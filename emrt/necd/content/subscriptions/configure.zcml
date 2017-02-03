@@ -1,0 +1,24 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+<!--     <adapter
+        for="emrt.necd.content.observation.IObservation"
+        provides=".interfaces.INotificationSubscriptions"
+        factory=".dexterity.NotificationSubscriptions"
+    /> -->
+
+    <adapter
+        for="emrt.necd.content.observation.IObservation"
+        provides=".interfaces.INotificationUnsubscriptions"
+        factory=".dexterity.NotificationUnsubscriptions"
+    />
+
+    <adapter
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        provides=".interfaces.INotificationUnsubscriptions"
+        factory=".dexterity.NotificationUnsubscriptions"
+    />
+
+
+
+</configure>

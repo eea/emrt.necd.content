@@ -3,7 +3,7 @@ import os
 
 version = '1.59.35'
 
-setup(name='esdrt.content',
+setup(name='emrt.necd.content',
       version=version,
       description="Content-types for ESD Review Tool",
       long_description=open("README.txt").read() + "\n" +
@@ -18,10 +18,10 @@ setup(name='esdrt.content',
       keywords='',
       author='Mikel Larreategi',
       author_email='mlarreategi@codesyntax.com',
-      url='https://github.com/eea/esdrt.content/',
+      url='https://github.com/eea/emrt.necd.content/',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
-      namespace_packages=['esdrt'],
+      namespace_packages=['emrt', 'emrt.necd'],
       include_package_data=True,
       zip_safe=False,
       install_requires=[

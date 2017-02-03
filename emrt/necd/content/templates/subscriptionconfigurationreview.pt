@@ -1,0 +1,113 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emrt.necd.content">
+
+<body>
+
+<metal:main fill-slot="content-title"/>
+<metal:main fill-slot="content-description"/>
+
+<metal:main fill-slot="content-core">
+  <metal:content-core define-macro="content-core"
+
+      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
+
+  <metal:observation define-macro="observation-info"
+    tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
+    <div class="backButton">
+      <a href=""
+        tal:attributes="href here/absolute_url"
+        class="standardButton">
+          <span class="eea-icon"><!-- --></span>
+            Back to list
+      </a>
+    </div>
+
+    <h1 class="documentFirstHeading" tal:content="context/title">
+           Title
+    </h1>
+
+  </metal:observation>
+
+
+  <div id="subscription-configuration">
+    <h2>Hello <span tal:replace="python:view.user().getProperty('fullname')" /></h2>
+
+    <p>
+      Your roles in this area are the following:<br/>
+    </p>
+
+      <ul>
+        <tal:role repeat="role view/user_roles">
+          <li tal:content="role">
+            Lead Reviewer
+          </li>
+        </tal:role>
+      </ul>
+
+    <p>
+      You are subscribed to receive the following notifications.<br/>
+
+      If you want to subscribe or unsubscribe from receiving those notifications, please check
+      the relevant box and then click on save.
+    </p>
+
+    <form method="post" action=""
+      tal:attributes="action string:${here/absolute_url}/save-subscriptions">
+
+      <div class="role" tal:repeat="item python:view.my_subscriptions().items()">
+        <h3>
+          Role: <span tal:replace="python:view.translate_rolename(item[0])" />
+        </h3>
+        <input type="hidden" name="subscription_data.name:records"
+          tal:attributes="value python:item[0]" />
+
+        <table class="listing">
+          <thead>
+            <tr>
+              <th>
+                Notification
+              </th>
+              <th>
+                Enabled?
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr tal:repeat="notification python:item[1].items()">
+              <td>
+                <span tal:replace="python:view.notification_name(item[0], notification[0])" />
+              </td>
+              <td>
+                <input type="checkbox"
+                  tal:attributes="checked python:notification[1];
+                                  name python:'subscription_data.' + notification[0] + ':records';
+                  " />
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div class="subscription-actions">
+        <button type="submit" class="standardButton">
+          Save
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  </metal:content-core>
+</metal:main>
+</body>
+</html>
+

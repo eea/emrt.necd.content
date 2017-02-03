@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<object name="portal_javascripts">
+  <javascript
+    id="++resource++emrt.necd.content/eea-tabs.js"
+    cacheable="True" compression="safe" cookable="False"
+    enabled="True" expression=""  inline="False"/>
+  <javascript
+    id="++resource++emrt.necd.content/moment.min.js"
+    cacheable="True" compression="None" cookable="False"
+    enabled="True" expression=""  inline="False"/>
+
+  <javascript
+    id="++resource++emrt.necd.content/chosen.jquery.js"
+    cacheable="True" compression="None" cookable="False"
+    enabled="True" expression=""  inline="False"/>
+
+  <javascript
+    id="++resource++emrt.necd.content/superlink.jquery.js"
+    cacheable="True" compression="None" cookable="False"
+    enabled="True" expression=""  inline="False"/>
+</object>
+

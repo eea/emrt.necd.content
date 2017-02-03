@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<dc-workflow workflow_id="esd-file-workflow" title="ESD File Workflow" description="" state_variable="review_state" initial_state="initial" manager_bypass="True">
+ <instance-creation-conditions>
+   <guard>
+    <guard-permission>emrt.necd.content: Add ESDRTFile</guard-permission>
+   </guard>
+ </instance-creation-conditions>
+ <permission>Access contents information</permission>
+ <permission>List folder contents</permission>
+ <permission>Modify portal content</permission>
+ <permission>View</permission>
+ <state state_id="confidential" title="">
+  <permission-map name="Access contents information" acquired="False">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Site Administrator</permission-role>
+  </permission-map>
+  <permission-map name="List folder contents" acquired="False">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Site Administrator</permission-role>
+  </permission-map>
+  <permission-map name="Modify portal content" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Site Administrator</permission-role>
+  </permission-map>
+  <permission-map name="View" acquired="False">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Site Administrator</permission-role>
+  </permission-map>
+ </state>
+ <state state_id="initial" title="Initial">
+  <permission-map name="Access contents information" acquired="True">
+  </permission-map>
+  <permission-map name="List folder contents" acquired="True">
+  </permission-map>
+  <permission-map name="Modify portal content" acquired="True">
+  </permission-map>
+  <permission-map name="View" acquired="True">
+  </permission-map>
+ </state>
+ <state state_id="standard" title="">
+  <permission-map name="Access contents information" acquired="False">
+   <permission-role>ExpertReviewer</permission-role>
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>ReviewerPhase2</permission-role>
+  </permission-map>
+  <permission-map name="List folder contents" acquired="False">
+   <permission-role>ExpertReviewer</permission-role>
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>ReviewerPhase2</permission-role>
+  </permission-map>
+  <permission-map name="Modify portal content" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Site Administrator</permission-role>
+  </permission-map>
+  <permission-map name="View" acquired="False">
+   <permission-role>ExpertReviewer</permission-role>
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>QualityExpert</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>ReviewerPhase1</permission-role>
+   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>Site Administrator</permission-role>
+  </permission-map>
+ </state>
+ <transition transition_id="mgr_confidential" title="Make confidential (Manager)" new_state="confidential" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=mgr_confidential" category="workflow" icon="">Make Confidential (Manager)</action>
+  <guard>
+   <guard-role>Manager</guard-role>
+   <guard-role>Site Administrator</guard-role>
+  </guard>
+ </transition>
+ <transition transition_id="mgr_standard" title="Make Standard (Manager)" new_state="standard" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=mgr_standard" category="workflow" icon="">Make Standard (Standard)</action>
+  <guard>
+   <guard-role>Manager</guard-role>
+   <guard-role>Site Administrator</guard-role>
+  </guard>
+ </transition>
+ <transition transition_id="to_confidential" title="Make confidential" new_state="confidential" trigger="AUTOMATIC" before_script="" after_script="">
+
+  <guard>
+   <guard-expression>here/confidential</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="to_standard" title="Make standard" new_state="standard" trigger="AUTOMATIC" before_script="" after_script="">
+
+  <guard>
+   <guard-expression>not:here/confidential</guard-expression>
+  </guard>
+ </transition>
+ <worklist worklist_id="reviewer_queue" title="">
+  <description>Reviewer tasks</description>
+  <action url="%(portal_url)s/search?review_state=pending" category="global" icon="">Pending (%(count)d)</action>
+  <guard>
+   <guard-permission>Review portal content</guard-permission>
+  </guard>
+  <match name="review_state" values="pending"/>
+ </worklist>
+ <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">
+  <description>Previous transition</description>
+  <default>
+
+   <expression>transition/getId|nothing</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="actor" for_catalog="False" for_status="True" update_always="True">
+  <description>The ID of the user who performed the previous transition</description>
+  <default>
+
+   <expression>user/getId</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="comments" for_catalog="False" for_status="True" update_always="True">
+  <description>Comment about the last transition</description>
+  <default>
+
+   <expression>python:state_change.kwargs.get('comment', '')</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+ <variable variable_id="review_history" for_catalog="False" for_status="False" update_always="False">
+  <description>Provides access to workflow history</description>
+  <default>
+
+   <expression>state_change/getHistory</expression>
+  </default>
+  <guard>
+   <guard-permission>Request review</guard-permission>
+   <guard-permission>Review portal content</guard-permission>
+  </guard>
+ </variable>
+ <variable variable_id="time" for_catalog="False" for_status="True" update_always="True">
+  <description>When the previous transition was performed</description>
+  <default>
+
+   <expression>state_change/getDateTime</expression>
+  </default>
+  <guard>
+  </guard>
+ </variable>
+</dc-workflow>
