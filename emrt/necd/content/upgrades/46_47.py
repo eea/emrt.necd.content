@@ -15,14 +15,14 @@ def upgrade(context, logger=None):
 
 def remove_vocabulary(context, logger):
     pv_tool = getToolByName(context, 'portal_vocabularies')
-    pv_vocab = pv_tool.get('crf_code', None)
+    pv_vocab = pv_tool.get('nfr_code', None)
     vocab_factory = getUtility(
-        IVocabularyFactory, name='emrt.necd.content.crf_code')
+        IVocabularyFactory, name='emrt.necd.content.nfr_code')
     reg_vocab = vocab_factory(context)
 
     if compare_vocabs(pv_vocab, reg_vocab, logger):
-        pv_tool.manage_delObjects(['crf_code'])
-        logger.info('Deleted crf_code vocabulary')
+        pv_tool.manage_delObjects(['nfr_code'])
+        logger.info('Deleted nfr_code vocabulary')
     else:
         logger.info('Registry vocab different from portal_vocabularies.')
 

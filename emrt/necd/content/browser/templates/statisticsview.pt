@@ -71,8 +71,8 @@
           <tal:block tal:repeat="country view/observation_status_per_country">
             <tr tal:condition="python: country['country'] != 'Sum'">
               <td tal:content="country/country|string:Sum">AT</td>
-              <td tal:content="country/SRRE|string:0">1</td>
-              <td tal:content="country/LRQE|string:0">1</td>
+              <td tal:content="country/SE|string:0">1</td>
+              <td tal:content="country/LR|string:0">1</td>
               <td tal:content="country/MSC|string:0">1</td>
               <td tal:content="country/answered|string:0">1</td>
               <td tal:content="country/conclusions|string:0">1</td>
@@ -86,8 +86,8 @@
           <tal:block tal:repeat="country view/observation_status_per_country">
             <tr tal:condition="python: country['country'] == 'Sum'">
               <td tal:content="country/country|string:Sum">AT</td>
-              <td tal:content="country/SRRE|string:0">1</td>
-              <td tal:content="country/LRQE|string:0">1</td>
+              <td tal:content="country/SE|string:0">1</td>
+              <td tal:content="country/LR|string:0">1</td>
               <td tal:content="country/MSC|string:0">1</td>
               <td tal:content="country/answered|string:0">1</td>
               <td tal:content="country/conclusions|string:0">1</td>
@@ -104,7 +104,7 @@
           <tr>
             <th>Sector</th>
             <th>SR/RE</th>
-            <th>LRQE</th>
+            <th>LR</th>
             <th>MSC</th>
             <th>Answer received</th>
             <th>Conclusions</th>
@@ -117,8 +117,8 @@
           <tal:block tal:repeat="country view/observation_status_per_sector">
             <tr tal:condition="python: country['sector'] != 'Sum'">
               <td tal:content="country/sector">Sector</td>
-              <td tal:content="country/SRRE|string:0">1</td>
-              <td tal:content="country/LRQE|string:0">1</td>
+              <td tal:content="country/SE|string:0">1</td>
+              <td tal:content="country/LR|string:0">1</td>
               <td tal:content="country/MSC|string:0">1</td>
               <td tal:content="country/answered|string:0">1</td>
               <td tal:content="country/conclusions|string:0">1</td>
@@ -132,8 +132,8 @@
           <tal:block tal:repeat="country view/observation_status_per_sector">
             <tr tal:condition="python: country['sector'] == 'Sum'">
               <td tal:content="country/sector">AT</td>
-              <td tal:content="country/SRRE|string:0">1</td>
-              <td tal:content="country/LRQE|string:0">1</td>
+              <td tal:content="country/SE|string:0">1</td>
+              <td tal:content="country/LR|string:0">1</td>
               <td tal:content="country/MSC|string:0">1</td>
               <td tal:content="country/answered|string:0">1</td>
               <td tal:content="country/conclusions|string:0">1</td>

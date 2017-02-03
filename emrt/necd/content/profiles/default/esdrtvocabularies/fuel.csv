@@ -1,6 +1,52 @@
-gaseous,Gaseous
-liquid,Liquid
-solid,Solid
-biomass,Biomass
-other,Other
-peat,Peat
+1,No value
+2,2-Stroke
+3,Biomass
+4,Blast Furnace Gas/Coke Oven Gas
+5,Blast Furnace Gas/Coke Oven Gas/Nat Gas
+6,Brown Coal
+7,Brown Coal/Lignite
+8,Bunker Fuel Oil
+9,CNG
+10,CNG (Buses)
+11,CNG (or LNG)
+12,Coal
+13,Coal Fuels
+14,Coal/gas/oil
+15,Coal/pet. Coke/gas/oil/recovered wastes
+16,Coke/Blast Furnace Gas/Coke Oven Gas/Nat Gas
+17,Coke/Blast Furnace Gas/Coke oven gas/NG/oil/BOF ga
+18,Coke/gas/oil
+19,Coke/oil/gas
+20,Coking Coal, Steam Coal & Sub-Bituminous Coal
+21,Diesel
+22,Fuel oil (Distillate fuel oil)
+23,Fuel oil (Residual fuel oil)
+24,Gas
+25,Gas Oil
+26,Gas Oil/Diesel
+27,Gas/Oil
+28,Gas/oil/coal
+29,Gaseous Fuels
+30,Gasoline
+31,Gasoline: 2-Stroke
+32,Gasoline: 4-Stroke
+33,Hard Coal
+34,Hard Coal and Brown Coal
+35,Heavy Fuel Oil
+36,Jet Gasoline and Aviation Gasoline
+37,Liquid Fuels
+38,LPG
+39,Marine diesel oil/marine gas oil (MDO/MGO)
+40,NA
+41,Natural gas
+42,Oil/coal/coke
+43,Oil/gas
+44,'Other' Liquid Fuels
+45,Refinery Gas
+46,Residual Oil
+47,Residual Oil (Refinery Fuel Oil)
+48,Solid Fuel (not biomass)
+49,Solid Fuels
+50,Wood
+51,Wood and similar wood waste
+52,Wood and wood waste (clean wood waste)

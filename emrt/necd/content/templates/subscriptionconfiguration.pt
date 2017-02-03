@@ -46,7 +46,7 @@
       <div class="row" style="margin-top:15px">
         <div class="cell position-1 width-2 esdLabel">Country</div>
         <div class="cell position-3 width-2 esdLabel">Sector</div>
-        <div class="cell position-5 width-2 esdLabel">Gases</div>
+        <div class="cell position-5 width-2 esdLabel">Pollutants</div>
         <div class="cell position-7 width-3 esdLabel">Inventory year</div>
         <div class="cell position-10 width-3 esdLabel">WF Location</div>
         <div class="cell position-13 width-3">
@@ -56,7 +56,7 @@
       <div class="row">
         <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
         <div class="cell position-3 width-2" tal:content="context/ghg_source_sectors_value">Sector</div>
-        <div class="cell position-5 width-2" tal:content="context/gas_value">Gas</div>
+        <div class="cell position-5 width-2" tal:content="context/pollutants_value">Pollutants</div>
         <div class="cell position-7 width-3" tal:content="context/year">Year of emission</div>
         <div class="cell position-10 width-3" tal:content="context/wf_location">Review expert</div>
       </div>
@@ -67,11 +67,11 @@
         </div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
-        <div class="cell position-0 width-8 esdLabel">CRF code</div>
+        <div class="cell position-0 width-8 esdLabel">NFR code</div>
         <div class="cell position-12 width-4 esdLabel">Parameter</div>
       </div>
       <div class="row observation-details" style="display:none">
-        <div class="cell position-0 width-8" tal:content="context/crf_code_value">CRF code</div>
+        <div class="cell position-0 width-8" tal:content="context/nfr_code_value">NFR code</div>
         <div class="cell position-12 width-4" tal:content="context/parameter_value">Parameter</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">

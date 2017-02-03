@@ -23,8 +23,8 @@
         <th style="width:45%" class="nosort">
           In short
         </th>
-        <th id="reviewfolder-crf" class="nosort">
-          CRF code
+        <th id="reviewfolder-nfr" class="nosort">
+          NFR code
         </th>
         <th style="width:47px" class="nosort"
             id="reviewfolder-year">
@@ -73,7 +73,7 @@
             class="observationText">
             Observation description
           </td>
-          <td tal:content="observation/crf_code_value">
+          <td tal:content="observation/nfr_code_value">
             1A1 Energy industries
           </td>
           <td tal:content="observation/review_year" class="yearCell">
@@ -89,10 +89,10 @@
             <div tal:attributes="class observation/observation_phase">&nbsp;</div>
           </td>
           <td >
-            <span tal:condition="python: observation.observation_status == 'SRRE'">
+            <span tal:condition="python: observation.observation_status == 'SE'">
               Sector Reviewer / Review Expert
             </span>
-            <span tal:condition="python: observation.observation_status == 'LRQE'">
+            <span tal:condition="python: observation.observation_status == 'LR'">
               Lead Reviewer / Quality Expert
             </span>
             <span tal:condition="python: observation.observation_status == 'MSC'">

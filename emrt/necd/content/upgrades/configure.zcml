@@ -210,7 +210,7 @@
 
     <genericsetup:upgradeStep
          title="Upgrade to 28."
-         description="Reinstall CRF Codes vocabulary"
+         description="Reinstall NFR Codes vocabulary"
          source="27"
          destination="28"
          handler=".27_28.upgrade"
@@ -357,12 +357,12 @@
 
       <genericsetup:upgradeDepends
           title="Import plone.app.registry"
-          description="Import the new registry based crf_code vocabulary."
+          description="Import the new registry based nfr_code vocabulary."
           import_steps="plone.app.registry"
           />
 
       <genericsetup:upgradeStep
-          title="Delete portal_vocabularies.crf_code vocabulary"
+          title="Delete portal_vocabularies.nfr_code vocabulary"
           description="Compares with new vocabulary before deleting."
           handler=".46_47.upgrade"
           />

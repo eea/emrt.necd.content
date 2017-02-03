@@ -158,14 +158,14 @@ class StatisticsView(grok.View):
         return self._generic_observation(
             key='country',
             value='status',
-            columns=['SRRE', 'LRQE', 'MSC', 'answered', 'conclusions', 'close-requested', 'finalised']
+            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'close-requested', 'finalised']
         )
 
     def observation_status_per_sector(self):
         return self._generic_observation(
             key='sector',
             value='status',
-            columns=['SRRE', 'LRQE', 'MSC', 'answered', 'conclusions', 'close-requested', 'finalised']
+            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'close-requested', 'finalised']
         )
 
     def finalised_reason_per_country(self):
@@ -356,12 +356,12 @@ class DownloadStatisticsView(grok.View):
         observations = self._generic_observation(
             key='country',
             value='status',
-            columns=['SRRE', 'LRQE', 'MSC', 'answered', 'conclusions', 'finalised']
+            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'finalised']
         )
         for observation in observations:
             data.append([observation['country'],
-                observation['SRRE'],
-                observation['LRQE'],
+                observation['SE'],
+                observation['LR'],
                 observation['MSC'],
                 observation['answered'],
                 observation['conclusions'],
@@ -378,12 +378,12 @@ class DownloadStatisticsView(grok.View):
         observations = self._generic_observation(
             key='sector',
             value='status',
-            columns=['SRRE', 'LRQE', 'MSC', 'answered', 'conclusions', 'finalised']
+            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'finalised']
         )
         for observation in observations:
             data.append([observation['sector'],
-                observation['SRRE'],
-                observation['LRQE'],
+                observation['SE'],
+                observation['LR'],
                 observation['MSC'],
                 observation['answered'],
                 observation['conclusions'],

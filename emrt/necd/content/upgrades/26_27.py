@@ -21,7 +21,7 @@ def reimport_vocabularies(context, logger):
     del atvm['fuel']
     del atvm['highlight']
     del atvm['parameter']
-    del atvm['crf_code']
+    del atvm['nfr_code']
     psetup = getToolByName(context, 'portal_setup')
     profile = psetup._getImportContext(PROFILE_ID)
     prepareVocabularies(context, profile)

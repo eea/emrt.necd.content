@@ -47,8 +47,8 @@ from eea.cache import cache
 from .comment import IComment
 from .commentanswer import ICommentAnswer
 from .conclusion import IConclusion
-from .crf_code_matching import get_category_ldap_from_crf_code
-from .crf_code_matching import get_category_value_from_crf_code
+from .nfr_code_matching import get_category_ldap_from_nfr_code
+from .nfr_code_matching import get_category_value_from_nfr_code
 from emrt.necd.content.subscriptions.interfaces import INotificationUnsubscriptions
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 import datetime
@@ -94,9 +94,9 @@ class IObservation(form.Schema, IImageScaleTraversable):
         required=True,
     )
 
-    crf_code = schema.Choice(
-        title=u"CRF category codes",
-        vocabulary='emrt.necd.content.crf_code',
+    nfr_code = schema.Choice(
+        title=u"NFR category codes",
+        vocabulary='emrt.necd.content.nfr_code',
         required=True,
     )
 
@@ -109,11 +109,11 @@ class IObservation(form.Schema, IImageScaleTraversable):
         required=True
     )
 
-    form.widget(gas=CheckBoxFieldWidget)
-    gas = schema.List(
+    form.widget(pollutants=CheckBoxFieldWidget)
+    pollutants = schema.List(
         title=u"Gas",
         value_type=schema.Choice(
-            vocabulary='emrt.necd.content.gas',
+            vocabulary='emrt.necd.content.pollutants',
         ),
         required=True,
     )
@@ -132,13 +132,13 @@ class IObservation(form.Schema, IImageScaleTraversable):
     )
 
     # ghg_source_category = schema.Choice(
-    #     title=_(u"CRF category group"),
+    #     title=_(u"NFR category group"),
     #     vocabulary='emrt.necd.content.ghg_source_category',
     #     required=True,
     # )
 
     # ghg_source_sectors = schema.Choice(
-    #     title=_(u"CRF Sector"),
+    #     title=_(u"NFR Sector"),
     #     vocabulary='emrt.necd.content.ghg_source_sectors',
     #     required=True,
     # )
@@ -205,18 +205,18 @@ def check_parameter(value):
         raise Invalid(u'You need to select at least one parameter')
 
 
-@form.validator(field=IObservation['gas'])
-def check_gas(value):
+@form.validator(field=IObservation['pollutants'])
+def check_pollutants(value):
     if len(value) == 0:
-        raise Invalid(u'You need to select at least one gas')
+        raise Invalid(u'You need to select at least one pollutant')
 
 
-@form.validator(field=IObservation['crf_code'])
-def check_crf_code(value):
+@form.validator(field=IObservation['nfr_code'])
+def check_nfr_code(value):
     """ Check if the user is in one of the group of users
-        allowed to add this category CRF Code observations
+        allowed to add this category NFR Code observations
     """
-    category = get_category_ldap_from_crf_code(value)
+    category = get_category_ldap_from_nfr_code(value)
     user = api.user.get_current()
     groups = user.getGroups()
     valid = False
@@ -293,10 +293,10 @@ def default_year(data):
 @grok.subscribe(IObservation, IObjectModifiedEvent)
 def set_title_to_observation(object, event):
     sector = safe_unicode(object.ghg_source_category_value())
-    gas = safe_unicode(object.gas_value())
+    pollutants = safe_unicode(object.pollutants_value())
     inventory_year = safe_unicode(str(object.year))
     parameter = safe_unicode(object.parameter_value())
-    object.title = u' '.join([sector, gas, inventory_year, parameter])
+    object.title = u' '.join([sector, pollutants, inventory_year, parameter])
     grant_local_roles(object)
 
 
@@ -336,10 +336,10 @@ class Observation(dexterity.Container):
             return self.listFolderContents()
 
 
-    def get_crf_code(self):
+    def get_nfr_code(self):
         """ stupid method to avoid name-clashes with the existing
         vocabularies when cataloging """
-        return self.crf_code
+        return self.nfr_code
 
     def get_ghg_source_sectors(self):
         """ stupid method to avoid name-clashes with the existing
@@ -357,31 +357,31 @@ class Observation(dexterity.Container):
             self.country
         )
 
-    def crf_code_value(self):
+    def nfr_code_value(self):
         return self._vocabulary_value(
-            'emrt.necd.content.crf_code',
-            self.crf_code
+            'emrt.necd.content.nfr_code',
+            self.nfr_code
         )
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
-        return get_category_ldap_from_crf_code(self.crf_code)
+        return get_category_ldap_from_nfr_code(self.nfr_code)
 
     def ghg_source_sectors_value(self):
         # Get the value of the sector to be used
         # on the Observation Metadata screen
-        return get_category_value_from_crf_code(self.crf_code)
+        return get_category_value_from_nfr_code(self.nfr_code)
 
     def parameter_value(self):
         parameters = [self._vocabulary_value('emrt.necd.content.parameter',
             p) for p in self.parameter]
         return u', '.join(parameters)
 
-    def gas_value(self):
-        gases = [self._vocabulary_value('emrt.necd.content.gas',
-            g) for g in self.gas]
+    def pollutants_value(self):
+        pollutants = [self._vocabulary_value('emrt.necd.content.pollutants',
+            p) for p in self.pollutants]
 
-        return u', '.join(gases)
+        return u', '.join(pollutants)
 
     def highlight_value(self):
         if self.highlight:
@@ -550,10 +550,10 @@ class Observation(dexterity.Container):
                       'phase1-counterpart-comments',
                       'phase2-counterpart-comments',
                       'observation-phase1-draft', 'observation-phase2-draft']:
-            return 'SRRE'
+            return 'SE'
         elif status in ['phase1-drafted', 'phase2-drafted',
                         'phase1-recalled-lr', 'phase2-recalled-lr']:
-            return 'LRQE'
+            return 'LR'
         elif status in ['phase1-pending', 'phase2-pending',
                         'phase1-pending-answer-drafting',
                         'phase2-pending-answer-drafting',
@@ -573,14 +573,14 @@ class Observation(dexterity.Container):
                 conclusion = self.get_conclusion()
                 conclusion_reason = conclusion and conclusion.closing_reason or ' '
                 if (conclusion_reason == 'no-conclusion-yet'):
-                    return "SRRE"
+                    return "SE"
                 else:
                     return "finalised"
             elif status == 'phase2-closed':
                 conclusion = self.get_conclusion_phase2()
                 conclusion_reason =  conclusion and conclusion.closing_reason or ' '
                 if (conclusion_reason == 'no-conclusion-yet'):
-                    return "SRRE"
+                    return "SE"
                 else:
                     return "finalised"
         else:
@@ -1459,7 +1459,7 @@ class ExportAsDocView(ObservationMixin):
         hdr_cells[0].paragraphs[0].style = "Table Cell Bold"
         hdr_cells[1].text = 'Sector'
         hdr_cells[1].paragraphs[0].style = "Table Cell Bold"
-        hdr_cells[2].text = 'Gases'
+        hdr_cells[2].text = 'Pollutants'
         hdr_cells[2].paragraphs[0].style = "Table Cell Bold"
         hdr_cells[3].text = 'Fuel'
         hdr_cells[3].paragraphs[0].style = "Table Cell Bold"
@@ -1473,7 +1473,7 @@ class ExportAsDocView(ObservationMixin):
         row_cells[0].paragraphs[0].style = "Table Cell"
         row_cells[1].text = self.context.ghg_source_sectors_value() or ''
         row_cells[1].paragraphs[0].style = "Table Cell"
-        row_cells[2].text = self.context.gas_value() or ''
+        row_cells[2].text = self.context.pollutants_value() or ''
         row_cells[2].paragraphs[0].style = "Table Cell"
         row_cells[3].text = self.context.fuel or ''
         row_cells[3].paragraphs[0].style = "Table Cell"
@@ -1688,7 +1688,7 @@ class ModificationForm(dexterity.EditForm):
         if 'ReviewerPhase1' in roles or 'ReviewerPhase2' in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
-                'crf_code',
+                'nfr_code',
                 'review_year',
                 'technical_corrections',
                 'closing_comments',
@@ -1706,8 +1706,8 @@ class ModificationForm(dexterity.EditForm):
             self.fields['parameter'].widgetFactory = CheckBoxFieldWidget
         if 'highlight' in fields:
             self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
-        if 'gas' in fields:
-            self.fields['gas'].widgetFactory = CheckBoxFieldWidget
+        if 'pollutants' in fields:
+            self.fields['pollutants'].widgetFactory = CheckBoxFieldWidget
 
     def updateActions(self):
         super(ModificationForm, self).updateActions()

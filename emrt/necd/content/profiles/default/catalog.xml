@@ -5,8 +5,8 @@
   <indexed_attr value="Country"/>
  </index>
 
- <index name="CRF_Code" meta_type="FieldIndex">
-  <indexed_attr value="CRF_Code"/>
+ <index name="NFR_Code" meta_type="FieldIndex">
+  <indexed_attr value="NFR_Code"/>
  </index>
 
  <index name="GHG_Source_Category" meta_type="FieldIndex">
@@ -21,8 +21,8 @@
   <indexed_attr value="Status_Flag"/>
  </index>
 
- <index name="crf_code" meta_type="FieldIndex">
-  <indexed_attr value="CRF_Code"/>
+ <index name="nfr_code" meta_type="FieldIndex">
+  <indexed_attr value="NFR_Code"/>
  </index>
 
  <index name="ghg_source_sectors" meta_type="FieldIndex">
@@ -99,7 +99,7 @@
  <column value="country_value" />
  <column value="get_ghg_source_sectors" />
  <column value="get_status" />
- <column value="get_crf_code" />
+ <column value="get_nfr_code" />
  <column value="get_highlight" />
  <column value="observation_step" />
  <column value="observation_finalisation_reason" />
@@ -109,7 +109,7 @@
  <column value="observation_is_potential_technical_correction" />
  <column value="observation_is_technical_correction" />
  <column value="text" />
- <column value="crf_code_value" />
+ <column value="nfr_code_value" />
  <column value="review_year" />
  <column value="year" />
  <column value="overview_status" />
@@ -122,5 +122,5 @@
  <column value="observation_finalisation_reason_step2" />
  <column value="observation_finalisation_text_step1" />
  <column value="observation_finalisation_text_step2" />
- <column value="gas_value" />
+ <column value="pollutants_value" />
 </object>

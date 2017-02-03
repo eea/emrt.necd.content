@@ -57,12 +57,12 @@ grok.global_utility(GHGSourceSectors,
     name=u"emrt.necd.content.ghg_source_sectors")
 
 
-class Gas(object):
+class Pollutants(object):
     grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('gas')
+        voc = pvoc.getVocabularyByName('pollutants')
         terms = []
         if voc is not None:
             for key, value in voc.getVocabularyLines():
@@ -71,8 +71,8 @@ class Gas(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Gas,
-    name=u"emrt.necd.content.gas")
+grok.global_utility(Pollutants,
+    name=u"emrt.necd.content.pollutants")
 
 
 class Fuel(object):
@@ -147,22 +147,22 @@ grok.global_utility(StatusFlag,
     name=u"emrt.necd.content.status_flag")
 
 
-from .crf_code_matching import crf_codes
+from .nfr_code_matching import nfr_codes
 
-class CRFCode(object):
+class NFRCode(object):
     grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         terms = []
-        crfcodes = crf_codes()
-        for key, value in crfcodes.items():
+        nfrcodes = nfr_codes()
+        for key, value in nfrcodes.items():
             # create a term - the arguments are the value, the token, and
             # the title (optional)
             terms.append(SimpleVocabulary.createTerm(key, key, value['title']))
         return SimpleVocabulary(terms)
 
-grok.global_utility(CRFCode,
-    name=u"emrt.necd.content.crf_code")
+grok.global_utility(NFRCode,
+    name=u"emrt.necd.content.nfr_code")
 
 
 class Conclusions(object):

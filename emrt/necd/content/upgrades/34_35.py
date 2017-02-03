@@ -39,7 +39,7 @@ def reimport_vocabularies(context, logger):
     atvm = getToolByName(context, 'portal_vocabularies')
     del atvm['highlight']
     del atvm['fuel']
-    del atvm['gas']
+    del atvm['pollutants']
     psetup = getToolByName(context, 'portal_setup')
     profile = psetup._getImportContext(PROFILE_ID)
     prepareVocabularies(context, profile)

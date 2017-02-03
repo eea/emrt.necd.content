@@ -107,7 +107,7 @@
                     In short
                 </th>
                 <th>
-                  CRF code
+                  NFR code
                 </th>
                 <th style="width:80px">
                   Modification date
@@ -148,7 +148,7 @@
                           class="observationText">
                         Observation description
                       </td>
-                    <td tal:content="observation/crf_code_value">
+                    <td tal:content="observation/nfr_code_value">
                       1A1 Energy industries
                     </td>
                     <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
@@ -192,7 +192,7 @@
                     In short
                 </th>
                 <th>
-                  CRF code
+                  NFR code
                 </th>
                 <th style="width:80px">
                   Modification date
@@ -233,7 +233,7 @@
                           class="observationText">
                         Observation description
                     </td>
-                    <td tal:content="observation/crf_code_value">
+                    <td tal:content="observation/nfr_code_value">
                       1A1 Energy industries
                     </td>
                     <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
@@ -277,7 +277,7 @@
                     In short
                 </th>
                 <th>
-                  CRF code
+                  NFR code
                 </th>
                 <th style="width:80px">
                   Modification date
@@ -318,7 +318,7 @@
                           class="observationText">
                         Observation description
                     </td>
-                    <td tal:content="observation/crf_code_value">
+                    <td tal:content="observation/nfr_code_value">
                       1A1 Energy industries
                     </td>
                     <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
@@ -362,7 +362,7 @@
                     In short
                 </th>
                 <th>
-                  CRF code
+                  NFR code
                 </th>
                 <th style="width:80px">
                   Modification date
@@ -403,7 +403,7 @@
                           class="observationText">
                         Observation description
                     </td>
-                    <td tal:content="observation/crf_code_value">
+                    <td tal:content="observation/nfr_code_value">
                       1A1 Energy industries
                     </td>
                     <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
@@ -447,7 +447,7 @@
                     In short
                 </th>
                 <th>
-                  CRF code
+                  NFR code
                 </th>
                 <th style="width:80px">
                   Modification date
@@ -488,7 +488,7 @@
                           class="observationText">
                         Observation description
                     </td>
-                    <td tal:content="observation/crf_code_value">
+                    <td tal:content="observation/nfr_code_value">
                       1A1 Energy industries
                     </td>
                     <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
@@ -532,7 +532,7 @@
                     In short
                 </th>
                 <th>
-                  CRF code
+                  NFR code
                 </th>
                 <th style="width:80px">
                   Modification date
@@ -573,7 +573,7 @@
                           class="observationText">
                         Observation description
                     </td>
-                    <td tal:content="observation/crf_code_value">
+                    <td tal:content="observation/nfr_code_value">
                       1A1 Energy industries
                     </td>
                     <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"

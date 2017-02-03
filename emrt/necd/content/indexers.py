@@ -23,8 +23,8 @@ def observation_country(context):
 
 
 @indexer(IObservation)
-def observation_crf_code(context):
-    return context.crf_code
+def observation_nfr_code(context):
+    return context.nfr_code
 
 
 @indexer(IObservation)

@@ -16,7 +16,7 @@ def upgrade(context, logger=None):
 
 def reimport_vocabularies(context, logger):
     atvm = getToolByName(context, 'portal_vocabularies')
-    del atvm['crf_code']
+    del atvm['nfr_code']
     del atvm['eea_member_states']
     del atvm['fuel']
     del atvm['gas']

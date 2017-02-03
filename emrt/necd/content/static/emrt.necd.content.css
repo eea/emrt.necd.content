@@ -321,7 +321,7 @@ div.phase2-observation{
 	background-color: #DADADA;
 	color: #999999;
 }
-.gasCell{
+.pollutantsCell{
 	text-align: center;
 	font-weight: bold;
 }
@@ -812,10 +812,10 @@ body.portaltype-conclusion #form-buttons-cancel {
 }
 
 
-form[action$="emrt.necd.content.crf_code_matching.IEsdrtSettings.crfcodeMapping"] input[type=text]{
+form[action$="emrt.necd.content.nfr_code_matching.IEsdrtSettings.nfrcodeMapping"] input[type=text]{
 	width: 98%;
 }
-form[action$="emrt.necd.content.crf_code_matching.IEsdrtSettings.crfcodeMapping"] div.multi-widget .inner{
+form[action$="emrt.necd.content.nfr_code_matching.IEsdrtSettings.nfrcodeMapping"] div.multi-widget .inner{
 	height: 480px;
     overflow: hidden;
     width: 100%;

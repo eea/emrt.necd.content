@@ -61,7 +61,7 @@ class ReviewFolderMixin(grok.View):
         freeText = self.request.form.get('freeText', '')
         step = self.request.form.get('step', '')
         wfStatus = self.request.form.get('wfStatus', '')
-        crfCode = self.request.form.get('crfCode', '')
+        nfrCode = self.request.form.get('nfrCode', '')
 
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
@@ -109,8 +109,8 @@ class ReviewFolderMixin(grok.View):
             query['observation_step'] = step
         if wfStatus != "":
             query['observation_status'] = wfStatus
-        if crfCode != "":
-            query['crf_code'] = crfCode
+        if nfrCode != "":
+            query['nfr_code'] = nfrCode
 
         return catalog(query)
 
@@ -153,9 +153,9 @@ class ReviewFolderMixin(grok.View):
         inventory_years = catalog.uniqueValuesFor('year')
         return inventory_years
 
-    def get_crf_categories(self):
+    def get_nfr_categories(self):
         vocab_factory = getUtility(
-            IVocabularyFactory, name='emrt.necd.content.crf_code')
+            IVocabularyFactory, name='emrt.necd.content.nfr_code')
         vocabulary = vocab_factory(self.context)
         return [(x.value, x.title) for x in vocabulary]
 
@@ -271,10 +271,10 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_is_potential_significant_issue', 'Is potential significant issue'),
     ('observation_is_potential_technical_correction', 'Is potential technical correction'),
     ('observation_is_technical_correction', 'Is technical correction'),
-    ('crf_code_value', 'CRF Code'),
+    ('nfr_code_value', 'NFR Code'),
     ('review_year', 'Review Year'),
     ('year', 'Inventory year'),
-    ('gas_value', 'GAS'),
+    ('pollutants_value', 'Pollutants'),
     ('get_highlight', 'Highlight'),
     ('overview_status', 'Status'),
     ('observation_phase', 'Step'),
@@ -464,7 +464,7 @@ def decorate(item):
     new_item['observation_is_potential_technical_correction'] = item.observation_is_potential_technical_correction()
     new_item['observation_is_technical_correction'] = item.observation_is_technical_correction()
     new_item['text'] = item.text
-    new_item['crf_code_value'] = item.crf_code_value()
+    new_item['nfr_code_value'] = item.nfr_code_value()
     new_item['modified'] = item.modified()
     new_item['observation_phase'] = item.observation_phase()
     new_item['observation_question_status'] = item.observation_question_status()

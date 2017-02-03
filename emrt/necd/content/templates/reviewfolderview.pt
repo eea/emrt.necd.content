@@ -80,7 +80,7 @@
             /* folder contents table loading actions */
             var ccore = $("#content-core");
             ccore.enableTableReload("#reviewfolder-title", { "sort_on": "getId", "sort_order": "ascending" });
-            ccore.enableTableReload("#reviewfolder-crf", { "sort_on": "crf_code", "sort_order": "ascending" });
+            ccore.enableTableReload("#reviewfolder-nfr", { "sort_on": "nfr_code", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-year", { "sort_on": "review_year", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-status", { "sort_on": "observation_status", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-step", { "sort_on": "observation_step", "sort_order": "ascending" });
@@ -166,13 +166,13 @@
                   }
                   filter += "wfStatus=" + $('#wfStatusFilter').val();
                 }
-                if ($('#crfFilter').val() != ""){
+                if ($('#nfrFilter').val() != ""){
                   if (filter == ""){
                     filter += "?";
                   }else{
                     filter += "&";
                   }
-                  filter += "crfCode=" + $('#crfFilter').val();
+                  filter += "nfrCode=" + $('#nfrFilter').val();
                 }
                 window.location.href = window.location.pathname + filter;
 
@@ -291,16 +291,16 @@
           </div>
         </div>
         <div class="row" style="padding-top:30px">
-          <div class="cell position-1 width-3 esdLabel">CRF category code</div>
+          <div class="cell position-1 width-3 esdLabel">NFR category code</div>
         </div>
         <div class="row">
           <div class="cell position-1 width-9 esdLabel">
-            <select id="crfFilter" class="chosen-select" data-placeholder="Select CRF category code">
+            <select id="nfrFilter" class="chosen-select" data-placeholder="Select NFR category code">
               <option></option>
-              <tal:block tal:repeat="item view/get_crf_categories">
+              <tal:block tal:repeat="item view/get_nfr_categories">
                 <option
                   tal:define="category python:'';
-                              category request/crfCode | category"
+                              category request/nfrCode | category"
                   tal:attributes="value python:item[0];
                                   selected python:item[0]==category"
                   tal:content="python:item[1]"></option>
@@ -343,8 +343,6 @@
                 tal:define="step python:'';
                             step request/step | step">
               <option></option>
-             <option tal:attributes="selected python:'step1'==step"
-                value="step1">Step1</option>
               <option tal:attributes="selected python:'step2'==step"
                 value="step2">Step2</option>
             </select>
@@ -354,10 +352,10 @@
                 tal:define="wfStatus python:'';
                             wfStatus request/wfStatus | wfStatus">
               <option></option>
-             <option tal:attributes="selected python:'SRRE'==wfStatus"
-                value="SRRE">Sector Reviewer / Review Expert</option>
-              <option tal:attributes="selected python:'LRQE'==wfStatus"
-                value="LRQE">Lead Reviewer / Quality Expert</option>
+              <option tal:attributes="selected python:'LR'==wfStatus"
+                value="LR">Lead Reviewer</option>
+              <option tal:attributes="selected python:'SE'==wfStatus"
+                value="SE">Sector Expert</option>
               <option tal:attributes="selected python:'MSC'==wfStatus"
                 value="MSC">MS Coordinator</option>
               <option tal:attributes="selected python:'answered'==wfStatus"
