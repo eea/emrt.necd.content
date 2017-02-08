@@ -285,7 +285,7 @@
         <div class="cell position-0 width-16" tal:content="context/highlight_value">Status flag</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
-        <div class="cell position-0 width-4 esdLabel">Short description by expert/reviewer</div>
+        <div class="cell position-0 width-4 esdLabel">Short description by sector expert</div>
       </div>
       <div class="row observation-details" style="display:none" tal:condition="view/show_description">
         <div class="cell position-0 width-16">
@@ -340,8 +340,6 @@
 
   <ul class="eea-tabs">
     <li style="width:165px;max-width:165px"
-      tal:condition="python:context.get_status() == 'phase1-close-requested'">Finish observation</li>
-    <li style="width:165px;max-width:165px"
       tal:condition="python:context.get_status() == 'phase2-close-requested'">Finish observation</li>
     <li style="width:165px;max-width:165px"
       tal:define="conclusion view/get_conclusion_phase2"
@@ -356,53 +354,6 @@
   </ul>
 
   <div class="eea-tabs-panels" style="overflow:hidden">
-    <div class="eea-tabs-panel finish-observation"
-      tal:condition="python:context.get_status() == 'phase1-close-requested'">
-        <dl>
-          <dt>Observation Finish Requested</dt>
-          <dd></dd>
-          <dt>SE comments on finish observation request:</dt>
-          <dd><span tal:replace="structure context/closing_comments/output|context/closing_comments|nothing" /></dd>
-        </dl>
-
-        <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'phase1-close-requested'" >
-          <dl>
-            <dt>Observation Finalisation previously denied</dt>
-            <dd></dd>
-            <dt>QE comments on finish observation request:</dt>
-            <dd>
-              <div tal:replace="structure context/closing_deny_comments/output|context/closing_deny_comments|nothing">
-              Content
-              </div>
-            </dd>
-          </dl>
-        </div>
-
-      <div class="actions" tal:condition="view/in_conclusions_phase1">
-        <tal:block tal:repeat="action view/actions">
-          <tal:block tal:condition="python: 'phase1-close' in action['action'] or 'phase2-close' in action['action'] or 'send-to-team-2' in action['action']">
-            <a href=""
-              tal:attributes="href action/action;
-                              title action/description|nothing;
-                              "
-              class="standardButton defaultWFButton"
-              tal:content="action/title">
-              Action
-            </a>
-          </tal:block>
-          <tal:block tal:condition="python: 'phase1-close' not in action['action'] and 'phase2-close' not in action['action'] and 'send-to-team-2' not in action['action']">
-            <a href=""
-              tal:attributes="href action/action;
-                              title action/description|nothing;
-                              "
-              class="standardButton"
-              tal:content="action/title">
-              Action
-            </a>
-          </tal:block>
-        </tal:block>
-      </div>
-    </div>
     <div class="eea-tabs-panel finish-observation"
       tal:condition="python:context.get_status() == 'phase2-close-requested'">
         <dl>
@@ -828,43 +779,10 @@
               <div class="conclusion-discussion conclusion-discussion-2" tal:content="structure provider:emrt.necd.content.commentmanager"  style="display:none"/>
             </div>
         </div>
-        <div class="actions" tal:condition="view/in_conclusions_phase1">
-
-          <a href=""
-            tal:condition="conclusion/can_edit"
-            tal:attributes="href string:${conclusion/absolute_url}/edit"
-            class="edit standardButton">
-            Edit conclusion
-          </a>
-          <a href=""
-            tal:condition="conclusion/can_add_files"
-            tal:attributes="href string:${conclusion/absolute_url}/++add++ESDRTFile"
-            class="addfile standardButton">
-            Upload file
-          </a>
-          <tal:block tal:repeat="action conclusion/get_actions">
-            <tal:block tal:condition="python: 'request-close' in action['action']">
-              <a href=""
-                tal:attributes="href action/action"
-                class="standardButton defaultWFButton"
-                tal:content="action/title">
-                Action
-              </a>
-            </tal:block>
-            <tal:block tal:condition="python: 'request-close' not in action['action']">
-              <a href=""
-                tal:attributes="href action/action"
-                class="standardButton"
-                tal:content="action/title">
-                Action
-              </a>
-            </tal:block>
-          </tal:block>
-        </div>
       </div>
     </div>
     <div class="eea-tabs-panel questions">
-      <tal:qactions condition="python:(not view.in_conclusions_phase1()) and (not view.in_conclusions_phase2())">
+      <tal:qactions condition="python:not view.in_conclusions_phase2()">
       <div class="actions"
         tal:condition="python:not view.get_questions() and view.can_add_conclusion()">
         <!-- <a href=""
@@ -897,13 +815,6 @@
             Delete observation
           </a>
         </tal:block>
-        <a href="./content_status_modify?workflow_action=close"
-          tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase1-observation'"
-          id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase1-draft-conclusions"
-          class="standardButton">
-          Go to conclusions
-        </a>
        <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase2-observation'"
           id="observation-finish"
@@ -1099,17 +1010,6 @@
         </div>
 
       <tal:last condition="repeat/question/end">
-      <tal:conclu condition="python:view.in_conclusions_phase1() and not here.get_conclusion()">
-        <div class="actions">
-        <a href=""
-            id="add-conclusion-link"
-            tal:condition="view/can_add_conclusion"
-            tal:attributes="href string:${here/absolute_url}/++add++Conclusion"
-            class="standardButton">
-            Add conclusions
-        </a>
-        </div>
-      </tal:conclu>
 
       <tal:conclu condition="python:view.in_conclusions_phase2() and not here.get_conclusion_phase2()">
         <div class="actions">
@@ -1125,7 +1025,7 @@
 
       </tal:last>
 
-      <tal:qactions condition="python:(not view.in_conclusions_phase1()) and (not view.in_conclusions_phase2())">
+      <tal:qactions condition="python:not view.in_conclusions_phase2()">
         <div class="actions" tal:condition="repeat/question/end">
 
           <tal:block tal:define="question view/question"
@@ -1261,9 +1161,8 @@
             </tal:block>
             <tal:block tal:condition="python: 'edit-highlights' in action['action']"
                        tal:define="question view/question;
-                                   cond1 python: (question and question.get_state_api() in ['phase1-drafted', 'phase2-drafted']) and ('ReviewerPhase1' in view.user_roles);
-                                   cond2 python: (question and question.get_state_api() in ['phase1-draft', 'phase1-pending', 'phase2-draft', 'phase2-pending']) and ('QualityExpert' in view.user_roles)">
-              <tal:block condition="python: not (cond1 or cond2)">
+                                   cond2 python: (question and question.get_state_api() in ['phase2-draft', 'phase2-pending']) and ('QualityExpert' in view.user_roles)">
+              <tal:block condition="python: not cond2">
                 <a href=""
                   tal:attributes="href string:${action/action};
                                   title action/description|nothing;"

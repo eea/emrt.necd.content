@@ -16,7 +16,6 @@ from zope.annotation.interfaces import IAnnotations
 import copy
 
 ROLE_TRANSLATOR = {
-    'ReviewerPhase1': 'Sector Expert (phase 1)',
     'ReviewerPhase2': 'Review Expert (phase 2)',
     'QualityExpert':  'Quality Expert (phase 1)',
     'LeadReviewer':   'Lead Reviewer (phase 2)',
@@ -27,12 +26,6 @@ ROLE_TRANSLATOR = {
 
 
 NOTIFICATIONS_PER_ROLE = {
-    'ReviewerPhase1': {
-        'observation_finalisation_denied': True,
-        'observation_finalised': True,
-        'question_answered': True,
-        'question_to_ms': True,
-    },
     'ReviewerPhase2': {
         'observation_finalisation_denied': True,
         'observation_finalised': True,
@@ -71,12 +64,6 @@ NOTIFICATIONS_PER_ROLE = {
 }
 
 NOTIFICATION_NAMES = {
-    'ReviewerPhase1': {
-        'observation_finalisation_denied': 'Observation finalisation denied by QE',
-        'observation_finalised': 'Observation finalised by QE',
-        'question_answered': 'Question answered by MS',
-        'question_to_ms': 'Question sent to MS by QE',
-    },
     'ReviewerPhase2': {
         'observation_finalisation_denied': 'Observation finalisation denied by LR',
         'observation_finalised': 'Observation finalised by LR',

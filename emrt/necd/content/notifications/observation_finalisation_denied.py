@@ -6,26 +6,6 @@ from utils import notify
 
 
 @grok.subscribe(IObservation, IActionSucceededEvent)
-def notification_rev_ph1(context, event):
-    """
-    To:     ReviewerPhase1
-    When:   Observation finalisation denied
-    """
-    _temp = PageTemplateFile('observation_finalisation_denied.pt')
-
-    if event.action in ['phase1-deny-closure']:
-        observation = context
-        subject = u'Observation finalisation denied'
-        notify(
-            observation,
-            _temp,
-            subject,
-            'ReviewerPhase1',
-            'observation_finalisation_denied'
-        )
-
-
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_rev_ph2(context, event):
     """
     To:     ReviewerPhase2

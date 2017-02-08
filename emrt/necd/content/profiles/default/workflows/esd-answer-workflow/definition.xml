@@ -54,7 +54,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
@@ -69,7 +68,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -84,7 +82,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">

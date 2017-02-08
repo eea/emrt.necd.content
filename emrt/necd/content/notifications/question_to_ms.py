@@ -14,7 +14,7 @@ def notification_ms(context, event):
     """
     _temp = PageTemplateFile('question_to_ms.pt')
 
-    if event.action in ['phase1-approve-question', 'phase2-approve-question']:
+    if event.action in ['phase2-approve-question']:
         observation = aq_parent(context)
         subject = u'New question for your country'
         notify(
@@ -22,26 +22,6 @@ def notification_ms(context, event):
             _temp,
             subject,
             role='MSAuthority',
-            notification_name='question_to_ms'
-        )
-
-
-@grok.subscribe(IQuestion, IActionSucceededEvent)
-def notification_rev_ph1(context, event):
-    """
-    To:     ReviewerPhase1
-    When:   Your question was sent to MS
-    """
-    _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
-
-    if event.action in ['phase1-approve-question']:
-        observation = aq_parent(context)
-        subject = u'Your observation was sent to MS'
-        notify(
-            observation,
-            _temp,
-            subject,
-            role='ReviewerPhase1',
             notification_name='question_to_ms'
         )
 

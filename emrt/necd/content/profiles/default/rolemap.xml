@@ -6,13 +6,11 @@
     <role name="MSAuthority"/>
     <role name="MSExpert"/>
 
-    <role name="SectorExpert" />
     <role name="QualityExpert" />
 
     <role name="ReviewExpert" />
     <role name="LeadReviewer" />
 
-    <role name="ReviewerPhase1" />
     <role name="ReviewerPhase2" />
 
   </roles>
@@ -73,7 +71,6 @@
     <permission name="emrt.necd.content: Add Observation" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="SectorExpert" />
       <role name="ReviewExpert" />
     </permission>
   </permissions>

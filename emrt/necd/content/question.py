@@ -36,19 +36,8 @@ class IQuestion(form.Schema, IImageScaleTraversable):
 # in separate view classes.
 
 PENDING_STATUS_NAMES = ['answered']
-OPEN_STATUS_NAMES = [
-    'phase1-pending',
-    'phase1-pending-answer',
-    'phase1-pending-answer-validation',
-    'phase1-validate-answer',
-    'phase1-recalled-msa'
-]
-DRAFT_STATUS_NAMES = [
-    'phase1-draft',
-    'phase1-counterpart-comments',
-    'phase1-drafted',
-    'phase1-recalled-lr'
-]
+OPEN_STATUS_NAMES = []
+DRAFT_STATUS_NAMES = []
 CLOSED_STATUS_NAMES = ['closed']
 
 PENDING_STATUS_NAME = 'pending'
@@ -119,10 +108,6 @@ class Question(dexterity.Container):
             if len(question_history) > 2:
                 previous_action = question_history[-1]
                 previous_previous_action = question_history[-2]
-                if current_status == 'phase1-draft':
-                    if previous_action['action'] == 'phase1-send-comments' and \
-                            previous_previous_action['action'] == 'phase1-request-for-counterpart-comments':
-                        return True
                 if current_status == 'phase2-draft':
                     if previous_action['action'] == 'phase2-send-comments' and \
                             previous_previous_action['action'] == 'phase2-request-for-counterpart-comments':
@@ -142,10 +127,13 @@ class Question(dexterity.Container):
             question_history = self.workflow_history['esd-question-review-workflow']
             current_status = api.content.get_state(self)
             previous_action = question_history[-1]
-            if current_status == 'phase1-draft':
-                return previous_action['action'] in ['phase1-add-folowup-question', 'phase1-reopen', None]
-            elif current_status == 'phase2-draft':
-                return previous_action['action'] in ['phase2-add-folowup-question', 'phase2-reopen', 'go-to-phase2', None]
+            if current_status == 'phase2-draft':
+                return previous_action['action'] in [
+                    'phase2-add-folowup-question',
+                    'phase2-reopen',
+                    'go-to-phase2',
+                    None
+                ]
 
         return False
 
@@ -169,7 +157,7 @@ class Question(dexterity.Container):
 
     def observation_not_closed(self):
         observation = self.get_observation()
-        return api.content.get_state(observation) in ['phase1-pending', 'phase2-pending']
+        return api.content.get_state(observation) in ['phase2-pending']
 
     def already_commented_by_counterpart(self):
         # XXXX
@@ -362,7 +350,7 @@ class EditAndCloseComments(grok.View):
         # Some checks:
         waction = self.request.get('workflow_action')
         comment = self.request.get('comment')
-        if waction not in ['phase1-send-comments', 'phase2-send-comments'] and \
+        if waction not in ['phase2-send-comments'] and \
             comment not in self.context.keys():
                 status = IStatusMessage(self.request)
                 msg = _(u'There was an error, try again please')
@@ -372,12 +360,7 @@ class EditAndCloseComments(grok.View):
 
     def render(self):
         # Execute the transition
-        if api.content.get_state(self.context).startswith('phase1-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase1-send-comments'
-            )
-        elif api.content.get_state(self.context).startswith('phase2-'):
+        if api.content.get_state(self.context).startswith('phase2-'):
             api.content.transition(
                 obj=self.context,
                 transition='phase2-send-comments'
@@ -398,7 +381,7 @@ class EditAnswerAndCloseComments(grok.View):
         # Some checks:
         waction = self.request.get('workflow_action')
         comment = self.request.get('comment')
-        if waction not in ['phase1-ask-answer-approval', 'phase2-ask-answer-aproval'] and \
+        if waction not in ['phase2-ask-answer-aproval'] and \
             comment not in self.context.keys():
             status = IStatusMessage(self.request)
             msg = _(u'There was an error, try again please')
@@ -409,12 +392,7 @@ class EditAnswerAndCloseComments(grok.View):
 
     def render(self):
         # Execute the transition
-        if api.content.get_state(self.context).startswith('phase1-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase1-ask-answer-approval'
-            )
-        elif api.content.get_state(self.context).startswith('phase2-'):
+        if api.content.get_state(self.context).startswith('phase2-'):
             api.content.transition(
                 obj=self.context,
                 transition='phase2-ask-answer-aproval'
@@ -432,11 +410,8 @@ class AddFollowUpQuestion(grok.View):
     grok.require('zope2.View')
 
     def render(self):
-        if api.content.get_state(self.context).startswith('phase1-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase1-reopen')
-        elif api.content.get_state(self.context).startswith('phase2-'):
+
+        if api.content.get_state(self.context).startswith('phase2-'):
             api.content.transition(
                 obj=self.context,
                 transition='phase2-reopen')
@@ -454,14 +429,7 @@ class AddConclusions(grok.View):
 
     def render(self):
         parent = aq_parent(self.context)
-        if api.content.get_state(parent).startswith('phase1-'):
-            conclusion = parent.get_conclusion()
-            if not conclusion:
-                url = '%s/++add++Conclusion' % parent.absolute_url()
-            else:
-                url = '%s/edit' % conclusion.absolute_url()
-
-        elif api.content.get_state(parent).startswith('phase2-'):
+        if api.content.get_state(parent).startswith('phase2-'):
             conclusionsphase2 = parent.get_conclusion_phase2()
             if not conclusionsphase2:
                 api.content.transition(
@@ -502,9 +470,7 @@ class DeleteLastComment(grok.View):
                 question_state = api.content.get_state(obj=question)
                 self.context.manage_delObjects([last_comment.getId()])
                 url = question.absolute_url()
-                if question_state == 'phase1-draft':
-                    url += '/content_status_modify?workflow_action=phase1-delete-question'
-                elif question_state == 'phase2-draft':
+                if question_state == 'phase2-draft':
                     url += '/content_status_modify?workflow_action=phase2-delete-question'
                 return self.request.response.redirect(url)
 
@@ -522,9 +488,7 @@ class DeleteLastAnswer(grok.View):
             last_comment = comments[-1]
             question_state = api.content.get_state(obj=question)
             self.context.manage_delObjects([last_comment.getId()])
-            if question_state == 'phase1-pending-answer-drafting':
-                url += '/content_status_modify?workflow_action=phase1-delete-answer'
-            elif question_state == 'phase2-pending-answer-drafting':
+            if question_state == 'phase2-pending-answer-drafting':
                 url += '/content_status_modify?workflow_action=phase2-delete-answer'
             return self.request.response.redirect(url)
         return self.request.response.redirect(url)

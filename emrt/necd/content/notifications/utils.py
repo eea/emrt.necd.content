@@ -85,7 +85,7 @@ def get_users_in_context(observation, role, notification_name):
             roles = user.getRolesInContext(observation)
             step = observation.observation_phase()
             if 'phase2' in step:
-                if 'ReviewerPhase1' in roles and not 'ReviewerPhase2' in roles:
+                if 'ReviewerPhase2' not in roles:
                     continue
             if not exclude_user_from_notification(observation, user, role, notification_name):
                 users.append(user)

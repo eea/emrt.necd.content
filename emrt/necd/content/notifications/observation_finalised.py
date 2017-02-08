@@ -12,7 +12,7 @@ def notification_ms(context, event):
     When:   Observation was finalised
     """
     _temp = PageTemplateFile('observation_finalised.pt')
-    if event.action in ['phase1-close', 'phase2-confirm-finishing-observation']:
+    if event.action in ['phase2-confirm-finishing-observation']:
         observation = context
         subject = u'An observation for your country was finalised'
         notify(
@@ -20,25 +20,6 @@ def notification_ms(context, event):
             _temp,
             subject,
             'MSAuthority',
-            'observation_finalised'
-        )
-
-
-@grok.subscribe(IObservation, IActionSucceededEvent)
-def notification_rev_ph1(context, event):
-    """
-    To:     ReviewerPhase1
-    When:   Observation finalised
-    """
-    _temp = PageTemplateFile('observation_finalised_rev_msg.pt')
-    if event.action in ['phase1-close']:
-        observation = context
-        subject = u'Your observation was finalised'
-        notify(
-            observation,
-            _temp,
-            subject,
-            'ReviewerPhase1',
             'observation_finalised'
         )
 

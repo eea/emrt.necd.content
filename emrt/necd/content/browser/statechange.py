@@ -68,12 +68,7 @@ class FinishObservationReasonForm(Form):
     def finish_observation(self, action):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
-            if api.content.get_state(self.context) == 'phase1-conclusions':
-                self.context.closing_comments = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase1-request-close',
-                )
-            elif api.content.get_state(self.context) == 'phase2-conclusions':
+            if api.content.get_state(self.context) == 'phase2-conclusions':
                 self.context.closing_comments_phase2 = comments
                 return self.context.content_status_modify(
                     workflow_action='phase2-finish-observation',
@@ -110,12 +105,7 @@ class DenyFinishObservationReasonForm(Form):
     def finish_observation(self, action):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
-            if api.content.get_state(self.context) == 'phase1-close-requested':
-                self.context.closing_deny_comments = comments
-                return self.context.content_status_modify(
-                    workflow_action='phase1-deny-closure',
-                )
-            elif api.content.get_state(self.context) == 'phase2-close-requested':
+            if api.content.get_state(self.context) == 'phase2-close-requested':
                 self.context.closing_deny_comments_phase2 = comments
                 return self.context.content_status_modify(
                     workflow_action='phase2-deny-finishing-observation',
@@ -217,9 +207,8 @@ class AssignAnswererForm(BrowserView):
                     roles=['MSExpert'],
                     obj=target)
 
-            if api.content.get_state(self.context) in [u'phase1-pending', u'phase1-pending-answer-drafting']:
-                wf_action = 'phase1-assign-answerer'
-            elif api.content.get_state(self.context) in [u'phase2-pending', u'phase2-pending-answer-drafting']:
+            if api.content.get_state(self.context) in [
+                    u'phase2-pending', u'phase2-pending-answer-drafting']:
                 wf_action = 'phase2-assign-answerer'
             else:
                 status = IStatusMessage(self.request)
@@ -374,9 +363,7 @@ class AssignCounterPartForm(BrowserView):
                     roles=['CounterPart'],
                     obj=target)
 
-            if api.content.get_state(self.context) == 'phase1-draft':
-                wf_action = 'phase1-request-for-counterpart-comments'
-            elif api.content.get_state(self.context) == 'phase2-draft':
+            if api.content.get_state(self.context) == 'phase2-draft':
                 wf_action = 'phase2-request-for-counterpart-comments'
             else:
                 status = IStatusMessage(self.request)
@@ -534,9 +521,7 @@ class AssignConclusionReviewerForm(BrowserView):
                     roles=['CounterPart'],
                 )
 
-            if api.content.get_state(self.context).startswith('phase1-'):
-                wf_action = 'phase1-request-comments'
-            elif api.content.get_state(self.context).startswith('phase2-'):
+            if api.content.get_state(self.context).startswith('phase2-'):
                 wf_action = 'phase2-request-comments'
             else:
                 status = IStatusMessage(self.request)

@@ -16,7 +16,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
    <permission-role>Site Administrator</permission-role>
   </permission-map>
@@ -26,7 +25,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
    <permission-role>Site Administrator</permission-role>
   </permission-map>
@@ -40,7 +38,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
    <permission-role>Site Administrator</permission-role>
   </permission-map>
@@ -62,7 +59,6 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
@@ -71,7 +67,6 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -85,7 +80,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
    <permission-role>Site Administrator</permission-role>
   </permission-map>

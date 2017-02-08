@@ -78,14 +78,15 @@ class IObservation(form.Schema, IImageScaleTraversable):
     """
 
     text = schema.Text(
-        title=u'Short description by expert/reviewer',
+        title=u'Short description by sector expert',
         required=True,
-        description=u"Describe the issue identified. Keep it short, you " \
-                    u"cannot change this description once you have sent it " \
-                    u"to the QE/LR. MS can only see the question once it " \
-                    u"has been approved and sent by the QE/LR. The " \
-                    u"question to the MS should be asked in the Q&A " \
-                    u"tab, not here.",
+        description=(
+            u"Describe the issue identified. Keep it short, you cannot "
+            u"change this description once you have sent it to LR. MS can "
+            u"only see the question once it has been approved and sent by "
+            u"the LR. The question to the MS should be asked in the Q&A tab, "
+            u"not here."
+        )
     )
 
     country = schema.Choice(
@@ -183,18 +184,6 @@ class IObservation(form.Schema, IImageScaleTraversable):
     form.write_permission(closing_deny_comments='cmf.ManagePortal')
     closing_deny_comments = schema.Text(
         title=u'Finish deny comments',
-        required=False,
-    )
-
-    form.write_permission(closing_comments_phase2='cmf.ManagePortal')
-    closing_comments_phase2 = schema.Text(
-        title=u'Finish request comments for phase 2',
-        required=False,
-    )
-
-    form.write_permission(closing_deny_comments_phase2='cmf.ManagePortal')
-    closing_deny_comments_phase2 = schema.Text(
-        title=u'Finish deny comments for phase 2',
         required=False,
     )
 
@@ -310,11 +299,6 @@ def add_observation(context, event):
     with api.env.adopt_roles(roles=['Manager']):
         if api.content.get_state(obj=review_folder) == 'ongoing-review-phase2':
             api.content.transition(obj=observation, transition='go-to-phase2')
-            return
-        elif api.content.get_state(obj=observation) == 'phase1-draft':
-            api.content.transition(
-                obj=observation, transition='phase1-approve'
-            )
 
 
 class Observation(dexterity.Container):
@@ -419,10 +403,6 @@ class Observation(dexterity.Container):
         if len(questions) > 0:
             q = questions[0]
             return q.get_state_api() in [
-                'phase1-draft',
-                'phase1-drafted',
-                'phase1-recalled-lr',
-                'phase1-closed',
                 'phase2-draft',
                 'phase2-drafted',
                 'phase2-recalled-lr',
@@ -432,37 +412,25 @@ class Observation(dexterity.Container):
             return True
 
     def can_close(self):
-        if self.get_status() in ['phase1-pending', 'phase2-pending']:
+        if self.get_status() in ['phase2-pending']:
             questions = self.get_values_cat('Question')
             if len(questions) > 0:
                 for q in questions:
-                    if q.get_state_api() not in [
-                            'phase1-closed',
-                            'phase2-closed']:
+                    if q.get_state_api() not in ['phase2-closed']:
                         return False
                 return True
 
         return False
 
     def wf_location(self):
-        if self.get_status() == 'phase1-draft':
-            return 'Sector expert'
-        elif self.get_status() == 'phase2-draft':
+        if self.get_status() == 'phase2-draft':
             return 'Review expert'
-        elif self.get_status() == 'phase1-closed':
-            return 'Quality expert'
         elif self.get_status() == 'phase2-closed':
             return 'Lead reviewer'
-        elif self.get_status() == 'phase1-conclusions':
-            return 'Sector expert'
         elif self.get_status() == 'phase2-conclusions':
             return 'Review expert'
-        elif self.get_status() in [
-                'phase1-conclusion-discussion',
-                'phase2-conclusion-discussion']:
+        elif self.get_status() in ['phase2-conclusion-discussion']:
             return 'Counterpart'
-        elif self.get_status() == 'phase1-close-requested':
-            return 'Quality expert'
         elif self.get_status() == 'phase2-close-requested':
             return 'Lead reviewer'
         else:
@@ -470,74 +438,55 @@ class Observation(dexterity.Container):
             if questions:
                 question = questions[0]
                 state = question.get_state_api()
-                if state in ['phase1-draft', 'phase1-closed']:
-                    return 'Sector expert'
                 if state in ['phase2-draft', 'phase2-closed']:
                     return 'Review expert'
-                elif state in ['phase1-counterpart-comments',
-                        'phase2-counterpart-comments']:
+                elif state in ['phase2-counterpart-comments']:
                     return 'Counterparts'
-                elif state in ['phase1-drafted', 'phase1-recalled-lr']:
-                    return 'Quality Expert'
                 elif state in ['phase2-drafted', 'phase2-recalled-lr']:
                     return 'Lead reviewer'
-                elif state in ['phase1-pending',
-                        'phase1-answered',
-                        'phase1-pending-answer-drafting',
-                        'phase1-recalled-msa',
+                elif state in [
                         'phase2-pending',
                         'phase2-answered',
                         'phase2-pending-answer-drafting',
                         'phase2-recalled-msa']:
                     return 'Member state coordinator'
-                elif state in ['phase1-expert-comments',
-                        'phase2-expert-comments']:
+                elif state in ['phase2-expert-comments']:
                     return 'Member state experts'
             else:
-                if self.get_status().startswith('phase1'):
-                    return "Sector expert"
-                else:
-                    return "Review expert"
+                return "Review expert"
 
     def wf_status(self):
-        if self.get_status() in ['phase1-draft', 'phase2-draft']:
+        if self.get_status() in ['phase2-draft']:
             return ['Observation created', "observationIcon"]
-        elif self.get_status() in ['phase1-closed', 'phase2-closed']:
+        elif self.get_status() in ['phase2-closed']:
             return ['Observation finished', "observationIcon"]
-        elif self.get_status() in ['phase1-close-requested',
-                'phase2-close-requested']:
+        elif self.get_status() in ['phase2-close-requested']:
             return ['Observation finish requested', "observationIcon"]
-        elif self.get_status() in ['phase1-conclusions', 'phase2-conclusions']:
+        elif self.get_status() in ['phase2-conclusions']:
             return ["Conclusion ongoing", "conclusionIcon"]
-        elif self.get_status() in ['phase1-conclusion-discussion',
-                'phase2-conclusion-discussion']:
+        elif self.get_status() in ['phase2-conclusion-discussion']:
             return ["Counterparts comments requested", "conclusionIcon"]
         else:
             questions = self.get_values_cat('Question')
             if questions:
                 question = questions[-1]
                 state = question.get_state_api()
-                if state in ['phase1-draft', 'phase2-draft']:
+                if state in ['phase2-draft']:
                     return ["Question drafted", "questionIcon"]
-                elif state in ['phase1-counterpart-comments',
-                        'phase2-counterpart-comments']:
+                elif state in ['phase2-counterpart-comments']:
                     return ["Counterpart's comments requested", "questionIcon"]
-                elif state in ['phase1-answered', 'phase2-answered']:
+                elif state in ['phase2-answered']:
                     return ['Pending question', "questionIcon"]
-                elif state in ['phase1-pending',
-                        'phase1-pending-answer-drafting',
-                        'phase1-recalled-msa',
+                elif state in [
                         'phase2-pending',
                         'phase2-pending-answer-drafting',
                         'phase2-recalled-msa']:
                     return ['Open question', "questionIcon"]
-                elif state in ['phase1-drafted', 'phase1-recalled-lr',
-                        'phase2-drafted', 'phase2-recalled-lr']:
+                elif state in ['phase2-drafted', 'phase2-recalled-lr']:
                     return ['Draft question', "questionIcon"]
-                elif state in ['phase1-expert-comments',
-                        'phase2-expert-comments']:
+                elif state in ['phase2-expert-comments']:
                     return ['MS expert comments requested', 'questionIcon']
-                elif state in ['phase1-closed', 'phase2-closed']:
+                elif state in ['phase2-closed']:
                     return ['Closed question', "questionIcon"]
             else:
                 return ['Observation created', "observationIcon"]
@@ -546,37 +495,25 @@ class Observation(dexterity.Container):
 
     def observation_status(self):
         status = self.observation_question_status()
-        if status in ['phase1-draft', 'phase2-draft',
-                      'phase1-counterpart-comments',
+        if status in ['phase2-draft',
                       'phase2-counterpart-comments',
-                      'observation-phase1-draft', 'observation-phase2-draft']:
+                      'observation-phase2-draft']:
             return 'SE'
-        elif status in ['phase1-drafted', 'phase2-drafted',
-                        'phase1-recalled-lr', 'phase2-recalled-lr']:
+        elif status in ['phase2-drafted', 'phase2-recalled-lr']:
             return 'LR'
-        elif status in ['phase1-pending', 'phase2-pending',
-                        'phase1-pending-answer-drafting',
+        elif status in ['phase2-pending',
                         'phase2-pending-answer-drafting',
-                        'phase1-expert-comments', 'phase2-expert-comments',
-                        'phase1-recalled-msa', 'phase1-recalled-msa']:
+                        'phase2-expert-comments']:
             return 'MSC'
-        elif status in ['phase1-answered', 'phase2-answered']:
+        elif status in ['phase2-answered']:
             return 'answered'
-        elif status in ['phase1-conclusions', 'phase2-conclusions',
-                        'phase1-conclusion-discussion',
+        elif status in ['phase2-conclusions',
                         'phase2-conclusion-discussion']:
             return 'conclusions'
-        elif status in ['phase1-close-requested', 'phase2-close-requested']:
+        elif status in ['phase2-close-requested']:
             return 'close-requested'
-        elif status in ['phase1-closed', 'phase2-closed']:
-            if status == 'phase1-closed':
-                conclusion = self.get_conclusion()
-                conclusion_reason = conclusion and conclusion.closing_reason or ' '
-                if (conclusion_reason == 'no-conclusion-yet'):
-                    return "SE"
-                else:
-                    return "finalised"
-            elif status == 'phase2-closed':
+        elif status in ['phase2-closed']:
+            if status == 'phase2-closed':
                 conclusion = self.get_conclusion_phase2()
                 conclusion_reason =  conclusion and conclusion.closing_reason or ' '
                 if (conclusion_reason == 'no-conclusion-yet'):
@@ -589,13 +526,7 @@ class Observation(dexterity.Container):
 
     def overview_status(self):
         status = self.get_status()
-        if status == 'phase1-closed':
-            conclusion = self.get_conclusion()
-            if conclusion:
-                return ' <br/> '.join(
-                    ['closed', '(' + conclusion.reason_value() + ')']
-                )
-        elif status == 'phase2-closed':
+        if status == 'phase2-closed':
             conclusion = self.get_conclusion_phase2()
             if conclusion:
                 return ' <br/> '.join(
@@ -632,52 +563,7 @@ class Observation(dexterity.Container):
             item['role'] = item['actor']
             item['object'] = 'observationIcon'
             item['author'] = self.get_author_name(item['actor'])
-            if item['review_state'] == 'phase1-draft':
-                item['state'] = 'Draft observation'
-                if self.observation_phase() == "phase1-observation":
-                    item['role'] = "Sector expert"
-                else:
-                    item['role'] = "Review expert"
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase1-pending' and item['action'] == "phase1-approve":
-                item['state'] = 'Pending'
-                # Do not add
-            elif item['review_state'] == 'phase1-pending' and item['action'] == "phase1-reopen":
-                item['state'] = 'Observation reopened'
-                item['role'] = "Sector expert"
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase1-closed':
-                item['state'] = 'Closed observation'
-                item['role'] = "Quality expert"
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase1-close-requested':
-                item['state'] = 'Finalisation requested'
-                item['role'] = "Sector expert"
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase1-conclusions' and item['action'] == "phase1-deny-closure":
-                item['state'] = 'Finalisation denied'
-                item['role'] = "Quality expert"
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase1-conclusion-discussion':
-                item['state'] = 'Conclusion comments requested'
-                item['role'] = "Sector expert"
-                item['object'] = 'conclusionIcon'
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase1-conclusions' and item['action'] == "phase1-finish-comments":
-                item['state'] = 'Conclusion comments closed'
-                item['role'] = "Sector expert"
-                item['object'] = 'conclusionIcon'
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase1-conclusions' and item['action'] == "phase1-draft-conclusions":
-                item['state'] = 'Conclusion drafting'
-                item['role'] = "Sector expert"
-                item['object'] = 'conclusionIcon'
-                observation_wf.append(item)
-            elif item['action'] == "phase1-send-to-team-2":
-                item['state'] = 'Handed to phase 2'
-                item['role'] = "Quality expert"
-                observation_wf.append(item)
-            elif item['review_state'] == 'phase2-draft':
+            if item['review_state'] == 'phase2-draft':
                 item['state'] = 'Draft observation'
                 item['role'] = "Review expert"
                 observation_wf.append(item)
@@ -733,67 +619,7 @@ class Observation(dexterity.Container):
                 item['role'] = item['actor']
                 item['object'] = 'questionIcon'
                 item['author'] = self.get_author_name(item['actor'])
-                if item['review_state'] == 'phase1-draft' and item['action'] is None:
-                    item['state'] = 'Draft question'
-                    if self.observation_phase() == "phase1-observation":
-                        item['role'] = "Sector expert"
-                    else:
-                        item['role'] = "Quality expert"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-counterpart-comments':
-                    item['state'] = 'Requested counterparts comments'
-                    item['role'] = "Sector expert"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-draft' and item['action'] == 'phase1-send-comments':
-                    item['state'] = 'Counterparts comments closed'
-                    item['role'] = "Sector expert"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-drafted':
-                    item['state'] = 'Sent to Quality expert'
-                    item['role'] = "Sector expert"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-draft' and item['action'] == 'phase1-recall-sre':
-                    item['state'] = 'Question recalled'
-                    item['role'] = "Sector expert"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-draft' and item['action'] == 'phase1-redraft':
-                    item['state'] = 'Question redrafted'
-                    item['role'] = "Quality expert"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-pending' and item['action'] == 'phase1-approve-question':
-                    item['state'] = 'Question approved and sent to MS coodinator'
-                    item['role'] = "Quality expert"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-recalled-lr':
-                    item['state'] = 'Question recalled'
-                    item['role'] = "Quality expert"
-                elif item['review_state'] == 'phase1-answered':
-                    item['state'] = 'Answer sent'
-                    item['role'] = "Member state coordinator"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-expert-comments':
-                    item['state'] = 'MS expert comments requested'
-                    item['role'] = "Member state coordinator"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-pending-answer-drafting':
-                    item['state'] = 'Member state expert comments closed'
-                    item['role'] = "Member state coordinator"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-recalled-msa':
-                    item['state'] = 'Answer recalled'
-                    item['role'] = "Member state coordinator"
-                    question_wf.append(item)
-                elif item['action'] == 'phase1-closed' and item['action'] == 'phase1-validate-answer-msa':
-                    item['state'] = 'Sector expert'
-                    item['role'] = "Answer acknowledged"
-                    question_wf.append(item)
-                elif item['review_state'] == 'phase1-draft' and item['action'] == "phase1-reopen":
-                    item['state'] = 'Reopened'
-                    # Do not add
-                elif item['review_state'] == 'phase1-closed':
-                    item['state'] = 'Closed'
-                    # Do not add
-                elif item['review_state'] == 'phase2-draft' and item['action'] == "phase2-reopen":
+                if item['review_state'] == 'phase2-draft' and item['action'] == "phase2-reopen":
                     item['state'] = 'Draft question'
                     item['role'] = "Review expert"
                     question_wf.append(item)
@@ -877,9 +703,8 @@ class Observation(dexterity.Container):
 
     def observation_question_status(self):
         questions = self.get_values_cat('Question')
-        if self.get_status() != 'phase1-pending' and \
-                self.get_status() != 'phase2-pending':
-            if self.get_status() in ['phase2-conclusions',]:
+        if self.get_status() != 'phase2-pending':
+            if self.get_status() in ['phase2-conclusions']:
                 if questions:
                     question = questions[-1]
                     question_state = api.content.get_state(question)
@@ -892,25 +717,18 @@ class Observation(dexterity.Container):
                 state = api.content.get_state(question)
                 return state
             else:
-                if self.get_status().startswith('phase1'):
-                    return "observation-phase1-draft"
-                else:
-                    return "observation-phase2-draft"
+                return "observation-phase2-draft"
 
     def observation_css_class(self):
         if self.highlight:
-            if self.get_status().startswith('phase1'):
-                if 'psi' in self.highlight:
-                    return "psiBackground"
-            else:
-                if self.get_status() == "phase2-closed":
-                    con_phase2 = self.get_conclusion_phase2()
-                    if con_phase2:
-                        if con_phase2.closing_reason == "technical-correction":
-                            return 'technicalCorrectionBackground'
+            if self.get_status() == "phase2-closed":
+                con_phase2 = self.get_conclusion_phase2()
+                if con_phase2:
+                    if con_phase2.closing_reason == "technical-correction":
+                        return 'technicalCorrectionBackground'
 
-                elif 'ptc' in self.highlight:
-                    return 'ptcBackground'
+            elif 'ptc' in self.highlight:
+                return 'ptcBackground'
 
     def observation_is_potential_significant_issue(self):
         if self.highlight:
@@ -987,25 +805,18 @@ class Observation(dexterity.Container):
             winfo = question.workflow_history
             state = self.get_status()
             for witem in winfo.get('esd-question-review-workflow', []):
-                if state.startswith('phase1-'):
-                    if witem.get('review_state', '') == 'phase1-answered':
-                        return True
-                elif state.startswith('phase2-'):
+                if state.startswith('phase2-'):
                     if witem.get('review_state', '') == 'phase2-answered':
                         return True
 
         return False
 
     def observation_phase(self):
-        status = api.content.get_state(self)
-        if status.startswith('phase1-'):
-            return "phase1-observation"
-        else:
-            return "phase2-observation"
+        return "phase2-observation"
 
     def can_add_followup(self):
         status = self.get_status()
-        return status in ['phase1-conclusions', 'phase2-conclusions']
+        return status in ['phase2-conclusions']
 
 # View class
 # The view will automatically use a similarly named template in
@@ -1090,7 +901,7 @@ class ObservationMixin(grok.View):
         return IContentListing(self.context.get_values_cat('Question'))
 
     def can_delete_observation(self):
-        is_draft = self.context.get_status() in ['phase1-pending', 'phase2-pending']
+        is_draft = self.context.get_status() in ['phase2-pending']
         questions = len(self.context.get_values_cat('Question'))
         #If observation has conclusion cannot be deleted (Ticket #26992)
         conclusions = len(self.context.get_values_cat('Conclusion'))
@@ -1125,22 +936,14 @@ class ObservationMixin(grok.View):
 
     def existing_conclusion(self):
         status = self.context.get_status()
-        if status.startswith('phase1-'):
-            conclusion = self.get_conclusion()
-        else:
-            conclusion = self.get_conclusion_phase2()
+        conclusion = self.get_conclusion_phase2()
 
         return conclusion and True or False
 
     def can_add_conclusion(self):
         sm = getSecurityManager()
-        status = self.context.get_status()
-        if status.startswith('phase1-'):
-            conclusion = self.get_conclusion()
-            return sm.checkPermission('emrt.necd.content: Add Conclusion', self.context) and not conclusion
-        else:
-            conclusion = self.get_conclusion_phase2()
-            return sm.checkPermission('emrt.necd.content: Add ConclusionsPhase2', self.context) and not conclusion
+        conclusion = self.get_conclusion_phase2()
+        return sm.checkPermission('emrt.necd.content: Add ConclusionsPhase2', self.context) and not conclusion
 
     def show_description(self):
         questions = self.get_questions()
@@ -1223,8 +1026,7 @@ class ObservationMixin(grok.View):
             permission = sm.checkPermission('emrt.necd.content: Add Comment', question)
             questions = [q for q in question.values() if q.portal_type == 'Comment']
             answers = [q for q in question.values() if q.portal_type == 'CommentAnswer']
-            obs_state = self.context.get_status()
-            return permission and len(questions) == len(answers) and obs_state != 'phase1-closed'
+            return permission and len(questions) == len(answers)
         else:
             return False
 
@@ -1244,11 +1046,6 @@ class ObservationMixin(grok.View):
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
-    def can_see_comments(self):
-        state = self.question().get_state_api()
-        # return state in ['draft', 'counterpart-comments', 'drafted']
-        return state in ['phase1-counterpart-comments']
-
     def add_comment_form(self):
         form_instance = AddCommentForm(self.context, self.request)
         alsoProvides(form_instance, IWrappedForm)
@@ -1258,15 +1055,6 @@ class ObservationMixin(grok.View):
         form_instance = AddConclusionForm(self.context, self.request)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
-
-    def in_conclusions_phase1(self):
-        state = self.context.get_status()
-        return state in [
-            'phase1-conclusions',
-            'phase1-conclusion-discussion',
-            'phase1-close-requested',
-            'phase1-closed',
-        ]
 
     def in_conclusions_phase2(self):
         state = self.context.get_status()
@@ -1278,33 +1066,22 @@ class ObservationMixin(grok.View):
         ]
 
     def get_last_editable_thing(self):
-        CONCLUSIONS_PHASE_1 = [
-            'phase1-conclusions',
-            'phase1-conclusion-discussion',
-            'phase1-close-requested',
-        ]
         CONCLUSIONS_PHASE_2 = [
             'phase2-conclusions',
             'phase2-conclusion-discussion',
             'phase2-close-requested',
         ]
         MS_OBSERVATION = [
-            'phase1-pending',
             'phase2-pending',
         ]
 
         MS_QUESTION = [
-            'phase1-pending',
-            'phase1-pending-answer-drafting',
-            'phase1-expert-comments',
             'phase2-pending',
             'phase2-pending-answer-drafting',
             'phase2-expert-comments',
         ]
         state = self.context.get_status()
-        if state in CONCLUSIONS_PHASE_1:
-            return self.context.get_conclusion()
-        elif state in CONCLUSIONS_PHASE_2:
+        if state in CONCLUSIONS_PHASE_2:
             return self.context.get_conclusion_phase2()
         else:
             question = self.question()
@@ -1388,7 +1165,7 @@ class ObservationMixin(grok.View):
 
     def isChatCurrent(self):
         status = api.content.get_state(self.context)
-        if status in ['phase1-draft', 'phase1-pending', 'phase2-draft', 'phase2-pending']:
+        if status in ['phase2-draft', 'phase2-pending']:
             return True
         else:
             return False
@@ -1479,12 +1256,8 @@ class ExportAsDocView(ObservationMixin):
         row_cells[3].paragraphs[0].style = "Table Cell"
         row_cells[4].text = self.context.year or ''
         row_cells[4].paragraphs[0].style = "Table Cell"
-        if self.context.observation_phase() == 'phase1-observation':
-            row_cells[5].text = "1"
-            row_cells[5].paragraphs[0].style = "Table Cell"
-        else:
-            row_cells[5].text = "2"
-            row_cells[5].paragraphs[0].style = "Table Cell"
+        row_cells[5].text = "2"
+        row_cells[5].paragraphs[0].style = "Table Cell"
         p = document.add_paragraph('')
 
         document.add_heading('Observation details', level=2)
@@ -1521,28 +1294,13 @@ class ExportAsDocView(ObservationMixin):
 
         p = document.add_paragraph('Description flags', style="Label Bold")
         p = document.add_paragraph(self.context.highlight_value())
-        p = document.add_paragraph('Short description by expert/reviewer', style="Label Bold")
+        p = document.add_paragraph('Short description by sector expert', style="Label Bold")
         p = document.add_paragraph(self.context.text)
-
-        if self.context.get_status() == 'phase1-close-requested':
-            document.add_heading('Finish observation', level=2)
-            document.add_heading('Observation Finish Requested', level=3)
-            p = document.add_paragraph('SE comments on finish observation request:', style="Label Bold")
-            p = document.add_paragraph(self.context.closing_comments)
-            if self.context.closing_deny_comments:
-                document.add_heading('Observation Finalisation previously denied', level=3)
-                p = document.add_paragraph('QE comments on finish observation request:', style="Label Bold")
-                p = document.add_paragraph(self.context.closing_deny_comments)
 
         if self.context.get_status() == 'phase2-close-requested':
             document.add_heading('Finish observation', level=2)
             document.add_heading('Observation Finish Requested', level=3)
             p = document.add_paragraph('RE comments on finish observation request:', style="Label Bold")
-            p = document.add_paragraph(self.context.closing_comments_phase2)
-            if self.context.closing_deny_comments_phase2:
-                document.add_heading('Observation Finalisation previously denied', level=3)
-                p = document.add_paragraph('LR comments on finish observation request:', style="Label Bold")
-                p = document.add_paragraph(self.context.closing_deny_comments_phase2)
 
         conclusion_2 = self.get_conclusion_phase2()
         if conclusion_2:
@@ -1553,11 +1311,6 @@ class ExportAsDocView(ObservationMixin):
             p = document.add_paragraph(conclusion_2.reason_value())
             p = document.add_paragraph('Recommendation/internal note:', style="Label Bold")
             p = document.add_paragraph(conclusion_2.text)
-
-            if self.context.closing_deny_comments_phase2:
-                document.add_heading('Observation Finalisation denied', level=3)
-                p = document.add_paragraph('LR comments on finish observation request:', style="Label Bold")
-                p = document.add_paragraph(self.context.closing_deny_comments_phase2)
 
         conclusion = self.get_conclusion()
         if conclusion:
@@ -1685,7 +1438,7 @@ class ModificationForm(dexterity.EditForm):
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
         fields = []
         # XXX Needed? Edit rights are controlled by the WF
-        if 'ReviewerPhase1' in roles or 'ReviewerPhase2' in roles:
+        if 'ReviewerPhase2' in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',
@@ -1693,8 +1446,6 @@ class ModificationForm(dexterity.EditForm):
                 'technical_corrections',
                 'closing_comments',
                 'closing_deny_comments',
-                'closing_comments_phase2',
-                'closing_deny_comments_phase2'
 
             ]]
         elif 'QualityExpert' in roles or 'LeadReviewer' in roles:
@@ -1738,9 +1489,7 @@ class AddAnswerForm(Form):
         )
         comment = context.get(item_id)
         comment.text = text
-        if context.get_state_api().startswith('phase1-'):
-            action = 'phase1-add-answer'
-        elif context.get_state_api().startswith('phase2-'):
+        if context.get_state_api().startswith('phase2-'):
             action = 'phase2-add-answer'
         else:
             raise ActionExecutionError(Invalid(u"Invalid context"))
@@ -1792,13 +1541,13 @@ class AddAnswerAndRequestComments(grok.View):
         )
         comment = context.get(item_id)
         comment.text = text
-        if context.get_state_api().startswith('phase1-'):
-            action = 'phase1-assign-answerer'
-        elif api.content.get_state(context).startswith('phase2-'):
+
+        if api.content.get_state(context).startswith('phase2-'):
             action = 'phase2-assign-answerer'
         else:
             raise ActionExecutionError(Invalid(u"Invalid context"))
         url = '%s/assign_answerer_form?workflow_action=%s&comment=%s' % (context.absolute_url(), action, item_id)
+
         return self.request.response.redirect(url)
 
 
@@ -1869,31 +1618,6 @@ class AddConclusionForm(Form):
             self.actions[k].addClass('standardButton')
 
 
-class EditConclusionAndCloseComments(grok.View):
-    grok.name('edit-conclusions-and-close-comments')
-    grok.context(IObservation)
-    grok.require('zope2.View')
-
-    def update(self):
-        # Some checks:
-        waction = self.request.get('workflow_action')
-        if waction != 'phase1-finish-comments':
-                status = IStatusMessage(self.request)
-                msg = u'There was an error, try again please'
-                status.addStatusMessage(msg, "error")
-
-    def render(self):
-        # Execute the transition
-        api.content.transition(
-            obj=self.context,
-            transition='phase1-finish-comments'
-        )
-        conclusions = self.context.get_values_cat('Conclusion')
-        conclusion = conclusions[0]
-        url = '%s/edit' % conclusion.absolute_url()
-        return self.request.response.redirect(url)
-
-
 class EditConclusionP2AndCloseComments(grok.View):
     grok.name('edit-conclusions-and-close-comments-phase2')
     grok.context(IObservation)
@@ -1942,51 +1666,7 @@ class AddConclusions(grok.View):
         transitions_available = [
             action['id'] for action in workflow.listActions(object=context)
         ]
-        if context.get_status().startswith('phase1-'):
-            current_user_id = api.user.get_current().getId()
-            user_roles = api.user.get_roles(
-                username=current_user_id,
-                obj=context
-            )
-            if 'ReviewerPhase1' in user_roles:
-                cs = self.context.get_values_cat('Conclusion')
-                if cs:
-                    conclusion = cs[0]
-                    if 'ReviewerPhase1' in user_roles:
-                        url = conclusion.absolute_url() + '/edit'
-                else:
-                    #with api.env.adopt_roles(['ReviewerPhase1']):
-                    id = context.invokeFactory(
-                        id=str(int(time())),
-                        type_name='Conclusion',
-                        text=u''
-                    )
-                    cs = self.context.get_values_cat('Conclusion')
-                    conclusion = cs[0]
-                    url = conclusion.absolute_url() + '/edit'
-                    #url = '%s/++add++Conclusion' % context.absolute_url()
-            else:
-                cs = self.context.get_values_cat('Conclusion')
-                if cs:
-                    conclusion = cs[0]
-                    url = conclusion.absolute_url() + '/edit'
-                else:
-                    #with api.env.adopt_roles(['ReviewerPhase1']):
-                    id = context.invokeFactory(
-                        id=str(int(time())),
-                        type_name='Conclusion',
-                        text=u''
-                    )
-                    cs = self.context.get_values_cat('Conclusion')
-                    conclusion = cs[0]
-                    url = conclusion.absolute_url() + '/edit'
-            if 'phase1-draft-conclusions' in transitions_available:
-                api.content.transition(
-                    obj=context,
-                    transition='phase1-draft-conclusions'
-                )
-
-        elif context.get_status().startswith('phase2-'):
+        if context.get_status().startswith('phase2-'):
             current_user_id = api.user.get_current().getId()
             user_roles = api.user.get_roles(
                 username=current_user_id,

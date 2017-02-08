@@ -35,10 +35,6 @@ class ObservationRoleAdapter(object):
             country = context.country.lower()
             sector = context.ghg_source_category_value()
             groups = member.getGroups()
-            if 'extranet-esd-ghginv-sr-%s-%s' % (sector, country) in groups:
-                roles.append('ReviewerPhase1')
-            if 'extranet-esd-ghginv-qualityexpert-%s' % sector in groups:
-                roles.append('QualityExpert')
             if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
                 roles.append('ReviewerPhase2')
             if 'extranet-esd-esdreview-leadreview-%s' % country in groups:
@@ -82,8 +78,6 @@ class QuestionRoleAdapter(object):
                 country = observation.country.lower()
                 sector = observation.ghg_source_category_value()
                 groups = member.getGroups()
-                if 'extranet-esd-ghginv-sr-%s-%s' % (sector, country) in groups:
-                    roles.append('ReviewerPhase1')
                 if 'extranet-esd-ghginv-qualityexpert-%s' % sector in groups:
                     roles.append('QualityExpert')
                 if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
@@ -132,8 +126,6 @@ class CommentRoleAdapter(object):
                     country = observation.country.lower()
                     sector = observation.ghg_source_category_value()
                     groups = member.getGroups()
-                    if 'extranet-esd-ghginv-sr-%s-%s' % (sector, country) in groups:
-                        roles.append('ReviewerPhase1')
                     if 'extranet-esd-ghginv-qualityexpert-%s' % sector in groups:
                         roles.append('QualityExpert')
                     if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
@@ -183,8 +175,6 @@ class CommentAnswerRoleAdapter(object):
                     country = observation.country.lower()
                     sector = observation.ghg_source_category_value()
                     groups = member.getGroups()
-                    if 'extranet-esd-ghginv-sr-%s-%s' % (sector, country) in groups:
-                        roles.append('ReviewerPhase1')
                     if 'extranet-esd-ghginv-qualityexpert-%s' % sector in groups:
                         roles.append('QualityExpert')
                     if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
@@ -230,8 +220,6 @@ class ConclusionRoleAdapter(object):
                 country = observation.country.lower()
                 sector = observation.ghg_source_category_value()
                 groups = member.getGroups()
-                if 'extranet-esd-ghginv-sr-%s-%s' % (sector, country) in groups:
-                    roles.append('ReviewerPhase1')
                 if 'extranet-esd-ghginv-qualityexpert-%s' % sector in groups:
                     roles.append('QualityExpert')
                 if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
@@ -277,8 +265,6 @@ class ConclusionPhase2RoleAdapter(object):
                 country = observation.country.lower()
                 sector = observation.ghg_source_category_value()
                 groups = member.getGroups()
-                if 'extranet-esd-ghginv-sr-%s-%s' % (sector, country) in groups:
-                    roles.append('ReviewerPhase1')
                 if 'extranet-esd-ghginv-qualityexpert-%s' % sector in groups:
                     roles.append('QualityExpert')
                 if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:

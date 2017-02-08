@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dc-workflow workflow_id="esd-review-workflow" title="ESD Review Workflow" description="" state_variable="review_state" initial_state="phase1-draft" manager_bypass="True">
+<dc-workflow workflow_id="esd-review-workflow" title="ESD Review Workflow" description="" state_variable="review_state" initial_state="phase2-draft" manager_bypass="True">
  <permission>Access contents information</permission>
  <permission>Delete objects</permission>
  <permission>Delete portal content</permission>
@@ -14,338 +14,6 @@
  <permission>emrt.necd.content: View Answer Discussion</permission>
  <permission>emrt.necd.content: View Comment Discussion</permission>
  <permission>emrt.necd.content: View Conclusion Discussion</permission>
- <state state_id="phase1-close-requested" title="Close requested">
-  <exit-transition transition_id="phase1-send-to-team-2"/>
-  <exit-transition transition_id="phase1-deny-closure"/>
-  <exit-transition transition_id="phase1-close"/>
-  <permission-map name="Access contents information" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="Delete objects" acquired="True">
-  </permission-map>
-  <permission-map name="Delete portal content" acquired="True">
-  </permission-map>
-  <permission-map name="List folder contents" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-  </permission-map>
-  <permission-map name="Sharing page: Delegate roles" acquired="False">
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Question" acquired="False">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Answer Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
- </state>
- <state state_id="phase1-closed" title="Closed">
-  <exit-transition transition_id="phase1-reopen-closed-observation"/>
-  <permission-map name="Access contents information" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="Delete objects" acquired="True">
-  </permission-map>
-  <permission-map name="Delete portal content" acquired="True">
-  </permission-map>
-  <permission-map name="List folder contents" acquired="False">
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content" acquired="False">
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="Sharing page: Delegate roles" acquired="False">
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Question" acquired="False">
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Answer Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
-  </permission-map>
- </state>
- <state state_id="phase1-conclusion-discussion" title="Conclusion discussion">
-  <exit-transition transition_id="phase1-finish-comments"/>
-  <permission-map name="Access contents information" acquired="False">
-   <permission-role>CounterPart</permission-role>
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="Delete objects" acquired="True">
-  </permission-map>
-  <permission-map name="Delete portal content" acquired="True">
-  </permission-map>
-  <permission-map name="List folder contents" acquired="False">
-   <permission-role>CounterPart</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content" acquired="False">
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="Sharing page: Delegate roles" acquired="False">
-   <permission-role>Manager</permission-role>
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>CounterPart</permission-role>
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Question" acquired="False">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Answer Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
-   <permission-role>CounterPart</permission-role>
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
- </state>
- <state state_id="phase1-conclusions" title="Conclusions">
-  <exit-transition transition_id="phase1-reopen"/>
-  <exit-transition transition_id="phase1-request-close"/>
-  <exit-transition transition_id="phase1-request-comments"/>
-  <exit-transition transition_id="phase1-edit-highlights"/>
-  <permission-map name="Access contents information" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="Delete objects" acquired="True">
-  </permission-map>
-  <permission-map name="Delete portal content" acquired="True">
-  </permission-map>
-  <permission-map name="List folder contents" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content" acquired="False">
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>QualityExpert</permission-role>
-  </permission-map>
-  <permission-map name="Sharing page: Delegate roles" acquired="False">
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>QualityExpert</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Question" acquired="False">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Answer Discussion" acquired="True">
-   <permission-role>QualityExpert</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
-   <permission-role>QualityExpert</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
- </state>
- <state state_id="phase1-draft" title="Draft">
-  <exit-transition transition_id="go-to-phase2"/>
-  <exit-transition transition_id="phase1-approve"/>
-  <exit-transition transition_id="phase1-draft-conclusions"/>
-  <permission-map name="Access contents information" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="List folder contents" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="Sharing page: Delegate roles" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Question" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Answer Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
-  </permission-map>
- </state>
- <state state_id="phase1-pending" title="Pending question">
-  <exit-transition transition_id="phase1-edit-highlights"/>
-  <exit-transition transition_id="phase1-draft-conclusions"/>
-  <permission-map name="Access contents information" acquired="False">
-   <permission-role>CounterPart</permission-role>
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="Delete objects" acquired="True">
-  </permission-map>
-  <permission-map name="Delete portal content" acquired="True">
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="List folder contents" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="Modify portal content" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="Sharing page: Delegate roles" acquired="False">
-   <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>CounterPart</permission-role>
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Question" acquired="False">
-   <permission-role>ReviewerPhase1</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Answer Discussion" acquired="False">
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
-   <permission-role>CounterPart</permission-role>
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
-  </permission-map>
- </state>
  <state state_id="phase2-close-requested" title="phase2-close-requested">
   <exit-transition transition_id="phase2-confirm-finishing-observation"/>
   <exit-transition transition_id="phase2-deny-finishing-observation"/>
@@ -354,7 +22,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
@@ -362,7 +29,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -376,7 +42,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
@@ -400,7 +65,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
@@ -418,7 +82,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
@@ -444,7 +107,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
@@ -454,7 +116,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -470,7 +131,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
@@ -501,7 +161,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
@@ -512,7 +171,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -527,7 +185,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
@@ -550,13 +207,11 @@
  </state>
  <state state_id="phase2-draft" title="phase2-draft">
   <exit-transition transition_id="phase2-open"/>
-  <exit-transition transition_id="recall-from-phase2"/>
   <exit-transition transition_id="phase2-draft-conclusions"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
@@ -567,7 +222,6 @@
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -582,7 +236,6 @@
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
@@ -614,7 +267,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
@@ -623,7 +275,6 @@
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -642,7 +293,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase1</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
@@ -675,81 +325,6 @@
    <guard-role>ReviewerPhase2</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase1-approve" title="Open" new_state="phase1-pending" trigger="USER" before_script="" after_script="">
-
-  <guard>
-   <guard-role>Manager</guard-role>
-   <guard-role>ReviewerPhase1</guard-role>
-  </guard>
- </transition>
- <transition transition_id="phase1-close" title="Confirm finishing observation" new_state="phase1-closed" trigger="USER" before_script="" after_script="">
-  <description>Don't confirm finishing observation for'unresolved' issues. 'Unresolved' observations shall be handed over to team 2.</description>
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase1-close" category="workflow" icon="">Confirm finishing observation</action>
-  <guard>
-   <guard-role>QualityExpert</guard-role>
-  </guard>
- </transition>
- <transition transition_id="phase1-deny-closure" title="Deny finishing observation" new_state="phase1-conclusions" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/deny-finish-observation?workflow_action=phase1-deny-closure" category="workflow" icon="">Deny finishing observation</action>
-  <guard>
-   <guard-role>QualityExpert</guard-role>
-  </guard>
- </transition>
- <transition transition_id="phase1-draft-conclusions" title="Go to Conclusions" new_state="phase1-conclusions" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/add-conclusions?workflow_action=phase1-draft-conclusions" category="" icon="">Go to conclusions</action>
-  <guard>
-   <guard-role>QualityExpert</guard-role>
-   <guard-role>ReviewerPhase1</guard-role>
-   <guard-expression>here/can_draft_conclusions</guard-expression>
-  </guard>
- </transition>
- <transition transition_id="phase1-edit-highlights" title="Edit Key Flags" new_state="" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/edit-highlights" category="workflow" icon="">Edit Key Flags</action>
-  <guard>
-   <guard-role>ReviewerPhase1</guard-role>
-   <guard-role>QualityExpert</guard-role>
-  </guard>
- </transition>
- <transition transition_id="phase1-finish-comments" title="Close Comments" new_state="phase1-conclusions" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase1-finish-comments" category="workflow" icon="">Close Comments</action>
-  <guard>
-   <guard-role>ReviewerPhase1</guard-role>
-  </guard>
- </transition>
- <transition transition_id="phase1-reopen" title="Reopen Q&amp;A Chat" new_state="phase1-pending" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase1-reopen" category="workflow" icon="">Reopen Q&amp;A Chat</action>
-  <guard>
-   <guard-role>ReviewerPhase1</guard-role>
-  </guard>
- </transition>
- <transition transition_id="phase1-reopen-closed-observation" title="Reopen closed observation" new_state="phase1-close-requested" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase1-reopen-closed-observation" category="workflow" icon="">Reopen closed observation</action>
-  <guard>
-   <guard-role>Manager</guard-role>
-  </guard>
- </transition>
- <transition transition_id="phase1-request-close" title="Finish Observation" new_state="phase1-close-requested" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/request-finish-observation?workflow_action=phase1-request-close" category="workflow" icon="">Request finalisation of the observation</action>
-  <guard>
-   <guard-role>ReviewerPhase1</guard-role>
-   <guard-expression>here/@@view/get_conclusion</guard-expression>
-  </guard>
- </transition>
- <transition transition_id="phase1-request-comments" title="Request Comments" new_state="phase1-conclusion-discussion" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/assign_conclusion_reviewer_form?workflow_action=phase1-request-comments" category="workflow" icon="">Request Comments</action>
-  <guard>
-   <guard-role>ReviewerPhase1</guard-role>
-   <guard-role>ReviewerPhase1</guard-role>
-   <guard-expression>here/@@view/get_conclusion</guard-expression>
-  </guard>
- </transition>
- <transition transition_id="phase1-send-to-team-2" title="Hand over to Team 2" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  <description>'Unresolved' observations shall be handed over to team 2</description>
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase1-send-to-team-2" category="workflow" icon="">Hand over to Team 2</action>
-  <guard>
-   <guard-role>QualityExpert</guard-role>
-  </guard>
- </transition>
  <transition transition_id="phase2-confirm-finishing-observation" title="Finish Observation" new_state="phase2-closed" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=phase2-confirm-finishing-observation" category="workflow" icon="">Finish Observation</action>
   <guard>
@@ -768,7 +343,6 @@
    <guard-role>ReviewerPhase2</guard-role>
    <guard-role>LeadReviewer</guard-role>
    <guard-role>ReviewExpert</guard-role>
-   <guard-role>SectorExpert</guard-role>
    <guard-expression>here/can_draft_conclusions</guard-expression>
   </guard>
  </transition>
@@ -815,25 +389,6 @@
   <action url="%(content_url)s/assign_conclusion_reviewer_form?workflow_action=phase2-request-comments" category="workflow" icon="">Request comments</action>
   <guard>
    <guard-role>ReviewerPhase2</guard-role>
-  </guard>
- </transition>
- <transition transition_id="recall-from-closed" title="Recall from closed" new_state="phase1-close-requested" trigger="USER" before_script="" after_script="">
-  <action url="" category="workflow" icon="%(content_url)s/content_status_modify?workflow_action=recall-from-closed">Recall from closed</action>
-  <guard>
-   <guard-role>Manager</guard-role>
-  </guard>
- </transition>
- <transition transition_id="recall-from-phase2" title="Recall Observation" new_state="phase1-close-requested" trigger="USER" before_script="" after_script="">
-  <action url="" category="workflow" icon="%(content_url)s/content_status_modify?workflow_action=recall-from-phase2">Recall Observation</action>
-  <guard>
-   <guard-role>QualityExpert</guard-role>
-  </guard>
- </transition>
- <transition transition_id="reopen-finished-observation" title="Reopen finished observation" new_state="phase1-conclusions" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=reopen-finished-observation" category="workflow" icon="">Reopen finished observation</action>
-  <guard>
-   <guard-role>Site Administrator</guard-role>
-   <guard-role>Manager</guard-role>
   </guard>
  </transition>
  <worklist worklist_id="reviewer_queue" title="">

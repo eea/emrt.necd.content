@@ -173,8 +173,8 @@ def to_unicode(value):
 
 def question_status(context):
     questions = [c for c in context.values() if c.portal_type == "Question"]
-    if context.get_status() != 'phase1-pending' and context.get_status() != 'phase2-pending':
-        if context.get_status() in ['phase2-conclusions',]:
+    if context.get_status() != 'phase2-pending':
+        if context.get_status() in ['phase2-conclusions']:
             if questions:
                 question_state = api.content.get_state(questions[-1])
                 if question_state != 'phase2-closed':
@@ -184,18 +184,12 @@ def question_status(context):
         if questions:
             question = questions[0]
             state = api.content.get_state(question)
-            if state in ['phase1-closed', 'phase2-closed']:
-                if state in ['phase1-closed']:
-                    return 'phase1-answered'
-                else:
+            if state in ['phase2-closed']:
                     return 'phase2-answered'
             else:
                 return state
         else:
-            if context.get_status().startswith('phase1'):
-                return "observation-phase1-draft"
-            else:
-                return "observation-phase2-draft"
+            return "observation-phase2-draft"
 
 
 @indexer(IObservation)
@@ -212,9 +206,7 @@ def observation_status(context):
 def observation_step(context):
     try:
         status = context.get_status()
-        if status.startswith("phase1"):
-            return "step1"
-        elif status.startswith("phase2"):
+        if status.startswith("phase2"):
             return "step2"
         else:
             return status
@@ -280,10 +272,7 @@ def observation_sent_to_mse(context):
 def observation_finalisation_reason(context):
     try:
         status = context.get_status()
-        if status == 'phase1-closed':
-            conclusions = [c for c in context.values() if c.portal_type == "Conclusion"]
-            return conclusions[0] and conclusions[0].closing_reason or ' '
-        elif status == 'phase2-closed':
+        if status == 'phase2-closed':
             conclusions = [c for c in context.values() if c.portal_type == "ConclusionsPhase2"]
             return conclusions[0] and conclusions[0].closing_reason or ' '
         else:
