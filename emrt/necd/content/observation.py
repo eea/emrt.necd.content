@@ -285,18 +285,6 @@ def set_title_to_observation(object, event):
     grant_local_roles(object)
 
 
-@grok.subscribe(IObservation, IObjectAddedEvent)
-def add_observation(context, event):
-    """ When adding an observation, go directly to
-        'open' status on the observation
-    """
-    observation = context
-    review_folder = aq_parent(observation)
-    with api.env.adopt_roles(roles=['Manager']):
-        if api.content.get_state(obj=review_folder) == 'ongoing-review-phase2':
-            api.content.transition(obj=observation, transition='go-to-phase2')
-
-
 class Observation(dexterity.Container):
     grok.implements(IObservation)
     # Add your class methods and properties here

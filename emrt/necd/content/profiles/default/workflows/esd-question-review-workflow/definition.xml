@@ -544,13 +544,6 @@
    <guard-role>ReviewerPhase2</guard-role>
   </guard>
  </transition>
- <transition transition_id="go-to-phase2" title="Go to phase 2" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-
-  <guard>
-   <guard-role>Manager</guard-role>
-   <guard-role>ReviewerPhase2</guard-role>
-  </guard>
- </transition>
  <transition transition_id="phase-reselect-msexperts" title="Select new Experts" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/select-new-mse?workflow_action=phase-reselect-msexperts" category="workflow" icon="">Select new Experts</action>
   <guard>

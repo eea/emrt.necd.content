@@ -131,7 +131,6 @@ class Question(dexterity.Container):
                 return previous_action['action'] in [
                     'phase2-add-folowup-question',
                     'phase2-reopen',
-                    'go-to-phase2',
                     None
                 ]
 
@@ -246,20 +245,6 @@ class AddForm(dexterity.AddForm):
         )
         comment = item.get(item_id)
         comment.text = text
-
-
-@grok.subscribe(IQuestion, IObjectAddedEvent)
-def add_question(context, event):
-    """ When adding a question, go directly to
-        'open' status on the observation
-    """
-    observation = aq_parent(context)
-    review_folder = aq_parent(observation)
-    with api.env.adopt_roles(roles=['Manager']):
-        if api.content.get_state(obj=review_folder) == 'ongoing-review-phase2':
-            api.content.transition(obj=context, transition='go-to-phase2')
-
-    observation.reindexObject()
 
 
 @grok.subscribe(IQuestion, IObjectModifiedEvent)

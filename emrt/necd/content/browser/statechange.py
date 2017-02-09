@@ -16,6 +16,7 @@ from eea.cache import cache
 from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 from emrt.necd.content.constants import LDAP_TERT
+from emrt.necd.content.constants import LDAP_MSEXPERT
 
 
 def revoke_roles(username=None, user=None, obj=None, roles=None, inherit=True):

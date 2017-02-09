@@ -282,13 +282,6 @@
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
   </permission-map>
  </state>
- <transition transition_id="go-to-phase2" title="Go to phase 2" new_state="phase2-pending" trigger="USER" before_script="" after_script="">
-
-  <guard>
-   <guard-role>Manager</guard-role>
-   <guard-role>ReviewerPhase2</guard-role>
-  </guard>
- </transition>
  <transition transition_id="phase2-confirm-finishing-observation" title="Finish Observation" new_state="phase2-closed" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=phase2-confirm-finishing-observation" category="workflow" icon="">Finish Observation</action>
   <guard>
