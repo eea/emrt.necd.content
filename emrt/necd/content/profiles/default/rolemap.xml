@@ -20,10 +20,6 @@
       <role name="Manager" />
       <role name="Site Administrator" />
     </permission>
-    <permission name="emrt.necd.content: Add Conclusion" acquire="False">
-      <role name="Manager" />
-      <role name="Site Administrator" />
-    </permission>
     <permission name="emrt.necd.content: Add ReviewFolder" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />

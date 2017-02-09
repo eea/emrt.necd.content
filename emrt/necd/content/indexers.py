@@ -1,6 +1,5 @@
 from emrt.necd.content.commentanswer import ICommentAnswer
 from emrt.necd.content.comment import IComment
-from conclusion import IConclusion
 from conclusionsphase2 import IConclusionsPhase2
 from .observation import IObservation
 import plone.api as api
@@ -63,18 +62,6 @@ def last_answer_reply_number(context):
 
 
 @indexer(IObservation)
-def conclusion1_reply_number(context):
-    replynum = 0
-    conclusions = context.values(['Conclusion'])
-    if conclusions:
-        conclusion = conclusions[0]
-        disc = IConversation(conclusion)
-        return disc.total_comments
-
-    return replynum
-
-
-@indexer(IObservation)
 def conclusion2_reply_number(context):
     replynum = 0
     conclusions = context.values(['ConclusionsPhase2'])
@@ -98,12 +85,6 @@ def SearchableText(context):
     except:
         questions = []
     try:
-        conclusions = context.getFolderContents({'portal_type': 'Conclusion'},
-            full_objects=True
-        )
-    except:
-        conclusions = []
-    try:
         conclusionsphase2 = context.getFolderContents(
             {'portal_type': 'ConclusionsPhase2'},
             full_objects=True
@@ -124,9 +105,6 @@ def SearchableText(context):
             items.extend(index_fields(
                 getFieldsInOrder(ICommentAnswer), answer)
             )
-
-    for conclusion in conclusions:
-        items.extend(index_fields(getFieldsInOrder(IConclusion), conclusion))
 
     for conclusion in conclusionsphase2:
         items.extend(index_fields(
@@ -282,18 +260,6 @@ def observation_finalisation_reason(context):
 
 
 @indexer(IObservation)
-def observation_finalisation_reason_step1(context):
-    try:
-        conclusions = [
-            c for c in context.values()
-            if c.portal_type == "Conclusion"
-        ]
-        return conclusions[0] and conclusions[0].closing_reason or ' '
-    except:
-        return None
-
-
-@indexer(IObservation)
 def observation_finalisation_reason_step2(context):
     try:
         conclusions = [
@@ -301,18 +267,6 @@ def observation_finalisation_reason_step2(context):
             if c.portal_type == "ConclusionsPhase2"
         ]
         return conclusions[0] and conclusions[0].closing_reason or ' '
-    except:
-        return None
-
-
-@indexer(IObservation)
-def observation_finalisation_text_step1(context):
-    try:
-        conclusions = [
-            c for c in context.values()
-            if c.portal_type == "Conclusion"
-        ]
-        return conclusions[0] and conclusions[0].text or ''
     except:
         return None
 

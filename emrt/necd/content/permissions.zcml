@@ -10,13 +10,6 @@
 	  title="emrt.necd.content: Add ConclusionsPhase2"
 	  />
 
-
-       <permission
-          id="emrt.necd.content.AddConclusion"
-	  title="emrt.necd.content: Add Conclusion"
-	  />
-
-
        <permission
           id="emrt.necd.content.AddReviewFolder"
     title="emrt.necd.content: Add ReviewFolder"

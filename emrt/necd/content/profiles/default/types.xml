@@ -9,7 +9,6 @@
 <object name="portal_types" meta_type="Plone Types Tool">
   <!-- -*- extra stuff goes here -*- -->
   <object name="ConclusionsPhase2" meta_type="Dexterity FTI" />
-  <object name="Conclusion" meta_type="Dexterity FTI" />
   <object name="ReviewFolder" meta_type="Dexterity FTI" />
   <object name="ESDRTFile" meta_type="Dexterity FTI" />
   <object name="CommentAnswer" meta_type="Dexterity FTI" />

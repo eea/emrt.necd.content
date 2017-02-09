@@ -7,7 +7,6 @@
  <permission>Modify portal content</permission>
  <permission>Sharing page: Delegate roles</permission>
  <permission>View</permission>
- <permission>emrt.necd.content: Add Conclusion</permission>
  <permission>emrt.necd.content: Add ConclusionsPhase2</permission>
  <permission>emrt.necd.content: Add ESDRTFile</permission>
  <permission>emrt.necd.content: Add Question</permission>
@@ -43,8 +42,6 @@
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
   </permission-map>
@@ -83,8 +80,6 @@
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
   </permission-map>
@@ -133,8 +128,6 @@
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
-  </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: Add Question" acquired="False">
@@ -178,16 +171,6 @@
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="Sharing page: Delegate roles" acquired="False">
-  </permission-map>
-  <permission-map name="View" acquired="False">
-   <permission-role>LeadReviewer</permission-role>
-   <permission-role>MSAuthority</permission-role>
-   <permission-role>MSExpert</permission-role>
-   <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="False">
    <permission-role>ReviewerPhase2</permission-role>
@@ -237,8 +220,6 @@
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="True">
    <permission-role>ReviewerPhase2</permission-role>
@@ -294,8 +275,6 @@
    <permission-role>Manager</permission-role>
    <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
-  </permission-map>
-  <permission-map name="emrt.necd.content: Add Conclusion" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Add ConclusionsPhase2" acquired="True">
    <permission-role>ReviewerPhase2</permission-role>

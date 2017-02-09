@@ -273,8 +273,6 @@ EXPORT_FIELDS = OrderedDict([
     ('get_highlight', 'Highlight'),
     ('overview_status', 'Status'),
     ('observation_phase', 'Step'),
-    ('observation_finalisation_reason_step1', 'Conclusion step 1'),
-    ('observation_finalisation_text_step1', 'Conclusion step 1 note'),
     ('observation_finalisation_reason_step2', 'Conclusion step 2'),
     ('observation_finalisation_text_step2', 'Conclusion step 2 note'),
     ('observation_status', 'Workflow'),
@@ -283,7 +281,6 @@ EXPORT_FIELDS = OrderedDict([
 
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
-    'observation_finalisation_text_step1',
     'observation_finalisation_text_step2',
 )
 

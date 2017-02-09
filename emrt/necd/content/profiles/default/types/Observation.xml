@@ -13,7 +13,6 @@
   <property name="filter_content_types">True</property>
   <property name="allowed_content_types">
     <element value="Question" />
-    <element value="Conclusion" />
     <element value="ConclusionsPhase2" />
   </property>
   <property name="allow_discussion">False</property>

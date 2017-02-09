@@ -137,14 +137,6 @@ def observation_transition(observation, event):
                     transition='phase2-recall'
                 )
 
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusion']
-            if conclusions:
-                conclusion = conclusions[0]
-                api.content.transition(
-                    obj=conclusion,
-                    transition='retract'
-                )
-
     elif event.action == 'phase2-reopen-closed-observation':
         with api.env.adopt_roles(roles=['Manager']):
             conclusions = [c for c in observation.values() if c.portal_type == 'ConclusionsPhase2']

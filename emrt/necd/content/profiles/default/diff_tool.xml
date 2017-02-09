@@ -11,11 +11,6 @@
   </type>
 
 
-  <type portal_type="Conclusion">
-   <field name="any" difftype="Compound Diff for Dexterity types"/>
-  </type>
-
-
   <type portal_type="ReviewFolder">
    <field name="any" difftype="Compound Diff for Dexterity types"/>
   </type>

@@ -69,7 +69,7 @@ def set_versioning(context, logger):
     portal_repository = getToolByName(context, 'portal_repository')
     newpolicy = [p for p in VERSION_POLICIES if p["id"] == version_policy][0]
     versionable_types = list(portal_repository.getVersionableContentTypes())
-    for type_id in ['Conclusion', 'ConclusionsPhase2']:
+    for type_id in ['ConclusionsPhase2']:
         if not newpolicy["policy"]:
             if type_id in versionable_types:
                 versionable_types.remove(type_id)

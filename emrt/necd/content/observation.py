@@ -33,7 +33,7 @@ from z3c.form import interfaces
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
-from zope import schema
+import zope.schema as schema
 from zope.browsermenu.menu import getMenu
 from zope.component import getUtility
 from zope.i18n import translate
@@ -46,7 +46,6 @@ from emrt.necd.content import MessageFactory as _
 from eea.cache import cache
 from .comment import IComment
 from .commentanswer import ICommentAnswer
-from .conclusion import IConclusion
 from .nfr_code_matching import get_category_ldap_from_nfr_code
 from .nfr_code_matching import get_category_value_from_nfr_code
 from emrt.necd.content.subscriptions.interfaces import INotificationUnsubscriptions
@@ -747,13 +746,6 @@ class Observation(dexterity.Container):
                 return con_phase2.closing_reason == "technical-correction"
         return False
 
-    def get_conclusion(self):
-        conclusions = self.get_values_cat('Conclusion')
-        mtool = api.portal.get_tool('portal_membership')
-        if conclusions and mtool.checkPermission('View', conclusions[0]):
-            return conclusions[0]
-        return None
-
     def get_conclusion_phase2(self):
         conclusions = self.get_values_cat('ConclusionsPhase2')
         mtool = api.portal.get_tool('portal_membership')
@@ -904,7 +896,7 @@ class ObservationMixin(grok.View):
         is_draft = self.context.get_status() in ['phase2-pending']
         questions = len(self.context.get_values_cat('Question'))
         #If observation has conclusion cannot be deleted (Ticket #26992)
-        conclusions = len(self.context.get_values_cat('Conclusion'))
+        conclusions = len(self.context.get_values_cat('ConclusionsPhase2'))
         return is_draft and not questions and not conclusions
 
     def can_add_question(self):
@@ -915,16 +907,8 @@ class ObservationMixin(grok.View):
     def can_edit(self):
         sm = getSecurityManager()
         #If observation has conclusion cannot be edited (Ticket #26992)
-        conclusions = len(self.context.get_values_cat('Conclusion'))
+        conclusions = len(self.context.get_values_cat('ConclusionsPhase2'))
         return sm.checkPermission('Modify portal content', self.context) and not conclusions
-
-    def get_conclusion(self):
-        sm = getSecurityManager()
-        conclusions = self.context.get_values_cat('Conclusion')
-        if conclusions and sm.checkPermission('View', conclusions[0]):
-            return conclusions[0]
-
-        return None
 
     def get_conclusion_phase2(self):
         sm = getSecurityManager()
@@ -1048,11 +1032,6 @@ class ObservationMixin(grok.View):
 
     def add_comment_form(self):
         form_instance = AddCommentForm(self.context, self.request)
-        alsoProvides(form_instance, IWrappedForm)
-        return form_instance()
-
-    def add_conclusion_form(self):
-        form_instance = AddConclusionForm(self.context, self.request)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
@@ -1312,23 +1291,6 @@ class ExportAsDocView(ObservationMixin):
             p = document.add_paragraph('Recommendation/internal note:', style="Label Bold")
             p = document.add_paragraph(conclusion_2.text)
 
-        conclusion = self.get_conclusion()
-        if conclusion:
-            if conclusion_2 is not None and not conclusion_2():
-                document.add_page_break()
-            document.add_heading('Conclusions Step 1', level=2)
-
-            p = document.add_paragraph('Reason:', style="Label Bold")
-            p = document.add_paragraph(conclusion.reason_value())
-            p = document.add_paragraph('SE comments on conclusion:', style="Label Bold")
-            p = document.add_paragraph(conclusion.text)
-
-            if self.context.closing_deny_comments:
-                document.add_heading('Observation Finalisation denied', level=3)
-                p = document.add_paragraph('QE comments on finish observation request:', style="Label Bold")
-                p = document.add_paragraph(self.context.closing_deny_comments)
-            document.add_page_break()
-
         chats = self.get_chat()
         if chats:
             document.add_heading('Q&A', level=2)
@@ -1582,38 +1544,6 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
-        for k in self.actions.keys():
-            self.actions[k].addClass('standardButton')
-
-
-class AddConclusionForm(Form):
-    ignoreContext = True
-    fields = field.Fields(IConclusion).select('text', 'closing_reason')
-
-    @button.buttonAndHandler(u'Add conclusion')
-    def create_conclusion(self, action):
-        context = aq_inner(self.context)
-        id = str(int(time()))
-        item_id = context.invokeFactory(
-            type_name='Conclusion',
-            id=id,
-        )
-        text = self.request.form.get('form.widgets.text', '')
-        comment = context.get(item_id)
-        comment.text = text
-        reason = self.request.form.get('form.widgets.closing_reason')
-        comment.closing_reason = reason[0]
-        adapted = IAllowDiscussion(comment)
-        adapted.allow_discussion = True
-
-        return self.request.response.redirect(context.absolute_url())
-
-    def updateWidgets(self):
-        super(AddConclusionForm, self).updateWidgets()
-        self.widgets['text'].rows = 15
-
-    def updateActions(self):
-        super(AddConclusionForm, self).updateActions()
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
 
