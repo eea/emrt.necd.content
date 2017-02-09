@@ -69,7 +69,7 @@ class FinishObservationReasonForm(Form):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
             if api.content.get_state(self.context) == 'phase2-conclusions':
-                self.context.closing_comments_phase2 = comments
+                self.context.closing_comments = comments
                 return self.context.content_status_modify(
                     workflow_action='phase2-finish-observation',
                 )
@@ -106,7 +106,7 @@ class DenyFinishObservationReasonForm(Form):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
             if api.content.get_state(self.context) == 'phase2-close-requested':
-                self.context.closing_deny_comments_phase2 = comments
+                self.context.closing_deny_comments = comments
                 return self.context.content_status_modify(
                     workflow_action='phase2-deny-finishing-observation',
                 )

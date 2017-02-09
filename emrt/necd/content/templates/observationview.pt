@@ -356,16 +356,16 @@
           <dt>Observation Finish Requested</dt>
           <dd></dd>
           <dt>SE comments on finish observation request:</dt>
-          <dd><span tal:replace="structure context/closing_comments_phase2/output|context/closing_comments_phase2|nothing" /></dd>
+          <dd><span tal:replace="structure context/closing_comments/output|context/closing_comments|nothing" /></dd>
         </dl>
 
-        <div class="finish-denied" tal:condition="python:context.closing_deny_comments_phase2 and context.get_status() == 'phase2-close-requested'" >
+        <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'phase2-close-requested'" >
           <dl>
             <dt>Observation Finalisation previously denied</dt>
             <dd></dd>
             <dt>LR comments on finish observation request:</dt>
             <dd>
-              <div tal:replace="structure context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing">
+              <div tal:replace="structure context/closing_deny_comments/output|context/closing_deny_comments|nothing">
               Content
               </div>
             </dd>
@@ -448,13 +448,13 @@
 
         </div>
 
-        <div class="finish-denied" tal:condition="context/closing_deny_comments_phase2|nothing">
+        <div class="finish-denied" tal:condition="context/closing_deny_comments|nothing">
           <dl>
             <dt>Observation Finishing denied</dt>
             <dd></dd>
             <tal:block condition="show_internal_notes">
             <dt>LR comments on finish observation request:</dt>
-            <dd><span tal:replace="structure context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing" /></dd>
+            <dd><span tal:replace="structure context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
             </tal:block>
           </dl>
         </div>
