@@ -949,7 +949,7 @@
             </div>
           </div>
         </tal:block>
-        <!-- Lead Reviewer / Quality expert -->
+        <!-- Lead Reviewer -->
         <tal:block tal:condition="view/is_lead_reviewer_or_quality_expert">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
@@ -1493,7 +1493,7 @@
               </div>
             </div>
             <div tal:condition="observations" class="my-ms-actions unanswered-questions-lr-que"
-              tal:define="observations view/get_unanswered_questions_lr_qe;
+              tal:define="observations view/get_unanswered_questions_lr;
                   b_size python:5;
                   b_size request/b_size | b_size;
                   b_start16 python:0;

@@ -17,7 +17,6 @@ import copy
 
 ROLE_TRANSLATOR = {
     'ReviewerPhase2': 'Review Expert (phase 2)',
-    'QualityExpert':  'Quality Expert (phase 1)',
     'LeadReviewer':   'Lead Reviewer (phase 2)',
     'MSAuthority':    'Member State Coordinator',
     'CounterPart':    'Counter Part',
@@ -32,13 +31,6 @@ NOTIFICATIONS_PER_ROLE = {
         'observation_to_phase2': True,
         'question_answered': True,
         'question_to_ms': True,
-    },
-    'QualityExpert': {
-        'conclusion_to_comment': True,
-        'observation_finalisation_request': True,
-        'question_answered': True,
-        'question_ready_for_approval': True,
-        'question_to_counterpart': True,
     },
     'LeadReviewer': {
         'conclusion_to_comment': True,
@@ -70,13 +62,6 @@ NOTIFICATION_NAMES = {
         'observation_to_phase2': 'Observation handed over to step 2',
         'question_answered': 'Question answered by MS',
         'question_to_ms': 'Question sent to MS by LR',
-    },
-    'QualityExpert': {
-        'conclusion_to_comment': 'Conclusion to comment by you as QE',
-        'observation_finalisation_request': 'Observation finalisation ready for your approval as QE',
-        'question_answered': 'Question answered by MS',
-        'question_ready_for_approval': 'Question ready for your approval as QE',
-        'question_to_counterpart': 'Question to comment by you as QE',
     },
     'LeadReviewer': {
         'conclusion_to_comment': 'Conclusion to comment by you as LR',

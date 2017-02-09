@@ -5,11 +5,6 @@
         permission="Sharing page: Delegate roles"
         />
     <role
-        id="QualityExpert"
-        title="QualityExpert"
-        permission="Sharing page: Delegate roles"
-        />
-    <role
         id="LeadReviewer"
         title="LeadReviewer"
         permission="Sharing page: Delegate roles"

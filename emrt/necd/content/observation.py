@@ -1410,7 +1410,7 @@ class ModificationForm(dexterity.EditForm):
                 'closing_deny_comments',
 
             ]]
-        elif 'QualityExpert' in roles or 'LeadReviewer' in roles:
+        elif 'LeadReviewer' in roles:
             fields = ['text', 'highlight']
 
         self.fields = field.Fields(IObservation).select(*fields)

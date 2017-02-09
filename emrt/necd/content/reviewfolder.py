@@ -608,7 +608,7 @@ class Inbox2ReviewFolderView(grok.View):
             'phase2-pending-answer-drafting'
         ]
 
-        # For a SE/RE, those on QE/LR pending to be sent to the MS
+        # For a SE/RE, those on LR pending to be sent to the MS
         # or recalled by him, are unanswered questions
         if self.is_sector_expert_or_review_expert():
             statuses.extend([
@@ -665,12 +665,12 @@ class Inbox2ReviewFolderView(grok.View):
         return items
 
     """
-        Lead Reviewer / Quality expert
+        Lead Reviewer
     """
 
     def get_questions_to_be_sent(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Questions waiting for me to send to the MS
         """
         items = []
@@ -683,7 +683,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_observations_to_finalise(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Observations waiting for me to confirm finalisation
         """
         items = []
@@ -695,7 +695,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_questions_to_comment(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Questions waiting for my comments
         """
         items = []
@@ -711,7 +711,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_conclusions_to_comment(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Conclusions waiting for my comments
         """
         items = []
@@ -727,7 +727,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_questions_with_comments_from_reviewers(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Questions waiting for comments by counterpart
         """
         items = []
@@ -743,8 +743,8 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_answers_from_ms(self):
         """
-         Role: Lead Reviewer / Quality expert
-         that need review by Sector Expert/Review expert
+         Role: Lead Reviewer
+         that need review by Review expert
         """
         items = []
         for obj in self.observations:
@@ -755,9 +755,9 @@ class Inbox2ReviewFolderView(grok.View):
 
 
 
-    def get_unanswered_questions_lr_qe(self):
+    def get_unanswered_questions_lr(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          questions waiting for comments from MS
         """
         items = []
@@ -861,7 +861,7 @@ class Inbox2ReviewFolderView(grok.View):
     def get_observations_with_my_comments_sent_to_se_re(self):
         """
          Role: MS Expert
-         Answers that I commented on sent to Sector Expert/Review expert
+         Answers that I commented on sent to Review expert
         """
         items = []
         for obj in self.observations:
@@ -991,9 +991,8 @@ class Inbox2ReviewFolderView(grok.View):
     def is_lead_reviewer_or_quality_expert(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_qe = 'extranet-esd-ghginv-qualityexpert' in user_groups
         is_lr = 'extranet-esd-esdreview-leadreview' in user_groups
-        return is_qe or is_lr
+        return is_lr
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
@@ -1021,7 +1020,6 @@ class RoleMapItem(object):
         self.isMSA = 'MSAuthority' in roles
         self.isRE = 'ReviewExpert' in roles
         self.isLR = 'LeadReviewer' in roles
-        self.isQE = "QualityExpert" in roles
 
     def check_roles(self, rolename):
         if rolename == 'CounterPart':
@@ -1034,8 +1032,6 @@ class RoleMapItem(object):
             return not self.isCP and self.isRE
         elif rolename == 'LeadReviewer':
             return self.isLR
-        elif rolename == 'QualityExpert':
-            return self.isQE
         return False
 
 
@@ -1192,7 +1188,7 @@ class Inbox3ReviewFolderView(grok.View):
          Role: Review expert
          my questions sent to LR and MS and waiting for reply
         """
-        # For a SE/RE, those on QE/LR pending to be sent to the MS
+        # For a SE/RE, those on LR pending to be sent to the MS
         # or recalled by him, are unanswered questions
 
         if not self.is_sector_expert_or_review_expert():
@@ -1267,12 +1263,12 @@ class Inbox3ReviewFolderView(grok.View):
         return phase2
 
     """
-        Lead Reviewer / Quality expert
+        Lead Reviewer
     """
     @timeit
     def get_questions_to_be_sent(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Questions waiting for me to send to the MS
         """
         phase2 = self.get_observations(
@@ -1286,7 +1282,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_observations_to_finalise(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Observations waiting for me to confirm finalisation
         """
 
@@ -1300,7 +1296,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_questions_to_comment(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Questions waiting for my comments
         """
         return self.get_observations(
@@ -1311,7 +1307,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_conclusions_to_comment(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Conclusions waiting for my comments
         """
         return self.get_observations(
@@ -1321,7 +1317,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_questions_with_comments_from_reviewers(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          Questions waiting for comments by counterpart
         """
         return self.get_observations(
@@ -1331,8 +1327,8 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_answers_from_ms(self):
         """
-         Role: Lead Reviewer / Quality expert
-         that need review by Sector Expert/Review expert
+         Role: Lead Reviewer
+         that need review by Review expert
         """
         phase2 = self.get_observations(
             rolecheck='LeadReviewer',
@@ -1341,9 +1337,9 @@ class Inbox3ReviewFolderView(grok.View):
         return phase2
 
     @timeit
-    def get_unanswered_questions_lr_qe(self):
+    def get_unanswered_questions_lr(self):
         """
-         Role: Lead Reviewer / Quality expert
+         Role: Lead Reviewer
          questions waiting for comments from MS
         """
 
@@ -1445,7 +1441,7 @@ class Inbox3ReviewFolderView(grok.View):
     def get_observations_with_my_comments_sent_to_se_re(self):
         """
          Role: MS Expert
-         Answers that I commented on sent to Sector Expert/Review expert
+         Answers that I commented on sent to Review expert
         """
         return self.get_observations(
             observation_question_status=[
@@ -1497,9 +1493,8 @@ class Inbox3ReviewFolderView(grok.View):
     def is_lead_reviewer_or_quality_expert(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_qe = 'extranet-esd-ghginv-qualityexpert' in user_groups
         is_lr = 'extranet-esd-esdreview-leadreview' in user_groups
-        return is_qe or is_lr
+        return is_lr
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
@@ -1591,8 +1586,6 @@ class FinalisedFolderView(grok.View):
                         return not x.isCP and x.isRE
                     elif rolename == 'LeadReviewer':
                         return x.isLR
-                    elif rolename == 'QualityExpert':
-                        return x.isQE
                     return False
                 return myfilter
 
@@ -1710,9 +1703,8 @@ class FinalisedFolderView(grok.View):
     def is_lead_reviewer_or_quality_expert(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_qe = 'extranet-esd-ghginv-qualityexpert' in user_groups
         is_lr = 'extranet-esd-esdreview-leadreview' in user_groups
-        return is_qe or is_lr
+        return is_lr
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()

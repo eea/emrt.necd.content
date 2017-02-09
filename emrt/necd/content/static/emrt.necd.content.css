@@ -789,10 +789,6 @@ body.portaltype-conclusion #form-buttons-cancel {
 	border: 2px solid blue;
 }
 
-.template-statistics table tbody tr:even{
-	background-color: white;
-}
-
 .template-statistics table thead tr th,
 .template-statistics table tfoot tr td{
 	background-color: rgb(221, 221, 221) !important;

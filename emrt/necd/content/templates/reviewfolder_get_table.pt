@@ -93,7 +93,7 @@
               Sector Reviewer / Review Expert
             </span>
             <span tal:condition="python: observation.observation_status == 'LR'">
-              Lead Reviewer / Quality Expert
+              Lead Reviewer
             </span>
             <span tal:condition="python: observation.observation_status == 'MSC'">
               MS Coordinator

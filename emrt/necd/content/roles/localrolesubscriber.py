@@ -17,11 +17,6 @@ def grant_local_roles(context):
 
     for obj in applyes_to:
         api.group.grant_roles(
-            groupname='extranet-esd-ghginv-qualityexpert-%s' % sector,
-            roles=['QualityExpert'],
-            obj=obj,
-        )
-        api.group.grant_roles(
             groupname='extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country),
             roles=['ReviewerPhase2'],
             obj=obj,

@@ -6,8 +6,6 @@
     <role name="MSAuthority"/>
     <role name="MSExpert"/>
 
-    <role name="QualityExpert" />
-
     <role name="ReviewExpert" />
     <role name="LeadReviewer" />
 

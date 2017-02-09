@@ -19,7 +19,6 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
@@ -29,7 +28,6 @@
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -41,7 +39,6 @@
   <permission-map name="View" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
@@ -51,7 +48,6 @@
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
  </state>
@@ -62,7 +58,6 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
@@ -74,7 +69,6 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -90,7 +84,6 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
@@ -100,7 +93,6 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
  </state>
@@ -110,19 +102,16 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="True">
@@ -135,7 +124,6 @@
   <permission-map name="View" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
@@ -145,7 +133,6 @@
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
  </state>
@@ -156,7 +143,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
@@ -167,7 +153,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -180,7 +165,6 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
@@ -189,7 +173,6 @@
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
  </state>

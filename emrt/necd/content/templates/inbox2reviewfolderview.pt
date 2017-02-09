@@ -706,7 +706,7 @@
             </table>
           </div>
         </tal:block>
-        <!-- Lead Reviewer / Quality expert -->
+        <!-- Lead Reviewer -->
         <tal:block tal:condition="view/is_lead_reviewer_or_quality_expert">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
@@ -1206,7 +1206,7 @@
                 Unanswered questions
               </div>
             </div>
-            <table class="observationList listing my-ms-actions" tal:condition="view/get_unanswered_questions_lr_qe">
+            <table class="observationList listing my-ms-actions" tal:condition="view/get_unanswered_questions_lr">
               <thead>
                 <tr>
                   <th>
@@ -1228,7 +1228,7 @@
               </thead>
 
               <tbody>
-                <tal:block tal:repeat="item view/get_unanswered_questions_lr_qe">
+                <tal:block tal:repeat="item view/get_unanswered_questions_lr">
                   <tal:item define="observation nocall:item;
                                     toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
                     <tr tal:attributes="data-href observation/absolute_url;

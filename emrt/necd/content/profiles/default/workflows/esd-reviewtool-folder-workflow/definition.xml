@@ -16,7 +16,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
@@ -39,7 +38,6 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
-   <permission-role>QualityExpert</permission-role>
    <permission-role>ReviewExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
