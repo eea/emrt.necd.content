@@ -29,6 +29,10 @@ from zope.interface import Interface
 from zope.interface import provider
 from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utilities.ms_user import IUserIsMS
+from emrt.necd.content.constants import LDAP_LEADREVIEW
+from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import LDAP_MSEXPERT
+from emrt.necd.content.constants import LDAP_MSA
 
 grok.templatedir('templates')
 
@@ -176,11 +180,11 @@ class ReviewFolderMixin(grok.View):
         if api.user.is_anonymous():
             raise Unauthorized
         user = api.user.get_current()
-        return "extranet-esd-countries-msa" in user.getGroups()
+        return LDAP_MSA in user.getGroups()
 
     def is_member_state_expert(self):
         user = api.user.get_current()
-        return "extranet-esd-countries-msexpert" in user.getGroups()
+        return LDAP_MSEXPERT in user.getGroups()
 
 
 class ReviewFolderView(ReviewFolderMixin):
@@ -600,7 +604,7 @@ class Inbox2ReviewFolderView(grok.View):
 
         # For a SE, those on LR pending to be sent to the MS
         # or recalled by him, are unanswered questions
-        if self.is_sector_expert_or_review_expert():
+        if self.is_sector_expert():
             statuses.extend([
                 'phase2-drafted',
                 'phase2-recalled-lr']
@@ -971,26 +975,23 @@ class Inbox2ReviewFolderView(grok.View):
 
         return sectors
 
-    def is_sector_expert_or_review_expert(self):
+    def is_sector_expert(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_se = 'extranet-esd-ghginv-sr' in user_groups
-        is_re = 'extranet-esd-esdreview-reviewexp' in user_groups
-        return is_se or is_re
+        return LDAP_SECTOREXP in user_groups
 
-    def is_lead_reviewer_or_quality_expert(self):
+    def is_lead_reviewer(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_lr = 'extranet-esd-esdreview-leadreview' in user_groups
-        return is_lr
+        return LDAP_LEADREVIEW in user_groups
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
-        return "extranet-esd-countries-msa" in user.getGroups()
+        return LDAP_MSA in user.getGroups()
 
     def is_member_state_expert(self):
         user = api.user.get_current()
-        return "extranet-esd-countries-msexpert" in user.getGroups()
+        return LDAP_MSEXPERT in user.getGroups()
 
 
 class InboxReviewFolderView(grok.View):
@@ -1181,7 +1182,7 @@ class Inbox3ReviewFolderView(grok.View):
         # For a SE, those on LR pending to be sent to the MS
         # or recalled by him, are unanswered questions
 
-        if not self.is_sector_expert_or_review_expert():
+        if not self.is_sector_expert():
             return []
 
         statuses_phase2 = [
@@ -1473,26 +1474,23 @@ class Inbox3ReviewFolderView(grok.View):
 
         return sectors
 
-    def is_sector_expert_or_review_expert(self):
+    def is_sector_expert(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_se = 'extranet-esd-ghginv-sr' in user_groups
-        is_re = 'extranet-esd-esdreview-reviewexp' in user_groups
-        return is_se or is_re
+        return LDAP_SECTOREXP in user_groups
 
-    def is_lead_reviewer_or_quality_expert(self):
+    def is_lead_reviewer(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_lr = 'extranet-esd-esdreview-leadreview' in user_groups
-        return is_lr
+        return LDAP_LEADREVIEW in user_groups
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
-        return "extranet-esd-countries-msa" in user.getGroups()
+        return LDAP_MSA in user.getGroups()
 
     def is_member_state_expert(self):
         user = api.user.get_current()
-        return "extranet-esd-countries-msexpert" in user.getGroups()
+        return LDAP_MSEXPERT in user.getGroups()
 
 
 class FirstObservation(Inbox3ReviewFolderView):
@@ -1683,23 +1681,20 @@ class FinalisedFolderView(grok.View):
 
         return sectors
 
-    def is_sector_expert_or_review_expert(self):
+    def is_sector_expert(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_se = 'extranet-esd-ghginv-sr' in user_groups
-        is_re = 'extranet-esd-esdreview-reviewexp' in user_groups
-        return is_se or is_re
+        return LDAP_SECTOREXP in user_groups
 
-    def is_lead_reviewer_or_quality_expert(self):
+    def is_lead_reviewer(self):
         user = api.user.get_current()
         user_groups = user.getGroups()
-        is_lr = 'extranet-esd-esdreview-leadreview' in user_groups
-        return is_lr
+        return LDAP_LEADREVIEW in user_groups
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
-        return "extranet-esd-countries-msa" in user.getGroups()
+        return LDAP_MSA in user.getGroups()
 
     def is_member_state_expert(self):
         user = api.user.get_current()
-        return "extranet-esd-countries-msexpert" in user.getGroups()
+        return LDAP_MSEXPERT in user.getGroups()

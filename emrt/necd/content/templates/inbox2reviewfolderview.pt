@@ -62,7 +62,7 @@
 
       <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
         <!-- Sector Expert -->
-        <tal:block tal:condition="view/is_sector_expert_or_review_expert">
+        <tal:block tal:condition="view/is_sector_expert">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
@@ -707,7 +707,7 @@
           </div>
         </tal:block>
         <!-- Lead Reviewer -->
-        <tal:block tal:condition="view/is_lead_reviewer_or_quality_expert">
+        <tal:block tal:condition="view/is_lead_reviewer">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>

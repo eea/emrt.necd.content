@@ -22,8 +22,7 @@ class TestCase(ptc.PloneTestCase):
 
         @classmethod
         def setUp(cls):
-            zcml.load_config('configure.zcml',
-              emrt.necd.content)
+            zcml.load_config('configure.zcml', emrt.necd.content)
 
         @classmethod
         def tearDown(cls):

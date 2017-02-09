@@ -1,7 +1,11 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from plone import api
+import plone.api as api
 from emrt.necd.content.reviewfolder import IReviewFolder
+from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import LDAP_LEADREVIEW
+from emrt.necd.content.constants import LDAP_MSA
+
 
 def grant_local_roles(context):
     """ add local roles to the groups when adding an observation
@@ -17,17 +21,17 @@ def grant_local_roles(context):
 
     for obj in applyes_to:
         api.group.grant_roles(
-            groupname='extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country),
+            groupname='{}-{}-{}'.format(LDAP_SECTOREXP, sector, country),
             roles=['ReviewerPhase2'],
             obj=obj,
         )
         api.group.grant_roles(
-            groupname='extranet-esd-esdreview-leadreview-%s' % country,
+            groupname='{}-{}'.format(LDAP_LEADREVIEW, country),
             roles=['LeadReviewer'],
             obj=obj,
         )
         api.group.grant_roles(
-            groupname='extranet-esd-countries-msa-%s' % country,
+            groupname='{}-{}'.format(LDAP_MSA, country),
             roles=['MSAuthority'],
             obj=obj,
         )

@@ -1,14 +1,37 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from borg.localrole.interfaces import ILocalRoleProvider
+from zope.component import adapts
+from zope.interface import implements
+
+import plone.api as api
+
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.commentanswer import ICommentAnswer
 from emrt.necd.content.observation import IObservation
 from emrt.necd.content.question import IQuestion
 from emrt.necd.content.conclusionsphase2 import IConclusionsPhase2
-from zope.component import adapts
-from zope.interface import implements
-from plone import api
+from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import LDAP_LEADREVIEW
+from emrt.necd.content.constants import LDAP_MSA
+
+
+def get_user_roles_in_context(context, principal_id):
+    mtool = api.portal.get_tool('portal_membership')
+    member = mtool.getMemberById(principal_id)
+    roles = []
+    if member is not None:
+        context = aq_inner(context)
+        country = context.country.lower()
+        sector = context.ghg_source_category_value()
+        groups = member.getGroups()
+        if '{}-{}-{}'.format(LDAP_SECTOREXP, sector, country) in groups:
+            roles.append('ReviewerPhase2')
+        if '{}-{}'.format(LDAP_LEADREVIEW, country) in groups:
+            roles.append('LeadReviewer')
+        if '{}-{}'.format(LDAP_MSA, country) in groups:
+            roles.append('MSAuthority')
+    return roles
 
 
 class ObservationRoleAdapter(object):
@@ -26,20 +49,7 @@ class ObservationRoleAdapter(object):
         @param context: Any Plone object
         @param principal_id: User login id
         """
-        mtool = api.portal.get_tool('portal_membership')
-        member = mtool.getMemberById(principal_id)
-        roles = []
-        if member is not None:
-            context = aq_inner(self.context)
-            country = context.country.lower()
-            sector = context.ghg_source_category_value()
-            groups = member.getGroups()
-            if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
-                roles.append('ReviewerPhase2')
-            if 'extranet-esd-esdreview-leadreview-%s' % country in groups:
-                roles.append('LeadReviewer')
-            if 'extranet-esd-countries-msa-%s' % country in groups:
-                roles.append('MSAuthority')
+        roles = get_user_roles_in_context(self.context, principal_id)
         if roles:
             from logging import getLogger
             log = getLogger(__name__)
@@ -71,18 +81,7 @@ class QuestionRoleAdapter(object):
         observation = aq_parent(aq_inner(self.context))
         roles = []
         if IObservation.providedBy(observation):
-            mtool = api.portal.get_tool('portal_membership')
-            member = mtool.getMemberById(principal_id)
-            if member is not None:
-                country = observation.country.lower()
-                sector = observation.ghg_source_category_value()
-                groups = member.getGroups()
-                if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
-                    roles.append('ReviewerPhase2')
-                if 'extranet-esd-esdreview-leadreview-%s' % country in groups:
-                    roles.append('LeadReviewer')
-                if 'extranet-esd-countries-msa-%s' % country in groups:
-                    roles.append('MSAuthority')
+            roles = get_user_roles_in_context(observation, principal_id)
         if roles:
             from logging import getLogger
             log = getLogger(__name__)
@@ -117,19 +116,7 @@ class CommentRoleAdapter(object):
         if IQuestion.providedBy(question):
             observation = aq_parent(question)
             if IObservation.providedBy(observation):
-                mtool = api.portal.get_tool('portal_membership')
-                member = mtool.getMemberById(principal_id)
-                if member is not None:
-                    country = observation.country.lower()
-                    sector = observation.ghg_source_category_value()
-                    groups = member.getGroups()
-                    if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
-                        roles.append('ReviewerPhase2')
-                    if 'extranet-esd-esdreview-leadreview-%s' % country in groups:
-                        roles.append('LeadReviewer')
-                    if 'extranet-esd-countries-msa-%s' % country in groups:
-                        roles.append('MSAuthority')
-
+                roles = get_user_roles_in_context(observation, principal_id)
         if roles:
             from logging import getLogger
             log = getLogger(__name__)
@@ -164,18 +151,7 @@ class CommentAnswerRoleAdapter(object):
         if IQuestion.providedBy(question):
             observation = aq_parent(question)
             if IObservation.providedBy(observation):
-                mtool = api.portal.get_tool('portal_membership')
-                member = mtool.getMemberById(principal_id)
-                if member is not None:
-                    country = observation.country.lower()
-                    sector = observation.ghg_source_category_value()
-                    groups = member.getGroups()
-                    if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
-                        roles.append('ReviewerPhase2')
-                    if 'extranet-esd-esdreview-leadreview-%s' % country in groups:
-                        roles.append('LeadReviewer')
-                    if 'extranet-esd-countries-msa-%s' % country in groups:
-                        roles.append('MSAuthority')
+                roles = get_user_roles_in_context(observation, principal_id)
         if roles:
             from logging import getLogger
             log = getLogger(__name__)
@@ -207,18 +183,7 @@ class ConclusionPhase2RoleAdapter(object):
         observation = aq_parent(aq_inner(self.context))
         roles = []
         if IObservation.providedBy(observation):
-            mtool = api.portal.get_tool('portal_membership')
-            member = mtool.getMemberById(principal_id)
-            if member is not None:
-                country = observation.country.lower()
-                sector = observation.ghg_source_category_value()
-                groups = member.getGroups()
-                if 'extranet-esd-esdreview-reviewexp-%s-%s' % (sector, country) in groups:
-                    roles.append('ReviewerPhase2')
-                if 'extranet-esd-esdreview-leadreview-%s' % country in groups:
-                    roles.append('LeadReviewer')
-                if 'extranet-esd-countries-msa-%s' % country in groups:
-                    roles.append('MSAuthority')
+            roles = get_user_roles_in_context(observation, principal_id)
         if roles:
             from logging import getLogger
             log = getLogger(__name__)

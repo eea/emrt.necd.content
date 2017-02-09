@@ -15,6 +15,7 @@ from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from eea.cache import cache
 from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
+from emrt.necd.content.constants import LDAP_TERT
 
 
 def revoke_roles(username=None, user=None, obj=None, roles=None, inherit=True):
@@ -169,7 +170,7 @@ class AssignAnswererForm(BrowserView):
         context = aq_inner(self.context)
         observation = aq_parent(context)
         country = observation.country.lower()
-        return 'extranet-esd-countries-msexpert-%s' % country
+        return '{}-{}'.format(LDAP_MSEXPERT, country)
 
     def get_counterpart_users(self):
         groupname = self.target_groupname()
@@ -281,10 +282,7 @@ class AssignCounterPartForm(BrowserView):
                     )
 
     def target_groupnames(self):
-        return [
-            'extranet-esd-ghginv',
-            'extranet-esd-esdreview',
-        ]
+        return [LDAP_TERT]
 
     def get_current_counterparters(self):
         """ Return list of current counterparters
@@ -474,10 +472,7 @@ class AssignConclusionReviewerForm(BrowserView):
         return aq_inner(self.context)
 
     def target_groupnames(self):
-        return [
-            'extranet-esd-ghginv',
-            'extranet-esd-esdreview',
-        ]
+        return [LDAP_TERT]
 
     def get_counterpart_users(self):
         current = api.user.get_current()

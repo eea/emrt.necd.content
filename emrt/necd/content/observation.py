@@ -209,9 +209,7 @@ def check_nfr_code(value):
     groups = user.getGroups()
     valid = False
     for group in groups:
-        if group.startswith('extranet-esd-ghginv-sr-%s-' % category):
-            valid = True
-        if group.startswith('extranet-esd-esdreview-reviewexp-%s-' % category):
+        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category):
             valid = True
 
     if not valid:
@@ -226,10 +224,7 @@ def check_country(value):
     groups = user.getGroups()
     valid = False
     for group in groups:
-        if group.startswith('extranet-esd-ghginv-sr-') and \
-                group.endswith('-%s' % value):
-            valid = True
-        if group.startswith('extranet-esd-esdreview-reviewexp-') and \
+        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
                 group.endswith('-%s' % value):
             valid = True
 
