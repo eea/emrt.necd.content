@@ -20,7 +20,6 @@
   <records interface="emrt.necd.content.nfr_code_matching.IEsdrtSettings" />
   <record name="emrt.necd.content.nfr_code_matching.IEsdrtSettings.nfrcodeMapping">
     <value purge="False">
-      <element key="1">sector1, sector 2, sector 3 and sector 4|1|1A1, 1A2, 1A3, 1A4, 1A5 Energy|1 Energy</element>
       <element key="1A1a">sector1|1A1a|1A1, 1A2, 1A4 Energy: stationary combustion|1A1a Public electricity and heat production</element>
       <element key="1A1b">sector1|1A1b|1A1, 1A2, 1A4 Energy: stationary combustion|1A1b Petroleum refining</element>
       <element key="1A1c">sector1|1A1c|1A1, 1A2, 1A4 Energy: stationary combustion|1A1c Manufacture of solid fuels and other energy industries</element>
@@ -64,7 +63,6 @@
       <element key="1B2b">sector4|1B2b|1B, 2A Fugitive and IPPU|1B2b Fugitive emissions from natural gas (exploration, production, processing, transmission, storage, distribution and other)</element>
       <element key="1B2c">sector4|1B2c|1B, 2A Fugitive and IPPU|1B2c Venting and flaring (oil, gas, combined oil and gas)</element>
       <element key="1B2d">sector4|1B2d|1B, 2A Fugitive and IPPU|1B2d Other fugitive emissions from energy production</element>
-      <element key="2">sector4, sector5 and sector 6|2|2 Industrial Processes|2 Industrial Processes and Product Use</element>
       <element key="2A">sector4|2A|1B, 2A Fugitive and IPPU|2A Mineral Industry</element>
       <element key="2A1">sector4|2A1|1B, 2A Fugitive and IPPU|2A1 Cement production</element>
       <element key="2A2">sector4|2A2|1B, 2A Fugitive and IPPU|2A2 Lime production</element>

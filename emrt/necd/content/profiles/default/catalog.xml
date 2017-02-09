@@ -49,10 +49,6 @@
     <indexed_attr value="last_answer_reply_number" />
  </index>
 
- <index name="conclusion1_reply_number" meta_type="FieldIndex">
-    <indexed_attr value="conclusion1_reply_number" />
- </index>
-
  <index name="conclusion2_reply_number" meta_type="FieldIndex">
     <indexed_attr value="conclusion2_reply_number" />
  </index>

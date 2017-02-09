@@ -367,7 +367,7 @@ class DownloadStatisticsView(grok.View):
                 observation['conclusions'],
                 observation['finalised'],
                 observation['sum']])
-        data.headers = ['Country', 'SR/RE', 'LR', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
+        data.headers = ['Country', 'SR/SE', 'LR', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
 
         return data
 
@@ -389,7 +389,7 @@ class DownloadStatisticsView(grok.View):
                 observation['conclusions'],
                 observation['finalised'],
                 observation['sum']])
-        data.headers = ['Sector', 'SR/RE', 'LR', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
+        data.headers = ['Sector', 'SR/SE', 'LR', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
 
         return data
 

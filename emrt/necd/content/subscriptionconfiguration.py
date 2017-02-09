@@ -16,7 +16,7 @@ from zope.annotation.interfaces import IAnnotations
 import copy
 
 ROLE_TRANSLATOR = {
-    'ReviewerPhase2': 'Review Expert (phase 2)',
+    'ReviewerPhase2': 'Sector Expert (phase 2)',
     'LeadReviewer':   'Lead Reviewer (phase 2)',
     'MSAuthority':    'Member State Coordinator',
     'CounterPart':    'Counter Part',

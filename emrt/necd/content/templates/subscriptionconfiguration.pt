@@ -58,7 +58,7 @@
         <div class="cell position-3 width-2" tal:content="context/ghg_source_sectors_value">Sector</div>
         <div class="cell position-5 width-2" tal:content="context/pollutants_value">Pollutants</div>
         <div class="cell position-7 width-3" tal:content="context/year">Year of emission</div>
-        <div class="cell position-10 width-3" tal:content="context/wf_location">Review expert</div>
+        <div class="cell position-10 width-3" tal:content="context/wf_location">Sector Expert</div>
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
         <div class="cell position-0 width-16">

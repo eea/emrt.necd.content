@@ -423,11 +423,11 @@ class Observation(dexterity.Container):
 
     def wf_location(self):
         if self.get_status() == 'phase2-draft':
-            return 'Review expert'
+            return 'Sector Expert'
         elif self.get_status() == 'phase2-closed':
             return 'Lead reviewer'
         elif self.get_status() == 'phase2-conclusions':
-            return 'Review expert'
+            return 'Sector Expert'
         elif self.get_status() in ['phase2-conclusion-discussion']:
             return 'Counterpart'
         elif self.get_status() == 'phase2-close-requested':
@@ -438,7 +438,7 @@ class Observation(dexterity.Container):
                 question = questions[0]
                 state = question.get_state_api()
                 if state in ['phase2-draft', 'phase2-closed']:
-                    return 'Review expert'
+                    return 'Sector Expert'
                 elif state in ['phase2-counterpart-comments']:
                     return 'Counterparts'
                 elif state in ['phase2-drafted', 'phase2-recalled-lr']:
@@ -452,7 +452,7 @@ class Observation(dexterity.Container):
                 elif state in ['phase2-expert-comments']:
                     return 'Member state experts'
             else:
-                return "Review expert"
+                return "Sector Expert"
 
     def wf_status(self):
         if self.get_status() in ['phase2-draft']:
@@ -564,14 +564,14 @@ class Observation(dexterity.Container):
             item['author'] = self.get_author_name(item['actor'])
             if item['review_state'] == 'phase2-draft':
                 item['state'] = 'Draft observation'
-                item['role'] = "Review expert"
+                item['role'] = "Sector Expert"
                 observation_wf.append(item)
             elif item['review_state'] == 'phase2-pending' and item['action'] == "phase2-approve":
                 item['state'] = 'Pending'
                 # Do not add
             elif item['review_state'] == 'phase2-pending' and item['action'] == "phase2-reopen":
                 item['state'] = 'Observation reopened'
-                item['role'] = "Review expert"
+                item['role'] = "Sector Expert"
                 observation_wf.append(item)
             elif item['review_state'] == 'phase2-pending':
                 item['state'] = 'Pending'
@@ -582,7 +582,7 @@ class Observation(dexterity.Container):
                 observation_wf.append(item)
             elif item['review_state'] == 'phase2-close-requested':
                 item['state'] = 'Finalisation requested'
-                item['role'] = "Review expert"
+                item['role'] = "Sector Expert"
                 observation_wf.append(item)
             elif item['review_state'] == 'phase2-conclusions' and item['action'] == "phase2-deny-finishing-observation":
                 item['state'] = 'Finalisation denied'
@@ -590,17 +590,17 @@ class Observation(dexterity.Container):
                 observation_wf.append(item)
             elif item['review_state'] == 'phase2-conclusion-discussion':
                 item['state'] = 'Conclusion comments requested'
-                item['role'] = "Review expert"
+                item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
             elif item['review_state'] == 'phase2-conclusions' and item['action'] == "phase2-finish-comments":
                 item['state'] = 'Conclusion comments closed'
-                item['role'] = "Review expert"
+                item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
             elif item['review_state'] == 'phase2-conclusions' and item['action'] == "phase2-draft-conclusions":
                 item['state'] = 'Conclusion drafting'
-                item['role'] = "Review expert"
+                item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
             else:
@@ -620,27 +620,27 @@ class Observation(dexterity.Container):
                 item['author'] = self.get_author_name(item['actor'])
                 if item['review_state'] == 'phase2-draft' and item['action'] == "phase2-reopen":
                     item['state'] = 'Draft question'
-                    item['role'] = "Review expert"
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'phase2-counterpart-comments':
                     item['state'] = 'Requested counterparts comments'
-                    item['role'] = "Review expert"
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'phase2-draft' and item['action'] =='phase2-send-comments':
                     item['state'] = 'Counterparts comments closed'
-                    item['role'] = "Review expert"
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'phase2-drafted':
                     item['state'] = 'Sent to LR'
-                    item['role'] = "Review expert"
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'phase2-draft' and item['action'] == 'phase2-recall-sre':
                     item['state'] = 'Question recalled'
-                    item['role'] = "Review expert"
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'phase2-draft' and item['action'] == 'phase2-redraft':
                     item['state'] = 'Question redrafted'
-                    item['role'] = "Review expert"
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'phase2-draft':
                     # Do not add
@@ -669,7 +669,7 @@ class Observation(dexterity.Container):
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
                 elif item['action'] == 'phase2-validate-answer-msa' and item['action'] == 'phase2-validate-answer-msa':
-                    item['state'] = 'Review expert'
+                    item['state'] = 'Sector Expert'
                     item['role'] = "Answer acknowledged"
                     question_wf.append(item)
                 elif item['review_state'] == 'phase2-draft' and item['action'] == "phase2-reopen":
@@ -1279,7 +1279,7 @@ class ExportAsDocView(ObservationMixin):
         if self.context.get_status() == 'phase2-close-requested':
             document.add_heading('Finish observation', level=2)
             document.add_heading('Observation Finish Requested', level=3)
-            p = document.add_paragraph('RE comments on finish observation request:', style="Label Bold")
+            p = document.add_paragraph('SE comments on finish observation request:', style="Label Bold")
 
         conclusion_2 = self.get_conclusion_phase2()
         if conclusion_2:

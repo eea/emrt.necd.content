@@ -283,8 +283,8 @@
                                   id python:item[0]"/>
                 <label tal:attributes="for python:item[0];"
                   tal:content="python:item[1]"></label><br/>
-                  <br tal:condition="python:item[0]=='ur'"/>
-                <div tal:condition="python:item[0]=='ur'" class="esdLabel">Draft/final conclusion flags</div>
+                  <br tal:condition="python:item[0]=='unece'"/>
+                <div tal:condition="python:item[0]=='unece'" class="esdLabel">Draft/final conclusion flags</div>
 
               </tal:block>
             </tal:block>

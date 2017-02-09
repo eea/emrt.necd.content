@@ -47,7 +47,6 @@
   <adapter name="Status_Flag" factory=".indexers.observation_status_flag" />
   <adapter name="last_question_reply_number" factory=".indexers.last_question_reply_number" />
   <adapter name="last_answer_reply_number" factory=".indexers.last_answer_reply_number" />
-  <adapter name="conclusion1_reply_number" factory=".indexers.conclusion1_reply_number" />
   <adapter name="conclusion2_reply_number" factory=".indexers.conclusion2_reply_number" />
   <adapter name="year" factory=".indexers.observation_year" />
   <adapter name="review_year" factory=".indexers.observation_review_year" />

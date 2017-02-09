@@ -158,11 +158,6 @@ class ReviewFolderMixin(grok.View):
         vtool = getToolByName(self, 'portal_vocabularies')
         reasons = [('open', 'open')]
         if self.context.Title() == '2015':
-            voc = vtool.getVocabularyByName('conclusion_reasons')
-            voc_terms = voc.getDisplayList(self).items()
-            for term in voc_terms:
-                if "2016" not in term[0]:
-                    reasons.append((term[0], term[1]))
             voc = vtool.getVocabularyByName('conclusion_phase2_reasons')
             voc_terms = voc.getDisplayList(self).items()
             for term in voc_terms:
@@ -170,11 +165,6 @@ class ReviewFolderMixin(grok.View):
                     reasons.append((term[0], term[1]))
             return reasons
         else:
-            voc = vtool.getVocabularyByName('conclusion_reasons')
-            voc_terms = voc.getDisplayList(self).items()
-            for term in voc_terms:
-                if "2016" in term[0]:
-                    reasons.append((term[0], term[1]))
             voc = vtool.getVocabularyByName('conclusion_phase2_reasons')
             voc_terms = voc.getDisplayList(self).items()
             for term in voc_terms:
@@ -503,14 +493,14 @@ class Inbox2ReviewFolderView(grok.View):
         return map(decorate, [b.getObject() for b in catalog.searchResults(query)])
 
     """
-        Review expert
+        Sector Expert
     """
 
 
 
     def get_draft_observations(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          without actions for LR, counterpart or MS
         """
         items = []
@@ -524,7 +514,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_draft_questions(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          with comments from counterpart or LR
         """
         items = []
@@ -543,7 +533,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_counterpart_questions_to_comment(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          needing comment from me
         """
         items = []
@@ -558,7 +548,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_counterpart_conclusion_to_comment(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          needing comment from me
         """
         items = []
@@ -573,7 +563,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_ms_answers_to_review(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          that need review
         """
         # user = api.user.get_current()
@@ -596,7 +586,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_unanswered_questions(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          my questions sent to LR and MS and waiting for reply
         """
         items = []
@@ -608,7 +598,7 @@ class Inbox2ReviewFolderView(grok.View):
             'phase2-pending-answer-drafting'
         ]
 
-        # For a SE/RE, those on LR pending to be sent to the MS
+        # For a SE, those on LR pending to be sent to the MS
         # or recalled by him, are unanswered questions
         if self.is_sector_expert_or_review_expert():
             statuses.extend([
@@ -623,7 +613,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_waiting_for_comment_from_counterparts_for_question(self):
         """
-         Role: Review expert
+         Role: Sector Expert
         """
         # user = api.user.get_current()
         # mtool = api.portal.get_tool('portal_membership')
@@ -638,7 +628,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_waiting_for_comment_from_counterparts_for_conclusion(self):
         """
-         Role: Review expert
+         Role: Sector Expert
         """
         # user = api.user.get_current()
         # mtool = api.portal.get_tool('portal_membership')
@@ -653,7 +643,7 @@ class Inbox2ReviewFolderView(grok.View):
 
     def get_observation_for_finalisation(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          waiting approval from LR
         """
         items = []
@@ -744,7 +734,7 @@ class Inbox2ReviewFolderView(grok.View):
     def get_answers_from_ms(self):
         """
          Role: Lead Reviewer
-         that need review by Review expert
+         that need review by Sector Expert
         """
         items = []
         for obj in self.observations:
@@ -777,7 +767,7 @@ class Inbox2ReviewFolderView(grok.View):
     def get_questions_to_be_answered(self):
         """
          Role: MS Coordinator
-         Questions from the SE/RE to be answered
+         Questions from the SE to be answered
         """
         items = []
         for obj in self.observations:
@@ -817,7 +807,7 @@ class Inbox2ReviewFolderView(grok.View):
     def get_answers_sent_to_se_re(self):
         """
          Role: MS Coordinator
-         Answers sent to SE/RE
+         Answers sent to SE
         """
         items = []
         for obj in self.observations:
@@ -861,7 +851,7 @@ class Inbox2ReviewFolderView(grok.View):
     def get_observations_with_my_comments_sent_to_se_re(self):
         """
          Role: MS Expert
-         Answers that I commented on sent to Review expert
+         Answers that I commented on sent to Sector Expert
         """
         items = []
         for obj in self.observations:
@@ -1018,7 +1008,7 @@ class RoleMapItem(object):
     def __init__(self, roles):
         self.isCP = 'CounterPart' in roles
         self.isMSA = 'MSAuthority' in roles
-        self.isRE = 'ReviewExpert' in roles
+        self.isRE = 'SectorExpert' in roles
         self.isLR = 'LeadReviewer' in roles
 
     def check_roles(self, rolename):
@@ -1026,7 +1016,7 @@ class RoleMapItem(object):
             return self.isCP
         elif rolename == 'MSAuthority':
             return self.isMSA
-        elif rolename == 'ReviewExpert':
+        elif rolename == 'SectorExpert':
             return self.isRE
         elif rolename == 'NotCounterPartPhase2':
             return not self.isCP and self.isRE
@@ -1107,11 +1097,11 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_draft_observations(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          without actions for LR, counterpart or MS
         """
         phase2 = self.get_observations(
-            rolecheck='ReviewExpert',
+            rolecheck='SectorExpert',
             observation_question_status=[
                 'observation-phase2-draft'])
 
@@ -1120,11 +1110,11 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_draft_questions(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          with comments from counterpart or LR
         """
         phase2 = self.get_observations(
-            rolecheck='ReviewExpert',
+            rolecheck='SectorExpert',
             observation_question_status=[
                 'phase2-draft',
                 'phase2-drafted'])
@@ -1143,7 +1133,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_counterpart_questions_to_comment(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          needing comment from me
         """
         return self.get_observations(
@@ -1154,7 +1144,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_counterpart_conclusion_to_comment(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          needing comment from me
         """
         return self.get_observations(
@@ -1164,19 +1154,19 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_ms_answers_to_review(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          that need review
         """
         # user = api.user.get_current()
         # mtool = api.portal.get_tool('portal_membership')
 
         answered_phase2 = self.get_observations(
-            rolecheck='ReviewExpert',
+            rolecheck='SectorExpert',
             observation_question_status=[
                 'phase2-answered'])
 
         pending_phase2 = self.get_observations(
-            rolecheck='ReviewExpert',
+            rolecheck='SectorExpert',
             observation_question_status=['phase2-closed'],
             review_state=['phase2-pending'])
 
@@ -1185,10 +1175,10 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_approval_questions(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          my questions sent to LR and MS and waiting for reply
         """
-        # For a SE/RE, those on LR pending to be sent to the MS
+        # For a SE, those on LR pending to be sent to the MS
         # or recalled by him, are unanswered questions
 
         if not self.is_sector_expert_or_review_expert():
@@ -1200,7 +1190,7 @@ class Inbox3ReviewFolderView(grok.View):
         ]
 
         phase2 = self.get_observations(
-            rolecheck="ReviewExpert",
+            rolecheck="SectorExpert",
             observation_question_status=statuses_phase2)
 
         return phase2
@@ -1208,7 +1198,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_unanswered_questions(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          my questions sent to LR and MS and waiting for reply
         """
 
@@ -1220,7 +1210,7 @@ class Inbox3ReviewFolderView(grok.View):
         ]
 
         phase2 = self.get_observations(
-            rolecheck="ReviewExpert",
+            rolecheck="SectorExpert",
             observation_question_status=statuses_phase2)
 
         return phase2
@@ -1228,7 +1218,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_waiting_for_comment_from_counterparts_for_question(self):
         """
-         Role: Review expert
+         Role: Sector Expert
         """
         phase2 =  self.get_observations(
             rolecheck='NotCounterPartPhase2',
@@ -1240,7 +1230,7 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_waiting_for_comment_from_counterparts_for_conclusion(self):
         """
-         Role: Review expert
+         Role: Sector Expert
         """
         phase2 =  self.get_observations(
             rolecheck='NotCounterPartPhase2',
@@ -1251,12 +1241,12 @@ class Inbox3ReviewFolderView(grok.View):
     @timeit
     def get_observation_for_finalisation(self):
         """
-         Role: Review expert
+         Role: Sector Expert
          waiting approval from LR
         """
 
         phase2 =  self.get_observations(
-            rolecheck='ReviewExpert',
+            rolecheck='SectorExpert',
             observation_question_status=[
                 'phase2-close-requested'])
 
@@ -1328,7 +1318,7 @@ class Inbox3ReviewFolderView(grok.View):
     def get_answers_from_ms(self):
         """
          Role: Lead Reviewer
-         that need review by Review expert
+         that need review by Sector Expert
         """
         phase2 = self.get_observations(
             rolecheck='LeadReviewer',
@@ -1360,7 +1350,7 @@ class Inbox3ReviewFolderView(grok.View):
     def get_questions_to_be_answered(self):
         """
          Role: MS Coordinator
-         Questions from the SE/RE to be answered
+         Questions from the SE to be answered
         """
         return self.get_observations(
             rolecheck='MSAuthority',
@@ -1396,7 +1386,7 @@ class Inbox3ReviewFolderView(grok.View):
     def get_answers_sent_to_se_re(self):
         """
          Role: MS Coordinator
-         Answers sent to SE/RE
+         Answers sent to SE
         """
         answered = self.get_observations(
             observation_question_status=['phase2-answered'])
@@ -1441,7 +1431,7 @@ class Inbox3ReviewFolderView(grok.View):
     def get_observations_with_my_comments_sent_to_se_re(self):
         """
          Role: MS Expert
-         Answers that I commented on sent to Review expert
+         Answers that I commented on sent to Sector Expert
         """
         return self.get_observations(
             observation_question_status=[
@@ -1580,7 +1570,7 @@ class FinalisedFolderView(grok.View):
                         return x.isCP
                     elif rolename == 'MSAuthority':
                         return x.isMSA
-                    elif rolename == 'ReviewExpert':
+                    elif rolename == 'SectorExpert':
                         return x.isRE
                     elif rolename == 'NotCounterPartPhase2':
                         return not x.isCP and x.isRE

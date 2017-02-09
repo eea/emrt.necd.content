@@ -39,8 +39,8 @@
         />
     <role
         remove="True"
-        id="ReviewExpert"
-        title="ReviewExpert"
+        id="SectorExpert"
+        title="SectorExpert"
         permission="Sharing page: Delegate roles"
         i18n:attributes="title"
         />

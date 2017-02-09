@@ -75,7 +75,7 @@
       </div>
 
       <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
-        <!-- Review expert -->
+        <!-- Sector Expert -->
         <tal:block tal:condition="view/is_sector_expert_or_review_expert">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
@@ -1584,7 +1584,7 @@
           <div class="my-actions inboxSection">
             <div class="collapsibleListTitle" data-list="questions-to-be-answered">
               <div>
-                Questions from Review expert to be answered
+                Questions from Sector Expert to be answered
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -1820,7 +1820,7 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="se-re-actions">
               <div>
-                Review expert actions
+                Sector Expert actions
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -1828,7 +1828,7 @@
           <div class="se-re-actions inboxSection">
             <div class="collapsibleListTitle" data-list="answers-sent-to-se-re">
               <div>
-                Answers sent to Review expert
+                Answers sent to Sector Expert
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -2075,7 +2075,7 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="sr-re-actions">
               <div>
-                Review expert actions
+                Sector Expert actions
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -2083,7 +2083,7 @@
           <div class="sr-re-actions inboxSection">
             <div class="collapsibleListTitle" data-list="observations-with-my-comments-sent-to-se-re">
               <div>
-                Answers that I commented on sent to Review expert
+                Answers that I commented on sent to Sector Expert
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>

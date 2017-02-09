@@ -1,7 +1,10 @@
 ne,Not Estimated
 pgf,Gap Filling
-psi,potential significant issue (step 1)
-ptc,potential technical correction (step 2)
 recalc-prev,Recalculation (compared to previous year submission)
 recalc-same,Recalculation (compared to same year submission)
 unece,UNECE recommendation
+ptc,Potential technical correction (PTC)
+nsms,Not sent to Member State
+tc,Technical Correction (TC)
+rev-est,Revised Estimate
+recommendation,Recommendation

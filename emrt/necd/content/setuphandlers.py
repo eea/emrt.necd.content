@@ -1,4 +1,5 @@
 from Products.CMFCore.utils import getToolByName
+from Products.ATVocabularyManager.config import SORT_METHOD_FOLDER_ORDER
 
 
 VOCABULARIES = [
@@ -45,6 +46,7 @@ def create_vocabulary(context, vocabname, vocabtitle, importfilename=None,
 
         )
     vocabulary = context.getVocabularyByName(vocabname)
+    vocabulary.setSortMethod(SORT_METHOD_FOLDER_ORDER)
     wtool = getToolByName(context, 'portal_workflow')
     wtool.doActionFor(vocabulary, 'publish')
     from logging import getLogger

@@ -16,7 +16,7 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
-   <permission-role>ReviewExpert</permission-role>
+   <permission-role>SectorExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="Change portal events" acquired="False">
@@ -25,7 +25,7 @@
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewExpert</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Owner</permission-role>
@@ -38,12 +38,12 @@
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
-   <permission-role>ReviewExpert</permission-role>
+   <permission-role>SectorExpert</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Observation" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewExpert</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="pending" title="Pending review">

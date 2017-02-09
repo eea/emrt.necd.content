@@ -355,7 +355,7 @@
         <dl>
           <dt>Observation Finish Requested</dt>
           <dd></dd>
-          <dt>RE comments on finish observation request:</dt>
+          <dt>SE comments on finish observation request:</dt>
           <dd><span tal:replace="structure context/closing_comments_phase2/output|context/closing_comments_phase2|nothing" /></dd>
         </dl>
 

@@ -57,7 +57,7 @@
         <thead>
           <tr>
             <th>Country</th>
-            <th>SR/RE</th>
+            <th>SR/SE</th>
             <th>LR</th>
             <th>MSC</th>
             <th>Answer received</th>
@@ -103,7 +103,7 @@
         <thead>
           <tr>
             <th>Sector</th>
-            <th>SR/RE</th>
+            <th>SR/SE</th>
             <th>LR</th>
             <th>MSC</th>
             <th>Answer received</th>

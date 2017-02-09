@@ -306,7 +306,7 @@
   <guard>
    <guard-role>ReviewerPhase2</guard-role>
    <guard-role>LeadReviewer</guard-role>
-   <guard-role>ReviewExpert</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-expression>here/can_draft_conclusions</guard-expression>
   </guard>
  </transition>

@@ -160,7 +160,7 @@
         </tal:block>
         <div class="from"  tal:define="portalType question/portal_type/lower">
           <span class="esdLabel">from</span>
-          <span class="value" tal:condition="python:portalType == 'comment'">Review expert</span>
+          <span class="value" tal:condition="python:portalType == 'comment'">Sector Expert</span>
           <span class="value" tal:condition="python:portalType == 'commentanswer'">Member state coordinator</span>
           <!--span class="value" tal:content="python:view.get_user_name(question.Creator(), question)">John Smith</span-->
           <span class="messageDate">

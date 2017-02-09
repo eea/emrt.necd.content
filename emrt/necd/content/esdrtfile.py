@@ -68,7 +68,7 @@ class AddForm(dexterity.AddForm):
         msg = _(u'Handling of confidential files: '
                 u'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
                 u'and send the password per email to the ESD Secretariat mailbox. '
-                u'Your password will only be shared with the lead reviewer and review expert. '
+                u'Your password will only be shared with the lead reviewer and sector Expert. '
         )
 
         status.add(msg, type='info')
