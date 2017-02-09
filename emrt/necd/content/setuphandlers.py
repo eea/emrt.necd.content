@@ -56,6 +56,9 @@ def create_vocabulary(context, vocabname, vocabtitle, importfilename=None,
         data = profile.readDataFile(importfilename, subdir='esdrtvocabularies')
         vocabulary.importCSV(data)
 
+    for term in vocabulary.values():
+        wtool.doActionFor(term, 'publish')
+
     log.info('done')
 
 

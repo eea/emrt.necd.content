@@ -50,7 +50,9 @@ from .nfr_code_matching import get_category_ldap_from_nfr_code
 from .nfr_code_matching import get_category_value_from_nfr_code
 from emrt.necd.content.subscriptions.interfaces import INotificationUnsubscriptions
 from emrt.necd.content.utilities.ms_user import IUserIsMS
+from emrt.necd.content.constants import LDAP_SECTOREXP
 import datetime
+
 
 HIDDEN_ACTIONS = [
     '/content_status_history',
@@ -209,7 +211,7 @@ def check_nfr_code(value):
     groups = user.getGroups()
     valid = False
     for group in groups:
-        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category):
+        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
             valid = True
 
     if not valid:

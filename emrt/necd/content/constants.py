@@ -15,11 +15,11 @@ LDAP_MSEXPERT = LDAP_COUNTRIES + '-msexpert'
 
 
 __all__ = (
-    LDAP_BASE.__name__,
-    LDAP_TERT.__name__,
-    LDAP_LEADREVIEW.__name__,
-    LDAP_SECTOREXP.__name__,
-    LDAP_COUNTRIES.__name__,
-    LDAP_MSA.__name__,
-    LDAP_MSEXPERT.__name__,
+    LDAP_BASE,
+    LDAP_TERT,
+    LDAP_LEADREVIEW,
+    LDAP_SECTOREXP,
+    LDAP_COUNTRIES,
+    LDAP_MSA,
+    LDAP_MSEXPERT,
 )
