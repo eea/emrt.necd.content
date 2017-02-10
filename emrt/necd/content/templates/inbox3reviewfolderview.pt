@@ -116,9 +116,7 @@
                       <th style="width:80px">
                         Modification date
                       </th>
-                      <th>
-                        Step
-                      </th>
+
                     </tr>
                   </thead>
                   <tbody>
@@ -157,9 +155,6 @@
                           <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                               tal:attributes="data-sorter python:observation.modified()">
                             20 Jun 2014, 11:35 AM
-                          </td>
-                          <td>
-                            <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                           </td>
                         </tr>
                       </tal:item>
@@ -202,9 +197,7 @@
                   <th style="width:80px">
                     Modification date
                   </th>
-                  <th>
-                    Step
-                  </th>
+
                 </tr>
               </thead>
               <tbody>
@@ -243,9 +236,6 @@
                       <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                           tal:attributes="data-sorter python:observation.modified()">
                         20 Jun 2014, 11:35 AM
-                      </td>
-                      <td>
-                        <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                       </td>
                     </tr>
                   </tal:item>
@@ -287,9 +277,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -330,9 +318,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -372,9 +357,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -415,9 +398,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -457,9 +437,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -499,9 +477,6 @@
                         <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
-                        </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                         </td>
                       </tr>
                     </tal:item>
@@ -551,9 +526,7 @@
                       <th style="width:80px">
                         Modification date
                       </th>
-                      <th>
-                        Step
-                      </th>
+
                     </tr>
                   </thead>
 
@@ -593,9 +566,6 @@
                           <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                               tal:attributes="data-sorter python:observation.modified()">
                             20 Jun 2014, 11:35 AM
-                          </td>
-                          <td>
-                            <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                           </td>
                         </tr>
                       </tal:item>
@@ -637,9 +607,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -680,9 +648,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -722,9 +687,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -765,9 +728,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -807,9 +767,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -850,9 +808,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -892,9 +847,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -934,9 +887,6 @@
                         <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
-                        </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                         </td>
                       </tr>
                     </tal:item>
@@ -988,9 +938,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1031,9 +979,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -1073,9 +1018,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1116,9 +1059,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -1158,9 +1098,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1201,9 +1139,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -1243,9 +1178,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1285,9 +1218,6 @@
                         <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
-                        </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                         </td>
                       </tr>
                     </tal:item>
@@ -1336,9 +1266,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1379,9 +1307,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -1421,9 +1346,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1463,9 +1386,6 @@
                         <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
-                        </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                         </td>
                       </tr>
                     </tal:item>
@@ -1514,9 +1434,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1556,9 +1474,6 @@
                         <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
-                        </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                         </td>
                       </tr>
                     </tal:item>
@@ -1604,9 +1519,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1647,9 +1560,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -1680,9 +1590,7 @@
                     <th style="width:80px">
                       Modification date
                     </th>
-                    <th>
-                      Step
-                    </th>
+
                   </tr>
                 </thead>
 
@@ -1723,9 +1631,6 @@
                             tal:attributes="data-sorter python:observation.modified()">
                           20 Jun 2014, 11:35 AM
                         </td>
-                        <td>
-                          <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                        </td>
                       </tr>
                     </tal:item>
                   </tal:block>
@@ -1764,9 +1669,7 @@
                   <th style="width:80px">
                     Modification date
                   </th>
-                  <th>
-                    Step
-                  </th>
+
                 </tr>
               </thead>
 
@@ -1807,9 +1710,6 @@
                           tal:attributes="data-sorter python:observation.modified()">
                         20 Jun 2014, 11:35 AM
                       </td>
-                      <td>
-                        <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                      </td>
                     </tr>
                   </tal:item>
                 </tal:block>
@@ -1848,9 +1748,7 @@
                   <th style="width:80px">
                     Modification date
                   </th>
-                  <th>
-                    Step
-                  </th>
+
                 </tr>
               </thead>
 
@@ -1890,9 +1788,6 @@
                       <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                           tal:attributes="data-sorter python:observation.modified()">
                         20 Jun 2014, 11:35 AM
-                      </td>
-                      <td>
-                        <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                       </td>
                     </tr>
                   </tal:item>
@@ -1935,9 +1830,7 @@
                   <th style="width:80px">
                     Modification date
                   </th>
-                  <th>
-                    Step
-                  </th>
+
                 </tr>
               </thead>
 
@@ -1978,9 +1871,6 @@
                           tal:attributes="data-sorter python:observation.modified()">
                         20 Jun 2014, 11:35 AM
                       </td>
-                      <td>
-                        <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                      </td>
                     </tr>
                   </tal:item>
                 </tal:block>
@@ -2019,9 +1909,7 @@
                   <th style="width:80px">
                     Modification date
                   </th>
-                  <th>
-                    Step
-                  </th>
+
                 </tr>
               </thead>
 
@@ -2062,9 +1950,6 @@
                           tal:attributes="data-sorter python:observation.modified()">
                         20 Jun 2014, 11:35 AM
                       </td>
-                      <td>
-                        <div tal:attributes="class observation/observation_phase">&nbsp;</div>
-                      </td>
                     </tr>
                   </tal:item>
                 </tal:block>
@@ -2103,9 +1988,7 @@
                   <th style="width:80px">
                     Modification date
                   </th>
-                  <th>
-                    Step
-                  </th>
+
                 </tr>
               </thead>
 
@@ -2145,9 +2028,6 @@
                       <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
                           tal:attributes="data-sorter python:observation.modified()">
                         20 Jun 2014, 11:35 AM
-                      </td>
-                      <td>
-                        <div tal:attributes="class observation/observation_phase">&nbsp;</div>
                       </td>
                     </tr>
                   </tal:item>

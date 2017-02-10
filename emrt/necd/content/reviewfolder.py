@@ -266,7 +266,6 @@ EXPORT_FIELDS = OrderedDict([
     ('pollutants_value', 'Pollutants'),
     ('get_highlight', 'Highlight'),
     ('overview_status', 'Status'),
-    ('observation_phase', 'Step'),
     ('observation_finalisation_reason_step2', 'Conclusion step 2'),
     ('observation_finalisation_text_step2', 'Conclusion step 2 note'),
     ('observation_status', 'Workflow'),
@@ -452,7 +451,6 @@ def decorate(item):
     new_item['text'] = item.text
     new_item['nfr_code_value'] = item.nfr_code_value()
     new_item['modified'] = item.modified()
-    new_item['observation_phase'] = item.observation_phase()
     new_item['observation_question_status'] = item.observation_question_status()
     new_item['last_answer_reply_number'] = item.last_answer_reply_number()
     new_item['get_status'] = item.get_status()

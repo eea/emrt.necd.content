@@ -109,7 +109,6 @@
  <column value="review_year" />
  <column value="year" />
  <column value="overview_status" />
- <column value="observation_phase" />
  <column value="observation_question_status" />
  <column value="last_answer_reply_number" />
  <column value="observation_already_replied" />

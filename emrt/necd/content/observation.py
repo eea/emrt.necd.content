@@ -788,9 +788,6 @@ class Observation(dexterity.Container):
 
         return False
 
-    def observation_phase(self):
-        return "phase2-observation"
-
     def can_add_followup(self):
         status = self.get_status()
         return status in ['phase2-conclusions']

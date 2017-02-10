@@ -33,9 +33,6 @@
         <th id="reviewfolder-status" class="nosort">
           Status
         </th>
-        <th id="reviewfolder-step" class="nosort">
-          Step
-        </th>
         <th id="reviewfolder-workflow" class="nosort">
           Workflow
         </th>
@@ -84,9 +81,6 @@
               tal:replace="structure observation/overview_status">
                 Open
             </span>
-          </td>
-          <td>
-            <div tal:attributes="class observation/observation_phase">&nbsp;</div>
           </td>
           <td >
             <span tal:condition="python: observation.observation_status == 'SE'">

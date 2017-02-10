@@ -49,9 +49,6 @@
         <div class="cell position-5 width-2 esdLabel">Pollutants</div>
         <div class="cell position-7 width-3 esdLabel">Inventory year</div>
         <div class="cell position-10 width-3 esdLabel">WF Location</div>
-        <div class="cell position-13 width-3">
-          <div tal:attributes="class python:context.observation_phase()">&nbsp;</div>
-        </div>
       </div>
       <div class="row">
         <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>

@@ -83,7 +83,6 @@
             ccore.enableTableReload("#reviewfolder-nfr", { "sort_on": "nfr_code", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-year", { "sort_on": "review_year", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-status", { "sort_on": "observation_status", "sort_order": "ascending" });
-            ccore.enableTableReload("#reviewfolder-step", { "sort_on": "observation_step", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-workflow", { "sort_on": "observation_finalisation_reason", "sort_order": "ascending" });
             ccore.delegate("div.listingBar a", "click", function(event) {
                 event.preventDefault();
@@ -149,14 +148,6 @@
                     filter += "&";
                   }
                   filter += "highlights=" + highlights;
-                }
-                if ($('#stepFilter').val() != ""){
-                  if (filter == ""){
-                    filter += "?";
-                  }else{
-                    filter += "&";
-                  }
-                  filter += "step=" + $('#stepFilter').val();
                 }
                 if ($('#wfStatusFilter').val() != ""){
                   if (filter == ""){
@@ -334,20 +325,10 @@
           </div>
         </div>
         <div class="row" style="padding-top:20px">
-          <div class="cell position-1 width-3 esdLabel">Step</div>
-          <div class="cell position-4 width-6 esdLabel">Workflow</div>
+          <div class="cell position-1 width-6 esdLabel">Workflow</div>
         </div>
         <div class="row">
-          <div class="cell position-1 width-3">
-            <select id="stepFilter"  class="chosen-select" data-placeholder="Select step"
-                tal:define="step python:'';
-                            step request/step | step">
-              <option></option>
-              <option tal:attributes="selected python:'step2'==step"
-                value="step2">Step2</option>
-            </select>
-          </div>
-          <div class="cell position-4 width-6">
+          <div class="cell position-1 width-6">
             <select id="wfStatusFilter"  class="chosen-select" data-placeholder="Select status"
                 tal:define="wfStatus python:'';
                             wfStatus request/wfStatus | wfStatus">

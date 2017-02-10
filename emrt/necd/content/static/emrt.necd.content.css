@@ -281,16 +281,6 @@
 .observationList tr.technicalCorrectionBackground{
 	border-left: 5px solid #FFA500 !important;
 }*/
-div.phase1-observation{
-	background: url("++resource++emrt.necd.content/phase-1.png") no-repeat;
-	width: 61px;
-	height: 32px;
-}
-div.phase2-observation{
-	background: url("++resource++emrt.necd.content/phase-2.png") no-repeat;
-	width: 61px;
-	height: 32px;
-}
 .observationRefCell{
 	color: #427597;
 	font-weight: bold;

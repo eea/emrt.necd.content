@@ -242,9 +242,6 @@
         <div class="cell position-8 width-2 esdLabel">Pollutants</div>
         <div class="cell position-10 width-1 esdLabel">Fuel</div>
         <div class="cell position-11 width-2 esdLabel">Inventory year</div>
-        <div class="cell position-13 width-3">
-          <div tal:attributes="class python:context.observation_phase()">&nbsp;</div>
-        </div>
       </div>
       <div class="row">
         <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
@@ -674,7 +671,7 @@
           </a>
         </tal:block>
        <a href="./content_status_modify?workflow_action=close"
-          tal:condition="python:not context.get_question() and view.can_add_question() and context.observation_phase() == 'phase2-observation'"
+          tal:condition="python:not context.get_question() and view.can_add_question()"
           id="observation-finish"
           tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions"
           class="standardButton">
