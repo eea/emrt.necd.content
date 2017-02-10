@@ -125,6 +125,117 @@ class DenyFinishObservationReasonForm(Form):
             self.actions[k].addClass('standardButton')
 
 
+class AssignFormMixin(BrowserView):
+
+    index = None
+
+    _managed_role = None
+
+    _counterpart_users = None
+
+    _revoke_on_call = None
+
+    _msg_no_usernames = None
+
+    def _get_wf_action(self):
+        raise NotImplementedError
+
+    def _assignation_target(self):
+        raise NotImplementedError
+
+    def _target_groupnames(self):
+        raise NotImplementedError
+
+    def _is_managed_role(self, username):
+        return self._managed_role in api.user.get_roles(
+            username=username,
+            obj=self._assignation_target(),
+            inherit=False
+        )
+
+    def revoke_all_roles(self):
+        with api.env.adopt_roles(['Manager']):
+            target = self._assignation_target()
+            for userId, username, cp in self.get_counterpart_users():
+                if cp:
+                    revoke_roles(
+                        username=userId,
+                        obj=target,
+                        roles=[self._managed_role],
+                        inherit=False,
+                    )
+
+    def get_users(self, groupname):
+        users = api.user.get_users(groupname=groupname)
+        return [(u.getId(), u.getProperty('fullname', u.getId())) for u in users]
+
+    def get_counterpart_users(self):
+        if self._counterpart_users is not None:
+            return self._counterpart_users
+
+        users = []
+
+        current_user_id = api.user.get_current().getId()
+
+        for groupname in self._target_groupnames():
+            try:
+                data = [
+                    (user_id, user_name, self._is_managed_role(user_id)) for
+                    user_id, user_name in self.get_users(groupname) if
+                    user_id != current_user_id
+                ]
+                users.extend(data)
+            except api.user.GroupNotFoundError:
+                from logging import getLogger
+                log = getLogger(__name__)
+                log.info('There is not such a group %s' % groupname)
+            except:
+                from logging import getLogger
+                import sys
+                log = getLogger(__name__)
+                log.info('Unexpected error: %s' % sys.exc_info()[0])
+
+        self._counterpart_users = list(set(users))
+        return self._counterpart_users
+
+    def __call__(self):
+        """ Perform the update and redirect if necessary, or render the page
+        """
+        target = self._assignation_target()
+        if self.request.get('send', None):
+            usernames = self.request.get('counterparts', None)
+            if not usernames:
+                status = IStatusMessage(self.request)
+                msg = self._msg_no_usernames
+                status.addStatusMessage(msg, "error")
+                return self.index()
+
+            self.revoke_all_roles()
+
+            for username in usernames:
+                api.user.grant_roles(
+                    username=username,
+                    roles=[self._managed_role],
+                    obj=target
+                )
+
+            wf_action = self._get_wf_action()
+            if wf_action:
+                return self.context.content_status_modify(
+                    workflow_action=wf_action)
+            else:
+                status = IStatusMessage(self.request)
+                msg = _(u'There was an error. Try again please')
+                status.addStatusMessage(msg, "error")
+                url = self.context.absolute_url()
+                return self.request.response.redirect(url)
+
+        else:
+            if self._revoke_on_call:
+                self.revoke_all_roles()
+            return self.index()
+
+
 class IAssignAnswererForm(Interface):
     answerers = schema.Choice(
         title=_(u'Select the answerers'),
@@ -137,101 +248,35 @@ class IAssignAnswererForm(Interface):
     )
 
 
-class AssignAnswererForm(BrowserView):
+class AssignAnswererForm(AssignFormMixin):
 
     index = ViewPageTemplateFile('templates/assign_answerer_form.pt')
 
-    def revoke_all_roles(self):
-        """
-          Revoke all existing roles
-        """
-        target = self.assignation_target()
-        for userId, username, cp in self.get_counterpart_users():
-            if cp:
-                revoke_roles(
-                    username=userId,
-                    obj=target,
-                    roles=['MSExpert'],
-                    inherit=False,
-                )
+    _managed_role = 'MSExpert'
+    _revoke_on_call = True
+    _msg_no_usernames = _(
+        u'You need to select at least one expert for discussion')
 
-    def cache_get_users(fun, self, groupname):
-        import time
-        return (groupname, time.time() // 3600)
-
-    @cache(cache_get_users)
-    def get_users(self, groupname):
-        users = api.user.get_users(groupname=groupname)
-        return [(u.getId(), u.getProperty('fullname', u.getId())) for u in users]
-
-    def assignation_target(self):
+    def _assignation_target(self):
         return aq_parent(aq_inner(self.context))
 
-    def target_groupname(self):
+    def _target_groupnames(self):
         context = aq_inner(self.context)
         observation = aq_parent(context)
         country = observation.country.lower()
-        return '{}-{}'.format(LDAP_MSEXPERT, country)
+        return ['{}-{}'.format(LDAP_MSEXPERT, country)]
 
-    def get_counterpart_users(self):
-        groupname = self.target_groupname()
-        current = api.user.get_current()
-        current_id = current.getId()
-
-        def isMSE(u):
-            target = self.assignation_target()
-            return 'MSExpert' in api.user.get_roles(username=u, obj=target, inherit=False)
-
-        try:
-            return [(u[0], u[1], isMSE(u[0])) for u in self.get_users(groupname=groupname) if current_id != u]
-        except api.user.GroupNotFoundError:
-            from logging import getLogger
-            log = getLogger(__name__)
-            log.info('There is not such a group %s' % groupname)
-            return []
-
-    def __call__(self):
-        """Perform the update and redirect if necessary, or render the page
-        """
-        target = self.assignation_target()
-        if self.request.form.get('send', None):
-            usernames = self.request.get('counterparts', None)
-            if not usernames:
-                status = IStatusMessage(self.request)
-                msg = _(u'You need to select at least one expert for discussion')
-                status.addStatusMessage(msg, "error")
-                return self.index()
-
-            self.revoke_all_roles()
-
-            for username in usernames:
-                api.user.grant_roles(username=username,
-                    roles=['MSExpert'],
-                    obj=target)
-
-            if api.content.get_state(self.context) in [
-                    u'phase2-pending', u'phase2-pending-answer-drafting']:
-                wf_action = 'phase2-assign-answerer'
-            else:
-                status = IStatusMessage(self.request)
-                msg = _(u'There was an error. Try again please')
-                status.addStatusMessage(msg, "error")
-                url = self.context.absolute_url()
-                return self.request.response.redirect(url)
-
-            return self.context.content_status_modify(
-                workflow_action=wf_action,
-            )
-
-        else:
-            self.revoke_all_roles()
-            return self.index()
+    def _get_wf_action(self):
+        if api.content.get_state(self.context) in [
+                u'phase2-pending',
+                u'phase2-pending-answer-drafting']:
+            return 'phase2-assign-answerer'
 
 
 class ReAssignMSExpertsForm(AssignAnswererForm):
     def __call__(self):
 
-        target = self.assignation_target()
+        target = self._assignation_target()
         if self.request.form.get('send', None):
             usernames = self.request.get('counterparts', None)
             if not usernames:
@@ -243,7 +288,7 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
             self.revoke_all_roles()
             for username in usernames:
                 api.user.grant_roles(username=username,
-                    roles=['MSExpert'],
+                    roles=[self._managed_role],
                     obj=target)
 
             return self.request.response.redirect(target.absolute_url())
@@ -263,122 +308,34 @@ class IAssignCounterPartForm(Interface):
     )
 
 
-class AssignCounterPartForm(BrowserView):
+class AssignCounterPartForm(AssignFormMixin):
 
     index = ViewPageTemplateFile('templates/assign_counterpart_form.pt')
 
-    def revoke_all_roles(self):
-        """
-          Revoke all existing roles
-        """
-        with api.env.adopt_roles(['Manager']):
-            target = self.assignation_target()
-            for userId, username, cp in self.get_counterpart_users():
-                if cp:
-                    revoke_roles(
-                        username=userId,
-                        obj=target,
-                        roles=['CounterPart'],
-                        inherit=False,
-                    )
+    _managed_role = 'CounterPart'
+    _revoke_on_call = True
+    _msg_no_usernames = _(
+        u'You need to select at least one counterpart')
 
-    def target_groupnames(self):
+    def _assignation_target(self):
+        return aq_parent(aq_inner(self.context))
+
+    def _get_wf_action(self):
+        if api.content.get_state(self.context) == 'phase2-draft':
+            return 'phase2-request-for-counterpart-comments'
+
+    def _target_groupnames(self):
         return [LDAP_TERT]
 
     def get_current_counterparters(self):
         """ Return list of current counterparters
         """
-        target = self.assignation_target()
+        target = self._assignation_target()
         local_roles = target.get_local_roles()
         users = [
-            u[0] for u in local_roles if 'CounterPart' in u[1]
+            u[0] for u in local_roles if self._managed_role in u[1]
         ]
         return [api.user.get(user) for user in users]
-
-    def cache_get_users(fun, self, groupname):
-        import time
-        return (groupname, time.time() // 86400)
-
-    @cache(cache_get_users)
-    def get_users(self, groupname):
-        #users = api.user.get_users(groupname=groupname)
-        #return [(u.getId(), u.getProperty('fullname', u.getId())) for u in users]
-
-        vtool = getToolByName(self, 'portal_vocabularies')
-        voc = vtool.getVocabularyByName(groupname)
-        users = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            users.append((term[0], term[1]))
-
-        return users
-
-    def assignation_target(self):
-        return aq_parent(aq_inner(self.context))
-
-    def get_counterpart_users(self):
-        current = api.user.get_current()
-        current_id = current.getId()
-
-        users = []
-
-        def isCP(userId):
-            target = self.assignation_target()
-            return False
-            #return 'CounterPart' in api.user.get_roles(username=userId, obj=target, inherit=False)
-
-        for groupname in self.target_groupnames():
-            try:
-                data = [(u[0], u[1], isCP(u[0])) for u in self.get_users(groupname) if current_id != u]
-                users.extend(data)
-            except api.user.GroupNotFoundError:
-                from logging import getLogger
-                log = getLogger(__name__)
-                log.info('There is not such a group %s' % groupname)
-            except:
-                from logging import getLogger
-                import sys
-                log = getLogger(__name__)
-                log.info('Unexpected error: %s' % sys.exc_info()[0])
-
-        return list(set(users))
-
-    def __call__(self):
-        """Perform the update and redirect if necessary, or render the page
-        """
-        target = self.assignation_target()
-        if self.request.form.get('send', None):
-            counterparts = self.request.get('counterparts', None)
-            if counterparts is None:
-                status = IStatusMessage(self.request)
-                msg = _(u'You need to select at least one counterpart')
-                status.addStatusMessage(msg, "error")
-                return self.index()
-
-            self.revoke_all_roles()
-
-            for username in counterparts:
-                api.user.grant_roles(username=username,
-                    roles=['CounterPart'],
-                    obj=target)
-
-            if api.content.get_state(self.context) == 'phase2-draft':
-                wf_action = 'phase2-request-for-counterpart-comments'
-            else:
-                status = IStatusMessage(self.request)
-                msg = _(u'There was an error. Try again please')
-                status.addStatusMessage(msg, "error")
-                url = self.context.absolute_url()
-                return self.request.response.redirect(url)
-
-            return self.context.content_status_modify(
-                workflow_action=wf_action,
-
-            )
-
-        else:
-            self.revoke_all_roles()
-            return self.index()
 
 
 class IAssignConclusionReviewerForm(Interface):
@@ -400,7 +357,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             counterparts = self.request.get('counterparts', None)
             if counterparts is None:
                 status = IStatusMessage(self.request)
-                msg = _(u'You need to select at least one counterpart')
+                msg = self._msg_no_usernames
                 status.addStatusMessage(msg, "error")
                 return self.index()
 
@@ -408,7 +365,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
 
             for username in counterparts:
                 api.user.grant_roles(username=username,
-                    roles=['CounterPart'],
+                    roles=[self._managed_role],
                     obj=target)
 
             status = IStatusMessage(self.request)
@@ -422,7 +379,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
                 target,
                 _temp,
                 subject,
-                role='CounterPart',
+                role=self._managed_role,
                 notification_name='question_to_counterpart'
             )
 
@@ -432,106 +389,27 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             return self.index()
 
 
-class AssignConclusionReviewerForm(BrowserView):
+class AssignConclusionReviewerForm(AssignFormMixin):
 
     index = ViewPageTemplateFile('templates/assign_conclusion_reviewer_form.pt')
 
+    _managed_role = 'CounterPart'
+    _revoke_on_call = False
+    _msg_no_usernames = _(
+        u'You need to select at least one reviewer for conclusions')
+
     def update(self):
-        self.revoke_all_roles()
+        self._revoke_all_roles()
 
-    def revoke_all_roles(self):
-        """
-          Revoke all existing roles
-        """
-        target = self.assignation_target()
-        for userId, username, cp in self.get_counterpart_users():
-            if cp:
-                revoke_roles(
-                    username=userId,
-                    obj=target,
-                    roles=['CounterPart'],
-                    inherit=False,
-                )
-
-    def cache_get_users(fun, self, groupname):
-        import time
-        return (groupname, time.time() // 3600)
-
-    @cache(cache_get_users)
-    def get_users(self, groupname):
-        #users = api.user.get_users(groupname=groupname)
-        #return [(u.getId(), u.getProperty('fullname', u.getId())) for u in users]
-        vtool = getToolByName(self, 'portal_vocabularies')
-        voc = vtool.getVocabularyByName(groupname)
-        users = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            users.append((term[0], term[1]))
-        return users
-
-    def assignation_target(self):
+    def _assignation_target(self):
         return aq_inner(self.context)
 
-    def target_groupnames(self):
+    def _target_groupnames(self):
         return [LDAP_TERT]
 
-    def get_counterpart_users(self):
-        current = api.user.get_current()
-        current_id = current.getId()
-
-        users = []
-
-        def isCP(u):
-            target = self.assignation_target()
-            return False
-            #return 'CounterPart' in api.user.get_roles(username=u, obj=target, inherit=False)
-
-        for groupname in self.target_groupnames():
-            try:
-                data = [(u[0], u[1], isCP(u[0])) for u in self.get_users(groupname=groupname) if current_id != u]
-                users.extend(data)
-            except api.user.GroupNotFoundError:
-                from logging import getLogger
-                log = getLogger(__name__)
-                log.info('There is not such a group %s' % groupname)
-
-        return list(set(users))
-
-    def __call__(self):
-        """Perform the update and redirect if necessary, or render the page
-        """
-        target = self.assignation_target()
-        if self.request.form.get('send', None):
-            usernames = self.request.form.get('counterparts', None)
-            if not usernames:
-                status = IStatusMessage(self.request)
-                msg = _(u'You need to select at least one reviewer for conclusions')
-                status.addStatusMessage(msg, "error")
-                return self.index()
-
-            self.revoke_all_roles()
-
-            for username in usernames:
-                api.user.grant_roles(username=username,
-                    obj=target,
-                    roles=['CounterPart'],
-                )
-
-            if api.content.get_state(self.context).startswith('phase2-'):
-                wf_action = 'phase2-request-comments'
-            else:
-                status = IStatusMessage(self.request)
-                msg = _(u'There was an error. Try again please')
-                status.addStatusMessage(msg, "error")
-                url = self.context.absolute_url()
-                return self.request.response.redirect(url)
-
-            return self.context.content_status_modify(
-                workflow_action=wf_action,
-            )
-
-        else:
-            return self.index()
+    def _get_wf_action(self):
+        if api.content.get_state(self.context).startswith('phase2-'):
+            return 'phase2-request-comments'
 
     def updateActions(self):
         super(AssignConclusionReviewerForm, self).updateActions()

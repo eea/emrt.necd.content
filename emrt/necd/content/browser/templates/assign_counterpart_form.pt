@@ -29,16 +29,16 @@
 
     <div tal:replace="structure provider:plone.abovecontentbody" tal:condition="not:ajax_load" />
 
-    <div id="content-core">
+    <div id="content-core" tal:define="counterpart_users view/get_counterpart_users">
 
-        <tal:block condition="not:view/get_counterpart_users">
+        <tal:block condition="not:counterpart_users">
           Sorry: there are no experts.
           Please, contact the EEA Secretariat for further assistance.
 
         </tal:block>
 
 
-        <tal:block condition="view/get_counterpart_users">
+        <tal:block condition="counterpart_users">
 
           <p class="discrete" tal:define="counterparters view/get_current_counterparters"
              tal:condition="counterparters">
@@ -59,7 +59,7 @@
               <select multiple="multiple" name="counterparts:list" class="chosen-select"
                 data-placeholder="Click here or type the name to select counterparts">
                 <option
-                  tal:repeat="member view/get_counterpart_users"
+                  tal:repeat="member counterpart_users"
                   tal:content="python: member[1]"
                   tal:attributes="value python:member[0];
                                   selected python:member[2] and 'selected' or None;">
