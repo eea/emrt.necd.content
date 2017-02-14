@@ -5,7 +5,7 @@ from five import grok
 
 
 class CopyFileToAnswer(grok.View):
-    grok.require('emrt.necd.content.AddESDRTFile')
+    grok.require('emrt.necd.content.AddNECDFile')
     grok.context(IComment)
     grok.name('copy-attachment-to-answer')
 
@@ -20,7 +20,7 @@ class CopyFileToAnswer(grok.View):
 
         filename = answer.invokeFactory(
             id=candidate_id,
-            type_name='ESDRTFile',
+            type_name='NECDFile',
             file=file,
         )
         return self.request.response.redirect(context.absolute_url())

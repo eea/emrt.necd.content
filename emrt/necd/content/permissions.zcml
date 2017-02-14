@@ -17,8 +17,8 @@
 
 
        <permission
-          id="emrt.necd.content.AddESDRTFile"
-    title="emrt.necd.content: Add ESDRTFile"
+          id="emrt.necd.content.AddNECDFile"
+    title="emrt.necd.content: Add NECDFile"
     />
 
 

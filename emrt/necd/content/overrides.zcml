@@ -10,7 +10,7 @@
     i18n_domain="emrt.necd.content">
 
   <adapter
-      factory=".converter.ESDRTIntegerDataConverter"
+      factory=".converter.NECDIntegerDataConverter"
       />
 
   <z3c:widgetTemplate

@@ -22,17 +22,17 @@ symbols = {
 }
 
 
-class ESDRTNumberDataConverter(NumberDataConverter):
+class NECDNumberDataConverter(NumberDataConverter):
     def __init__(self, field, widget):
-        super(ESDRTNumberDataConverter, self).__init__(field, widget)
+        super(NECDNumberDataConverter, self).__init__(field, widget)
         self.formatter.symbols.update(symbols)
 
     # def format(self, obj, pattern=None):
     #     import pdb; pdb.set_trace()
-    #     super(ESDRTIntegerDataConverter, self).format(obj, pattern)
+    #     super(NECDIntegerDataConverter, self).format(obj, pattern)
 
 
-class ESDRTIntegerDataConverter(ESDRTNumberDataConverter):
+class NECDIntegerDataConverter(NECDNumberDataConverter):
     """A data converter for integers."""
     zope.component.adapts(
         zope.schema.interfaces.IInt, IWidget)

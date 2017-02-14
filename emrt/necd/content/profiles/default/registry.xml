@@ -17,8 +17,8 @@
     </field>
     <value>False</value>
   </record>
-  <records interface="emrt.necd.content.nfr_code_matching.IEsdrtSettings" />
-  <record name="emrt.necd.content.nfr_code_matching.IEsdrtSettings.nfrcodeMapping">
+  <records interface="emrt.necd.content.nfr_code_matching.INECDSettings" />
+  <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping">
     <value purge="False">
       <element key="1A1a">sector1|1A1a|1A1, 1A2, 1A4 Energy: stationary combustion|1A1a Public electricity and heat production</element>
       <element key="1A1b">sector1|1A1b|1A1, 1A2, 1A4 Energy: stationary combustion|1A1b Petroleum refining</element>

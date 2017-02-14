@@ -12,7 +12,7 @@ from zope import schema
 
 
 # Interface class; used to define content-type schema.
-class IESDRTFile(form.Schema, IImageScaleTraversable):
+class INECDFile(form.Schema, IImageScaleTraversable):
     """
     Files with special needs
     """
@@ -38,8 +38,8 @@ class IESDRTFile(form.Schema, IImageScaleTraversable):
 # be instances of this class. Use this class to add content-type specific
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
-class ESDRTFile(dexterity.Item):
-    grok.implements(IESDRTFile)
+class NECDFile(dexterity.Item):
+    grok.implements(INECDFile)
     # Add your class methods and properties here
 
     def can_edit(self):
@@ -54,9 +54,9 @@ class ESDRTFile(dexterity.Item):
 
 
 class AddForm(dexterity.AddForm):
-    grok.name('emrt.necd.content.esdrtfile')
-    grok.context(IESDRTFile)
-    grok.require('emrt.necd.content.AddESDRTFile')
+    grok.name('emrt.necd.content.necdfile')
+    grok.context(INECDFile)
+    grok.require('emrt.necd.content.AddNECDFile')
 
     label = 'file'
     description = ''
@@ -75,15 +75,15 @@ class AddForm(dexterity.AddForm):
 
     def updateFields(self):
         super(AddForm, self).updateFields()
-        self.fields = field.Fields(IESDRTFile).omit('title')
+        self.fields = field.Fields(INECDFile).omit('title')
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
 
 
 grok.templatedir('templates')
 
 
-class ESDRTFileView(grok.View):
-    grok.context(IESDRTFile)
+class NECDFileView(grok.View):
+    grok.context(INECDFile)
     grok.require('zope2.View')
     grok.name('view')
 

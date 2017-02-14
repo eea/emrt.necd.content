@@ -2,7 +2,7 @@
 <dc-workflow workflow_id="esd-file-workflow" title="ESD File Workflow" description="" state_variable="review_state" initial_state="initial" manager_bypass="True">
  <instance-creation-conditions>
    <guard>
-    <guard-permission>emrt.necd.content: Add ESDRTFile</guard-permission>
+    <guard-permission>emrt.necd.content: Add NECDFile</guard-permission>
    </guard>
  </instance-creation-conditions>
  <permission>Access contents information</permission>

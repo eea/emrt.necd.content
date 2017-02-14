@@ -15,7 +15,7 @@
  <permission>View</permission>
  <permission>emrt.necd.content: Add Comment</permission>
  <permission>emrt.necd.content: Add CommentAnswer</permission>
- <permission>emrt.necd.content: Add ESDRTFile</permission>
+ <permission>emrt.necd.content: Add NECDFile</permission>
  <permission>emrt.necd.content: Edit Comment</permission>
  <permission>emrt.necd.content: Edit CommentAnswer</permission>
  <permission>emrt.necd.content: View Answer Discussion</permission>
@@ -57,7 +57,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
   </permission-map>
@@ -113,7 +113,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
   </permission-map>
@@ -177,7 +177,7 @@
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
@@ -237,7 +237,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
@@ -293,7 +293,7 @@
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
@@ -357,7 +357,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>MSAuthority</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
@@ -410,7 +410,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
   </permission-map>
@@ -463,7 +463,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
@@ -513,7 +513,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
   </permission-map>

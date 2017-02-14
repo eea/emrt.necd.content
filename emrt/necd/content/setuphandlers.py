@@ -53,7 +53,7 @@ def create_vocabulary(context, vocabname, vocabtitle, importfilename=None,
     log = getLogger('create_vocabulary')
     log.info('Created %s vocabulary' % vocabname)
     if importfilename is not None:
-        data = profile.readDataFile(importfilename, subdir='esdrtvocabularies')
+        data = profile.readDataFile(importfilename, subdir='necdvocabularies')
         vocabulary.importCSV(data)
 
     for term in vocabulary.values():

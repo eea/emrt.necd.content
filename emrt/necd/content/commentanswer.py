@@ -47,7 +47,7 @@ class CommentAnswer(dexterity.Container):
     def can_add_files(self):
         sm = getSecurityManager()
         parent = aq_parent(self)
-        return sm.checkPermission('emrt.necd.content: Add ESDRTFile', self) and api.content.get_state(parent) not in ['phase2-expert-comments']
+        return sm.checkPermission('emrt.necd.content: Add NECDFile', self) and api.content.get_state(parent) not in ['phase2-expert-comments']
 
     def get_files(self):
         items = self.values()

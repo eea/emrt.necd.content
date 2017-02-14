@@ -12,7 +12,7 @@
  <permission>Modify portal content</permission>
  <permission>Reply to item</permission>
  <permission>View</permission>
- <permission>emrt.necd.content: Add ESDRTFile</permission>
+ <permission>emrt.necd.content: Add NECDFile</permission>
  <permission>emrt.necd.content: Edit CommentAnswer</permission>
  <state state_id="initial" title="Initial">
   <exit-transition transition_id="publish"/>
@@ -39,7 +39,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>MSAuthority</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit CommentAnswer" acquired="True">
@@ -81,7 +81,7 @@
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit CommentAnswer" acquired="False">

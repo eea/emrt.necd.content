@@ -22,7 +22,7 @@
       <role name="Manager" />
       <role name="Site Administrator" />
     </permission>
-    <permission name="emrt.necd.content: Add ESDRTFile" acquire="False">
+    <permission name="emrt.necd.content: Add NECDFile" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />
     </permission>

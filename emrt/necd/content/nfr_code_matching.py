@@ -7,7 +7,8 @@ from logging import getLogger
 from collections import OrderedDict
 logger = getLogger('emrt.necd.content.nfr_codes')
 
-class IEsdrtSettings(Interface):
+
+class INECDSettings(Interface):
     """Settings expected to be found in plone.registry
     """
 
@@ -36,7 +37,7 @@ def nfr_codes():
         }
     """
     registry = getUtility(IRegistry)
-    nfrcodeMapping = registry.forInterface(IEsdrtSettings).nfrcodeMapping
+    nfrcodeMapping = registry.forInterface(INECDSettings).nfrcodeMapping
 
     nfr_codes = {}
 

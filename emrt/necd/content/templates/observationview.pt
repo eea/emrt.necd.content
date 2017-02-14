@@ -620,7 +620,7 @@
           </a>
           <a href=""
             tal:condition="conclusion/can_add_files"
-            tal:attributes="href string:${conclusion/absolute_url}/++add++ESDRTFile"
+            tal:attributes="href string:${conclusion/absolute_url}/++add++NECDFile"
             class="addfile standardButton">
             Upload file
           </a>
@@ -951,13 +951,13 @@
 
           <a href=""
                 tal:condition="question/can_add_files"
-                tal:attributes="href string:${question/absolute_url}/++add++ESDRTFile"
+                tal:attributes="href string:${question/absolute_url}/++add++NECDFile"
                 class="standardButton addfile">
                   Upload file
           </a>
           <span
                 tal:condition="question/can_add_files"
-                tal:content="string:${question/absolute_url}/++add++ESDRTFile"
+                tal:content="string:${question/absolute_url}/++add++NECDFile"
                 id="upload-file-url"
                 style="display:none">
                   Upload file

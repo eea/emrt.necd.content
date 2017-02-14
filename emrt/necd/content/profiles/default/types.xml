@@ -10,7 +10,7 @@
   <!-- -*- extra stuff goes here -*- -->
   <object name="ConclusionsPhase2" meta_type="Dexterity FTI" />
   <object name="ReviewFolder" meta_type="Dexterity FTI" />
-  <object name="ESDRTFile" meta_type="Dexterity FTI" />
+  <object name="NECDFile" meta_type="Dexterity FTI" />
   <object name="CommentAnswer" meta_type="Dexterity FTI" />
   <object name="Comment" meta_type="Dexterity FTI" />
   <object name="Question" meta_type="Dexterity FTI" />

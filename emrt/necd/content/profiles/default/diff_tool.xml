@@ -16,7 +16,7 @@
   </type>
 
 
-  <type portal_type="ESDRTFile">
+  <type portal_type="NECDFile">
    <field name="any" difftype="Compound Diff for Dexterity types"/>
   </type>
 

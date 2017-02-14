@@ -11,7 +11,7 @@
  <permission>Modify portal content</permission>
  <permission>Reply to item</permission>
  <permission>View</permission>
- <permission>emrt.necd.content: Add ESDRTFile</permission>
+ <permission>emrt.necd.content: Add NECDFile</permission>
  <permission>emrt.necd.content: View Conclusion Discussion</permission>
  <state state_id="approval" title="Approval">
   <exit-transition transition_id="publish"/>
@@ -41,7 +41,7 @@
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
   </permission-map>
@@ -86,7 +86,7 @@
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
@@ -126,7 +126,7 @@
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="True">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
   </permission-map>
@@ -167,7 +167,7 @@
    <permission-role>Manager</permission-role>
    <permission-role>ReviewerPhase2</permission-role>
   </permission-map>
-  <permission-map name="emrt.necd.content: Add ESDRTFile" acquired="False">
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">

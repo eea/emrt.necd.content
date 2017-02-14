@@ -126,7 +126,7 @@ class ConclusionsPhase2(dexterity.Container):
 
     def can_add_files(self):
         sm = getSecurityManager()
-        return sm.checkPermission('emrt.necd.content: Add ESDRTFile', self)
+        return sm.checkPermission('emrt.necd.content: Add NECDFile', self)
 
     def get_actions(self):
         parent = aq_parent(self)

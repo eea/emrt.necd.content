@@ -26,7 +26,7 @@
   <type type_id="ReviewFolder">
    <bound-workflow workflow_id="esd-reviewtool-folder-workflow"/>
   </type>
-  <type type_id="ESDRTFile">
+  <type type_id="NECDFile">
    <bound-workflow workflow_id="esd-file-workflow"/>
   </type>
   <type type_id="Discussion Item">
