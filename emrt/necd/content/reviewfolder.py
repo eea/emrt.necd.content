@@ -104,8 +104,6 @@ class ReviewFolderMixin(grok.View):
             query['highlight'] = highlights.split(",")
         if freeText != "":
             query['SearchableText'] = freeText
-        if step != "":
-            query['observation_step'] = step
         if wfStatus != "":
             query['observation_status'] = wfStatus
         if nfrCode != "":

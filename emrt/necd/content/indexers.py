@@ -62,7 +62,7 @@ def last_answer_reply_number(context):
 
 
 @indexer(IObservation)
-def conclusion2_reply_number(context):
+def conclusion_reply_number(context):
     replynum = 0
     conclusions = context.values(['Conclusions'])
     if conclusions:
@@ -178,15 +178,6 @@ def observation_question_status(context):
 @indexer(IObservation)
 def observation_status(context):
     return context.observation_status()
-
-
-@indexer(IObservation)
-def observation_step(context):
-    try:
-        return context.get_status()
-    except:
-        return None
-
 
 @indexer(IObservation)
 def last_answer_has_replies(context):

@@ -49,8 +49,8 @@
     <indexed_attr value="last_answer_reply_number" />
  </index>
 
- <index name="conclusion2_reply_number" meta_type="FieldIndex">
-    <indexed_attr value="conclusion2_reply_number" />
+ <index name="conclusion_reply_number" meta_type="FieldIndex">
+    <indexed_attr value="conclusion_reply_number" />
  </index>
 
 
@@ -86,10 +86,6 @@
     <indexed_attr value="observation_status" />
  </index>
 
- <index name="observation_step" meta_type="FieldIndex">
-    <indexed_attr value="observation_step" />
- </index>
-
  <column value="observation_status" />
  <column value="country" />
  <column value="country_value" />
@@ -97,7 +93,6 @@
  <column value="get_status" />
  <column value="get_nfr_code" />
  <column value="get_highlight" />
- <column value="observation_step" />
  <column value="observation_finalisation_reason" />
  <column value="get_author_name" />
  <column value="observation_css_class" />

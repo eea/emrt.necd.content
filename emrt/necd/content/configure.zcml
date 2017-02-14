@@ -47,7 +47,7 @@
   <adapter name="Status_Flag" factory=".indexers.observation_status_flag" />
   <adapter name="last_question_reply_number" factory=".indexers.last_question_reply_number" />
   <adapter name="last_answer_reply_number" factory=".indexers.last_answer_reply_number" />
-  <adapter name="conclusion2_reply_number" factory=".indexers.conclusion2_reply_number" />
+  <adapter name="conclusion_reply_number" factory=".indexers.conclusion_reply_number" />
   <adapter name="year" factory=".indexers.observation_year" />
   <adapter name="review_year" factory=".indexers.observation_review_year" />
   <adapter name="SearchableText" factory=".indexers.SearchableText" />
@@ -57,12 +57,10 @@
   <adapter name="observation_already_replied" factory=".indexers.observation_already_replied" />
   <adapter name="reply_comments_by_mse" factory=".indexers.reply_comments_by_mse" />
   <adapter name="observation_finalisation_reason" factory=".indexers.observation_finalisation_reason" />
-  <adapter name="observation_finalisation_reason" factory=".indexers.observation_finalisation_reason" />
   <adapter name="observation_finalisation_text" factory=".indexers.observation_finalisation_text" />
   <adapter name="observation_sent_to_msc" factory=".indexers.observation_sent_to_msc" />
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
-  <adapter name="observation_step" factory=".indexers.observation_step" />
 
   <!-- Crons view -->
   <browser:page

@@ -161,8 +161,7 @@ class NFRCode(object):
             terms.append(SimpleVocabulary.createTerm(key, key, value['title']))
         return SimpleVocabulary(terms)
 
-grok.global_utility(NFRCode,
-    name=u"emrt.necd.content.nfr_code")
+grok.global_utility(NFRCode, name=u"emrt.necd.content.nfr_code")
 
 
 class Conclusions(object):
@@ -181,20 +180,3 @@ class Conclusions(object):
 
 grok.global_utility(Conclusions, name=u"emrt.necd.content.conclusion_reasons")
 
-
-class Conclusions(object):
-    grok.implements(IVocabularyFactory)
-
-    def __call__(self, context):
-        pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('conclusion_reasons')
-        terms = []
-        if voc is not None:
-            for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
-                terms.append(SimpleVocabulary.createTerm(key, key, value))
-        return SimpleVocabulary(terms)
-
-grok.global_utility(Conclusions,
-    name=u"emrt.necd.content.conclusion_reasons")

@@ -38,7 +38,6 @@ class StatisticsView(grok.View):
                 sector=brain.get_ghg_source_sectors,
                 highlight=brain.get_highlight or [],
                 finalisation_reason=brain.observation_finalisation_reason,
-                step=brain.observation_step,
             )
             data.append(item)
         return data
@@ -238,7 +237,6 @@ class DownloadStatisticsView(grok.View):
                 sector=brain.get_ghg_source_sectors,
                 highlight=brain.get_highlight or [],
                 finalisation_reason=brain.observation_finalisation_reason,
-                step=brain.observation_step,
             )
             data.append(item)
         return data
