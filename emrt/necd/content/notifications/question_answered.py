@@ -14,7 +14,7 @@ def notification_lr(context, event):
     """
     _temp = PageTemplateFile('question_answered_lr_msg.pt')
 
-    if event.action in ['phase2-answer-to-lr']:
+    if event.action in ['answer-to-lr']:
         observation = aq_parent(context)
         subject = u'New answer from country'
         notify(
@@ -29,19 +29,19 @@ def notification_lr(context, event):
 @grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_rev_ph2(context, event):
     """
-    To:     ReviewerPhase2
+    To:     NECDReviewer
     When:   New answer from country
     """
     _temp = PageTemplateFile('question_answered_rev_msg.pt')
 
-    if event.action in ['phase2-answer-to-lr']:
+    if event.action in ['answer-to-lr']:
         observation = aq_parent(context)
         subject = u'New answer from country'
         notify(
             observation,
             _temp,
             subject,
-            'ReviewerPhase2',
+            'NECDReviewer',
             'question_answered'
         )
 
@@ -54,7 +54,7 @@ def notification_rev_msexperts(context, event):
     """
     _temp = PageTemplateFile('question_answered_msexperts_msg.pt')
 
-    if event.action in ['phase2-answer-to-lr']:
+    if event.action in ['answer-to-lr']:
         observation = aq_parent(context)
         subject = u'New answer from country'
         notify(

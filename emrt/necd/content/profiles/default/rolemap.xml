@@ -9,12 +9,12 @@
     <role name="SectorExpert" />
     <role name="LeadReviewer" />
 
-    <role name="ReviewerPhase2" />
+    <role name="NECDReviewer" />
 
   </roles>
   <permissions>
     <!-- -*- extra stuff goes here -*- -->
-    <permission name="emrt.necd.content: Add ConclusionsPhase2" acquire="False">
+    <permission name="emrt.necd.content: Add Conclusions" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />
     </permission>

@@ -14,7 +14,7 @@ def notification_lr(context, event):
     """
     _temp = PageTemplateFile('question_ready_for_approval.pt')
 
-    if event.action in ['phase2-send-to-lr']:
+    if event.action in ['send-to-lr']:
         observation = aq_parent(context)
         subject = u'New question for approval'
         notify(

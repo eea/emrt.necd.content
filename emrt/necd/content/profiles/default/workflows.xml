@@ -6,7 +6,7 @@
  <object name="esd-file-workflow" meta_type="Workflow"/>
  <object name="esd-review-workflow" meta_type="Workflow"/>
  <object name="esd-reviewtool-folder-workflow" meta_type="Workflow"/>
- <object name="esd-conclusion-phase2-workflow" meta_type="Workflow"/>
+ <object name="esd-conclusion-workflow" meta_type="Workflow"/>
  <bindings>
   <type type_id="Comment">
    <bound-workflow workflow_id="esd-comment-workflow"/>
@@ -17,8 +17,8 @@
   <type type_id="Observation">
    <bound-workflow workflow_id="esd-review-workflow"/>
   </type>
-  <type type_id="ConclusionsPhase2">
-   <bound-workflow workflow_id="esd-conclusion-phase2-workflow"/>
+  <type type_id="Conclusions">
+   <bound-workflow workflow_id="esd-conclusion-workflow"/>
   </type>
   <type type_id="Question">
    <bound-workflow workflow_id="esd-question-review-workflow"/>

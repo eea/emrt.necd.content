@@ -14,7 +14,7 @@ def notification_ms(context, event):
     """
     _temp = PageTemplateFile('answer_acknowledged.pt')
 
-    if event.action in ['phase2-validate-answer-msa']:
+    if event.action in ['validate-answer-msa']:
         observation = aq_parent(context)
         subject = u'Your answer was acknowledged'
         notify(

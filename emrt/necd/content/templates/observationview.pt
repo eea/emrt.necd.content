@@ -337,18 +337,18 @@
 
   <ul class="eea-tabs">
     <li style="width:165px;max-width:165px"
-      tal:condition="python:context.get_status() == 'phase2-close-requested'">Finish observation</li>
+      tal:condition="python:context.get_status() == 'close-requested'">Finish observation</li>
     <li style="width:165px;max-width:165px"
-      tal:define="conclusion view/get_conclusion_phase2"
+      tal:define="conclusion view/get_conclusion"
       tal:condition="nocall:conclusion"
-      >Conclusions Step 2</li>
+      >Conclusions</li>
     <li style="width:200px;max-width:200px"
       id="questionChatRoom">Q&amp;A</li>
   </ul>
 
   <div class="eea-tabs-panels" style="overflow:hidden">
     <div class="eea-tabs-panel finish-observation"
-      tal:condition="python:context.get_status() == 'phase2-close-requested'">
+      tal:condition="python:context.get_status() == 'close-requested'">
         <dl>
           <dt>Observation Finish Requested</dt>
           <dd></dd>
@@ -356,7 +356,7 @@
           <dd><span tal:replace="structure context/closing_comments/output|context/closing_comments|nothing" /></dd>
         </dl>
 
-        <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'phase2-close-requested'" >
+        <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'close-requested'" >
           <dl>
             <dt>Observation Finalisation previously denied</dt>
             <dd></dd>
@@ -370,28 +370,28 @@
         </div>
     </div>
     <div class="eea-tabs-panel finish-observation"
-      tal:condition="python:context.get_status() == 'phase2-close-requested'">
+      tal:condition="python:context.get_status() == 'close-requested'">
         <dl>
           <dt>Observation Finish Requested</dt>
           <dd></dd>
           <dt>RE comments on finish observation request:</dt>
-          <dd><span tal:replace="structure context/closing_comments_phase2/output|context/closing_comments_phase2|nothing" /></dd>
+          <dd><span tal:replace="structure context/closing_comments/output|context/closing_comments|nothing" /></dd>
         </dl>
 
-        <div class="finish-denied" tal:condition="python:context.closing_deny_comments_phase2 and context.get_status() == 'phase2-close-requested'" >
+        <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'close-requested'" >
           <dl>
             <dt>Observation Finalisation previously denied</dt>
             <dd></dd>
             <dt>LR comments on finish observation request:</dt>
             <dd>
-              <div tal:replace="structure context/closing_deny_comments_phase2/output|context/closing_deny_comments_phase2|nothing">
+              <div tal:replace="structure context/closing_deny_comments/output|context/closing_deny_comments|nothing">
               Content
               </div>
             </dd>
           </dl>
         </div>
 
-      <div class="actions" tal:condition="view/in_conclusions_phase2">
+      <div class="actions" tal:condition="view/in_conclusions">
         <tal:block tal:repeat="action view/actions">
           <a href=""
             tal:attributes="href action/action;
@@ -403,8 +403,8 @@
         </tal:block>
       </div>
     </div>
-    <div class="eea-tabs-panel conclusions-phase2"
-        tal:define="conclusion view/get_conclusion_phase2"
+    <div class="eea-tabs-panel conclusions"
+        tal:define="conclusion view/get_conclusion"
         tal:condition="nocall:conclusion">
       <div class="row">
         <div id="conclusions">
@@ -611,7 +611,7 @@
               <div class="conclusion-discussion conclusion-discussion-1" tal:content="structure provider:emrt.necd.content.commentmanager"  style="display:none"/>
             </div>
         </div>
-        <div class="actions" tal:condition="view/in_conclusions_phase2">
+        <div class="actions" tal:condition="view/in_conclusions">
           <a href=""
             tal:condition="conclusion/can_edit"
             tal:attributes="href string:${conclusion/absolute_url}/edit"
@@ -637,7 +637,7 @@
       </div>
     </div>
     <div class="eea-tabs-panel questions">
-      <tal:qactions condition="python:not view.in_conclusions_phase2()">
+      <tal:qactions condition="python:not view.in_conclusions()">
       <div class="actions"
         tal:condition="python:not view.get_questions() and view.can_add_conclusion()">
         <!-- <a href=""
@@ -673,7 +673,7 @@
        <a href="./content_status_modify?workflow_action=close"
           tal:condition="python:not context.get_question() and view.can_add_question()"
           id="observation-finish"
-          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=phase2-draft-conclusions"
+          tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=draft-conclusions"
           class="standardButton">
           Go to conclusions
         </a>
@@ -866,12 +866,12 @@
 
       <tal:last condition="repeat/question/end">
 
-      <tal:conclu condition="python:view.in_conclusions_phase2() and not here.get_conclusion_phase2()">
+      <tal:conclu condition="python:view.in_conclusions() and not here.get_conclusion()">
         <div class="actions">
         <a href=""
             id="add-conclusion-link"
             tal:condition="view/can_add_conclusion"
-            tal:attributes="href string:${here/absolute_url}/++add++ConclusionsPhase2"
+            tal:attributes="href string:${here/absolute_url}/++add++Conclusions"
             class="standardButton">
             Add conclusions
         </a>
@@ -880,7 +880,7 @@
 
       </tal:last>
 
-      <tal:qactions condition="python:not view.in_conclusions_phase2()">
+      <tal:qactions condition="python:not view.in_conclusions()">
         <div class="actions" tal:condition="repeat/question/end">
 
           <tal:block tal:define="question view/question"

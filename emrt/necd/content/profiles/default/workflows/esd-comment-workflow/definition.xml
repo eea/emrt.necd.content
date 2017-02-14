@@ -41,7 +41,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
@@ -54,7 +54,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -67,7 +67,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>

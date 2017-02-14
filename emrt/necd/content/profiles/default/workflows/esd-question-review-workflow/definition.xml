@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dc-workflow workflow_id="esd-question-review-workflow" title="ESD Question Review Workflow" description="" state_variable="review_state" initial_state="phase2-draft" manager_bypass="True">
+<dc-workflow workflow_id="esd-question-review-workflow" title="ESD Question Review Workflow" description="" state_variable="review_state" initial_state="draft" manager_bypass="True">
  <instance-creation-conditions>
    <guard>
     <guard-permission>emrt.necd.content: Add Question</guard-permission>
@@ -20,16 +20,16 @@
  <permission>emrt.necd.content: Edit CommentAnswer</permission>
  <permission>emrt.necd.content: View Answer Discussion</permission>
  <permission>emrt.necd.content: View Comment Discussion</permission>
- <state state_id="phase2-answered" title="phase2-answered">
-  <exit-transition transition_id="phase2-recall-msa"/>
-  <exit-transition transition_id="phase2-validate-answer-msa"/>
+ <state state_id="answered" title="answered">
+  <exit-transition transition_id="recall-msa"/>
+  <exit-transition transition_id="validate-answer-msa"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
   </permission-map>
@@ -51,7 +51,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -69,26 +69,26 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
- <state state_id="phase2-closed" title="phase2-closed">
-  <exit-transition transition_id="phase2-add-folowup-question "/>
-  <exit-transition transition_id="phase2-draft-conclusions"/>
-  <exit-transition transition_id="phase2-go-to-conclusions"/>
-  <exit-transition transition_id="phase2-reopen"/>
+ <state state_id="closed" title="closed">
+  <exit-transition transition_id="add-folowup-question "/>
+  <exit-transition transition_id="draft-conclusions"/>
+  <exit-transition transition_id="go-to-conclusions"/>
+  <exit-transition transition_id="reopen"/>
  </state>
- <state state_id="phase2-counterpart-comments" title="phase2-counterpart-comments">
-  <exit-transition transition_id="phase2-reselect-counterparts"/>
-  <exit-transition transition_id="phase2-send-comments"/>
+ <state state_id="counterpart-comments" title="counterpart-comments">
+  <exit-transition transition_id="reselect-counterparts"/>
+  <exit-transition transition_id="send-comments"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
    <permission-role>Manager</permission-role>
@@ -101,13 +101,13 @@
   <permission-map name="Reply to item" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -126,40 +126,40 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
- <state state_id="phase2-draft" title="phase2-draft">
+ <state state_id="draft" title="draft">
   <exit-transition transition_id="finish-observation-re"/>
-  <exit-transition transition_id="phase2-delete-question"/>
-  <exit-transition transition_id="phase2-request-for-counterpart-comments"/>
-  <exit-transition transition_id="phase2-close"/>
-  <exit-transition transition_id="phase2-send-to-lr"/>
-  <exit-transition transition_id="phase2-reopen"/>
+  <exit-transition transition_id="delete-question"/>
+  <exit-transition transition_id="request-for-counterpart-comments"/>
+  <exit-transition transition_id="close"/>
+  <exit-transition transition_id="send-to-lr"/>
+  <exit-transition transition_id="reopen"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="Reply to item" acquired="False">
    <permission-role>Manager</permission-role>
@@ -168,22 +168,22 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit CommentAnswer" acquired="False">
    <permission-role>Manager</permission-role>
@@ -193,20 +193,20 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
- <state state_id="phase2-drafted" title="phase2-drafted">
+ <state state_id="drafted" title="drafted">
   <exit-transition transition_id="finish-observation-lr"/>
-  <exit-transition transition_id="phase2-approve-question"/>
-  <exit-transition transition_id="phase2-close-lr"/>
-  <exit-transition transition_id="phase2-recall-sre"/>
-  <exit-transition transition_id="phase2-redraft"/>
+  <exit-transition transition_id="approve-question"/>
+  <exit-transition transition_id="close-lr"/>
+  <exit-transition transition_id="recall-sre"/>
+  <exit-transition transition_id="redraft"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -231,7 +231,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -250,19 +250,19 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
- <state state_id="phase2-expert-comments" title="phase2-expert-comments">
-  <exit-transition transition_id="phase-reselect-msexperts"/>
-  <exit-transition transition_id="phase2-ask-answer-aproval"/>
+ <state state_id="expert-comments" title="expert-comments">
+  <exit-transition transition_id="eselect-msexperts"/>
+  <exit-transition transition_id="ask-answer-aproval"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -286,7 +286,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -307,22 +307,22 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
- <state state_id="phase2-pending" title="phase2-pending">
-  <exit-transition transition_id="phase2-assign-answerer"/>
-  <exit-transition transition_id="phase2-add-answer"/>
-  <exit-transition transition_id="phase2-recall-question-lr"/>
-  <exit-transition transition_id="phase2-answer-to-lr"/>
-  <exit-transition transition_id="phase2-go-to-conclusions"/>
+ <state state_id="pending" title="pending">
+  <exit-transition transition_id="assign-answerer"/>
+  <exit-transition transition_id="add-answer"/>
+  <exit-transition transition_id="recall-question-lr"/>
+  <exit-transition transition_id="answer-to-lr"/>
+  <exit-transition transition_id="go-to-conclusions"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -348,7 +348,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
@@ -372,16 +372,16 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
   </permission-map>
  </state>
- <state state_id="phase2-pending-answer-drafting" title="phase2-pending-answer-drafting">
-  <exit-transition transition_id="phase2-assign-answerer"/>
-  <exit-transition transition_id="phase2-answer-to-lr"/>
+ <state state_id="pending-answer-drafting" title="pending-answer-drafting">
+  <exit-transition transition_id="assign-answerer"/>
+  <exit-transition transition_id="answer-to-lr"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -404,7 +404,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -425,18 +425,18 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
- <state state_id="phase2-recalled-lr" title="phase2-recalled-lr">
-  <exit-transition transition_id="phase2-redraft"/>
-  <exit-transition transition_id="phase2-approve-question"/>
-  <exit-transition transition_id="phase2-close-lr"/>
+ <state state_id="recalled-lr" title="recalled-lr">
+  <exit-transition transition_id="redraft"/>
+  <exit-transition transition_id="approve-question"/>
+  <exit-transition transition_id="close-lr"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -457,7 +457,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -475,18 +475,18 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
- <state state_id="phase2-recalled-msa" title="phase2-recalled-msa">
-  <exit-transition transition_id="phase2-assign-answerer"/>
-  <exit-transition transition_id="phase2-answer-to-lr"/>
+ <state state_id="recalled-msa" title="recalled-msa">
+  <exit-transition transition_id="assign-answerer"/>
+  <exit-transition transition_id="answer-to-lr"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -507,7 +507,7 @@
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -529,164 +529,164 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>ReviewerPhase2</permission-role>
+   <permission-role>NECDReviewer</permission-role>
   </permission-map>
  </state>
  <transition transition_id="finish-observation-lr" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/../add-conclusions?workflow_action=phase2-draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
+  <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
  <transition transition_id="finish-observation-re" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/../add-conclusions?workflow_action=phase2-draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
+  <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase-reselect-msexperts" title="Select new Experts" new_state="" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/select-new-mse?workflow_action=phase-reselect-msexperts" category="workflow" icon="">Select new Experts</action>
+ <transition transition_id="eselect-msexperts" title="Select new Experts" new_state="" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/select-new-mse?workflow_action=eselect-msexperts" category="workflow" icon="">Select new Experts</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-add-answer" title="Add Answer" new_state="phase2-pending-answer-drafting" trigger="USER" before_script="" after_script="">
+ <transition transition_id="add-answer" title="Add Answer" new_state="pending-answer-drafting" trigger="USER" before_script="" after_script="">
 
   <guard>
    <guard-role>MSAuthority</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-add-folowup-question " title="Add follow up question" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/add-follow-up-question?workflow_action=phase2-add-followup-question" category="workflow" icon="">Add follow up question</action>
+ <transition transition_id="add-folowup-question " title="Add follow up question" new_state="draft" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/add-follow-up-question?workflow_action=add-followup-question" category="workflow" icon="">Add follow up question</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
-   <guard-expression>python:here.has_answers() and here.aq_parent.get_status() not in ['phase2-conclusion-discussion', 'phase2-close-requested']</guard-expression>
+   <guard-role>NECDReviewer</guard-role>
+   <guard-expression>python:here.has_answers() and here.aq_parent.get_status() not in ['conclusion-discussion', 'close-requested']</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-answer-to-lr" title="Submit Answer" new_state="phase2-answered" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-answer-to-lr" category="workflow" icon="">Submit Answer</action>
+ <transition transition_id="answer-to-lr" title="Submit Answer" new_state="answered" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=answer-to-lr" category="workflow" icon="">Submit Answer</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
    <guard-expression>object/one_pending_answer</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-approve-question" title="Approve question and send" new_state="phase2-pending" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-approve-question" category="workflow" icon="">Approve question and send</action>
+ <transition transition_id="approve-question" title="Approve question and send" new_state="pending" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=approve-question" category="workflow" icon="">Approve question and send</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-ask-answer-aproval" title="Close Comments" new_state="phase2-pending-answer-drafting" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-ask-answer-aproval" category="workflow" icon="">Close Comments</action>
+ <transition transition_id="ask-answer-aproval" title="Close Comments" new_state="pending-answer-drafting" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=ask-answer-aproval" category="workflow" icon="">Close Comments</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-assign-answerer" title="Request Comments" new_state="phase2-expert-comments" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/assign_answerer_form?workflow_action=phase2-assign-answerer" category="workflow" icon="">Request Comments</action>
+ <transition transition_id="assign-answerer" title="Request Comments" new_state="expert-comments" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/assign_answerer_form?workflow_action=assign-answerer" category="workflow" icon="">Request Comments</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
    <guard-expression>object/one_pending_answer</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-close" title="Finish Observation" new_state="phase2-closed" trigger="USER" before_script="" after_script="">
+ <transition transition_id="close" title="Finish Observation" new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="" category="" icon="">Finish Observation</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-close-lr" title="Finish Observation" new_state="phase2-closed" trigger="USER" before_script="" after_script="">
+ <transition transition_id="close-lr" title="Finish Observation" new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="" category="" icon="">Finish Observation</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-delete-answer" title="Delete Answer" new_state="phase2-pending" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/delete-last-answer?workflow_action=phase2-delete-answer" category="workflow" icon="">Delete Answer</action>
+ <transition transition_id="delete-answer" title="Delete Answer" new_state="pending" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/delete-last-answer?workflow_action=delete-answer" category="workflow" icon="">Delete Answer</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-delete-question" title="Delete Question" new_state="phase2-closed" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/delete-last-comment?workflow_action=phase2-delete-question" category="workflow" icon="">Delete Question</action>
+ <transition transition_id="delete-question" title="Delete Question" new_state="closed" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/delete-last-comment?workflow_action=delete-question" category="workflow" icon="">Delete Question</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
    <guard-expression>here/can_be_deleted</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-draft-conclusions" title="Add Conclusions" new_state="" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/add-conclusions?workflow_action=phase2-draft-conclusions" category="workflow" icon="">Add Conclusions</action>
+ <transition transition_id="draft-conclusions" title="Add Conclusions" new_state="" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Add Conclusions</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
-   <guard-expression>python:here.has_answers() and not here.aq_parent.get_conclusion_phase2() and here.aq_parent.get_status() == 'phase2-pending'</guard-expression>
+   <guard-role>NECDReviewer</guard-role>
+   <guard-expression>python:here.has_answers() and not here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-go-to-conclusions" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/../add-conclusions?workflow_action=phase2-draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
+ <transition transition_id="go-to-conclusions" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
-   <guard-expression>python:here.has_answers() and here.aq_parent.get_conclusion_phase2() and here.aq_parent.get_status() == 'phase2-pending'</guard-expression>
+   <guard-role>NECDReviewer</guard-role>
+   <guard-expression>python:here.has_answers() and here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-recall-msa" title="Recall" new_state="phase2-recalled-msa" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-recall-msa" category="workflow" icon="">Recall</action>
+ <transition transition_id="recall-msa" title="Recall" new_state="recalled-msa" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=recall-msa" category="workflow" icon="">Recall</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-recall-question-lr" title="Recall Question" new_state="phase2-recalled-lr" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-recall-question-lr" category="workflow" icon="">Recall Question</action>
+ <transition transition_id="recall-question-lr" title="Recall Question" new_state="recalled-lr" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=recall-question-lr" category="workflow" icon="">Recall Question</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-recall-sre" title="Recall Question" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-recall-sre" category="workflow" icon="">Recall Question</action>
+ <transition transition_id="recall-sre" title="Recall Question" new_state="draft" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=recall-sre" category="workflow" icon="">Recall Question</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-redraft" title="Ask SE to redraft" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-redraft" category="workflow" icon="">Ask SE to redraft</action>
+ <transition transition_id="redraft" title="Ask SE to redraft" new_state="draft" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=redraft" category="workflow" icon="">Ask SE to redraft</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-reopen" title="Reopen" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
+ <transition transition_id="reopen" title="Reopen" new_state="draft" trigger="USER" before_script="" after_script="">
 
   <guard>
   </guard>
  </transition>
- <transition transition_id="phase2-request-for-counterpart-comments" title="Request Comments" new_state="phase2-counterpart-comments" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/assign_counterpart_form?workflow_action=phase2-request-for-counterpart-comments" category="workflow" icon="">Request Comments</action>
+ <transition transition_id="request-for-counterpart-comments" title="Request Comments" new_state="counterpart-comments" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/assign_counterpart_form?workflow_action=request-for-counterpart-comments" category="workflow" icon="">Request Comments</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
    <guard-expression>here/unanswered_questions</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-reselect-counterparts" title="Select new Counterparts" new_state="" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/reassign_counterpart_form?workflow_action=phase2-reselect-counterpart" category="workflow" icon="">Select new Counterparts</action>
+ <transition transition_id="reselect-counterparts" title="Select new Counterparts" new_state="" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/reassign_counterpart_form?workflow_action=reselect-counterpart" category="workflow" icon="">Select new Counterparts</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-send-comments" title="Close Comments" new_state="phase2-draft" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-send-comments" category="workflow" icon="">Close Comments</action>
+ <transition transition_id="send-comments" title="Close Comments" new_state="draft" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=send-comments" category="workflow" icon="">Close Comments</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="phase2-send-to-lr" title=" Send Question for Approval " new_state="phase2-drafted" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-send-to-lr" category="workflow" icon="">Send Question for Approval</action>
+ <transition transition_id="send-to-lr" title=" Send Question for Approval " new_state="drafted" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=send-to-lr" category="workflow" icon="">Send Question for Approval</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
    <guard-expression>python:object.can_be_sent_to_lr()</guard-expression>
   </guard>
  </transition>
- <transition transition_id="phase2-validate-answer-msa" title="Acknowledge Answer " new_state="phase2-closed" trigger="USER" before_script="" after_script="">
-  <action url="%(content_url)s/content_status_modify?workflow_action=phase2-validate-answer-msa" category="workflow" icon="">Acknowledge Answer</action>
+ <transition transition_id="validate-answer-msa" title="Acknowledge Answer " new_state="closed" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/content_status_modify?workflow_action=validate-answer-msa" category="workflow" icon="">Acknowledge Answer</action>
   <guard>
-   <guard-role>ReviewerPhase2</guard-role>
+   <guard-role>NECDReviewer</guard-role>
   </guard>
  </transition>
  <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">

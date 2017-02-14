@@ -13,7 +13,7 @@ def notification_cp(context, event):
     """
     _temp = PageTemplateFile('conclusion_to_comment.pt')
 
-    if event.action in ['phase2-request-comments']:
+    if event.action in ['request-comments']:
         observation = context
         subject = u'New draft conclusion to comment on'
         notify(
@@ -33,7 +33,7 @@ def notification_lr(context, event):
     """
     _temp = PageTemplateFile('conclusion_to_comment.pt')
 
-    if event.action in ['phase2-request-comments']:
+    if event.action in ['request-comments']:
         observation = context
         subject = u'New draft conclusion to comment on'
         notify(

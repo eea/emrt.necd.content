@@ -14,7 +14,7 @@ def notification_cp(context, event):
     """
     _temp = PageTemplateFile('question_to_counterpart.pt')
 
-    if event.action in ['phase2-request-for-counterpart-comments']:
+    if event.action in ['request-for-counterpart-comments']:
         observation = aq_parent(context)
         subject = u'New draft question to comment'
         notify(
@@ -34,7 +34,7 @@ def notification_lr(context, event):
     """
     _temp = PageTemplateFile('question_to_counterpart.pt')
 
-    if event.action in ['phase2-request-for-counterpart-comments']:
+    if event.action in ['request-for-counterpart-comments']:
         observation = aq_parent(context)
         subject = u'New draft question to comment'
         notify(

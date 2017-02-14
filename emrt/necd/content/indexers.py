@@ -1,6 +1,6 @@
 from emrt.necd.content.commentanswer import ICommentAnswer
 from emrt.necd.content.comment import IComment
-from conclusionsphase2 import IConclusionsPhase2
+from conclusions import IConclusions
 from .observation import IObservation
 import plone.api as api
 from plone.app.discussion.interfaces import IConversation
@@ -64,7 +64,7 @@ def last_answer_reply_number(context):
 @indexer(IObservation)
 def conclusion2_reply_number(context):
     replynum = 0
-    conclusions = context.values(['ConclusionsPhase2'])
+    conclusions = context.values(['Conclusions'])
     if conclusions:
         conclusion = conclusions[0]
         disc = IConversation(conclusion)
@@ -85,12 +85,12 @@ def SearchableText(context):
     except:
         questions = []
     try:
-        conclusionsphase2 = context.getFolderContents(
-            {'portal_type': 'ConclusionsPhase2'},
+        conclusions = context.getFolderContents(
+            {'portal_type': 'Conclusions'},
             full_objects=True
         )
     except:
-        conclusionsphase2 = []
+        conclusions = []
 
     for question in questions:
         comments = question.getFolderContents({'portal_type': 'Comment'},
@@ -106,9 +106,9 @@ def SearchableText(context):
                 getFieldsInOrder(ICommentAnswer), answer)
             )
 
-    for conclusion in conclusionsphase2:
+    for conclusion in conclusions:
         items.extend(index_fields(
-            getFieldsInOrder(IConclusionsPhase2), conclusion)
+            getFieldsInOrder(IConclusions), conclusion)
         )
 
     return u' '.join(items)
@@ -151,23 +151,23 @@ def to_unicode(value):
 
 def question_status(context):
     questions = [c for c in context.values() if c.portal_type == "Question"]
-    if context.get_status() != 'phase2-pending':
-        if context.get_status() in ['phase2-conclusions']:
+    if context.get_status() != 'pending':
+        if context.get_status() in ['conclusions']:
             if questions:
                 question_state = api.content.get_state(questions[-1])
-                if question_state != 'phase2-closed':
+                if question_state != 'closed':
                     return question_state
         return context.get_status()
     else:
         if questions:
             question = questions[0]
             state = api.content.get_state(question)
-            if state in ['phase2-closed']:
-                    return 'phase2-answered'
+            if state in ['closed']:
+                    return 'answered'
             else:
                 return state
         else:
-            return "observation-phase2-draft"
+            return "observation-draft"
 
 
 @indexer(IObservation)
@@ -183,11 +183,7 @@ def observation_status(context):
 @indexer(IObservation)
 def observation_step(context):
     try:
-        status = context.get_status()
-        if status.startswith("phase2"):
-            return "step2"
-        else:
-            return status
+        return context.get_status()
     except:
         return None
 
@@ -250,8 +246,8 @@ def observation_sent_to_mse(context):
 def observation_finalisation_reason(context):
     try:
         status = context.get_status()
-        if status == 'phase2-closed':
-            conclusions = [c for c in context.values() if c.portal_type == "ConclusionsPhase2"]
+        if status == 'closed':
+            conclusions = [c for c in context.values() if c.portal_type == "Conclusions"]
             return conclusions[0] and conclusions[0].closing_reason or ' '
         else:
             return None
@@ -260,11 +256,11 @@ def observation_finalisation_reason(context):
 
 
 @indexer(IObservation)
-def observation_finalisation_reason_step2(context):
+def observation_finalisation_reason(context):
     try:
         conclusions = [
             c for c in context.values()
-            if c.portal_type == "ConclusionsPhase2"
+            if c.portal_type == "Conclusions"
         ]
         return conclusions[0] and conclusions[0].closing_reason or ' '
     except:
@@ -272,11 +268,11 @@ def observation_finalisation_reason_step2(context):
 
 
 @indexer(IObservation)
-def observation_finalisation_text_step2(context):
+def observation_finalisation_text(context):
     try:
         conclusions = [
             c for c in context.values()
-            if c.portal_type == "ConclusionsPhase2"
+            if c.portal_type == "Conclusions"
         ]
         return conclusions[0] and conclusions[0].text or ''
     except:

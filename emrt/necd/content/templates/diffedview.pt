@@ -303,7 +303,7 @@
       </div>
 
         <div id="conclusion-2-discussion-wrapper"
-          tal:define="context here/get_conclusion_phase2"
+          tal:define="context here/get_conclusion"
           tal:condition="nocall:context">
           <div class="changes" tal:condition="context/can_edit">
             <div class="row collapsiblePanelTitle" data-panel="question-history">

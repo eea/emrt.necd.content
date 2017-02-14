@@ -53,14 +53,14 @@ class ITableRowSchema(form.Schema):
     so2 = schema.Float(title=_(u'SO\u2082'), required=False)
 
 
-class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
+class IConclusions(form.Schema, IImageScaleTraversable):
     """
     Conclusions of the Second Phase of the Review
     """
 
     closing_reason = schema.Choice(
         title=_(u'Conclusion'),
-        vocabulary='emrt.necd.content.conclusionphase2reasons',
+        vocabulary='emrt.necd.content.conclusion_reasons',
         required=True,
     )
 
@@ -84,7 +84,7 @@ class IConclusionsPhase2(form.Schema, IImageScaleTraversable):
     )
 
 
-@form.validator(field=IConclusionsPhase2['ghg_estimations'])
+@form.validator(field=IConclusions['ghg_estimations'])
 def check_ghg_estimations(value):
     for item in value:
         for val in item.values():
@@ -96,12 +96,12 @@ def check_ghg_estimations(value):
 # be instances of this class. Use this class to add content-type specific
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
-class ConclusionsPhase2(dexterity.Container):
-    grok.implements(IConclusionsPhase2)
+class Conclusions(dexterity.Container):
+    grok.implements(IConclusions)
 
     def reason_value(self):
         return self._vocabulary_value(
-            'emrt.necd.content.conclusionphase2reasons',
+            'emrt.necd.content.conclusion_reasons',
             self.closing_reason
         )
 
@@ -151,17 +151,17 @@ class ConclusionsPhase2(dexterity.Container):
 
 
 class AddForm(dexterity.AddForm):
-    grok.name('emrt.necd.content.conclusionsphase2')
-    grok.context(IConclusionsPhase2)
-    grok.require('emrt.necd.content.AddConclusionsPhase2')
+    grok.name('emrt.necd.content.conclusions')
+    grok.context(IConclusions)
+    grok.require('emrt.necd.content.AddConclusions')
 
-    label = 'Conclusions Step 2'
+    label = 'Conclusions'
     description = ''
 
     def updateFields(self):
         super(AddForm, self).updateFields()
         from .observation import IObservation
-        conclusion_fields = field.Fields(IConclusionsPhase2).select('closing_reason', 'text') #, 'ghg_estimations')
+        conclusion_fields = field.Fields(IConclusions).select('closing_reason', 'text') #, 'ghg_estimations')
         observation_fields = field.Fields(IObservation).select('highlight')
         self.fields = field.Fields(conclusion_fields, observation_fields)
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
@@ -201,25 +201,25 @@ class AddForm(dexterity.AddForm):
             self.actions[k].addClass('standardButton')
 
 
-class ConclusionsPhase2View(grok.View):
-    grok.context(IConclusionsPhase2)
+class ConclusionsView(grok.View):
+    grok.context(IConclusions)
     grok.require('zope2.View')
     grok.name('view')
 
     def render(self):
         context = aq_inner(self.context)
         parent = aq_parent(context)
-        url = '%s#tab-conclusions-phase2' % parent.absolute_url()
+        url = '%s#tab-conclusions' % parent.absolute_url()
 
         return self.request.response.redirect(url)
 
 
 class EditForm(dexterity.EditForm):
     grok.name('edit')
-    grok.context(IConclusionsPhase2)
+    grok.context(IConclusions)
     grok.require('cmf.ModifyPortalContent')
 
-    label = 'Conclusions Step 2'
+    label = 'Conclusions'
     description = ''
     ignoreContext = False
 
@@ -241,7 +241,7 @@ class EditForm(dexterity.EditForm):
     def updateFields(self):
         super(EditForm, self).updateFields()
         from .observation import IObservation
-        conclusion_fields = field.Fields(IConclusionsPhase2).select('closing_reason', 'text') #, 'ghg_estimations')
+        conclusion_fields = field.Fields(IConclusions).select('closing_reason', 'text') #, 'ghg_estimations')
         observation_fields = field.Fields(IObservation).select('highlight')
         self.fields = field.Fields(conclusion_fields, observation_fields)
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget

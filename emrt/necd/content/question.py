@@ -102,7 +102,7 @@ class Question(dexterity.Container):
 
         if len(questions) > len(answers):
             current_status = api.content.get_state(self)
-            return current_status == 'phase2-draft'
+            return current_status == 'draft'
 
         return False
 
@@ -118,10 +118,10 @@ class Question(dexterity.Container):
             question_history = self.workflow_history['esd-question-review-workflow']
             current_status = api.content.get_state(self)
             previous_action = question_history[-1]
-            if current_status == 'phase2-draft':
+            if current_status == 'draft':
                 return previous_action['action'] in [
-                    'phase2-add-folowup-question',
-                    'phase2-reopen',
+                    'add-folowup-question',
+                    'reopen',
                     None
                 ]
 
@@ -147,7 +147,7 @@ class Question(dexterity.Container):
 
     def observation_not_closed(self):
         observation = self.get_observation()
-        return api.content.get_state(observation) in ['phase2-pending']
+        return api.content.get_state(observation) in ['pending']
 
     def already_commented_by_counterpart(self):
         # XXXX
@@ -326,7 +326,7 @@ class EditAndCloseComments(grok.View):
         # Some checks:
         waction = self.request.get('workflow_action')
         comment = self.request.get('comment')
-        if waction not in ['phase2-send-comments'] and \
+        if waction not in ['send-comments'] and \
             comment not in self.context.keys():
                 status = IStatusMessage(self.request)
                 msg = _(u'There was an error, try again please')
@@ -336,13 +336,10 @@ class EditAndCloseComments(grok.View):
 
     def render(self):
         # Execute the transition
-        if api.content.get_state(self.context).startswith('phase2-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase2-send-comments'
-            )
-        else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+        api.content.transition(
+            obj=self.context,
+            transition='send-comments'
+        )
 
         url = '%s/%s/edit' % (self.context.absolute_url(), self.comment)
         return self.request.response.redirect(url)
@@ -357,7 +354,7 @@ class EditAnswerAndCloseComments(grok.View):
         # Some checks:
         waction = self.request.get('workflow_action')
         comment = self.request.get('comment')
-        if waction not in ['phase2-ask-answer-aproval'] and \
+        if waction not in ['ask-answer-aproval'] and \
             comment not in self.context.keys():
             status = IStatusMessage(self.request)
             msg = _(u'There was an error, try again please')
@@ -368,13 +365,10 @@ class EditAnswerAndCloseComments(grok.View):
 
     def render(self):
         # Execute the transition
-        if api.content.get_state(self.context).startswith('phase2-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase2-ask-answer-aproval'
-            )
-        else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+        api.content.transition(
+            obj=self.context,
+            transition='ask-answer-aproval'
+        )
 
         url = '%s/%s/edit' % (self.context.absolute_url(), self.comment)
         return self.request.response.redirect(url)
@@ -386,13 +380,9 @@ class AddFollowUpQuestion(grok.View):
     grok.require('zope2.View')
 
     def render(self):
-
-        if api.content.get_state(self.context).startswith('phase2-'):
-            api.content.transition(
-                obj=self.context,
-                transition='phase2-reopen')
-        else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+        api.content.transition(
+            obj=self.context,
+            transition='reopen')
 
         url = '%s/++add++Comment' % self.context.absolute_url()
         return self.request.response.redirect(url)
@@ -405,23 +395,20 @@ class AddConclusions(grok.View):
 
     def render(self):
         parent = aq_parent(self.context)
-        if api.content.get_state(parent).startswith('phase2-'):
-            conclusionsphase2 = parent.get_conclusion_phase2()
-            if not conclusionsphase2:
-                api.content.transition(
-                    obj=parent,
-                    transition='phase2-draft-conclusions'
-                )
+        conclusions = parent.get_conclusion()
+        if not conclusions:
+            api.content.transition(
+                obj=parent,
+                transition='draft-conclusions'
+            )
 
-                cp2 = parent.invokeFactory(
-                    id=int(time()),
-                    type_name='ConclusionsPhase2'
-                )
-                conclusionsphase2 = parent.get(cp2)
+            new_conclusions = parent.invokeFactory(
+                id=int(time()),
+                type_name='Conclusions'
+            )
+            conclusions = parent.get(new_conclusions)
 
-            url = '%s/edit' % conclusionsphase2.absolute_url()
-        else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+        url = '%s/edit' % conclusions.absolute_url()
 
         return self.request.response.redirect(url)
 
@@ -446,8 +433,8 @@ class DeleteLastComment(grok.View):
                 question_state = api.content.get_state(obj=question)
                 self.context.manage_delObjects([last_comment.getId()])
                 url = question.absolute_url()
-                if question_state == 'phase2-draft':
-                    url += '/content_status_modify?workflow_action=phase2-delete-question'
+                if question_state == 'draft':
+                    url += '/content_status_modify?workflow_action=delete-question'
                 return self.request.response.redirect(url)
 
 
@@ -464,7 +451,7 @@ class DeleteLastAnswer(grok.View):
             last_comment = comments[-1]
             question_state = api.content.get_state(obj=question)
             self.context.manage_delObjects([last_comment.getId()])
-            if question_state == 'phase2-pending-answer-drafting':
-                url += '/content_status_modify?workflow_action=phase2-delete-answer'
+            if question_state == 'pending-answer-drafting':
+                url += '/content_status_modify?workflow_action=delete-answer'
             return self.request.response.redirect(url)
         return self.request.response.redirect(url)

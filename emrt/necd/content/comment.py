@@ -162,7 +162,7 @@ def add_question(context, event):
             api.content.transition(obj=observation, transition='reopen')
             api.content.transition(obj=question, transition='reopen')
 
-        if api.content.get_state(observation) == 'phase2-draft':
-            api.content.transition(obj=observation, transition='phase2-open')
+        if api.content.get_state(observation) == 'draft':
+            api.content.transition(obj=observation, transition='open')
 
         context.manage_addProperty('creator_role', 'Sector Expert', 'string')

@@ -387,90 +387,90 @@ class Observation(dexterity.Container):
         if len(questions) > 0:
             q = questions[0]
             return q.get_state_api() in [
-                'phase2-draft',
-                'phase2-drafted',
-                'phase2-recalled-lr',
-                'phase2-closed',
+                'draft',
+                'drafted',
+                'recalled-lr',
+                'closed',
             ]
         else:
             return True
 
     def can_close(self):
-        if self.get_status() in ['phase2-pending']:
+        if self.get_status() in ['pending']:
             questions = self.get_values_cat('Question')
             if len(questions) > 0:
                 for q in questions:
-                    if q.get_state_api() not in ['phase2-closed']:
+                    if q.get_state_api() not in ['closed']:
                         return False
                 return True
 
         return False
 
     def wf_location(self):
-        if self.get_status() == 'phase2-draft':
+        if self.get_status() == 'draft':
             return 'Sector Expert'
-        elif self.get_status() == 'phase2-closed':
+        elif self.get_status() == 'closed':
             return 'Lead reviewer'
-        elif self.get_status() == 'phase2-conclusions':
+        elif self.get_status() == 'conclusions':
             return 'Sector Expert'
-        elif self.get_status() in ['phase2-conclusion-discussion']:
+        elif self.get_status() in ['conclusion-discussion']:
             return 'Counterpart'
-        elif self.get_status() == 'phase2-close-requested':
+        elif self.get_status() == 'close-requested':
             return 'Lead reviewer'
         else:
             questions = self.get_values_cat('Question')
             if questions:
                 question = questions[0]
                 state = question.get_state_api()
-                if state in ['phase2-draft', 'phase2-closed']:
+                if state in ['draft', 'closed']:
                     return 'Sector Expert'
-                elif state in ['phase2-counterpart-comments']:
+                elif state in ['counterpart-comments']:
                     return 'Counterparts'
-                elif state in ['phase2-drafted', 'phase2-recalled-lr']:
+                elif state in ['drafted', 'recalled-lr']:
                     return 'Lead reviewer'
                 elif state in [
-                        'phase2-pending',
-                        'phase2-answered',
-                        'phase2-pending-answer-drafting',
-                        'phase2-recalled-msa']:
+                        'pending',
+                        'answered',
+                        'pending-answer-drafting',
+                        'recalled-msa']:
                     return 'Member state coordinator'
-                elif state in ['phase2-expert-comments']:
+                elif state in ['expert-comments']:
                     return 'Member state experts'
             else:
                 return "Sector Expert"
 
     def wf_status(self):
-        if self.get_status() in ['phase2-draft']:
+        if self.get_status() in ['draft']:
             return ['Observation created', "observationIcon"]
-        elif self.get_status() in ['phase2-closed']:
+        elif self.get_status() in ['closed']:
             return ['Observation finished', "observationIcon"]
-        elif self.get_status() in ['phase2-close-requested']:
+        elif self.get_status() in ['close-requested']:
             return ['Observation finish requested', "observationIcon"]
-        elif self.get_status() in ['phase2-conclusions']:
+        elif self.get_status() in ['conclusions']:
             return ["Conclusion ongoing", "conclusionIcon"]
-        elif self.get_status() in ['phase2-conclusion-discussion']:
+        elif self.get_status() in ['conclusion-discussion']:
             return ["Counterparts comments requested", "conclusionIcon"]
         else:
             questions = self.get_values_cat('Question')
             if questions:
                 question = questions[-1]
                 state = question.get_state_api()
-                if state in ['phase2-draft']:
+                if state in ['draft']:
                     return ["Question drafted", "questionIcon"]
-                elif state in ['phase2-counterpart-comments']:
+                elif state in ['counterpart-comments']:
                     return ["Counterpart's comments requested", "questionIcon"]
-                elif state in ['phase2-answered']:
+                elif state in ['answered']:
                     return ['Pending question', "questionIcon"]
                 elif state in [
-                        'phase2-pending',
-                        'phase2-pending-answer-drafting',
-                        'phase2-recalled-msa']:
+                        'pending',
+                        'pending-answer-drafting',
+                        'recalled-msa']:
                     return ['Open question', "questionIcon"]
-                elif state in ['phase2-drafted', 'phase2-recalled-lr']:
+                elif state in ['drafted', 'recalled-lr']:
                     return ['Draft question', "questionIcon"]
-                elif state in ['phase2-expert-comments']:
+                elif state in ['expert-comments']:
                     return ['MS expert comments requested', 'questionIcon']
-                elif state in ['phase2-closed']:
+                elif state in ['closed']:
                     return ['Closed question', "questionIcon"]
             else:
                 return ['Observation created', "observationIcon"]
@@ -479,26 +479,26 @@ class Observation(dexterity.Container):
 
     def observation_status(self):
         status = self.observation_question_status()
-        if status in ['phase2-draft',
-                      'phase2-counterpart-comments',
-                      'observation-phase2-draft']:
+        if status in ['draft',
+                      'counterpart-comments',
+                      'observation-draft']:
             return 'SE'
-        elif status in ['phase2-drafted', 'phase2-recalled-lr']:
+        elif status in ['drafted', 'recalled-lr']:
             return 'LR'
-        elif status in ['phase2-pending',
-                        'phase2-pending-answer-drafting',
-                        'phase2-expert-comments']:
+        elif status in ['pending',
+                        'pending-answer-drafting',
+                        'expert-comments']:
             return 'MSC'
-        elif status in ['phase2-answered']:
+        elif status in ['answered']:
             return 'answered'
-        elif status in ['phase2-conclusions',
-                        'phase2-conclusion-discussion']:
+        elif status in ['conclusions',
+                        'conclusion-discussion']:
             return 'conclusions'
-        elif status in ['phase2-close-requested']:
+        elif status in ['close-requested']:
             return 'close-requested'
-        elif status in ['phase2-closed']:
-            if status == 'phase2-closed':
-                conclusion = self.get_conclusion_phase2()
+        elif status in ['closed']:
+            if status == 'closed':
+                conclusion = self.get_conclusion()
                 conclusion_reason =  conclusion and conclusion.closing_reason or ' '
                 if (conclusion_reason == 'no-conclusion-yet'):
                     return "SE"
@@ -510,8 +510,8 @@ class Observation(dexterity.Container):
 
     def overview_status(self):
         status = self.get_status()
-        if status == 'phase2-closed':
-            conclusion = self.get_conclusion_phase2()
+        if status == 'closed':
+            conclusion = self.get_conclusion()
             if conclusion:
                 return ' <br/> '.join(
                     ['closed', '(' + conclusion.reason_value() + ')']
@@ -547,43 +547,43 @@ class Observation(dexterity.Container):
             item['role'] = item['actor']
             item['object'] = 'observationIcon'
             item['author'] = self.get_author_name(item['actor'])
-            if item['review_state'] == 'phase2-draft':
+            if item['review_state'] == 'draft':
                 item['state'] = 'Draft observation'
                 item['role'] = "Sector Expert"
                 observation_wf.append(item)
-            elif item['review_state'] == 'phase2-pending' and item['action'] == "phase2-approve":
+            elif item['review_state'] == 'pending' and item['action'] == "approve":
                 item['state'] = 'Pending'
                 # Do not add
-            elif item['review_state'] == 'phase2-pending' and item['action'] == "phase2-reopen":
+            elif item['review_state'] == 'pending' and item['action'] == "reopen":
                 item['state'] = 'Observation reopened'
                 item['role'] = "Sector Expert"
                 observation_wf.append(item)
-            elif item['review_state'] == 'phase2-pending':
+            elif item['review_state'] == 'pending':
                 item['state'] = 'Pending'
                 # Do not add
-            elif item['review_state'] == 'phase2-closed':
+            elif item['review_state'] == 'closed':
                 item['state'] = 'Closed observation'
                 item['role'] = "Lead Reviewer"
                 observation_wf.append(item)
-            elif item['review_state'] == 'phase2-close-requested':
+            elif item['review_state'] == 'close-requested':
                 item['state'] = 'Finalisation requested'
                 item['role'] = "Sector Expert"
                 observation_wf.append(item)
-            elif item['review_state'] == 'phase2-conclusions' and item['action'] == "phase2-deny-finishing-observation":
+            elif item['review_state'] == 'conclusions' and item['action'] == "deny-finishing-observation":
                 item['state'] = 'Finalisation denied'
                 item['role'] = "Lead reviewer"
                 observation_wf.append(item)
-            elif item['review_state'] == 'phase2-conclusion-discussion':
+            elif item['review_state'] == 'conclusion-discussion':
                 item['state'] = 'Conclusion comments requested'
                 item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
-            elif item['review_state'] == 'phase2-conclusions' and item['action'] == "phase2-finish-comments":
+            elif item['review_state'] == 'conclusions' and item['action'] == "finish-comments":
                 item['state'] = 'Conclusion comments closed'
                 item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
-            elif item['review_state'] == 'phase2-conclusions' and item['action'] == "phase2-draft-conclusions":
+            elif item['review_state'] == 'conclusions' and item['action'] == "draft-conclusions":
                 item['state'] = 'Conclusion drafting'
                 item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
@@ -603,64 +603,64 @@ class Observation(dexterity.Container):
                 item['role'] = item['actor']
                 item['object'] = 'questionIcon'
                 item['author'] = self.get_author_name(item['actor'])
-                if item['review_state'] == 'phase2-draft' and item['action'] == "phase2-reopen":
+                if item['review_state'] == 'draft' and item['action'] == "reopen":
                     item['state'] = 'Draft question'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-counterpart-comments':
+                elif item['review_state'] == 'counterpart-comments':
                     item['state'] = 'Requested counterparts comments'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-draft' and item['action'] =='phase2-send-comments':
+                elif item['review_state'] == 'draft' and item['action'] =='send-comments':
                     item['state'] = 'Counterparts comments closed'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-drafted':
+                elif item['review_state'] == 'drafted':
                     item['state'] = 'Sent to LR'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-draft' and item['action'] == 'phase2-recall-sre':
+                elif item['review_state'] == 'draft' and item['action'] == 'recall-sre':
                     item['state'] = 'Question recalled'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-draft' and item['action'] == 'phase2-redraft':
+                elif item['review_state'] == 'draft' and item['action'] == 'redraft':
                     item['state'] = 'Question redrafted'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-draft':
+                elif item['review_state'] == 'draft':
                     # Do not add
                     pass
-                elif item['review_state'] == 'phase2-pending' and item['action'] == 'phase2-approve-question':
+                elif item['review_state'] == 'pending' and item['action'] == 'approve-question':
                     item['state'] = 'Question approved and sent to MS coordinator'
                     item['role'] = "Lead reviewer"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-recalled-lr':
+                elif item['review_state'] == 'recalled-lr':
                     item['state'] = 'Question recalled'
                     item['role'] = "Lead reviewer"
-                elif item['review_state'] == 'phase2-answered':
+                elif item['review_state'] == 'answered':
                     item['state'] = 'Answer sent'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-expert-comments':
+                elif item['review_state'] == 'expert-comments':
                     item['state'] = 'MS expert comments requested'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-pending-answer-drafting':
+                elif item['review_state'] == 'pending-answer-drafting':
                     item['state'] = 'Member state expert comments closed'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-recalled-msa':
+                elif item['review_state'] == 'recalled-msa':
                     item['state'] = 'Answer recalled'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['action'] == 'phase2-validate-answer-msa' and item['action'] == 'phase2-validate-answer-msa':
+                elif item['action'] == 'validate-answer-msa' and item['action'] == 'validate-answer-msa':
                     item['state'] = 'Sector Expert'
                     item['role'] = "Answer acknowledged"
                     question_wf.append(item)
-                elif item['review_state'] == 'phase2-draft' and item['action'] == "phase2-reopen":
+                elif item['review_state'] == 'draft' and item['action'] == "reopen":
                     item['state'] = 'Reopened'
                     # Do not add
-                elif item['review_state'] == 'phase2-closed':
+                elif item['review_state'] == 'closed':
                     item['state'] = 'Closed'
                     # Do not add
                 else:
@@ -687,12 +687,12 @@ class Observation(dexterity.Container):
 
     def observation_question_status(self):
         questions = self.get_values_cat('Question')
-        if self.get_status() != 'phase2-pending':
-            if self.get_status() in ['phase2-conclusions']:
+        if self.get_status() != 'pending':
+            if self.get_status() in ['conclusions']:
                 if questions:
                     question = questions[-1]
                     question_state = api.content.get_state(question)
-                    if question_state != 'phase2-closed':
+                    if question_state != 'closed':
                         return question_state
             return self.get_status()
         else:
@@ -701,14 +701,14 @@ class Observation(dexterity.Container):
                 state = api.content.get_state(question)
                 return state
             else:
-                return "observation-phase2-draft"
+                return "observation-draft"
 
     def observation_css_class(self):
         if self.highlight:
-            if self.get_status() == "phase2-closed":
-                con_phase2 = self.get_conclusion_phase2()
-                if con_phase2:
-                    if con_phase2.closing_reason == "technical-correction":
+            if self.get_status() == "closed":
+                con = self.get_conclusion()
+                if con:
+                    if con.closing_reason == "technical-correction":
                         return 'technicalCorrectionBackground'
 
             elif 'ptc' in self.highlight:
@@ -725,14 +725,14 @@ class Observation(dexterity.Container):
         return False
 
     def observation_is_technical_correction(self):
-        if self.get_status() == "phase2-closed":
-            con_phase2 = self.get_conclusion_phase2()
-            if con_phase2:
-                return con_phase2.closing_reason == "technical-correction"
+        if self.get_status() == "closed":
+            con = self.get_conclusion()
+            if con:
+                return con.closing_reason == "technical-correction"
         return False
 
-    def get_conclusion_phase2(self):
-        conclusions = self.get_values_cat('ConclusionsPhase2')
+    def get_conclusion(self):
+        conclusions = self.get_values_cat('Conclusions')
         mtool = api.portal.get_tool('portal_membership')
         if conclusions and mtool.checkPermission('View', conclusions[0]):
             return conclusions[0]
@@ -782,15 +782,14 @@ class Observation(dexterity.Container):
             winfo = question.workflow_history
             state = self.get_status()
             for witem in winfo.get('esd-question-review-workflow', []):
-                if state.startswith('phase2-'):
-                    if witem.get('review_state', '') == 'phase2-answered':
-                        return True
+                if witem.get('review_state', '') == 'answered':
+                    return True
 
         return False
 
     def can_add_followup(self):
         status = self.get_status()
-        return status in ['phase2-conclusions']
+        return status in ['conclusions']
 
 # View class
 # The view will automatically use a similarly named template in
@@ -875,10 +874,10 @@ class ObservationMixin(grok.View):
         return IContentListing(self.context.get_values_cat('Question'))
 
     def can_delete_observation(self):
-        is_draft = self.context.get_status() in ['phase2-pending']
+        is_draft = self.context.get_status() in ['pending']
         questions = len(self.context.get_values_cat('Question'))
         #If observation has conclusion cannot be deleted (Ticket #26992)
-        conclusions = len(self.context.get_values_cat('ConclusionsPhase2'))
+        conclusions = len(self.context.get_values_cat('Conclusions'))
         return is_draft and not questions and not conclusions
 
     def can_add_question(self):
@@ -889,12 +888,12 @@ class ObservationMixin(grok.View):
     def can_edit(self):
         sm = getSecurityManager()
         #If observation has conclusion cannot be edited (Ticket #26992)
-        conclusions = len(self.context.get_values_cat('ConclusionsPhase2'))
+        conclusions = len(self.context.get_values_cat('Conclusions'))
         return sm.checkPermission('Modify portal content', self.context) and not conclusions
 
-    def get_conclusion_phase2(self):
+    def get_conclusion(self):
         sm = getSecurityManager()
-        conclusions = self.context.get_values_cat('ConclusionsPhase2')
+        conclusions = self.context.get_values_cat('Conclusions')
         if conclusions and sm.checkPermission('View', conclusions[0]):
             return conclusions[0]
 
@@ -902,14 +901,14 @@ class ObservationMixin(grok.View):
 
     def existing_conclusion(self):
         status = self.context.get_status()
-        conclusion = self.get_conclusion_phase2()
+        conclusion = self.get_conclusion()
 
         return conclusion and True or False
 
     def can_add_conclusion(self):
         sm = getSecurityManager()
-        conclusion = self.get_conclusion_phase2()
-        return sm.checkPermission('emrt.necd.content: Add ConclusionsPhase2', self.context) and not conclusion
+        conclusion = self.get_conclusion()
+        return sm.checkPermission('emrt.necd.content: Add Conclusions', self.context) and not conclusion
 
     def show_description(self):
         questions = self.get_questions()
@@ -1017,33 +1016,33 @@ class ObservationMixin(grok.View):
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
-    def in_conclusions_phase2(self):
+    def in_conclusions(self):
         state = self.context.get_status()
         return state in [
-            'phase2-conclusions',
-            'phase2-conclusion-discussion',
-            'phase2-close-requested',
-            'phase2-closed',
+            'conclusions',
+            'conclusion-discussion',
+            'close-requested',
+            'closed',
         ]
 
     def get_last_editable_thing(self):
         CONCLUSIONS_PHASE_2 = [
-            'phase2-conclusions',
-            'phase2-conclusion-discussion',
-            'phase2-close-requested',
+            'conclusions',
+            'conclusion-discussion',
+            'close-requested',
         ]
         MS_OBSERVATION = [
-            'phase2-pending',
+            'pending',
         ]
 
         MS_QUESTION = [
-            'phase2-pending',
-            'phase2-pending-answer-drafting',
-            'phase2-expert-comments',
+            'pending',
+            'pending-answer-drafting',
+            'expert-comments',
         ]
         state = self.context.get_status()
         if state in CONCLUSIONS_PHASE_2:
-            return self.context.get_conclusion_phase2()
+            return self.context.get_conclusion()
         else:
             question = self.question()
             if question is not None:
@@ -1126,7 +1125,7 @@ class ObservationMixin(grok.View):
 
     def isChatCurrent(self):
         status = api.content.get_state(self.context)
-        if status in ['phase2-draft', 'phase2-pending']:
+        if status in ['draft', 'pending']:
             return True
         else:
             return False
@@ -1258,15 +1257,15 @@ class ExportAsDocView(ObservationMixin):
         p = document.add_paragraph('Short description by sector expert', style="Label Bold")
         p = document.add_paragraph(self.context.text)
 
-        if self.context.get_status() == 'phase2-close-requested':
+        if self.context.get_status() == 'close-requested':
             document.add_heading('Finish observation', level=2)
             document.add_heading('Observation Finish Requested', level=3)
             p = document.add_paragraph('SE comments on finish observation request:', style="Label Bold")
 
-        conclusion_2 = self.get_conclusion_phase2()
+        conclusion_2 = self.get_conclusion()
         if conclusion_2:
             document.add_page_break()
-            document.add_heading('Conclusions Step 2', level=2)
+            document.add_heading('Conclusions', level=2)
 
             p = document.add_paragraph('Final status of observation:', style="Label Bold")
             p = document.add_paragraph(conclusion_2.reason_value())
@@ -1382,7 +1381,7 @@ class ModificationForm(dexterity.EditForm):
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
         fields = []
         # XXX Needed? Edit rights are controlled by the WF
-        if 'ReviewerPhase2' in roles:
+        if 'NECDReviewer' in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',
@@ -1433,10 +1432,7 @@ class AddAnswerForm(Form):
         )
         comment = context.get(item_id)
         comment.text = text
-        if context.get_state_api().startswith('phase2-'):
-            action = 'phase2-add-answer'
-        else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+        action = 'add-answer'
 
         api.content.transition(obj=context, transition=action)
 
@@ -1486,10 +1482,7 @@ class AddAnswerAndRequestComments(grok.View):
         comment = context.get(item_id)
         comment.text = text
 
-        if api.content.get_state(context).startswith('phase2-'):
-            action = 'phase2-assign-answerer'
-        else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+        action = 'assign-answerer'
         url = '%s/assign_answerer_form?workflow_action=%s&comment=%s' % (context.absolute_url(), action, item_id)
 
         return self.request.response.redirect(url)
@@ -1531,14 +1524,14 @@ class AddCommentForm(Form):
 
 
 class EditConclusionP2AndCloseComments(grok.View):
-    grok.name('edit-conclusions-and-close-comments-phase2')
+    grok.name('edit-conclusions-and-close-comments')
     grok.context(IObservation)
     grok.require('zope2.View')
 
     def update(self):
         # Some checks:
         waction = self.request.get('workflow_action')
-        if waction != 'phase2-finish-comments':
+        if waction != 'finish-comments':
                 status = IStatusMessage(self.request)
                 msg = u'There was an error, try again please'
                 status.addStatusMessage(msg, "error")
@@ -1547,9 +1540,9 @@ class EditConclusionP2AndCloseComments(grok.View):
         # Execute the transition
         api.content.transition(
             obj=self.context,
-            transition='phase2-finish-comments'
+            transition='finish-comments'
         )
-        conclusions = self.context.get_values_cat('ConclusionsPhase2')
+        conclusions = self.context.get_values_cat('Conclusions')
         conclusion = conclusions[0]
         url = '%s/edit' % conclusion.absolute_url()
         return self.request.response.redirect(url)
@@ -1578,54 +1571,51 @@ class AddConclusions(grok.View):
         transitions_available = [
             action['id'] for action in workflow.listActions(object=context)
         ]
-        if context.get_status().startswith('phase2-'):
-            current_user_id = api.user.get_current().getId()
-            user_roles = api.user.get_roles(
-                username=current_user_id,
-                obj=context
-            )
-            if 'ReviewerPhase2' in user_roles:
-                csp2 = self.context.get_values_cat('ConclusionsPhase2')
-                if csp2:
-                    conclusionsphase2 = csp2[0]
-                    url = conclusionsphase2.absolute_url() + '/edit'
-
-                else:
-                    #with api.env.adopt_roles(['ReviewerPhase2']):
-                    id = context.invokeFactory(
-                        id=str(int(time())),
-                        type_name='ConclusionsPhase2',
-                        text=u''
-                    )
-                    cs = self.context.get_values_cat('ConclusionsPhase2')
-                    conclusion = cs[0]
-                    url = conclusion.absolute_url() + '/edit'
-                    #url = '%s/++add++ConclusionsPhase2' % context.absolute_url()
+        current_user_id = api.user.get_current().getId()
+        user_roles = api.user.get_roles(
+            username=current_user_id,
+            obj=context
+        )
+        if 'NECDReviewer' in user_roles:
+            conclusions_folder = self.context.get_values_cat('Conclusions')
+            if conclusions_folder:
+                conclusions = conclusions_folder[0]
+                url = conclusions.absolute_url() + '/edit'
 
             else:
-                csp2 = self.context.get_values_cat('ConclusionsPhase2')
-                if csp2:
-                    conclusionsphase2 = csp2[0]
-                    url = conclusionsphase2.absolute_url() + '/edit'
-
-                else:
-                    #with api.env.adopt_roles(['ReviewerPhase2']):
-                    id = context.invokeFactory(
-                        id=str(int(time())),
-                        type_name='ConclusionsPhase2',
-                        text=u''
-                    )
-                    cs = self.context.get_values_cat('ConclusionsPhase2')
-                    conclusion = cs[0]
-                    url = conclusion.absolute_url() + '/edit'
-
-            if 'phase2-draft-conclusions' in transitions_available:
-                api.content.transition(
-                    obj=context,
-                    transition='phase2-draft-conclusions'
+                #with api.env.adopt_roles(['NECDReviewer']):
+                id = context.invokeFactory(
+                    id=str(int(time())),
+                    type_name='Conclusions',
+                    text=u''
                 )
+                cs = self.context.get_values_cat('Conclusions')
+                conclusion = cs[0]
+                url = conclusion.absolute_url() + '/edit'
+                #url = '%s/++add++Conclusions' % context.absolute_url()
+
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            conclusions_folder = self.context.get_values_cat('Conclusions')
+            if conclusions_folder:
+                conclusions = conclusions_folder[0]
+                url = conclusions.absolute_url() + '/edit'
+
+            else:
+                #with api.env.adopt_roles(['NECDReviewer']):
+                id = context.invokeFactory(
+                    id=str(int(time())),
+                    type_name='Conclusions',
+                    text=u''
+                )
+                cs = self.context.get_values_cat('Conclusions')
+                conclusion = cs[0]
+                url = conclusion.absolute_url() + '/edit'
+
+        if 'draft-conclusions' in transitions_available:
+            api.content.transition(
+                obj=context,
+                transition='draft-conclusions'
+            )
 
         self.context.reindexObject()
         return self.request.response.redirect(url)

@@ -10,7 +10,7 @@ from emrt.necd.content.comment import IComment
 from emrt.necd.content.commentanswer import ICommentAnswer
 from emrt.necd.content.observation import IObservation
 from emrt.necd.content.question import IQuestion
-from emrt.necd.content.conclusionsphase2 import IConclusionsPhase2
+from emrt.necd.content.conclusions import IConclusions
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
@@ -26,7 +26,7 @@ def get_user_roles_in_context(context, principal_id):
         sector = context.ghg_source_category_value()
         groups = member.getGroups()
         if '{}-{}-{}'.format(LDAP_SECTOREXP, sector, country) in groups:
-            roles.append('ReviewerPhase2')
+            roles.append('NECDReviewer')
         if '{}-{}'.format(LDAP_LEADREVIEW, country) in groups:
             roles.append('LeadReviewer')
         if '{}-{}'.format(LDAP_MSA, country) in groups:
@@ -165,9 +165,9 @@ class CommentAnswerRoleAdapter(object):
         return []
 
 
-class ConclusionPhase2RoleAdapter(object):
+class ConclusionRoleAdapter(object):
     implements(ILocalRoleProvider)
-    adapts(IConclusionsPhase2)
+    adapts(IConclusions)
 
     def __init__(self, context):
         self.context = context

@@ -179,16 +179,15 @@ class Conclusions(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Conclusions,
-    name=u"emrt.necd.content.conclusionreasons")
+grok.global_utility(Conclusions, name=u"emrt.necd.content.conclusion_reasons")
 
 
-class ConclusionsPhase2(object):
+class Conclusions(object):
     grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('conclusion_phase2_reasons')
+        voc = pvoc.getVocabularyByName('conclusion_reasons')
         terms = []
         if voc is not None:
             for key, value in voc.getVocabularyLines():
@@ -197,5 +196,5 @@ class ConclusionsPhase2(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(ConclusionsPhase2,
-    name=u"emrt.necd.content.conclusionphase2reasons")
+grok.global_utility(Conclusions,
+    name=u"emrt.necd.content.conclusion_reasons")

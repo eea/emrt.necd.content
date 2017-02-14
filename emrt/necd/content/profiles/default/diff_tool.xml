@@ -6,7 +6,7 @@
     <difftypes>
         <!-- -*- extra stuff goes here -*- -->
 
-  <type portal_type="ConclusionsPhase2">
+  <type portal_type="Conclusions">
    <field name="any" difftype="Compound Diff for Dexterity types"/>
   </type>
 

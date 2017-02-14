@@ -70,10 +70,10 @@ class FinishObservationReasonForm(Form):
     def finish_observation(self, action):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
-            if api.content.get_state(self.context) == 'phase2-conclusions':
+            if api.content.get_state(self.context) == 'conclusions':
                 self.context.closing_comments = comments
                 return self.context.content_status_modify(
-                    workflow_action='phase2-finish-observation',
+                    workflow_action='finish-observation',
                 )
 
         self.request.response.redirect(self.context.absolute_url())
@@ -107,10 +107,10 @@ class DenyFinishObservationReasonForm(Form):
     def finish_observation(self, action):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
-            if api.content.get_state(self.context) == 'phase2-close-requested':
+            if api.content.get_state(self.context) == 'close-requested':
                 self.context.closing_deny_comments = comments
                 return self.context.content_status_modify(
-                    workflow_action='phase2-deny-finishing-observation',
+                    workflow_action='deny-finishing-observation',
                 )
 
         return self.response.redirect(self.context.absolute_url())
@@ -268,9 +268,9 @@ class AssignAnswererForm(AssignFormMixin):
 
     def _get_wf_action(self):
         if api.content.get_state(self.context) in [
-                u'phase2-pending',
-                u'phase2-pending-answer-drafting']:
-            return 'phase2-assign-answerer'
+                u'pending',
+                u'pending-answer-drafting']:
+            return 'assign-answerer'
 
 
 class ReAssignMSExpertsForm(AssignAnswererForm):
@@ -321,8 +321,8 @@ class AssignCounterPartForm(AssignFormMixin):
         return aq_parent(aq_inner(self.context))
 
     def _get_wf_action(self):
-        if api.content.get_state(self.context) == 'phase2-draft':
-            return 'phase2-request-for-counterpart-comments'
+        if api.content.get_state(self.context) == 'draft':
+            return 'request-for-counterpart-comments'
 
     def _target_groupnames(self):
         return [LDAP_TERT]
@@ -408,8 +408,7 @@ class AssignConclusionReviewerForm(AssignFormMixin):
         return [LDAP_TERT]
 
     def _get_wf_action(self):
-        if api.content.get_state(self.context).startswith('phase2-'):
-            return 'phase2-request-comments'
+        return 'request-comments'
 
     def updateActions(self):
         super(AssignConclusionReviewerForm, self).updateActions()

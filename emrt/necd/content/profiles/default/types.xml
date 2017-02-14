@@ -8,7 +8,7 @@
   -->
 <object name="portal_types" meta_type="Plone Types Tool">
   <!-- -*- extra stuff goes here -*- -->
-  <object name="ConclusionsPhase2" meta_type="Dexterity FTI" />
+  <object name="Conclusions" meta_type="Dexterity FTI" />
   <object name="ReviewFolder" meta_type="Dexterity FTI" />
   <object name="NECDFile" meta_type="Dexterity FTI" />
   <object name="CommentAnswer" meta_type="Dexterity FTI" />

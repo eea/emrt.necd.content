@@ -22,7 +22,7 @@ def grant_local_roles(context):
     for obj in applyes_to:
         api.group.grant_roles(
             groupname='{}-{}-{}'.format(LDAP_SECTOREXP, sector, country),
-            roles=['ReviewerPhase2'],
+            roles=['NECDReviewer'],
             obj=obj,
         )
         api.group.grant_roles(

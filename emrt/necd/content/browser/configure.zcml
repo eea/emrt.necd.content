@@ -88,7 +88,7 @@
 
      <browser:viewlet
         name="plone.comments"
-        for="..conclusionsphase2.IConclusionsPhase2"
+        for="..conclusions.IConclusions"
         layer="plone.app.discussion.interfaces.IDiscussionLayer"
         manager=".interfaces.ICommentDiscussion"
         view="plone.app.layout.globals.interfaces.IViewView"

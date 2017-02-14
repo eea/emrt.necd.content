@@ -113,7 +113,7 @@
  <column value="last_answer_reply_number" />
  <column value="observation_already_replied" />
  <column value="reply_comments_by_mse" />
- <column value="observation_finalisation_reason_step2" />
- <column value="observation_finalisation_text_step2" />
+ <column value="observation_finalisation_reason" />
+ <column value="observation_finalisation_text" />
  <column value="pollutants_value" />
 </object>

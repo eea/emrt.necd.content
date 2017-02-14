@@ -6,8 +6,8 @@
 
       <!-- -*- extra stuff goes here -*- -->
        <permission
-          id="emrt.necd.content.AddConclusionsPhase2"
-	  title="emrt.necd.content: Add ConclusionsPhase2"
+          id="emrt.necd.content.AddConclusions"
+	  title="emrt.necd.content: Add Conclusions"
 	  />
 
        <permission

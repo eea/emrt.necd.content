@@ -89,11 +89,11 @@ class ReviewFolderMixin(grok.View):
                 query['observation_finalisation_reason'] = status
             else:
                 query['review_state'] = [
-                    'phase2-pending',
-                    'phase2-close-requested',
-                    'phase2-draft',
-                    'phase2-conclusions',
-                    'phase2-conclusion-discussion',
+                    'pending',
+                    'close-requested',
+                    'draft',
+                    'conclusions',
+                    'conclusion-discussion',
                 ]
 
         if reviewYear != "":
@@ -175,7 +175,7 @@ class ReviewFolderMixin(grok.View):
 
         context_title = self.context.Title().strip()
 
-        vocab_ids = ('conclusion_phase2_reasons', )
+        vocab_ids = ('conclusion_reasons', )
 
         to_add = []
         all_terms = []
@@ -290,15 +290,15 @@ EXPORT_FIELDS = OrderedDict([
     ('pollutants_value', 'Pollutants'),
     ('get_highlight', 'Highlight'),
     ('overview_status', 'Status'),
-    ('observation_finalisation_reason_step2', 'Conclusion step 2'),
-    ('observation_finalisation_text_step2', 'Conclusion step 2 note'),
+    ('observation_finalisation_reason', 'Conclusion'),
+    ('observation_finalisation_text', 'Conclusion note'),
     ('observation_status', 'Workflow'),
     ('get_author_name', 'Author')
 ])
 
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
-    'observation_finalisation_text_step2',
+    'observation_finalisation_text',
 )
 
 
@@ -532,7 +532,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for item in self.observations:
             if item.get('observation_question_status', '') in [
-                    'observation-phase2-draft']:
+                    'observation-draft']:
                 items.append(item)
         return items
 
@@ -546,8 +546,8 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for item in self.observations:
             if item.get('observation_question_status', '') in [
-                    'phase2-draft',
-                    'phase2-counterpart-comments']:
+                    'draft',
+                    'counterpart-comments']:
                 items.append(item)
         return items
 
@@ -566,7 +566,7 @@ class Inbox2ReviewFolderView(grok.View):
         for item in self.observations:
             # roles = self.get_roles_for_item(user, item)
             if item.get('observation_question_status', '') in [
-                    'phase2-counterpart-comments'] and \
+                    'counterpart-comments'] and \
                     item.get('isCP', ''):
                 items.append(item)
         return items
@@ -581,7 +581,7 @@ class Inbox2ReviewFolderView(grok.View):
         for obj in self.observations:
             # roles = self.get_roles_for_item(user, obj)
             if obj.get('observation_question_status', '') in [
-                    'phase2-conclusion-discussion'] and \
+                    'conclusion-discussion'] and \
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
@@ -597,13 +597,13 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-answered',
+                    'answered',
                     ] or \
                     (obj.get('get_status') in [
-                        'phase2-pending',
+                        'pending',
                         ] and \
                     obj.get('observation_question_status', '') in [
-                        'phase2-closed',
+                        'closed',
                     ]):
                 items.append(obj)
         return items
@@ -618,18 +618,18 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
 
         statuses = [
-            'phase2-pending',
-            'phase2-recalled-msa',
-            'phase2-expert-comments',
-            'phase2-pending-answer-drafting'
+            'pending',
+            'recalled-msa',
+            'expert-comments',
+            'pending-answer-drafting'
         ]
 
         # For a SE, those on LR pending to be sent to the MS
         # or recalled by him, are unanswered questions
         if self.is_sector_expert():
             statuses.extend([
-                'phase2-drafted',
-                'phase2-recalled-lr']
+                'drafted',
+                'recalled-lr']
             )
 
         for obj in self.observations:
@@ -647,7 +647,7 @@ class Inbox2ReviewFolderView(grok.View):
         for obj in self.observations:
             # roles = self.get_roles_for_item(user, obj)
             if obj.get('observation_question_status', '') in [
-                    'phase2-counterpart-comments'] and \
+                    'counterpart-comments'] and \
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
@@ -662,7 +662,7 @@ class Inbox2ReviewFolderView(grok.View):
         for obj in self.observations:
             # roles = self.get_roles_for_item(user, obj)
             if obj.get('observation_question_status', '') in [
-                    'phase2-conclusion-discussion'] and \
+                    'conclusion-discussion'] and \
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
@@ -675,8 +675,8 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-conclusions',
-                    'phase2-close-requested',]:
+                    'conclusions',
+                    'close-requested',]:
                 items.append(obj)
         return items
 
@@ -692,8 +692,8 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-drafted',
-                    'phase2-recalled-lr']:
+                    'drafted',
+                    'recalled-lr']:
                 items.append(obj)
         return items
 
@@ -705,7 +705,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-close-requested']:
+                    'close-requested']:
                 items.append(obj)
         return items
 
@@ -718,7 +718,7 @@ class Inbox2ReviewFolderView(grok.View):
         for obj in self.observations:
             # roles = self.get_roles_for_item(user, obj)
             if obj.get('observation_question_status', '') in [
-                    'phase2-counterpart-comments'] and \
+                    'counterpart-comments'] and \
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
@@ -734,7 +734,7 @@ class Inbox2ReviewFolderView(grok.View):
         for obj in self.observations:
             # roles = self.get_roles_for_item(user, obj)
             if obj.get('observation_question_status', '') in [
-                    'phase2-conclusion-discussion'] and \
+                    'conclusion-discussion'] and \
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
@@ -750,7 +750,7 @@ class Inbox2ReviewFolderView(grok.View):
         for obj in self.observations:
             # roles = self.get_roles_for_item(user, obj)
             if obj.get('observation_question_status', '') in [
-                    'phase2-counterpart-comments'] and \
+                    'counterpart-comments'] and \
                     obj.get('isCP', ''):
                 items.append(obj)
         return items
@@ -765,7 +765,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-answered']:
+                    'answered']:
                 items.append(obj)
         return items
 
@@ -779,10 +779,10 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-pending',
-                    'phase2-recalled-msa',
-                    'phase2-expert-comments',
-                    'phase2-pending-answer-drafting']:
+                    'pending',
+                    'recalled-msa',
+                    'expert-comments',
+                    'pending-answer-drafting']:
                 items.append(obj)
         return items
 
@@ -799,9 +799,9 @@ class Inbox2ReviewFolderView(grok.View):
         for obj in self.observations:
             # roles = self.get_roles_for_item(user, obj)
             if obj.get('observation_question_status', '') in [
-                    'phase2-pending',
-                    'phase2-recalled-msa',
-                    'phase2-pending-answer-drafting'] and obj.get('isMSA', ''):
+                    'pending',
+                    'recalled-msa',
+                    'pending-answer-drafting'] and obj.get('isMSA', ''):
                 items.append(obj)
         return items
 
@@ -813,7 +813,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-expert-comments'] and \
+                    'expert-comments'] and \
                     obj.get('last_answer_reply_number') > 0:
                 items.append(obj)
         return items
@@ -826,7 +826,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-expert-comments']:
+                    'expert-comments']:
                 items.append(obj)
         return items
 
@@ -838,10 +838,10 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if (obj.get('observation_question_status', '') in
-                    ['phase2-answered'] or
+                    ['answered'] or
                     obj.get('observation_already_replied')) and \
                     obj.get('get_status', '') not in [
-                        'phase2-closed']:
+                        'closed']:
                 items.append(obj)
         return items
     """
@@ -856,7 +856,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-expert-comments']:
+                    'expert-comments']:
                 items.append(obj)
         return items
 
@@ -868,8 +868,8 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-expert-comments',
-                    'phase2-pending-answer-drafting'] and \
+                    'expert-comments',
+                    'pending-answer-drafting'] and \
                     obj.get('reply_comments_by_mse'):
                 items.append(obj)
         return items
@@ -882,8 +882,8 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-answered',
-                    'phase2-recalled-msa'] and \
+                    'answered',
+                    'recalled-msa'] and \
                     obj.get('reply_comments_by_mse'):
                 items.append(obj)
         return items
@@ -899,7 +899,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-closed'] and \
+                    'closed'] and \
                     obj.get('observation_finalisation_reason', '') == 'no-response-needed':
                 items.append(obj)
         return items
@@ -911,7 +911,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-closed'] and \
+                    'closed'] and \
                     obj.get('observation_finalisation_reason', '') == 'resolved':
                 items.append(obj)
         return items
@@ -923,7 +923,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-closed'] and \
+                    'closed'] and \
                     obj.get('observation_finalisation_reason', '') == 'unresolved':
                 items.append(obj)
         return items
@@ -935,7 +935,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-closed'] and \
+                    'closed'] and \
                     obj.get('observation_finalisation_reason', '') == 'partly-resolved':
                 items.append(obj)
         return items
@@ -947,7 +947,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-closed'] and \
+                    'closed'] and \
                     obj.get('observation_finalisation_reason', '') == 'technical-correction':
                 items.append(obj)
         return items
@@ -959,7 +959,7 @@ class Inbox2ReviewFolderView(grok.View):
         items = []
         for obj in self.observations:
             if obj.get('observation_question_status', '') in [
-                    'phase2-closed'] and \
+                    'closed'] and \
                     obj.get('observation_finalisation_reason', '') == 'revised-estimate':
                 items.append(obj)
         return items
@@ -1041,7 +1041,7 @@ class RoleMapItem(object):
             return self.isMSA
         elif rolename == 'SectorExpert':
             return self.isRE
-        elif rolename == 'NotCounterPartPhase2':
+        elif rolename == 'NotCounterPart':
             return not self.isCP and self.isRE
         elif rolename == 'LeadReviewer':
             return self.isLR
@@ -1123,12 +1123,10 @@ class Inbox3ReviewFolderView(grok.View):
          Role: Sector Expert
          without actions for LR, counterpart or MS
         """
-        phase2 = self.get_observations(
+        return self.get_observations(
             rolecheck='SectorExpert',
             observation_question_status=[
-                'observation-phase2-draft'])
-
-        return phase2
+                'observation-draft'])
 
     @timeit
     def get_draft_questions(self):
@@ -1136,22 +1134,22 @@ class Inbox3ReviewFolderView(grok.View):
          Role: Sector Expert
          with comments from counterpart or LR
         """
-        phase2 = self.get_observations(
+        conclusions = self.get_observations(
             rolecheck='SectorExpert',
             observation_question_status=[
-                'phase2-draft',
-                'phase2-drafted'])
+                'draft',
+                'drafted'])
 
         """
          Add also finalised observations with "no conclusion yet"
          https://taskman.eionet.europa.eu/issues/28813#note-5
         """
         no_conclusion_yet = self.get_observations(
-            observation_question_status=['phase2-closed'],
+            observation_question_status=['closed'],
             observation_finalisation_reason='no-conclusion-yet',
         )
 
-        return phase2 + no_conclusion_yet
+        return conclusions + no_conclusion_yet
 
     @timeit
     def get_counterpart_questions_to_comment(self):
@@ -1162,7 +1160,7 @@ class Inbox3ReviewFolderView(grok.View):
         return self.get_observations(
             rolecheck='CounterPart',
             observation_question_status=[
-                'phase2-counterpart-comments'])
+                'counterpart-comments'])
 
     @timeit
     def get_counterpart_conclusion_to_comment(self):
@@ -1172,7 +1170,7 @@ class Inbox3ReviewFolderView(grok.View):
         """
         return self.get_observations(
             rolecheck='CounterPart',
-            observation_question_status=['phase2-conclusion-discussion'])
+            observation_question_status=['conclusion-discussion'])
 
     @timeit
     def get_ms_answers_to_review(self):
@@ -1183,17 +1181,17 @@ class Inbox3ReviewFolderView(grok.View):
         # user = api.user.get_current()
         # mtool = api.portal.get_tool('portal_membership')
 
-        answered_phase2 = self.get_observations(
+        answered = self.get_observations(
             rolecheck='SectorExpert',
             observation_question_status=[
-                'phase2-answered'])
+                'answered'])
 
-        pending_phase2 = self.get_observations(
+        pending = self.get_observations(
             rolecheck='SectorExpert',
-            observation_question_status=['phase2-closed'],
-            review_state=['phase2-pending'])
+            observation_question_status=['closed'],
+            review_state=['pending'])
 
-        return answered_phase2 + pending_phase2
+        return answered + pending
 
     @timeit
     def get_approval_questions(self):
@@ -1207,16 +1205,15 @@ class Inbox3ReviewFolderView(grok.View):
         if not self.is_sector_expert():
             return []
 
-        statuses_phase2 = [
-            'phase2-drafted',
-            'phase2-recalled-lr'
+        statuses = [
+            'drafted',
+            'recalled-lr'
         ]
 
-        phase2 = self.get_observations(
+        return self.get_observations(
             rolecheck="SectorExpert",
-            observation_question_status=statuses_phase2)
+            observation_question_status=statuses)
 
-        return phase2
 
     @timeit
     def get_unanswered_questions(self):
@@ -1225,41 +1222,37 @@ class Inbox3ReviewFolderView(grok.View):
          my questions sent to LR and MS and waiting for reply
         """
 
-        statuses_phase2 = [
-            'phase2-pending',
-            'phase2-recalled-msa',
-            'phase2-expert-comments',
-            'phase2-pending-answer-drafting'
+        statuses = [
+            'pending',
+            'recalled-msa',
+            'expert-comments',
+            'pending-answer-drafting'
         ]
 
-        phase2 = self.get_observations(
+        return self.get_observations(
             rolecheck="SectorExpert",
-            observation_question_status=statuses_phase2)
+            observation_question_status=statuses)
 
-        return phase2
 
     @timeit
     def get_waiting_for_comment_from_counterparts_for_question(self):
         """
          Role: Sector Expert
         """
-        phase2 =  self.get_observations(
-            rolecheck='NotCounterPartPhase2',
+        return self.get_observations(
+            rolecheck='NotCounterPart',
             observation_question_status=[
-                'phase2-counterpart-comments'])
-
-        return phase2
+                'counterpart-comments'])
 
     @timeit
     def get_waiting_for_comment_from_counterparts_for_conclusion(self):
         """
          Role: Sector Expert
         """
-        phase2 =  self.get_observations(
-            rolecheck='NotCounterPartPhase2',
+        return  self.get_observations(
+            rolecheck='NotCounterPart',
             observation_question_status=[
-                'phase2-conclusion-discussion'])
-        return phase2
+                'conclusion-discussion'])
 
     @timeit
     def get_observation_for_finalisation(self):
@@ -1268,12 +1261,12 @@ class Inbox3ReviewFolderView(grok.View):
          waiting approval from LR
         """
 
-        phase2 =  self.get_observations(
+        return  self.get_observations(
             rolecheck='SectorExpert',
             observation_question_status=[
-                'phase2-close-requested'])
+                'close-requested'])
 
-        return phase2
+
 
     """
         Lead Reviewer
@@ -1284,13 +1277,13 @@ class Inbox3ReviewFolderView(grok.View):
          Role: Lead Reviewer
          Questions waiting for me to send to the MS
         """
-        phase2 = self.get_observations(
+        return self.get_observations(
             rolecheck='LeadReviewer',
             observation_question_status=[
-                'phase2-drafted',
-                'phase2-recalled-lr'])
+                'drafted',
+                'recalled-lr'])
 
-        return phase2
+
 
     @timeit
     def get_observations_to_finalise(self):
@@ -1299,12 +1292,12 @@ class Inbox3ReviewFolderView(grok.View):
          Observations waiting for me to confirm finalisation
         """
 
-        phase2 = self.get_observations(
+        return self.get_observations(
             rolecheck='LeadReviewer',
             observation_question_status=[
-                'phase2-close-requested'])
+                'close-requested'])
 
-        return phase2
+
 
     @timeit
     def get_questions_to_comment(self):
@@ -1315,7 +1308,7 @@ class Inbox3ReviewFolderView(grok.View):
         return self.get_observations(
             rolecheck='CounterPart',
             observation_question_status=[
-                'phase2-counterpart-comments'])
+                'counterpart-comments'])
 
     @timeit
     def get_conclusions_to_comment(self):
@@ -1325,7 +1318,7 @@ class Inbox3ReviewFolderView(grok.View):
         """
         return self.get_observations(
             rolecheck='CounterPart',
-            observation_question_status=['phase2-conclusion-discussion'])
+            observation_question_status=['conclusion-discussion'])
 
     @timeit
     def get_questions_with_comments_from_reviewers(self):
@@ -1335,7 +1328,7 @@ class Inbox3ReviewFolderView(grok.View):
         """
         return self.get_observations(
             rolecheck='CounterPart',
-            observation_question_status=['phase2-counterpart-comments'])
+            observation_question_status=['counterpart-comments'])
 
     @timeit
     def get_answers_from_ms(self):
@@ -1343,11 +1336,11 @@ class Inbox3ReviewFolderView(grok.View):
          Role: Lead Reviewer
          that need review by Sector Expert
         """
-        phase2 = self.get_observations(
+        return self.get_observations(
             rolecheck='LeadReviewer',
             observation_question_status=[
-                'phase2-answered'])
-        return phase2
+                'answered'])
+
 
     @timeit
     def get_unanswered_questions_lr(self):
@@ -1356,15 +1349,15 @@ class Inbox3ReviewFolderView(grok.View):
          questions waiting for comments from MS
         """
 
-        phase2 = self.get_observations(
+        return self.get_observations(
             rolecheck='LeadReviewer',
             observation_question_status=[
-                'phase2-pending',
-                'phase2-recalled-msa',
-                'phase2-expert-comments',
-                'phase2-pending-answer-drafting'])
+                'pending',
+                'recalled-msa',
+                'expert-comments',
+                'pending-answer-drafting'])
 
-        return phase2
+
 
     """
         MS Coordinator
@@ -1378,9 +1371,9 @@ class Inbox3ReviewFolderView(grok.View):
         return self.get_observations(
             rolecheck='MSAuthority',
             observation_question_status=[
-                'phase2-pending',
-                'phase2-recalled-msa',
-                'phase2-pending-answer-drafting'])
+                'pending',
+                'recalled-msa',
+                'pending-answer-drafting'])
 
     @timeit
     def get_questions_with_comments_received_from_mse(self):
@@ -1390,7 +1383,7 @@ class Inbox3ReviewFolderView(grok.View):
         """
         return self.get_observations(
             rolecheck='MSAuthority',
-            observation_question_status=['phase2-expert-comments'],
+            observation_question_status=['expert-comments'],
             last_answer_has_replies=True,
             # last_answer_reply_number > 0
         )
@@ -1402,7 +1395,7 @@ class Inbox3ReviewFolderView(grok.View):
          Answers requiring comments/discussion from MS experts
         """
         return self.get_observations(
-            observation_question_status=['phase2-expert-comments'],
+            observation_question_status=['expert-comments'],
         )
 
     @timeit
@@ -1412,11 +1405,11 @@ class Inbox3ReviewFolderView(grok.View):
          Answers sent to SE
         """
         answered = self.get_observations(
-            observation_question_status=['phase2-answered'])
+            observation_question_status=['answered'])
         cat = api.portal.get_tool('portal_catalog')
         statuses = list(cat.uniqueValuesFor('review_state'))
         try:
-            statuses.remove('phase2-closed')
+            statuses.remove('closed')
         except ValueError:
             pass
         not_closed = self.get_observations(
@@ -1435,7 +1428,7 @@ class Inbox3ReviewFolderView(grok.View):
          Comments for answer needed by MS Coordinator
         """
         return self.get_observations(
-            observation_question_status=['phase2-expert-comments'])
+            observation_question_status=['expert-comments'])
 
     @timeit
     def get_observations_with_my_comments(self):
@@ -1445,8 +1438,8 @@ class Inbox3ReviewFolderView(grok.View):
         """
         return self.get_observations(
             observation_question_status=[
-                'phase2-expert-comments',
-                'phase2-pending-answer-drafting'],
+                'expert-comments',
+                'pending-answer-drafting'],
             reply_comments_by_mse=True,
         )
 
@@ -1458,8 +1451,8 @@ class Inbox3ReviewFolderView(grok.View):
         """
         return self.get_observations(
             observation_question_status=[
-                'phase2-answered',
-                'phase2-recalled-msa'],
+                'answered',
+                'recalled-msa'],
             reply_comments_by_mse=True,
         )
 
@@ -1592,7 +1585,7 @@ class FinalisedFolderView(grok.View):
                         return x.isMSA
                     elif rolename == 'SectorExpert':
                         return x.isRE
-                    elif rolename == 'NotCounterPartPhase2':
+                    elif rolename == 'NotCounterPart':
                         return not x.isCP and x.isRE
                     elif rolename == 'LeadReviewer':
                         return x.isLR
@@ -1616,7 +1609,7 @@ class FinalisedFolderView(grok.View):
          Finalised with 'no response needed'
         """
         return self.get_observations(
-            observation_question_status=['phase2-closed'],
+            observation_question_status=['closed'],
             observation_finalisation_reason='no-response-needed',
         )
 
@@ -1626,7 +1619,7 @@ class FinalisedFolderView(grok.View):
          Finalised with 'resolved'
         """
         return self.get_observations(
-            observation_question_status=['phase2-closed'],
+            observation_question_status=['closed'],
             observation_finalisation_reason='resolved',
         )
 
@@ -1636,7 +1629,7 @@ class FinalisedFolderView(grok.View):
          Finalised with 'unresolved'
         """
         return self.get_observations(
-            observation_question_status=['phase2-closed'],
+            observation_question_status=['closed'],
             observation_finalisation_reason='unresolved',
         )
 
@@ -1646,7 +1639,7 @@ class FinalisedFolderView(grok.View):
          Finalised with 'partly resolved'
         """
         return self.get_observations(
-            observation_question_status=['phase2-closed'],
+            observation_question_status=['closed'],
             observation_finalisation_reason='partly-resolved',
         )
 
@@ -1656,7 +1649,7 @@ class FinalisedFolderView(grok.View):
          Finalised with 'technical correction'
         """
         return self.get_observations(
-            observation_question_status=['phase2-closed'],
+            observation_question_status=['closed'],
             observation_finalisation_reason='technical-correction',
         )
 
@@ -1666,7 +1659,7 @@ class FinalisedFolderView(grok.View):
          Finalised with 'partly resolved'
         """
         return self.get_observations(
-            observation_question_status=['phase2-closed'],
+            observation_question_status=['closed'],
             observation_finalisation_reason='revised-estimate',
         )
 

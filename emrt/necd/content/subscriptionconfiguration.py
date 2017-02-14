@@ -16,8 +16,8 @@ from zope.annotation.interfaces import IAnnotations
 import copy
 
 ROLE_TRANSLATOR = {
-    'ReviewerPhase2': 'Sector Expert (phase 2)',
-    'LeadReviewer':   'Lead Reviewer (phase 2)',
+    'NECDReviewer': 'Sector Expert',
+    'LeadReviewer':   'Lead Reviewer',
     'MSAuthority':    'Member State Coordinator',
     'CounterPart':    'Counter Part',
     'MSExpert':       'Member State Expert',
@@ -25,17 +25,15 @@ ROLE_TRANSLATOR = {
 
 
 NOTIFICATIONS_PER_ROLE = {
-    'ReviewerPhase2': {
+    'NECDReviewer': {
         'observation_finalisation_denied': True,
         'observation_finalised': True,
-        'observation_to_phase2': True,
         'question_answered': True,
         'question_to_ms': True,
     },
     'LeadReviewer': {
         'conclusion_to_comment': True,
         'observation_finalisation_request': True,
-        'observation_to_phase2': True,
         'question_answered': True,
         'question_ready_for_approval': True,
         'question_to_counterpart': True,
@@ -56,17 +54,15 @@ NOTIFICATIONS_PER_ROLE = {
 }
 
 NOTIFICATION_NAMES = {
-    'ReviewerPhase2': {
+    'NECDReviewer': {
         'observation_finalisation_denied': 'Observation finalisation denied by LR',
         'observation_finalised': 'Observation finalised by LR',
-        'observation_to_phase2': 'Observation handed over to step 2',
         'question_answered': 'Question answered by MS',
         'question_to_ms': 'Question sent to MS by LR',
     },
     'LeadReviewer': {
         'conclusion_to_comment': 'Conclusion to comment by you as LR',
         'observation_finalisation_request': 'Observation finalisation ready for your approval as LR',
-        'observation_to_phase2': 'Observation handed over to step 2',
         'question_answered': 'Question answered by MS',
         'question_ready_for_approval': 'Question ready for your approval as LR',
         'question_to_counterpart': 'Question to comment by you as LR',
