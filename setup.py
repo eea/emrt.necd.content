@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.59.35'
+VERSION = '1.59.35'
 
 setup(name='emrt.necd.content',
-      version=version,
+      version=VERSION,
       description="Content-types for ESD Review Tool",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
