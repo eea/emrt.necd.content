@@ -15,6 +15,7 @@
       directory="profiles/default"
       description="Content-types for emrt.necd.content. Content-types for ESD Review Tool"
       provides="Products.GenericSetup.interfaces.EXTENSION"
+      post_handler=".setuphandlers.post_install"
       />
 
   <!-- Register the import step -->
