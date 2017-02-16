@@ -54,9 +54,6 @@ LDAP_ROLE_MAPPING = {
 }
 
 
-MEMCACHED_ID = 'memcached'
-
-
 def create_vocabulary(
         context, vocabname, vocabtitle, importfilename=None, profile=None):
     _ = context.invokeFactory(
@@ -103,7 +100,7 @@ def enable_atd_spellchecker(portal):
 
 
 def setup_memcached(portal, memcached_id):
-    if 'memcached' not in portal.keys():
+    if memcached_id not in portal.keys():
         try:
             _ = portal.manage_addProduct[
                 'MemcachedManager'].manage_addMemcachedManager(memcached_id)
@@ -118,12 +115,43 @@ def setup_memcached(portal, memcached_id):
 def setup_ldap(portal, ldap_id, memcached_id):
     acl = portal['acl_users']
     ldap_plugin = acl[ldap_id]
+
+    # map LDAP roles to Plone roles
     ldap_acl = ldap_plugin._getLDAPUserFolder()
     for ldap_group, plone_role in LDAP_ROLE_MAPPING.items():
         ldap_acl.manage_addGroupMapping(ldap_group, plone_role)
 
     # enable memcached
     ldap_plugin.ZCacheable_setManagerId(manager_id=memcached_id)
+
+    # disable unnecessary PAS LDAP plugins
+    enabled_interfaces = (
+        'IUserEnumerationPlugin',
+        'IGroupsPlugin',
+        'IGroupEnumerationPlugin',
+        'IRoleEnumerationPlugin',
+        'IAuthenticationPlugin',
+        'IPropertiesPlugin',
+        'IRolesPlugin',
+        'IGroupIntrospection',
+        # Commenting out disabled plugins for reference.
+        # 'ICredentialsResetPlugin',
+        # 'IGroupManagement',
+        # 'IUserAdderPlugin',
+        # 'IUserManagement',
+    )
+
+    # activate selected plugins
+    ldap_plugin.manage_activateInterfaces(enabled_interfaces)
+
+    # move LDAP Properties plugin to top
+    plugins = acl['plugins']
+    active_plugins = plugins.getAllPlugins('IPropertiesPlugin')['active']
+    interface = plugins._getInterfaceFromName('IPropertiesPlugin')
+
+    for _ in range(len(active_plugins) - 1):
+        # need to move it one position at a time
+        plugins.movePluginsUp(interface, [ldap_id])
 
 
 def post_install(context):
