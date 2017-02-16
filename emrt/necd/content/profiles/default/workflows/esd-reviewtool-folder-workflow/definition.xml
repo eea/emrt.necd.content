@@ -6,7 +6,7 @@
  <permission>Modify portal content</permission>
  <permission>View</permission>
  <permission>emrt.necd.content: Add Observation</permission>
- <state state_id="ongoing-review" title="Ongoing review (Phase 2)">
+ <state state_id="ongoing-review" title="Ongoing review">
   <exit-transition transition_id="end-review"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>Anonymous</permission-role>

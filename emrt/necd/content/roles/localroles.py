@@ -187,7 +187,7 @@ class ConclusionRoleAdapter(object):
         if roles:
             from logging import getLogger
             log = getLogger(__name__)
-            log.debug('Conclusions Phase 2 Roles: %s %s' % (principal_id, roles))
+            log.debug('Conclusions Roles: %s %s' % (principal_id, roles))
 
         return roles
 
