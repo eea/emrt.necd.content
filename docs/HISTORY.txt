@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.60.00 (unreleased)
---------------------
+2.0 (unreleased)
+----------------
 
 - emrt.necd.content fork
   [batradav]
