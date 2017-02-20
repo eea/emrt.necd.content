@@ -1,10 +1,10 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
+2.0.1 (2017-02-20)
 ------------------
 
-- Nothing changed yet.
+- Task: #82126 Fixing ReAssignCounterPartsForm and statisticsview.
 
 
 2.0 (2017-02-16)
