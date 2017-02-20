@@ -352,7 +352,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
     def __call__(self):
         """Perform the update and redirect if necessary, or render the page
         """
-        target = self.assignation_target()
+        target = self._assignation_target()
         if self.request.form.get('send', None):
             counterparts = self.request.get('counterparts', None)
             if counterparts is None:

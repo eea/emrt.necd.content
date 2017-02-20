@@ -66,12 +66,6 @@ class StatisticsView(grok.View):
         except:
             return []
 
-    def get_step(self):
-        step = self.request.form.get('step', '')
-        if step == '':
-            step = 'step1'
-        return step
-
     def _generic_getter(self, objs, key, value, columns=[], filter_fun=None):
 
         """
@@ -86,14 +80,9 @@ class StatisticsView(grok.View):
         """
         data = []
         items = {}
-        step = self.get_step()
-        if step == 'step1':
-            objs = [item for item in objs if item['step'] == 'step1']
-        elif step == 'step2':
-            objs = [item for item in objs if item['step'] == 'step2']
         # Get the items, filtered if needed
         filted_items = filter(filter_fun, objs)
-        #filted_items = filter(lambda x: x.step == step, filted_items)
+
         # Set sorting and grouping key into a function
         getkey = operator.itemgetter(key)
         filted_items.sort(key=getkey)
@@ -249,12 +238,6 @@ class DownloadStatisticsView(grok.View):
         except:
             return []
 
-    def get_step(self):
-        step = self.request.form.get('step', '')
-        if step == '':
-            step = 'step1'
-        return step
-
     def _generic_getter(self, objs, key, value, columns=[], filter_fun=None):
 
         """
@@ -269,14 +252,9 @@ class DownloadStatisticsView(grok.View):
         """
         data = []
         items = {}
-        step = self.get_step()
-        if step == 'step1':
-            objs = [item for item in objs if item['step'] == 'step1']
-        elif step == 'step2':
-            objs = [item for item in objs if item['step'] == 'step2']
         # Get the items, filtered if needed
         filted_items = filter(filter_fun, objs)
-        #filted_items = filter(lambda x: x.step == step, filted_items)
+
         # Set sorting and grouping key into a function
         getkey = operator.itemgetter(key)
         filted_items.sort(key=getkey)
@@ -331,7 +309,7 @@ class DownloadStatisticsView(grok.View):
         self.observations = self.get_all_observations()
 
         now = datetime.now()
-        filename = 'EMRT-' + now.strftime("%Y%M%d%H%m") + " - " + self.get_step() + ".xls"
+        filename = 'EMRT-' + now.strftime("%Y%M%d%H%m") + " - " + ".xls"
 
         book = tablib.Databook((self.observation_status_per_country(),
                 self.observation_status_per_sector(),

@@ -28,23 +28,6 @@
       <div id="observations">
       <h2>Today's Summary</h2>
 
-      <div id="statisticsPhase" tal:define="step python:'';
-                                            step request/step | step">
-        <a tal:attributes="href string:${here/absolute_url}/statistics?step=step1;
-                          class python: step == 'step1' and 'selected' or ''">
-          <img src="++resource++emrt.necd.content/phase-1.png"/>
-        </a>
-        <a tal:attributes="href string:${here/absolute_url}/statistics?step=step2;
-                          class python: step == 'step2' and 'selected' or ''">
-          <img src="++resource++emrt.necd.content/phase-2.png"/>
-        </a>
-        <a tal:attributes="href string:${here/absolute_url}/statistics?step=step12;
-                          class python: step == 'step12' and 'selected' or ''">
-          <img src="++resource++emrt.necd.content/phase-12.png"/>
-        </a>
-        <span class="strech"></span>
-      </div>
-
       <div class="collapsiblePanelTitle" data-panel="observation_status_per_country">
         <div>
           Observations: How many observations are still drafts, open in conclusion state and finished?
@@ -371,4 +354,3 @@
 
 </body>
 </html>
-
