@@ -4,13 +4,15 @@ Changelog
 2.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Task: #80370 Internal testing from EEA - Fixing some issues
+  [batradav]
 
 
 2.0.1 (2017-02-20)
 ------------------
 
 - Task: #82126 Fixing ReAssignCounterPartsForm and statisticsview.
+  [batradav]
 
 
 2.0 (2017-02-16)
