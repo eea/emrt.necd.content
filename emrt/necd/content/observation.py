@@ -113,7 +113,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
 
     form.widget(pollutants=CheckBoxFieldWidget)
     pollutants = schema.List(
-        title=u"Gas",
+        title=u"Pollutants",
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.pollutants',
         ),
