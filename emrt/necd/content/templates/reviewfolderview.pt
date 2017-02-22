@@ -222,7 +222,7 @@
           <div class="cell position-1 width-3 esdLabel">Country</div>
           <div class="cell position-4 width-3 esdLabel tooltipIconBlue" title="Review year is the year in which the emissions inventory was submitted and the review was carried out.">Review year</div>
           <div class="cell position-7 width-3 esdLabel tooltipIconBlue" title="Inventory year is the year or a range of years (e.g. '2012', '2009-2012') in which the emissions occured and an issue was observed in the review.">Inventory year</div>
-          <div class="cell position-11 width-3 esdLabel tooltipIconBlue" title="Key flags highlight important information that is closely related to the main purpose of 'initial checks' and ESD review.">Description flags</div>
+          <div class="cell position-11 width-3 esdLabel tooltipIconBlue" title="Key flags highlight important information that is closely related to the item.">Description flags</div>
         </div>
         <div class="row">
           <div class="cell position-1 width-3">

@@ -133,18 +133,6 @@ class IObservation(form.Schema, IImageScaleTraversable):
         required=False,
     )
 
-    # ghg_source_category = schema.Choice(
-    #     title=_(u"NFR category group"),
-    #     vocabulary='emrt.necd.content.ghg_source_category',
-    #     required=True,
-    # )
-
-    # ghg_source_sectors = schema.Choice(
-    #     title=_(u"NFR Sector"),
-    #     vocabulary='emrt.necd.content.ghg_source_sectors',
-    #     required=True,
-    # )
-
     ms_key_catagory = schema.Bool(
         title=u"MS key category",
     )
@@ -166,9 +154,10 @@ class IObservation(form.Schema, IImageScaleTraversable):
     form.widget(highlight=CheckBoxFieldWidget)
     highlight = schema.List(
         title=u"Description flags",
-        description=u"Description flags highlight important information " \
-                    u"that is closely related to the main purpose of " \
-                    u"'initial checks' and ESD review",
+        description=(
+            u"Description flags highlight important information "
+            u"that is closely related to the item."
+        ),
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.highlight',
         ),
