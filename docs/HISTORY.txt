@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.2 (unreleased)
+2.0.2 (2017-02-22)
 ------------------
 
 - Task: #80370 Internal testing from EEA - Fixing some issues
