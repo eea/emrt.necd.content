@@ -1,6 +1,19 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    i18n_domain="emrt.necd.content">
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+  i18n_domain="emrt.necd.content">
+
+  <genericsetup:upgradeSteps
+    source="2.0"
+    destination="2.0.3"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update NFR codes."
+      description="Will overwrite existing NFR code data!"
+      import_steps="plone.app.registry"
+      />
+
+  </genericsetup:upgradeSteps>
 
 </configure>

@@ -19,7 +19,7 @@
   </record>
   <records interface="emrt.necd.content.nfr_code_matching.INECDSettings" />
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping">
-    <value purge="False">
+    <value purge="True">
       <element key="1A1a">sector1|1A1a|1A1, 1A2, 1A4 Energy: stationary combustion|1A1a Public electricity and heat production</element>
       <element key="1A1b">sector1|1A1b|1A1, 1A2, 1A4 Energy: stationary combustion|1A1b Petroleum refining</element>
       <element key="1A1c">sector1|1A1c|1A1, 1A2, 1A4 Energy: stationary combustion|1A1c Manufacture of solid fuels and other energy industries</element>
@@ -35,7 +35,9 @@
       <element key="1A4ci">sector1|1A4ci|1A1, 1A2, 1A4 Energy: stationary combustion|1A4ci Agriculture/Forestry/Fishing: Stationary</element>
       <element key="1A5a">sector1|1A5a|1A1, 1A2, 1A4 Energy: stationary combustion|1A5a Other stationary (including military)</element>
       <element key="1A3ai(i)">sector2|1A3ai(i)|1A3 Energy: transport including international|1A3ai(i) International aviation LTO (civil)</element>
+      <element key="1A3ai(ii)">sector2|1A3ai(ii)|1A3 Energy: transport including international|1A3ai(ii) International aviation cruise (civil) - Memo Item</element>
       <element key="1A3aii(i)">sector2|1A3aii(i)|1A3 Energy: transport including international|1A3aii(i) Domestic aviation LTO (civil)</element>
+      <element key="1A3aii(ii)">sector2|1A3aii(ii)|1A3 Energy: transport including international|1A3aii(ii) Domestic aviation cruise (civil) - Memo Item</element>
       <element key="1A3bi">sector2|1A3bi|1A3 Energy: transport including international|1A3bi Road transport: Passenger cars</element>
       <element key="1A3bii">sector2|1A3bii|1A3 Energy: transport including international|1A3bii Road transport: Light duty vehicles</element>
       <element key="1A3biii">sector2|1A3biii|1A3 Energy: transport including international|1A3biii Road transport: Heavy duty vehicles and buses</element>
@@ -44,7 +46,9 @@
       <element key="1A3bvi">sector2|1A3bvi|1A3 Energy: transport including international|1A3bvi Road transport: Automobile tyre and brake wear</element>
       <element key="1A3bvii">sector2|1A3bvii|1A3 Energy: transport including international|1A3bvii Road transport: Automobile road abrasion</element>
       <element key="1A3di(ii)">sector2|1A3di(ii)|1A3 Energy: transport including international|1A3di(ii) International inland waterways</element>
+      <element key="1A3di(i)">sector2|1A3di(i)|1A3 Energy: transport including international|1A3di(i) International maritime navigation - Memo Item</element>
       <element key="1A3dii">sector2|1A3dii|1A3 Energy: transport including international|1A3dii National navigation (shipping)</element>
+      <element key="1A3">sector2|1A3|1A3 Energy: transport including international|1A3 Transport: Fuel Used - Memo Item</element>
       <element key="1A2gvii ">sector3|1A2gvii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A2gvii Mobile Combustion in manufacturing industries and construction: (please specify in the IIR)</element>
       <element key="1A3c">sector3|1A3c|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A3c Railways</element>
       <element key="1A3ei">sector3|1A3ei|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A3ei Pipeline transport</element>
@@ -54,6 +58,7 @@
       <element key="1A4cii">sector3|1A4cii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A4cii Agriculture/Forestry/Fishing: Off-road vehicles and other machinery</element>
       <element key="1A4ciii">sector3|1A4ciii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A4ciii Agriculture/Forestry/Fishing: National fishing</element>
       <element key="1A5b">sector3|1A5b|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A5b Other, Mobile (including military, land based and recreational boats)</element>
+      <element key="1A5c">sector3|1A5c|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A5c Multilateral operations - Memo Item</element>
       <element key="1B1a">sector4|1B1a|1B, 2A Fugitive and IPPU|1B1a Fugitive emission from solid fuels: Coal mining and handling</element>
       <element key="1B1b">sector4|1B1b|1B, 2A Fugitive and IPPU|1B1b Fugitive emission from solid fuels: Solid fuel transformation</element>
       <element key="1B1c">sector4|1B1c|1B, 2A Fugitive and IPPU|1B1c Other fugitive emissions from solid fuels</element>
@@ -149,6 +154,11 @@
       <element key="5D2">sector8|5D2|5A - 5E Waste|5D2 Industrial wastewater handling</element>
       <element key="5D3">sector8|5D3|5A - 5E Waste|5D3 Other wastewater handling</element>
       <element key="5E">sector8|5E|5A - 5E Waste|5E Other waste (please specify in IIR)</element>
+      <element key="6A">sector9|6A|6A Other Sources|6A Other Sources</element>
+      <element key="6B">sector9|6B|6B Other Sources|6B Other Not Included in Natonal Total of the entire territory</element>
+      <element key="11A">sector9|11A|11A Other Sources|11A Volcanoes</element>
+      <element key="11B">sector9|11B|11B Other Sources|11B Forest fires</element>
+      <element key="11C">sector9|11C|11C Other Sources|11C Other natural emissions (please specify in the IIR)</element>
     </value>
   </record>
 </registry>

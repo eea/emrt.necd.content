@@ -5,7 +5,8 @@ Changelog
 2.0.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Task: #82584 Sector List Update - Reimport NFR codes.
+  [batradav]
 
 
 2.0.2 (2017-02-22)
