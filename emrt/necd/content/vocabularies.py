@@ -3,6 +3,8 @@ from plone import api
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
+from emrt.necd.content.constants import LDAP_SECTOREXP
+
 
 class MSVocabulary(object):
     grok.implements(IVocabularyFactory)
@@ -155,10 +157,40 @@ class NFRCode(object):
     def __call__(self, context):
         terms = []
         nfrcodes = nfr_codes()
+
+        try:
+            user = api.user.get_current()
+        except Exception:
+            user = None
+
+        have_user = user is not None and not api.user.is_anonymous()
+        if have_user:
+            user_groups = user.getGroups()
+
         for key, value in nfrcodes.items():
+            # if there's an active user, show only NFR codes
+            # part of the user's ldap sector
+            valid = False
+            if have_user:
+                for group in user_groups:
+                    if valid:
+                        break
+
+                    valid_prefix = '{}-{}-'.format(
+                        LDAP_SECTOREXP,
+                        value['ldap']
+                    )
+
+                    valid = group.startswith(valid_prefix)
+                if not valid:
+                    # skip this term
+                    continue
+
             # create a term - the arguments are the value, the token, and
             # the title (optional)
-            terms.append(SimpleVocabulary.createTerm(key, key, value['title']))
+            term = SimpleVocabulary.createTerm(key, key, value['title'])
+            terms.append(term)
+
         return SimpleVocabulary(terms)
 
 grok.global_utility(NFRCode, name=u"emrt.necd.content.nfr_code")
@@ -179,4 +211,3 @@ class Conclusions(object):
         return SimpleVocabulary(terms)
 
 grok.global_utility(Conclusions, name=u"emrt.necd.content.conclusion_reasons")
-

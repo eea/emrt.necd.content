@@ -8,6 +8,10 @@ Changelog
 - Task: #82584 Sector List Update - Reimport NFR codes.
   [batradav]
 
+- Task: #80370 Internal testing from EEA - Filter NFR codes
+  based on user's ldap sector.
+  [batradav]
+
 
 2.0.2 (2017-02-22)
 ------------------
