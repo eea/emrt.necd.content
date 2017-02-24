@@ -863,7 +863,7 @@ class ObservationMixin(DefaultView):
         return IContentListing(self.context.get_values_cat('Question'))
 
     def can_delete_observation(self):
-        is_draft = self.context.get_status() in ['pending']
+        is_draft = self.context.get_status() in ['pending', 'draft']
         questions = len(self.context.get_values_cat('Question'))
         #If observation has conclusion cannot be deleted (Ticket #26992)
         conclusions = len(self.context.get_values_cat('Conclusions'))
