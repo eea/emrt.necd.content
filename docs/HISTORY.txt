@@ -16,6 +16,7 @@ Changelog
   * fixing go to conclusion workflow state change
   * fixing observation tabs after "request finalisation"
   * fixing file upload
+  * fixing "Fuel is shown as some number"
   [batradav]
 
 

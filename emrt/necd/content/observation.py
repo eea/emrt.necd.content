@@ -14,6 +14,7 @@ from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
+from plone.dexterity.browser.view import DefaultView
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.app.discussion.interfaces import IConversation
 from plone.directives import dexterity
@@ -818,8 +819,7 @@ class AddForm(dexterity.AddForm):
             self.actions[k].addClass('standardButton')
 
 
-class ObservationMixin(grok.View):
-    grok.baseclass()
+class ObservationMixin(DefaultView):
 
     @property
     def user_roles(self):
@@ -1121,9 +1121,6 @@ class ObservationMixin(grok.View):
 
 
 class ObservationView(ObservationMixin):
-    grok.context(IObservation)
-    grok.require('zope2.View')
-    grok.name('view')
 
     def get_current_counterparters(self):
         """ Return list of current counterparters,
@@ -1147,16 +1144,7 @@ class ObservationView(ObservationMixin):
         )
 
 
-class DiffedView(ObservationView):
-    grok.name('diffedview')
-    grok.context(IObservation)
-    grok.require('zope2.View')
-
-
 class ExportAsDocView(ObservationMixin):
-    grok.name('export_as_docx')
-    grok.context(IObservation)
-    grok.require('emrt.necd.content.ExportAnObservation')
 
     def strip_special_chars(self, s):
         """ return s without special chars
@@ -1179,7 +1167,7 @@ class ExportAsDocView(ObservationMixin):
         document.add_heading(self.context.getId(), 0)
 
         p = document.add_paragraph('')
-        table = document.add_table(rows=1, cols=6)
+        table = document.add_table(rows=1, cols=5)
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Country'
         hdr_cells[0].paragraphs[0].style = "Table Cell Bold"
@@ -1191,8 +1179,6 @@ class ExportAsDocView(ObservationMixin):
         hdr_cells[3].paragraphs[0].style = "Table Cell Bold"
         hdr_cells[4].text = 'Inventory year'
         hdr_cells[4].paragraphs[0].style = "Table Cell Bold"
-        hdr_cells[5].text = 'Phase'
-        hdr_cells[5].paragraphs[0].style = "Table Cell Bold"
 
         row_cells = table.add_row().cells
         row_cells[0].text = self.context.country_value() or ''
@@ -1201,12 +1187,13 @@ class ExportAsDocView(ObservationMixin):
         row_cells[1].paragraphs[0].style = "Table Cell"
         row_cells[2].text = self.context.pollutants_value() or ''
         row_cells[2].paragraphs[0].style = "Table Cell"
-        row_cells[3].text = self.context.fuel or ''
+        row_cells[3].text = self.context._vocabulary_value(
+            IObservation['fuel'].vocabularyName,
+            self.context.fuel
+        )
         row_cells[3].paragraphs[0].style = "Table Cell"
         row_cells[4].text = self.context.year or ''
         row_cells[4].paragraphs[0].style = "Table Cell"
-        row_cells[5].text = "2"
-        row_cells[5].paragraphs[0].style = "Table Cell"
         p = document.add_paragraph('')
 
         document.add_heading('Observation details', level=2)

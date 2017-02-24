@@ -1,0 +1,32 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:i18n="http://namespaces.zope.org/i18n"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  i18n_domain="emrt.necd.content">
+
+
+  <!-- Observation views -->
+  <browser:page
+    name="view"
+    for=".observation.IObservation"
+    class=".observation.ObservationView"
+    template="templates/observationview.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="diffedview"
+    for=".observation.IObservation"
+    class=".observation.ObservationView"
+    template="templates/diffedview.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="export_as_docx"
+    for=".observation.IObservation"
+    class=".observation.ExportAsDocView"
+    permission="emrt.necd.content.ExportAnObservation"
+    />
+
+</configure>
