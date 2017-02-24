@@ -12,6 +12,10 @@ Changelog
   based on user's ldap sector.
   [batradav]
 
+- Task: #82622 Bugs from Testing with CORE TEAM - 22 February
+  * fixing go to conclusion workflow state change
+  [batradav]
+
 
 2.0.2 (2017-02-22)
 ------------------

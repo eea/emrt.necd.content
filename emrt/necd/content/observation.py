@@ -1556,55 +1556,13 @@ class AddConclusions(grok.View):
 
     def render(self):
         context = aq_inner(self.context)
-        workflow = getToolByName(context, 'portal_workflow')
-        transitions_available = [
-            action['id'] for action in workflow.listActions(object=context)
-        ]
-        current_user_id = api.user.get_current().getId()
-        user_roles = api.user.get_roles(
-            username=current_user_id,
-            obj=context
-        )
-        if 'NECDReviewer' in user_roles:
-            conclusions_folder = self.context.get_values_cat('Conclusions')
-            if conclusions_folder:
-                conclusions = conclusions_folder[0]
-                url = conclusions.absolute_url() + '/edit'
+        conclusions_folder = self.context.get_values_cat('Conclusions')
 
-            else:
-                #with api.env.adopt_roles(['NECDReviewer']):
-                id = context.invokeFactory(
-                    id=str(int(time())),
-                    type_name='Conclusions',
-                    text=u''
-                )
-                cs = self.context.get_values_cat('Conclusions')
-                conclusion = cs[0]
-                url = conclusion.absolute_url() + '/edit'
-                #url = '%s/++add++Conclusions' % context.absolute_url()
+        if conclusions_folder:
+            conclusions = conclusions_folder[0]
+            url = conclusions.absolute_url() + '/edit'
 
         else:
-            conclusions_folder = self.context.get_values_cat('Conclusions')
-            if conclusions_folder:
-                conclusions = conclusions_folder[0]
-                url = conclusions.absolute_url() + '/edit'
+            url = '{}/++add++Conclusions'.format(context.absolute_url())
 
-            else:
-                #with api.env.adopt_roles(['NECDReviewer']):
-                id = context.invokeFactory(
-                    id=str(int(time())),
-                    type_name='Conclusions',
-                    text=u''
-                )
-                cs = self.context.get_values_cat('Conclusions')
-                conclusion = cs[0]
-                url = conclusion.absolute_url() + '/edit'
-
-        if 'draft-conclusions' in transitions_available:
-            api.content.transition(
-                obj=context,
-                transition='draft-conclusions'
-            )
-
-        self.context.reindexObject()
         return self.request.response.redirect(url)

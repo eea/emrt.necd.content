@@ -161,11 +161,11 @@ class AddForm(dexterity.AddForm):
     def updateFields(self):
         super(AddForm, self).updateFields()
         from .observation import IObservation
-        conclusion_fields = field.Fields(IConclusions).select('closing_reason', 'text') #, 'ghg_estimations')
+        conclusion_fields = field.Fields(IConclusions).select(
+            'closing_reason', 'text')
         observation_fields = field.Fields(IObservation).select('highlight')
         self.fields = field.Fields(conclusion_fields, observation_fields)
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
-        #self.fields['ghg_estimations'].widgetFactory = DataGridFieldFactory
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
 
     def updateWidgets(self):
@@ -173,8 +173,6 @@ class AddForm(dexterity.AddForm):
         self.widgets['text'].rows = 15
 
     def create(self, data={}):
-        # import pdb; pdb.set_trace()
-        # return super(AddForm, self).create(data)
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -193,6 +191,13 @@ class AddForm(dexterity.AddForm):
         content.closing_reason = reason[0]
         adapted = IAllowDiscussion(content)
         adapted.allow_discussion = True
+
+        # Update Observation state
+        api.content.transition(
+            obj=container,
+            transition='draft-conclusions'
+        )
+
         return aq_base(content)
 
     def updateActions(self):
@@ -241,11 +246,11 @@ class EditForm(dexterity.EditForm):
     def updateFields(self):
         super(EditForm, self).updateFields()
         from .observation import IObservation
-        conclusion_fields = field.Fields(IConclusions).select('closing_reason', 'text') #, 'ghg_estimations')
+        conclusion_fields = field.Fields(IConclusions).select(
+            'closing_reason', 'text')
         observation_fields = field.Fields(IObservation).select('highlight')
         self.fields = field.Fields(conclusion_fields, observation_fields)
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
-        #self.fields['ghg_estimations'].widgetFactory = DataGridFieldFactory
         self.fields['text'].rows = 15
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
 

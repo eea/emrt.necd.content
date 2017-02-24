@@ -397,18 +397,9 @@ class AddConclusions(grok.View):
         parent = aq_parent(self.context)
         conclusions = parent.get_conclusion()
         if not conclusions:
-            api.content.transition(
-                obj=parent,
-                transition='draft-conclusions'
-            )
-
-            new_conclusions = parent.invokeFactory(
-                id=int(time()),
-                type_name='Conclusions'
-            )
-            conclusions = parent.get(new_conclusions)
-
-        url = '%s/edit' % conclusions.absolute_url()
+            url = '{}/++add++Conclusions'.format(parent.absolute_url())
+        else:
+            url = '%s/edit' % conclusions.absolute_url()
 
         return self.request.response.redirect(url)
 
