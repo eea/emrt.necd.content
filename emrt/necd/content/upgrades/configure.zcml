@@ -14,6 +14,12 @@
       import_steps="plone.app.registry"
       />
 
+    <genericsetup:upgradeDepends
+      title="Reimport types to fix NECDFile."
+      description="Renamed ESDRTFile.xml to NECDFile.xml in types. Reimport it's definition."
+      import_steps="typeinfo"
+      />
+
   </genericsetup:upgradeSteps>
 
 </configure>
