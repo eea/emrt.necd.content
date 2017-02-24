@@ -14,6 +14,7 @@ Changelog
 
 - Task: #82622 Bugs from Testing with CORE TEAM - 22 February
   * fixing go to conclusion workflow state change
+  * fixing observation tabs after "request finalisation"
   [batradav]
 
 

@@ -369,40 +369,6 @@
           </dl>
         </div>
     </div>
-    <div class="eea-tabs-panel finish-observation"
-      tal:condition="python:context.get_status() == 'close-requested'">
-        <dl>
-          <dt>Observation Finish Requested</dt>
-          <dd></dd>
-          <dt>RE comments on finish observation request:</dt>
-          <dd><span tal:replace="structure context/closing_comments/output|context/closing_comments|nothing" /></dd>
-        </dl>
-
-        <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'close-requested'" >
-          <dl>
-            <dt>Observation Finalisation previously denied</dt>
-            <dd></dd>
-            <dt>LR comments on finish observation request:</dt>
-            <dd>
-              <div tal:replace="structure context/closing_deny_comments/output|context/closing_deny_comments|nothing">
-              Content
-              </div>
-            </dd>
-          </dl>
-        </div>
-
-      <div class="actions" tal:condition="view/in_conclusions">
-        <tal:block tal:repeat="action view/actions">
-          <a href=""
-            tal:attributes="href action/action;
-                            title action/description|nothing;"
-            class="standardButton"
-            tal:content="action/title">
-            Action
-          </a>
-        </tal:block>
-      </div>
-    </div>
     <div class="eea-tabs-panel conclusions"
         tal:define="conclusion view/get_conclusion"
         tal:condition="nocall:conclusion">
@@ -1079,4 +1045,3 @@
 </metal:main>
 </body>
 </html>
-
