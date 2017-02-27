@@ -17,6 +17,7 @@ Changelog
   * fixing observation tabs after "request finalisation"
   * fixing file upload
   * fixing "Fuel is shown as some number"
+  * fixing "Cannot delete observation"
   [batradav]
 
 
