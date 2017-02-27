@@ -6,74 +6,46 @@
 <span tal:attributes="id view/id"
       tal:omit-tag="single_checkbox"
       tal:condition="python:len(items) > 0">
- <span class="option"
-       tal:repeat="item items"
-       tal:attributes="id python:single_checkbox and view.id or None">
-  <input type="checkbox" id="" name="" class="" alt="" title=""
-         tabindex="" disabled="" readonly="" accesskey="" value=""
-         checked="checked"
-         tal:condition="item/checked"
-         tal:attributes="id item/id;
-                         name item/name;
-                         class view/klass;
-                         value item/value;
-                         style view/style;
-                         title view/title;
-                         lang view/lang;
-                         onclick view/onclick;
-                         ondblclick view/ondblclick;
-                         onmousedown view/onmousedown;
-                         onmouseup view/onmouseup;
-                         onmouseover view/onmouseover;
-                         onmousemove view/onmousemove;
-                         onmouseout view/onmouseout;
-                         onkeypress view/onkeypress;
-                         onkeydown view/onkeydown;
-                         onkeyup view/onkeyup;
-                         disabled view/disabled;
-                         tabindex view/tabindex;
-                         onfocus view/onfocus;
-                         onblur view/onblur;
-                         onchange view/onchange;
-                         readonly view/readonly;
-                         alt view/alt;
-                         accesskey view/accesskey;
-                         onselect view/onselect"
-  /><input id="" name="" class="" alt="" title="" tabindex=""
-           disabled="" readonly="" accesskey="" value=""
-           type="checkbox"
-         tal:condition="not:item/checked"
-         tal:attributes="id item/id;
-                         name item/name;
-                         class view/klass;
-                         value item/value;
-                         style view/style;
-                         title view/title;
-                         lang view/lang;
-                         onclick view/onclick;
-                         ondblclick view/ondblclick;
-                         onmousedown view/onmousedown;
-                         onmouseup view/onmouseup;
-                         onmouseover view/onmouseover;
-                         onmousemove view/onmousemove;
-                         onmouseout view/onmouseout;
-                         onkeypress view/onkeypress;
-                         onkeydown view/onkeydown;
-                         onkeyup view/onkeyup;
-                         disabled view/disabled;
-                         tabindex view/tabindex;
-                         onfocus view/onfocus;
-                         onblur view/onblur;
-                         onchange view/onchange;
-                         readonly view/readonly;
-                         alt view/alt;
-                         accesskey view/accesskey;
-                         onselect view/onselect" />
-  <label for=""
-         tal:attributes="for item/id">
-    <span class="label" tal:content="item/label">Label</span>
-  </label>
- </span>
+  <tal:item repeat="item items">
+    <tal:header condition="python:item['value'] == 'ptc'">
+      <br />
+      <div><strong>Draft/final conclusion flags</strong></div>
+    </tal:header>
+    <div class="option" tal:attributes="id python:single_checkbox and view.id or None">
+      <input type="checkbox"
+             tal:attributes="id item/id;
+                             name item/name;
+                             class view/klass;
+                             checked item/checked;
+                             value item/value;
+                             style view/style;
+                             title view/title;
+                             lang view/lang;
+                             onclick view/onclick;
+                             ondblclick view/ondblclick;
+                             onmousedown view/onmousedown;
+                             onmouseup view/onmouseup;
+                             onmouseover view/onmouseover;
+                             onmousemove view/onmousemove;
+                             onmouseout view/onmouseout;
+                             onkeypress view/onkeypress;
+                             onkeydown view/onkeydown;
+                             onkeyup view/onkeyup;
+                             disabled view/disabled;
+                             tabindex view/tabindex;
+                             onfocus view/onfocus;
+                             onblur view/onblur;
+                             onchange view/onchange;
+                             readonly view/readonly;
+                             alt view/alt;
+                             accesskey view/accesskey;
+                             onselect view/onselect"
+      /><label for=""
+               tal:attributes="for item/id">
+        <span class="label" tal:content="item/label">Label</span>
+      </label>
+    </div>
+  </tal:item>
 </span>
 <input name="field-empty-marker" type="hidden" value="1"
        tal:attributes="name string:${view/name}-empty-marker" />

@@ -794,7 +794,20 @@ class Observation(dexterity.Container):
 # using grok.name below.
 # This will make this view the default view for your content-type
 
+
 grok.templatedir('templates')
+
+
+class EditForm(dexterity.EditForm):
+    grok.name('edit')
+    grok.context(IObservation)
+    grok.require('cmf.ModifyPortalContent')
+
+    def updateWidgets(self):
+        super(EditForm, self).updateWidgets()
+        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
+            'templates/widget_highlight.pt'
+        )
 
 
 class AddForm(dexterity.AddForm):
@@ -1389,6 +1402,13 @@ class ModificationForm(dexterity.EditForm):
         if 'pollutants' in fields:
             self.fields['pollutants'].widgetFactory = CheckBoxFieldWidget
 
+    def updateWidgets(self):
+        super(ModificationForm, self).updateWidgets()
+
+        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
+            'templates/widget_highlight.pt'
+        )
+
     def updateActions(self):
         super(ModificationForm, self).updateActions()
         for k in self.actions.keys():
@@ -1544,6 +1564,12 @@ class EditHighlightsForm(dexterity.EditForm):
         self.fields = field.Fields(IObservation).select('highlight')
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+
+    def updateWidgets(self):
+        super(EditHighlightsForm, self).updateWidgets()
+        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
+            'templates/widget_highlight.pt'
+        )
 
 
 class AddConclusions(grok.View):
