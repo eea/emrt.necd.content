@@ -15,7 +15,6 @@ from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.browser.view import DefaultView
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.app.discussion.interfaces import IConversation
 from plone.directives import dexterity
 from plone.directives import form
@@ -36,6 +35,9 @@ from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
 import zope.schema as schema
 from zope.browsermenu.menu import getMenu
+from zope.browserpage.viewpagetemplatefile import (
+    ViewPageTemplateFile as Z3ViewPageTemplateFile
+)
 from zope.component import getUtility
 from zope.i18n import translate
 from zope.interface import alsoProvides
@@ -49,7 +51,9 @@ from .comment import IComment
 from .commentanswer import ICommentAnswer
 from .nfr_code_matching import get_category_ldap_from_nfr_code
 from .nfr_code_matching import get_category_value_from_nfr_code
-from emrt.necd.content.subscriptions.interfaces import INotificationUnsubscriptions
+from emrt.necd.content.subscriptions.interfaces import (
+    INotificationUnsubscriptions
+)
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 from emrt.necd.content.constants import LDAP_SECTOREXP
 import datetime
@@ -807,7 +811,13 @@ class AddForm(dexterity.AddForm):
         self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
         self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
         self.widgets['text'].rows = 15
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
+            'templates/widget_highlight.pt'
+        )
+        self.groups = [
+            g for g in self.groups if
+            g.label == 'label_schema_default'
+        ]
 
     def updateActions(self):
         super(AddForm, self).updateActions()
