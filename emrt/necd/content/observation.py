@@ -236,30 +236,24 @@ def inventory_year(value):
     Inventory year can be a given year (2014), a range of years (2012-2014)
     or a list of the years (2012, 2014, 2016)
     """
-    def string_analyzer(string, separator):
-        """ return True is each element of string are Integer
-            return False otherwise
-        """
-        for item in value.split(separator):
-            try:
-                _ = int(item.strip())
-            except ValueError:
-                return False
-        return True
 
-    try:
-        _ = int(value)
-        valid = True
-    except ValueError:
-        # Let's see if it's a range of years or a list of year:
-        if '-' in value:
-            valid = string_analyzer(value, '-')
-        elif ',' in value:
-            valid = string_analyzer(value, ',')
-        else:
-            valid = string_analyzer(value, ';')
+    def split_on_sep(val, sep):
+        for s in sep:
+            if s in val:
+                return tuple(val.split(s))
+        return (val, )
 
-    if not valid:
+    def validate(value):
+        normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
+        return False not in (int(val) > 0 for val in normalized_value)
+
+    def check_valid(value):
+        try:
+            return validate(value)
+        except ValueError:
+            return False
+
+    if not check_valid(value):
         raise Invalid(u'Inventory year format is not correct. ')
 
 
