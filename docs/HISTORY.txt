@@ -18,6 +18,7 @@ Changelog
   * fixing file upload
   * fixing "Fuel is shown as some number"
   * fixing "Cannot delete observation"
+  * fixing "Description flags are hard to read and select"
   [batradav]
 
 

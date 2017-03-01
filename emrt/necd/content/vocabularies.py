@@ -155,43 +155,53 @@ class NFRCode(object):
     grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
-        terms = []
-        nfrcodes = nfr_codes()
 
-        try:
-            user = api.user.get_current()
-        except Exception:
-            user = None
+        def get_valid_user():
+            try:
+                user = api.user.get_current()
+            except Exception:
+                return None
 
-        have_user = user is not None and not api.user.is_anonymous()
-        if have_user:
-            user_groups = user.getGroups()
+            return user if user and not api.user.is_anonymous() else None
 
-        for key, value in nfrcodes.items():
-            # if there's an active user, show only NFR codes
-            # part of the user's ldap sector
-            valid = False
-            if have_user:
-                for group in user_groups:
-                    if valid:
-                        break
+        def validate_term(prefix, groups):
+            return tuple([
+                group for group in groups
+                if group.startswith(prefix)
+            ])
 
-                    valid_prefix = '{}-{}-'.format(
-                        LDAP_SECTOREXP,
-                        value['ldap']
+        def build_prefix(ldap_role, sector):
+            return '{}-{}-'.format(ldap_role, sector)
+
+        def vocab_from_terms(*terms):
+            return SimpleVocabulary([
+                SimpleVocabulary.createTerm(key, key, value['title']) for
+                (key, value) in terms
+            ])
+
+        user = get_valid_user()
+
+        if user:
+            user_groups = tuple(user.getGroups())
+            user_has_sectors = tuple([
+                group for group in user_groups
+                if '-sector' in group
+            ])
+
+            # if user has no 'sector' assignments, return all codes
+            # this results in sector experts having a filtered list while
+            # other users (e.g. MS, LR) will see all codes.
+            if user_has_sectors:
+                return vocab_from_terms(*(
+                    (term_key, term) for (term_key, term) in
+                    nfr_codes().items() if validate_term(
+                        build_prefix(LDAP_SECTOREXP, term['ldap']),
+                        user_groups
                     )
+                ))
 
-                    valid = group.startswith(valid_prefix)
-                if not valid:
-                    # skip this term
-                    continue
+        return vocab_from_terms(*nfr_codes().items())
 
-            # create a term - the arguments are the value, the token, and
-            # the title (optional)
-            term = SimpleVocabulary.createTerm(key, key, value['title'])
-            terms.append(term)
-
-        return SimpleVocabulary(terms)
 
 grok.global_utility(NFRCode, name=u"emrt.necd.content.nfr_code")
 
