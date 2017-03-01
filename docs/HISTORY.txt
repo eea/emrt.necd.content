@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.0.3 (unreleased)
+2.0.3 (2017-03-01)
 ------------------
 
 - Task: #82584 Sector List Update - Reimport NFR codes.
