@@ -83,8 +83,6 @@ def get_users_in_context(observation, role, notification_name):
         user = api.user.get(username=username)
         if user is not None:
             roles = user.getRolesInContext(observation)
-            if 'SectorExpert' not in roles:
-                continue
             if not exclude_user_from_notification(observation, user, role, notification_name):
                 users.append(user)
         else:
