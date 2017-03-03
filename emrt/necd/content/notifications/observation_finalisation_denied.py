@@ -6,9 +6,9 @@ from utils import notify
 
 
 @grok.subscribe(IObservation, IActionSucceededEvent)
-def notification_rev_ph2(context, event):
+def notification_se(context, event):
     """
-    To:     NECDReviewer
+    To:     SectorExpert
     When:   Observation finalisation denied
     """
     _temp = PageTemplateFile('observation_finalisation_denied.pt')
@@ -20,6 +20,6 @@ def notification_rev_ph2(context, event):
             observation,
             _temp,
             subject,
-            'NECDReviewer',
+            'SectorExpert',
             'observation_finalisation_denied'
         )

@@ -27,9 +27,9 @@ def notification_ms(context, event):
 
 
 @grok.subscribe(IQuestion, IActionSucceededEvent)
-def notification_rev_ph2(context, event):
+def notification_se(context, event):
     """
-    To:     NECDReviewer
+    To:     SectorExpert
     When:   Your question was sent to MS
     """
     _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
@@ -41,6 +41,6 @@ def notification_rev_ph2(context, event):
             observation,
             _temp,
             subject,
-            role='NECDReviewer',
+            role='SectorExpert',
             notification_name='question_to_ms'
         )

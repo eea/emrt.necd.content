@@ -1374,7 +1374,7 @@ class ModificationForm(dexterity.EditForm):
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
         fields = []
         # XXX Needed? Edit rights are controlled by the WF
-        if 'NECDReviewer' in roles:
+        if 'SectorExpert' in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',

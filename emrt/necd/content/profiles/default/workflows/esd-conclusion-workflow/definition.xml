@@ -19,7 +19,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -28,7 +28,7 @@
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -39,7 +39,7 @@
   <permission-map name="View" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -48,7 +48,7 @@
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="comments" title="Comments">
@@ -58,18 +58,18 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -78,13 +78,13 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
@@ -93,7 +93,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="draft" title="Draft">
@@ -102,21 +102,21 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="True">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Reply to item" acquired="False">
    <permission-role>Manager</permission-role>
@@ -124,7 +124,7 @@
   <permission-map name="View" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
    <permission-role>Manager</permission-role>
@@ -133,7 +133,7 @@
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="published" title="Published">
@@ -143,7 +143,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
    <permission-role>Manager</permission-role>
@@ -153,7 +153,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -165,7 +165,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
@@ -173,7 +173,7 @@
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <transition transition_id="ask-approval" title="Ask Approval" new_state="approval" trigger="USER" before_script="" after_script="">

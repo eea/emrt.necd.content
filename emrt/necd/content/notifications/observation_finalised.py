@@ -25,9 +25,9 @@ def notification_ms(context, event):
 
 
 @grok.subscribe(IObservation, IActionSucceededEvent)
-def notification_rev_ph2(context, event):
+def notification_se(context, event):
     """
-    To:     NECDReviewer
+    To:     SectorExpert
     When:   Observation finalised
     """
     _temp = PageTemplateFile('observation_finalised_rev_msg.pt')
@@ -38,6 +38,6 @@ def notification_rev_ph2(context, event):
             observation,
             _temp,
             subject,
-            'NECDReviewer',
+            'SectorExpert',
             'observation_finalised'
         )

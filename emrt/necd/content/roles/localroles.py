@@ -26,7 +26,7 @@ def get_user_roles_in_context(context, principal_id):
         sector = context.ghg_source_category_value()
         groups = member.getGroups()
         if '{}-{}-{}'.format(LDAP_SECTOREXP, sector, country) in groups:
-            roles.append('NECDReviewer')
+            roles.append('SectorExpert')
         if '{}-{}'.format(LDAP_LEADREVIEW, country) in groups:
             roles.append('LeadReviewer')
         if '{}-{}'.format(LDAP_MSA, country) in groups:

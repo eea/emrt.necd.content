@@ -29,7 +29,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
   </permission-map>
@@ -51,7 +51,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -69,7 +69,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="closed" title="closed">
@@ -85,10 +85,10 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
    <permission-role>Manager</permission-role>
@@ -101,13 +101,13 @@
   <permission-map name="Reply to item" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -126,7 +126,7 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="draft" title="draft">
@@ -140,26 +140,26 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Save new version" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Reply to item" acquired="False">
    <permission-role>Manager</permission-role>
@@ -168,22 +168,22 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add CommentAnswer" acquired="False">
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit Comment" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Edit CommentAnswer" acquired="False">
    <permission-role>Manager</permission-role>
@@ -193,7 +193,7 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="drafted" title="drafted">
@@ -206,7 +206,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -231,7 +231,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -250,7 +250,7 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="expert-comments" title="expert-comments">
@@ -262,7 +262,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -286,7 +286,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -307,7 +307,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="pending" title="pending">
@@ -322,7 +322,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -348,7 +348,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
@@ -381,7 +381,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -404,7 +404,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -425,7 +425,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="recalled-lr" title="recalled-lr">
@@ -436,7 +436,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -457,7 +457,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -475,7 +475,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="recalled-msa" title="recalled-msa">
@@ -486,7 +486,7 @@
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="CMFEditions: Access previous versions" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -507,7 +507,7 @@
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
   </permission-map>
@@ -529,7 +529,7 @@
   </permission-map>
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <transition transition_id="finish-observation-lr" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
@@ -541,7 +541,7 @@
  <transition transition_id="finish-observation-re" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="eselect-msexperts" title="Select new Experts" new_state="" trigger="USER" before_script="" after_script="">
@@ -559,7 +559,7 @@
  <transition transition_id="add-folowup-question " title="Add follow up question" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/add-follow-up-question?workflow_action=add-followup-question" category="workflow" icon="">Add follow up question</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-expression>python:here.has_answers() and here.aq_parent.get_status() not in ['conclusion-discussion', 'close-requested']</guard-expression>
   </guard>
  </transition>
@@ -592,7 +592,7 @@
  <transition transition_id="close" title="Finish Observation" new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="" category="" icon="">Finish Observation</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="close-lr" title="Finish Observation" new_state="closed" trigger="USER" before_script="" after_script="">
@@ -610,21 +610,21 @@
  <transition transition_id="delete-question" title="Delete Question" new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/delete-last-comment?workflow_action=delete-question" category="workflow" icon="">Delete Question</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-expression>here/can_be_deleted</guard-expression>
   </guard>
  </transition>
  <transition transition_id="draft-conclusions" title="Add Conclusions" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Add Conclusions</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-expression>python:here.has_answers() and not here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
   </guard>
  </transition>
  <transition transition_id="go-to-conclusions" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-expression>python:here.has_answers() and here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
   </guard>
  </transition>
@@ -643,7 +643,7 @@
  <transition transition_id="recall-sre" title="Recall Question" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=recall-sre" category="workflow" icon="">Recall Question</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="redraft" title="Ask SE to redraft" new_state="draft" trigger="USER" before_script="" after_script="">
@@ -660,33 +660,33 @@
  <transition transition_id="request-for-counterpart-comments" title="Request Comments" new_state="counterpart-comments" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/assign_counterpart_form?workflow_action=request-for-counterpart-comments" category="workflow" icon="">Request Comments</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-expression>here/unanswered_questions</guard-expression>
   </guard>
  </transition>
  <transition transition_id="reselect-counterparts" title="Select new Counterparts" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/reassign_counterpart_form?workflow_action=reselect-counterpart" category="workflow" icon="">Select new Counterparts</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="send-comments" title="Close Comments" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=send-comments" category="workflow" icon="">Close Comments</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="send-to-lr" title=" Send Question for Approval " new_state="drafted" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=send-to-lr" category="workflow" icon="">Send Question for Approval</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-expression>python:object.can_be_sent_to_lr()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="validate-answer-msa" title="Acknowledge Answer " new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=validate-answer-msa" category="workflow" icon="">Acknowledge Answer</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">

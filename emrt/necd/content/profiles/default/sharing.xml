@@ -1,10 +1,5 @@
 <sharing xmlns:i18n="http://xml.zope.org/namespaces/i18n" i18n:domain="plone">
     <role
-        id="NECDReviewer"
-        title="NECDReviewer"
-        permission="Sharing page: Delegate roles"
-        />
-    <role
         id="LeadReviewer"
         title="LeadReviewer"
         permission="Sharing page: Delegate roles"

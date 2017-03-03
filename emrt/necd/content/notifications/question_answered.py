@@ -27,9 +27,9 @@ def notification_lr(context, event):
 
 
 @grok.subscribe(IQuestion, IActionSucceededEvent)
-def notification_rev_ph2(context, event):
+def notification_se(context, event):
     """
-    To:     NECDReviewer
+    To:     SectorExpert
     When:   New answer from country
     """
     _temp = PageTemplateFile('question_answered_rev_msg.pt')
@@ -41,7 +41,7 @@ def notification_rev_ph2(context, event):
             observation,
             _temp,
             subject,
-            'NECDReviewer',
+            'SectorExpert',
             'question_answered'
         )
 

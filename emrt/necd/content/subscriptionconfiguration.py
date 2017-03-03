@@ -16,7 +16,7 @@ from zope.annotation.interfaces import IAnnotations
 import copy
 
 ROLE_TRANSLATOR = {
-    'NECDReviewer': 'Sector Expert',
+    'SectorExpert': 'Sector Expert',
     'LeadReviewer':   'Lead Reviewer',
     'MSAuthority':    'Member State Coordinator',
     'CounterPart':    'Counter Part',
@@ -25,7 +25,7 @@ ROLE_TRANSLATOR = {
 
 
 NOTIFICATIONS_PER_ROLE = {
-    'NECDReviewer': {
+    'SectorExpert': {
         'observation_finalisation_denied': True,
         'observation_finalised': True,
         'question_answered': True,
@@ -54,7 +54,7 @@ NOTIFICATIONS_PER_ROLE = {
 }
 
 NOTIFICATION_NAMES = {
-    'NECDReviewer': {
+    'SectorExpert': {
         'observation_finalisation_denied': 'Observation finalisation denied by LR',
         'observation_finalised': 'Observation finalised by LR',
         'question_answered': 'Question answered by MS',

@@ -16,6 +16,7 @@ from eea.cache import cache
 from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 from emrt.necd.content.constants import LDAP_TERT
+from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_MSEXPERT
 
 
@@ -325,7 +326,7 @@ class AssignCounterPartForm(AssignFormMixin):
             return 'request-for-counterpart-comments'
 
     def _target_groupnames(self):
-        return [LDAP_TERT]
+        return [LDAP_TERT, LDAP_SECTOREXP]
 
     def get_current_counterparters(self):
         """ Return list of current counterparters

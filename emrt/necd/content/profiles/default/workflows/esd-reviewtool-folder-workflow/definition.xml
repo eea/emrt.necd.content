@@ -17,7 +17,6 @@
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
    <permission-role>SectorExpert</permission-role>
-   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="Change portal events" acquired="False">
    <permission-role>Manager</permission-role>
@@ -39,7 +38,6 @@
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
    <permission-role>SectorExpert</permission-role>
-   <permission-role>NECDReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Observation" acquired="False">
    <permission-role>Manager</permission-role>

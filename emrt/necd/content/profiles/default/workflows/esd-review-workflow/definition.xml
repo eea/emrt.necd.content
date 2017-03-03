@@ -20,13 +20,13 @@
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>LeadReviewer</permission-role>
@@ -38,7 +38,7 @@
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
   </permission-map>
@@ -58,7 +58,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>Manager</permission-role>
@@ -74,7 +74,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
   </permission-map>
@@ -96,7 +96,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>CounterPart</permission-role>
@@ -104,7 +104,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -118,7 +118,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
   </permission-map>
@@ -132,7 +132,7 @@
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="conclusions" title="conclusions">
@@ -145,7 +145,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -154,16 +154,16 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="Sharing page: Delegate roles" acquired="False">
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusions" acquired="False">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
@@ -175,7 +175,7 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="draft" title="draft">
@@ -184,7 +184,7 @@
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -193,30 +193,30 @@
   <permission-map name="List folder contents" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Sharing page: Delegate roles" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusions" acquired="True">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: Add Question" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: View Answer Discussion" acquired="True">
   </permission-map>
@@ -234,7 +234,7 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="True">
   </permission-map>
@@ -242,16 +242,16 @@
   </permission-map>
   <permission-map name="List folder contents" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Sharing page: Delegate roles" acquired="False">
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="View" acquired="False">
    <permission-role>CounterPart</permission-role>
@@ -259,16 +259,16 @@
    <permission-role>MSAuthority</permission-role>
    <permission-role>MSExpert</permission-role>
    <permission-role>Manager</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add Conclusions" acquired="True">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: Add Question" acquired="False">
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: View Answer Discussion" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -277,7 +277,7 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
-   <permission-role>NECDReviewer</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
   </permission-map>
@@ -297,36 +297,35 @@
  <transition transition_id="draft-conclusions" title="Go to conclusions" new_state="conclusions" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=draft-conclusions" category="" icon="">Go to conclusions</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
-   <guard-role>LeadReviewer</guard-role>
    <guard-role>SectorExpert</guard-role>
+   <guard-role>LeadReviewer</guard-role>
    <guard-expression>here/can_draft_conclusions</guard-expression>
   </guard>
  </transition>
  <transition transition_id="edit-highlights" title="Edit Key Flags" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/edit-highlights" category="workflow" icon="">Edit Key Flags</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
  <transition transition_id="finish-comments" title="Close Comments" new_state="conclusions" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=finish-comments" category="workflow" icon="">Close Comments</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="finish-observation" title="Finish Observation" new_state="close-requested" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/request-finish-observation?workflow_action=finish-observation" category="workflow" icon="">Request finalisation of the observation</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="open" title="Open" new_state="pending" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=open" category="" icon="">open</action>
   <guard>
    <guard-role>Manager</guard-role>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
@@ -339,13 +338,13 @@
  <transition transition_id="reopen-qa-chat" title="Reopen Q&amp;A Chat" new_state="pending" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=reopen-qa-chat" category="workflow" icon="">Reopen Q&amp;A Chat</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <transition transition_id="request-comments" title="Request comments" new_state="conclusion-discussion" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/assign_conclusion_reviewer_form?workflow_action=request-comments" category="workflow" icon="">Request comments</action>
   <guard>
-   <guard-role>NECDReviewer</guard-role>
+   <guard-role>SectorExpert</guard-role>
   </guard>
  </transition>
  <worklist worklist_id="reviewer_queue" title="">

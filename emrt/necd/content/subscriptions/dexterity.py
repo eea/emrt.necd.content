@@ -25,7 +25,6 @@ class NotificationUnsubscriptions(object):
 
          {
             'CounterPart': ['conclusion_to_comment'],
-            'ReviewerPhase1': ['observation_finalised', 'question_to_ms'],
          }
         """
         annotated = IAnnotations(self.context)
@@ -36,4 +35,3 @@ class NotificationUnsubscriptions(object):
             del data[userid]
         annotated[UNSUBSCRIPTION_KEY] = data
         return 1
-

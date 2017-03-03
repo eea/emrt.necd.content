@@ -8,9 +8,7 @@
 
     <role name="SectorExpert" />
     <role name="LeadReviewer" />
-
-    <role name="NECDReviewer" />
-
+ 
   </roles>
   <permissions>
     <!-- -*- extra stuff goes here -*- -->
