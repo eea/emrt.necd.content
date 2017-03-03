@@ -22,4 +22,22 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.3"
+    destination="2.0.4"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update roles."
+      description="NECDReviewer renamed to SectorExpert."
+      import_steps="rolemap sharing workflow update-workflow-rolemap"
+      />
+
+    <genericsetup:upgradeDepends
+      title="Update LDAP group to role mapping."
+      description="Grant LeadReviewer the LeadReviewer role."
+      import_steps="emrt.necd.content.ldaproles"
+      />
+
+  </genericsetup:upgradeSteps>
 </configure>

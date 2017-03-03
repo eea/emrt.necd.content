@@ -26,4 +26,12 @@
       handler="emrt.necd.content.setuphandlers.setupVarious"
     />
 
+  <!-- Custom import step for LDAP role mapping -->
+  <genericsetup:importStep
+    name="emrt.necd.content.ldaproles"
+    title="Assign roles to LDAP groups."
+    description="Re-assign Zope roles to LDAP groups."
+    handler="emrt.necd.content.setuphandlers.map_ldap_roles"
+    />
+
 </configure>

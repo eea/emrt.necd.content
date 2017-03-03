@@ -7,6 +7,7 @@ from Products.ATVocabularyManager.config import SORT_METHOD_FOLDER_ORDER
 
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_SECRETARIAT
+from emrt.necd.content.constants import LDAP_LEADREVIEW
 
 
 LOGGER = logging.getLogger('emrt.necd.content.setuphandlers')
@@ -51,7 +52,11 @@ VOCABULARIES = [
 LDAP_ROLE_MAPPING = {
     LDAP_SECTOREXP: 'SectorExpert',
     LDAP_SECRETARIAT: 'Manager',
+    LDAP_LEADREVIEW: 'LeadReviewer',
 }
+
+LDAP_PLUGIN_ID = 'ldap-plugin'
+MEMCACHED_ID = 'memcached'
 
 
 def create_vocabulary(
@@ -112,9 +117,25 @@ def setup_memcached(portal, memcached_id):
             cache._p_changed = True
 
 
+def get_portal_acl(portal):
+    return portal['acl_users']
+
+
+def get_ldap_plugin(acl, ldap_id):
+    return acl[ldap_id]
+
+
+def map_ldap_roles(_):
+    """Map LDAP roles to Plone roles"""
+    ldap_plugin = get_ldap_plugin(get_portal_acl(getSite()), LDAP_PLUGIN_ID)
+    ldap_acl = ldap_plugin._getLDAPUserFolder()
+    for ldap_group, plone_role in LDAP_ROLE_MAPPING.items():
+        ldap_acl.manage_addGroupMapping(ldap_group, plone_role)
+
+
 def setup_ldap(portal, ldap_id, memcached_id):
-    acl = portal['acl_users']
-    ldap_plugin = acl[ldap_id]
+    acl = get_portal_acl(portal)
+    ldap_plugin = get_ldap_plugin(acl, ldap_id)
 
     # map LDAP roles to Plone roles
     ldap_acl = ldap_plugin._getLDAPUserFolder()
@@ -155,10 +176,9 @@ def setup_ldap(portal, ldap_id, memcached_id):
 
 
 def post_install(context):
-    memcached_id = 'memcached'
     portal = getSite()
-    setup_memcached(portal, memcached_id)
-    setup_ldap(portal, 'ldap-plugin', memcached_id)
+    setup_memcached(portal, MEMCACHED_ID)
+    setup_ldap(portal, LDAP_PLUGIN_ID, MEMCACHED_ID)
 
 
 def setupVarious(context):
