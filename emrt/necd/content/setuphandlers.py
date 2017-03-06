@@ -125,9 +125,12 @@ def get_ldap_plugin(acl, ldap_id):
     return acl[ldap_id]
 
 
-def map_ldap_roles(_):
+def map_ldap_roles(context):
     """Map LDAP roles to Plone roles"""
-    ldap_plugin = get_ldap_plugin(get_portal_acl(getSite()), LDAP_PLUGIN_ID)
+    if context.readDataFile('emrt.necd.content_various.txt') is None:
+        return
+    portal_acl = get_portal_acl(getSite())
+    ldap_plugin = get_ldap_plugin(portal_acl, LDAP_PLUGIN_ID)
     ldap_acl = ldap_plugin._getLDAPUserFolder()
     for ldap_group, plone_role in LDAP_ROLE_MAPPING.items():
         ldap_acl.manage_addGroupMapping(ldap_group, plone_role)
