@@ -42,6 +42,7 @@ NOTIFICATIONS_PER_ROLE = {
         'answer_acknowledged': True,
         'observation_finalised': True,
         'question_to_ms': True,
+        'comment_to_msa': True,
     },
     'CounterPart': {
         'conclusion_to_comment': True,
@@ -50,6 +51,7 @@ NOTIFICATIONS_PER_ROLE = {
     'MSExpert': {
         'answer_to_msexperts': True,
         'question_answered': True,
+        'comment_to_mse': True,
     },
 }
 
@@ -69,8 +71,9 @@ NOTIFICATION_NAMES = {
     },
     'MSAuthority': {
         'answer_acknowledged': 'Answer acknowledged by sector expert',
-        'observation_finalised': 'Observation finished by Quality Expert',
+        'observation_finalised': 'Observation finalised by LR',
         'question_to_ms': 'Question to be answered by your country',
+        'comment_to_msa': 'New comment from MS Expert',
     },
     'CounterPart': {
         'conclusion_to_comment': 'Conclusion to comment by you as counterpart',
@@ -79,6 +82,7 @@ NOTIFICATION_NAMES = {
     'MSExpert': {
         'answer_to_msexperts': 'New question to comment by you as MS expert',
         'question_answered': 'Question answered by MS',
+        'comment_to_mse': 'New comment from MS Expert',
     }
 }
 
