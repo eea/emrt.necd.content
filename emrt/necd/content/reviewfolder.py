@@ -29,10 +29,6 @@ from zope.interface import Interface
 from zope.interface import provider
 from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utilities.ms_user import IUserIsMS
-from emrt.necd.content.constants import LDAP_LEADREVIEW
-from emrt.necd.content.constants import LDAP_SECTOREXP
-from emrt.necd.content.constants import LDAP_MSEXPERT
-from emrt.necd.content.constants import LDAP_MSA
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
@@ -966,13 +962,19 @@ class InboxReviewFolderView(grok.View):
 
     def is_sector_expert(self):
         user = api.user.get_current()
-        user_groups = user.getGroups()
-        return LDAP_SECTOREXP in user_groups
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_SE in roles
 
     def is_lead_reviewer(self):
         user = api.user.get_current()
-        user_groups = user.getGroups()
-        return LDAP_LEADREVIEW in user_groups
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_LR in roles
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
@@ -1164,13 +1166,19 @@ class FinalisedFolderView(grok.View):
 
     def is_sector_expert(self):
         user = api.user.get_current()
-        user_groups = user.getGroups()
-        return LDAP_SECTOREXP in user_groups
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_SE in roles
 
     def is_lead_reviewer(self):
         user = api.user.get_current()
-        user_groups = user.getGroups()
-        return LDAP_LEADREVIEW in user_groups
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_LR in roles
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()

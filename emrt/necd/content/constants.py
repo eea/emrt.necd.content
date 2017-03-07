@@ -17,6 +17,13 @@ LDAP_MSA = LDAP_COUNTRIES + '-msa'
 LDAP_MSEXPERT = LDAP_COUNTRIES + '-msexpert'
 
 
+ROLE_SE = 'SectorExpert'
+ROLE_CP = 'CounterPart'
+ROLE_LR = 'LeadReviewer'
+ROLE_MSA = 'MSAuthority'
+ROLE_MSE = 'MSExpert'
+
+
 __all__ = (
     'LDAP_BASE',
     'LDAP_SECRETARIAT',
@@ -26,4 +33,9 @@ __all__ = (
     'LDAP_COUNTRIES',
     'LDAP_MSA',
     'LDAP_MSEXPERT',
+    'ROLE_SE',
+    'ROLE_CP',
+    'ROLE_LR',
+    'ROLE_MSA',
+    'ROLE_MSE',
 )
