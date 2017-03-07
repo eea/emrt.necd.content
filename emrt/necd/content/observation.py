@@ -1283,7 +1283,7 @@ class ExportAsDocView(ObservationMixin):
                         '> %s' % self.strip_special_chars(chat.text)
                     )
                     p = document.add_paragraph(
-                        "From expert/reviewer To Member State \t\t %s" % (
+                        "From TERTs To Member State \t\t %s" % (
                             sent_info % date.strftime('%d %b %Y, %H:%M CET')
                         )
                     )
@@ -1293,7 +1293,7 @@ class ExportAsDocView(ObservationMixin):
                         '< %s' % self.strip_special_chars(chat.text)
                     )
                     p = document.add_paragraph(
-                        "From Member State To expert/reviewer \t\t %s" % (
+                        "From Member State To TERTs \t\t %s" % (
                             sent_info % date.strftime('%d %b %Y, %H:%M CET')
                         )
                     )

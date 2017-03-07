@@ -572,7 +572,7 @@
             <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-1">
                 <div class="cell position-0 width-16">
-                  Internal comments on conclusion between experts/reviewers/LR
+                  Internal comments on conclusion between TERTs
                   <span class="eea-icon eea-icon-left"></span>
                 </div>
               </div>
@@ -663,11 +663,11 @@
         </tal:block>
         <div class="from"  tal:define="portalType question/portal_type/lower">
           <span class="esdLabel">from</span>
-          <span class="value" tal:condition="python:portalType == 'comment'">expert/reviewer</span>
+          <span class="value" tal:condition="python:portalType == 'comment'">TERTs</span>
           <span class="value" tal:condition="python:portalType == 'commentanswer'">Member State</span>
           <span class="esdLabel">to</span>
           <span class="value" tal:condition="python:portalType == 'comment'">Member State</span>
-          <span class="value" tal:condition="python:portalType == 'commentanswer'">expert/reviewer</span>
+          <span class="value" tal:condition="python:portalType == 'commentanswer'">TERTs</span>
           <span class="tooltipIconBlue" tal:condition="python:portalType == 'comment'" title="Draft a question for the MS. MS can only see the question once it has been approved and sent by the LR">&nbsp;</span>
           <!--span class="value" tal:content="python:view.get_user_name(question.Creator(), question)">John Smith</span-->
           <span class="messageDate">
@@ -813,9 +813,9 @@
               <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
                   <div class="cell position-0 width-16">
-                    Internal comments on question between experts/reviewers/LR
+                    Internal comments on question between TERTs
                     <span class="eea-icon eea-icon-left"></span>
-                    <span class="tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart experts/reviewers/LR engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the expert/reviewer should use the default sentence: 'Discussed with ...' in the first text field">&nbsp;</span>
+                    <span class="tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart TERTs engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the TERTs should use the default sentence: 'Discussed with ...' in the first text field">&nbsp;</span>
                   </div>
                 </div>
                 <div class="question-comments" tal:content="structure provider:emrt.necd.content.commentmanager" style="display:none" />
