@@ -33,6 +33,11 @@ from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_MSEXPERT
 from emrt.necd.content.constants import LDAP_MSA
+from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_MSE
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.constants import ROLE_CP
 
 grok.templatedir('templates')
 
@@ -82,9 +87,9 @@ class ReviewFolderMixin(grok.View):
         if self.is_member_state_expert():
             query['observation_sent_to_mse'] = bool(True)
 
-        if (country != ""):
+        if country != "":
             query['Country'] = country
-        if (status != ""):
+        if status != "":
             if status != "open":
                 query['observation_finalisation_reason'] = status
             else:
@@ -141,8 +146,10 @@ class ReviewFolderMixin(grok.View):
 
     def get_review_years(self):
         catalog = api.portal.get_tool('portal_catalog')
-        review_years = catalog.uniqueValuesFor('review_year')
-        review_years = [c for c in catalog.uniqueValuesFor('review_year') if isinstance(c, basestring)]
+        review_years = [
+            c for c in catalog.uniqueValuesFor('review_year') if
+            isinstance(c, basestring)
+        ]
         return review_years
 
     def get_inventory_years(self):
@@ -202,11 +209,19 @@ class ReviewFolderMixin(grok.View):
         if api.user.is_anonymous():
             raise Unauthorized
         user = api.user.get_current()
-        return LDAP_MSA in user.getGroups()
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_MSA in roles
 
     def is_member_state_expert(self):
         user = api.user.get_current()
-        return LDAP_MSEXPERT in user.getGroups()
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_MSE in roles
 
 
 class ReviewFolderView(ReviewFolderMixin):
@@ -479,8 +494,8 @@ def decorate(item):
     new_item['observation_already_replied'] = item.observation_already_replied()
     new_item['reply_comments_by_mse'] = item.reply_comments_by_mse()
     new_item['observation_finalisation_reason'] = item.observation_finalisation_reason()
-    new_item['isCP'] = 'CounterPart' in roles
-    new_item['isMSA'] = 'MSAuthority' in roles
+    new_item['isCP'] = ROLE_CP in roles
+    new_item['isMSA'] = ROLE_MSA in roles
     return new_item
 
 
@@ -494,21 +509,21 @@ def _catalog_change(fun, self, *args, **kwargs):
 class RoleMapItem(object):
 
     def __init__(self, roles):
-        self.isCP = 'CounterPart' in roles
-        self.isMSA = 'MSAuthority' in roles
-        self.isRE = 'SectorExpert' in roles
-        self.isLR = 'LeadReviewer' in roles
+        self.isCP = ROLE_CP in roles
+        self.isMSA = ROLE_MSA in roles
+        self.isSE = ROLE_SE in roles
+        self.isLR = ROLE_LR in roles
 
     def check_roles(self, rolename):
-        if rolename == 'CounterPart':
+        if rolename == ROLE_CP:
             return self.isCP
-        elif rolename == 'MSAuthority':
+        elif rolename == ROLE_MSA:
             return self.isMSA
-        elif rolename == 'SectorExpert':
-            return self.isRE
+        elif rolename == ROLE_SE:
+            return self.isSE
         elif rolename == 'NotCounterPart':
-            return not self.isCP and self.isRE
-        elif rolename == 'LeadReviewer':
+            return not self.isCP and self.isSE
+        elif rolename == ROLE_LR:
             return self.isLR
         return False
 
@@ -584,7 +599,7 @@ class InboxReviewFolderView(grok.View):
          without actions for LR, counterpart or MS
         """
         return self.get_observations(
-            rolecheck='SectorExpert',
+            rolecheck=ROLE_SE,
             observation_question_status=[
                 'observation-draft'])
 
@@ -595,7 +610,7 @@ class InboxReviewFolderView(grok.View):
          with comments from counterpart or LR
         """
         conclusions = self.get_observations(
-            rolecheck='SectorExpert',
+            rolecheck=ROLE_SE,
             observation_question_status=[
                 'draft',
                 'drafted'])
@@ -618,7 +633,7 @@ class InboxReviewFolderView(grok.View):
          needing comment from me
         """
         return self.get_observations(
-            rolecheck='CounterPart',
+            rolecheck=ROLE_CP,
             observation_question_status=[
                 'counterpart-comments'])
 
@@ -629,7 +644,7 @@ class InboxReviewFolderView(grok.View):
          needing comment from me
         """
         return self.get_observations(
-            rolecheck='CounterPart',
+            rolecheck=ROLE_CP,
             observation_question_status=['conclusion-discussion'])
 
     @timeit
@@ -642,12 +657,12 @@ class InboxReviewFolderView(grok.View):
         # mtool = api.portal.get_tool('portal_membership')
 
         answered = self.get_observations(
-            rolecheck='SectorExpert',
+            rolecheck=ROLE_SE,
             observation_question_status=[
                 'answered'])
 
         pending = self.get_observations(
-            rolecheck='SectorExpert',
+            rolecheck=ROLE_SE,
             observation_question_status=['closed'],
             review_state=['pending'])
 
@@ -671,7 +686,7 @@ class InboxReviewFolderView(grok.View):
         ]
 
         return self.get_observations(
-            rolecheck="SectorExpert",
+            rolecheck=ROLE_SE,
             observation_question_status=statuses)
 
 
@@ -690,7 +705,7 @@ class InboxReviewFolderView(grok.View):
         ]
 
         return self.get_observations(
-            rolecheck="SectorExpert",
+            rolecheck=ROLE_SE,
             observation_question_status=statuses)
 
 
@@ -722,7 +737,7 @@ class InboxReviewFolderView(grok.View):
         """
 
         return  self.get_observations(
-            rolecheck='SectorExpert',
+            rolecheck=ROLE_SE,
             observation_question_status=[
                 'close-requested'])
 
@@ -738,7 +753,7 @@ class InboxReviewFolderView(grok.View):
          Questions waiting for me to send to the MS
         """
         return self.get_observations(
-            rolecheck='LeadReviewer',
+            rolecheck=ROLE_LR,
             observation_question_status=[
                 'drafted',
                 'recalled-lr'])
@@ -753,7 +768,7 @@ class InboxReviewFolderView(grok.View):
         """
 
         return self.get_observations(
-            rolecheck='LeadReviewer',
+            rolecheck=ROLE_LR,
             observation_question_status=[
                 'close-requested'])
 
@@ -766,7 +781,7 @@ class InboxReviewFolderView(grok.View):
          Questions waiting for my comments
         """
         return self.get_observations(
-            rolecheck='CounterPart',
+            rolecheck=ROLE_CP,
             observation_question_status=[
                 'counterpart-comments'])
 
@@ -777,7 +792,7 @@ class InboxReviewFolderView(grok.View):
          Conclusions waiting for my comments
         """
         return self.get_observations(
-            rolecheck='CounterPart',
+            rolecheck=ROLE_CP,
             observation_question_status=['conclusion-discussion'])
 
     @timeit
@@ -787,7 +802,7 @@ class InboxReviewFolderView(grok.View):
          Questions waiting for comments by counterpart
         """
         return self.get_observations(
-            rolecheck='CounterPart',
+            rolecheck=ROLE_CP,
             observation_question_status=['counterpart-comments'])
 
     @timeit
@@ -797,7 +812,7 @@ class InboxReviewFolderView(grok.View):
          that need review by Sector Expert
         """
         return self.get_observations(
-            rolecheck='LeadReviewer',
+            rolecheck=ROLE_LR,
             observation_question_status=[
                 'answered'])
 
@@ -810,7 +825,7 @@ class InboxReviewFolderView(grok.View):
         """
 
         return self.get_observations(
-            rolecheck='LeadReviewer',
+            rolecheck=ROLE_LR,
             observation_question_status=[
                 'pending',
                 'recalled-msa',
@@ -829,7 +844,7 @@ class InboxReviewFolderView(grok.View):
          Questions from the SE to be answered
         """
         return self.get_observations(
-            rolecheck='MSAuthority',
+            rolecheck=ROLE_MSA,
             observation_question_status=[
                 'pending',
                 'recalled-msa',
@@ -842,7 +857,7 @@ class InboxReviewFolderView(grok.View):
          Comments received from MS Experts
         """
         return self.get_observations(
-            rolecheck='MSAuthority',
+            rolecheck=ROLE_MSA,
             observation_question_status=['expert-comments'],
             last_answer_has_replies=True,
             # last_answer_reply_number > 0
@@ -961,11 +976,19 @@ class InboxReviewFolderView(grok.View):
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
-        return LDAP_MSA in user.getGroups()
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_MSA in roles
 
     def is_member_state_expert(self):
         user = api.user.get_current()
-        return LDAP_MSEXPERT in user.getGroups()
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_MSE in roles
 
 
 class FinalisedFolderView(grok.View):
@@ -1022,15 +1045,15 @@ class FinalisedFolderView(grok.View):
                 https://stackoverflow.com/questions/7045754/python-list-filtering-with-arguments
                 """
                 def myfilter(x):
-                    if rolename == 'CounterPart':
+                    if rolename == ROLE_CP:
                         return x.isCP
-                    elif rolename == 'MSAuthority':
+                    elif rolename == ROLE_MSA:
                         return x.isMSA
-                    elif rolename == 'SectorExpert':
-                        return x.isRE
+                    elif rolename == ROLE_SE:
+                        return x.isSE
                     elif rolename == 'NotCounterPart':
-                        return not x.isCP and x.isRE
-                    elif rolename == 'LeadReviewer':
+                        return not x.isCP and x.isSE
+                    elif rolename == ROLE_LR:
                         return x.isLR
                     return False
                 return myfilter
@@ -1151,8 +1174,16 @@ class FinalisedFolderView(grok.View):
 
     def is_member_state_coordinator(self):
         user = api.user.get_current()
-        return LDAP_MSA in user.getGroups()
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_MSA in roles
 
     def is_member_state_expert(self):
         user = api.user.get_current()
-        return LDAP_MSEXPERT in user.getGroups()
+        roles = api.user.get_roles(
+            user=user,
+            obj=self.context
+        )
+        return ROLE_MSE in roles

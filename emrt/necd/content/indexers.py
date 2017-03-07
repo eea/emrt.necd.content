@@ -211,7 +211,7 @@ def observation_sent_to_msc(context):
             question = questions[0]
             winfo = question.workflow_history
             for witem in winfo.get('esd-question-review-workflow', []):
-                if witem.get('review_state', '').endswith('-pending'):
+                if witem.get('review_state', '').endswith('pending'):
                     return True
         return False
     except:
@@ -226,7 +226,7 @@ def observation_sent_to_mse(context):
             question = questions[0]
             winfo = question.workflow_history
             for witem in winfo.get('esd-question-review-workflow', []):
-                if witem.get('review_state', '').endswith('-expert-comments'):
+                if witem.get('review_state', '').endswith('expert-comments'):
                     return True
         return False
     except:
@@ -242,18 +242,6 @@ def observation_finalisation_reason(context):
             return conclusions[0] and conclusions[0].closing_reason or ' '
         else:
             return None
-    except:
-        return None
-
-
-@indexer(IObservation)
-def observation_finalisation_reason(context):
-    try:
-        conclusions = [
-            c for c in context.values()
-            if c.portal_type == "Conclusions"
-        ]
-        return conclusions[0] and conclusions[0].closing_reason or ' '
     except:
         return None
 

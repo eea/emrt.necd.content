@@ -18,6 +18,8 @@ from DateTime import DateTime
 from emrt.necd.content.constants import LDAP_TERT
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_MSEXPERT
+from emrt.necd.content.constants import ROLE_CP
+from emrt.necd.content.constants import ROLE_MSE
 
 
 def revoke_roles(username=None, user=None, obj=None, roles=None, inherit=True):
@@ -253,7 +255,7 @@ class AssignAnswererForm(AssignFormMixin):
 
     index = ViewPageTemplateFile('templates/assign_answerer_form.pt')
 
-    _managed_role = 'MSExpert'
+    _managed_role = ROLE_MSE
     _revoke_on_call = True
     _msg_no_usernames = _(
         u'You need to select at least one expert for discussion')
@@ -313,7 +315,7 @@ class AssignCounterPartForm(AssignFormMixin):
 
     index = ViewPageTemplateFile('templates/assign_counterpart_form.pt')
 
-    _managed_role = 'CounterPart'
+    _managed_role = ROLE_CP
     _revoke_on_call = True
     _msg_no_usernames = _(
         u'You need to select at least one counterpart')
@@ -394,7 +396,7 @@ class AssignConclusionReviewerForm(AssignFormMixin):
 
     index = ViewPageTemplateFile('templates/assign_conclusion_reviewer_form.pt')
 
-    _managed_role = 'CounterPart'
+    _managed_role = ROLE_CP
     _revoke_on_call = False
     _msg_no_usernames = _(
         u'You need to select at least one reviewer for conclusions')

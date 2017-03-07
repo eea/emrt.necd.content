@@ -15,40 +15,47 @@ from zope.annotation.interfaces import IAnnotations
 
 import copy
 
+from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_MSE
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_CP
+from emrt.necd.content.constants import ROLE_LR
+
+
 ROLE_TRANSLATOR = {
-    'SectorExpert': 'Sector Expert',
-    'LeadReviewer':   'Lead Reviewer',
-    'MSAuthority':    'Member State Coordinator',
-    'CounterPart':    'Counter Part',
-    'MSExpert':       'Member State Expert',
+    ROLE_SE: 'Sector Expert',
+    ROLE_LR: 'Lead Reviewer',
+    ROLE_CP: 'Counter Part',
+    ROLE_MSA:'Member State Coordinator',
+    ROLE_MSE:'Member State Expert',
 }
 
 
 NOTIFICATIONS_PER_ROLE = {
-    'SectorExpert': {
+    ROLE_SE: {
         'observation_finalisation_denied': True,
         'observation_finalised': True,
         'question_answered': True,
         'question_to_ms': True,
     },
-    'LeadReviewer': {
+    ROLE_LR: {
         'conclusion_to_comment': True,
         'observation_finalisation_request': True,
         'question_answered': True,
         'question_ready_for_approval': True,
         'question_to_counterpart': True,
     },
-    'MSAuthority': {
+    ROLE_MSA: {
         'answer_acknowledged': True,
         'observation_finalised': True,
         'question_to_ms': True,
         'comment_to_msa': True,
     },
-    'CounterPart': {
+    ROLE_CP: {
         'conclusion_to_comment': True,
         'question_to_counterpart': True,
     },
-    'MSExpert': {
+    ROLE_MSE: {
         'answer_to_msexperts': True,
         'question_answered': True,
         'comment_to_mse': True,
@@ -56,30 +63,30 @@ NOTIFICATIONS_PER_ROLE = {
 }
 
 NOTIFICATION_NAMES = {
-    'SectorExpert': {
+    ROLE_SE: {
         'observation_finalisation_denied': 'Observation finalisation denied by LR',
         'observation_finalised': 'Observation finalised by LR',
         'question_answered': 'Question answered by MS',
         'question_to_ms': 'Question sent to MS by LR',
     },
-    'LeadReviewer': {
+    ROLE_LR: {
         'conclusion_to_comment': 'Conclusion to comment by you as LR',
         'observation_finalisation_request': 'Observation finalisation ready for your approval as LR',
         'question_answered': 'Question answered by MS',
         'question_ready_for_approval': 'Question ready for your approval as LR',
         'question_to_counterpart': 'Question to comment by you as LR',
     },
-    'MSAuthority': {
+    ROLE_MSA: {
         'answer_acknowledged': 'Answer acknowledged by sector expert',
         'observation_finalised': 'Observation finalised by LR',
         'question_to_ms': 'Question to be answered by your country',
         'comment_to_msa': 'New comment from MS Expert',
     },
-    'CounterPart': {
+    ROLE_CP: {
         'conclusion_to_comment': 'Conclusion to comment by you as counterpart',
         'question_to_counterpart': 'Question to comment by you as counterpart',
     },
-    'MSExpert': {
+    ROLE_MSE: {
         'answer_to_msexperts': 'New question to comment by you as MS expert',
         'question_answered': 'Question answered by MS',
         'comment_to_mse': 'New comment from MS Expert',

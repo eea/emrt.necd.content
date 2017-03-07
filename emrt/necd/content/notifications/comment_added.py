@@ -8,6 +8,8 @@ import plone.api as api
 
 from emrt.necd.content.observation import IObservation
 from emrt.necd.content.notifications.utils import notify
+from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_MSE
 
 
 def find_parent_with_interface(interface, context):
@@ -22,7 +24,7 @@ def user_has_role_in_context(role, context):
     return role in roles
 
 FIND_PARENT_OBSERVATION = partial(find_parent_with_interface, IObservation)
-USER_IS_MSE = partial(user_has_role_in_context, 'MSExpert')
+USER_IS_MSE = partial(user_has_role_in_context, ROLE_MSE)
 
 
 @grok.subscribe(IComment, IObjectAddedEvent)
@@ -42,7 +44,7 @@ def notification_mse(context, event):
         observation,
         _temp,
         subject,
-        'MSExpert',
+        ROLE_MSE,
         'comment_to_mse'
     )
 
@@ -64,6 +66,6 @@ def notification_msc(context, event):
         observation,
         _temp,
         subject,
-        'MSAuthority',
+        ROLE_MSA,
         'comment_to_msa'
     )

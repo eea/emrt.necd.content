@@ -14,6 +14,9 @@ from emrt.necd.content.conclusions import IConclusions
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
+from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_LR
 
 
 def get_user_roles_in_context(context, principal_id):
@@ -26,11 +29,11 @@ def get_user_roles_in_context(context, principal_id):
         sector = context.ghg_source_category_value()
         groups = member.getGroups()
         if '{}-{}-{}'.format(LDAP_SECTOREXP, sector, country) in groups:
-            roles.append('SectorExpert')
+            roles.append(ROLE_SE)
         if '{}-{}'.format(LDAP_LEADREVIEW, country) in groups:
-            roles.append('LeadReviewer')
+            roles.append(ROLE_LR)
         if '{}-{}'.format(LDAP_MSA, country) in groups:
-            roles.append('MSAuthority')
+            roles.append(ROLE_MSA)
     return roles
 
 

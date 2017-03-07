@@ -5,6 +5,9 @@ from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
+from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_LR
 
 
 def grant_local_roles(context):
@@ -22,16 +25,16 @@ def grant_local_roles(context):
     for obj in applyes_to:
         api.group.grant_roles(
             groupname='{}-{}-{}'.format(LDAP_SECTOREXP, sector, country),
-            roles=['SectorExpert'],
+            roles=[ROLE_SE],
             obj=obj,
         )
         api.group.grant_roles(
             groupname='{}-{}'.format(LDAP_LEADREVIEW, country),
-            roles=['LeadReviewer'],
+            roles=[ROLE_LR],
             obj=obj,
         )
         api.group.grant_roles(
             groupname='{}-{}'.format(LDAP_MSA, country),
-            roles=['MSAuthority'],
+            roles=[ROLE_MSA],
             obj=obj,
         )

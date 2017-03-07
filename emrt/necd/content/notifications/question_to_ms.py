@@ -4,6 +4,8 @@ from five import grok
 from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from utils import notify
+from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_SE
 
 
 @grok.subscribe(IQuestion, IActionSucceededEvent)
@@ -21,7 +23,7 @@ def notification_ms(context, event):
             observation,
             _temp,
             subject,
-            role='MSAuthority',
+            role=ROLE_MSA,
             notification_name='question_to_ms'
         )
 
@@ -41,6 +43,6 @@ def notification_se(context, event):
             observation,
             _temp,
             subject,
-            role='SectorExpert',
+            role=ROLE_SE,
             notification_name='question_to_ms'
         )

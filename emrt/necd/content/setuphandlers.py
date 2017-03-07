@@ -8,6 +8,8 @@ from Products.ATVocabularyManager.config import SORT_METHOD_FOLDER_ORDER
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_SECRETARIAT
 from emrt.necd.content.constants import LDAP_LEADREVIEW
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_LR
 
 
 LOGGER = logging.getLogger('emrt.necd.content.setuphandlers')
@@ -50,9 +52,9 @@ VOCABULARIES = [
 
 
 LDAP_ROLE_MAPPING = {
-    LDAP_SECTOREXP: 'SectorExpert',
+    LDAP_SECTOREXP: ROLE_SE,
+    LDAP_LEADREVIEW: ROLE_LR,
     LDAP_SECRETARIAT: 'Manager',
-    LDAP_LEADREVIEW: 'LeadReviewer',
 }
 
 LDAP_PLUGIN_ID = 'ldap-plugin'

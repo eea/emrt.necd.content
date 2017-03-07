@@ -56,6 +56,9 @@ from emrt.necd.content.subscriptions.interfaces import (
 )
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_CP
+from emrt.necd.content.constants import ROLE_LR
 import datetime
 
 
@@ -1150,7 +1153,7 @@ class ObservationView(ObservationMixin):
         target = self.context
         local_roles = target.get_local_roles()
         users = [
-            u[0] for u in local_roles if 'CounterPart' in u[1]
+            u[0] for u in local_roles if ROLE_CP in u[1]
         ]
         return [api.user.get(user) for user in users]
 
@@ -1374,7 +1377,7 @@ class ModificationForm(dexterity.EditForm):
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
         fields = []
         # XXX Needed? Edit rights are controlled by the WF
-        if 'SectorExpert' in roles:
+        if ROLE_SE in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',
@@ -1384,7 +1387,7 @@ class ModificationForm(dexterity.EditForm):
                 'closing_deny_comments',
 
             ]]
-        elif 'LeadReviewer' in roles:
+        elif ROLE_LR in roles:
             fields = ['text', 'highlight']
 
         self.fields = field.Fields(IObservation).select(*fields)

@@ -40,4 +40,18 @@
       />
 
   </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+    source="2.0.4"
+    destination="2.0.5"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Reindex sent_to_mse and sent_to_msc"
+      description="Fixing indexers to correctly check the review state."
+      handler="emrt.necd.content.upgrades.evolve205.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

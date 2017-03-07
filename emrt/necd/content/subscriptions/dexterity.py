@@ -24,7 +24,7 @@ class NotificationUnsubscriptions(object):
          the list of notifications that will be unsubscribed:
 
          {
-            'CounterPart': ['conclusion_to_comment'],
+            ROLE_CP: ['conclusion_to_comment'],
          }
         """
         annotated = IAnnotations(self.context)
