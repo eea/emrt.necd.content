@@ -1,3 +1,4 @@
+from functools import partial
 from Acquisition import aq_parent, aq_inner
 from emrt.necd.content import MessageFactory as _
 from plone import api
@@ -15,12 +16,19 @@ from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from eea.cache import cache
 from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
+from emrt.necd.content.reviewfolder import IReviewFolder
+from emrt.necd.content.utils import find_parent_with_interface
+from emrt.necd.content.utils import principals_with_roles
 from emrt.necd.content.constants import LDAP_TERT
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_MSEXPERT
 from emrt.necd.content.constants import ROLE_CP
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
+
+PARENT_REVIEWFOLDER = partial(find_parent_with_interface, IReviewFolder)
 
 
 def revoke_roles(username=None, user=None, obj=None, roles=None, inherit=True):
@@ -192,12 +200,12 @@ class AssignFormMixin(BrowserView):
             except api.user.GroupNotFoundError:
                 from logging import getLogger
                 log = getLogger(__name__)
-                log.info('There is not such a group %s' % groupname)
+                log.info('There is not such a group %s', groupname)
             except:
                 from logging import getLogger
                 import sys
                 log = getLogger(__name__)
-                log.info('Unexpected error: %s' % sys.exc_info()[0])
+                log.info('Unexpected error: %s', sys.exc_info()[0])
 
         self._counterpart_users = list(set(users))
         return self._counterpart_users
@@ -329,7 +337,11 @@ class AssignCounterPartForm(AssignFormMixin):
             return 'request-for-counterpart-comments'
 
     def _target_groupnames(self):
-        return [LDAP_TERT, LDAP_SECTOREXP, LDAP_LEADREVIEW]
+        reviewfolder = PARENT_REVIEWFOLDER(self.context)
+        rolenames = (ROLE_SE, ROLE_LR)
+        from_reviewfolder = principals_with_roles(reviewfolder, rolenames)
+        static = (LDAP_LEADREVIEW, LDAP_SECTOREXP)
+        return static + from_reviewfolder
 
     def get_current_counterparters(self):
         """ Return list of current counterparters
@@ -409,7 +421,11 @@ class AssignConclusionReviewerForm(AssignFormMixin):
         return aq_inner(self.context)
 
     def _target_groupnames(self):
-        return [LDAP_TERT]
+        reviewfolder = PARENT_REVIEWFOLDER(self.context)
+        rolenames = (ROLE_SE, ROLE_LR)
+        from_reviewfolder = principals_with_roles(reviewfolder, rolenames)
+        static = (LDAP_LEADREVIEW, LDAP_SECTOREXP)
+        return static + from_reviewfolder
 
     def _get_wf_action(self):
         return 'request-comments'

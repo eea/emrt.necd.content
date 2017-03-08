@@ -8,15 +8,10 @@ import plone.api as api
 
 from emrt.necd.content.observation import IObservation
 from emrt.necd.content.notifications.utils import notify
+from emrt.necd.content.utils import find_parent_with_interface
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
 
-
-def find_parent_with_interface(interface, context):
-    parent = context.aq_parent
-    if interface.providedBy(parent):
-        return parent
-    return find_parent_with_interface(interface, parent)
 
 def user_has_role_in_context(role, context):
     user = api.user.get_current()

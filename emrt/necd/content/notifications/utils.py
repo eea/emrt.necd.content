@@ -14,6 +14,7 @@ def notify(observation, template, subject, role, notification_name):
     content = template(**dict(observation=observation))
     send_mail(subject, safe_unicode(content), users)
 
+
 def send_mail(subject, email_content, users=[]):
     """
     Effectively send the e-mail message
@@ -40,13 +41,13 @@ def send_mail(subject, email_content, users=[]):
             mailhost = api.portal.get_tool('MailHost')
             mailhost.send(mail.as_string())
             message = u'Users have been notified by e-mail'
-            log.info('Emails sent to users %s' % ', '.join([
+            log.info('Emails sent to users %s', ', '.join([
                 email.replace('@', ' <at> ') for email in user_emails
             ]))
             IStatusMessage(request).add(message)
         except Exception as e:
             message = u'There was an error sending the notification, but your action was completed succesfuly. Contact the EEA Secretariat for further instructions.'
-            log.error('Error when sending the notification: %s' % e)
+            log.error('Error when sending the notification: %s', e)
             IStatusMessage(request).add(message, type='error')
 
 
@@ -87,7 +88,7 @@ def get_users_in_context(observation, role, notification_name):
         else:
             from logging import getLogger
             log = getLogger(__name__)
-            log.info('Username %s has no user object' % username)
+            log.info('Username %s has no user object', username)
 
     return users
 

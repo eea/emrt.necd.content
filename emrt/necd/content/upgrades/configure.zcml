@@ -54,4 +54,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.5"
+    destination="2.0.6"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Fix local NECDReviewer roles"
+      description="Reassign locally assigned NECDReviewer roles to SectorExpert. This should have been done in 2.0.4"
+      handler="emrt.necd.content.upgrades.evolve206.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
