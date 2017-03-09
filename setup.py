@@ -26,6 +26,7 @@ setup(name='emrt.necd.content',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'futures',
           'five.grok',
           'plone.app.dexterity [grok, relations]',
           'plone.namedfile [blobs]',
@@ -39,7 +40,7 @@ setup(name='emrt.necd.content',
           'collective.deletepermission',
           'tablib',
           'python-docx == 0.8.5',
-          'zc.dict'
+          'zc.dict',
       ],
       entry_points="""
       # -*- Entry points: -*-

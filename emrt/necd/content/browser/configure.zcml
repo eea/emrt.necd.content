@@ -7,6 +7,12 @@
 
   <!-- -*- extra stuff goes here -*- -->
 
+    <browser:page
+        name="warmup_ldap"
+        for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+        class=".ldap_warmup.Warmup"
+        permission="zope2.View"
+        />
 
     <browser:page
         name="assign_counterpart_form"
