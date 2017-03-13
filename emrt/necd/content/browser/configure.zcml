@@ -11,7 +11,7 @@
         name="warmup_ldap"
         for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
         class=".ldap_warmup.Warmup"
-        permission="zope2.View"
+        permission="emrt.necd.content.Warmup"
         />
 
     <browser:page

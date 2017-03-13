@@ -1,11 +1,11 @@
-import logging
+from time import time
+import itertools
 from functools import partial
-import concurrent.futures
 from Products.Five.browser import BrowserView
 from emrt.necd.content import constants
+from emrt.necd.content import utils
 import plone.api as api
 
-LOGGER = logging.getLogger(__name__)
 
 COUNTRIES = (
     'at',
@@ -23,7 +23,7 @@ COUNTRIES = (
     'gr',
     'hu',
     'ie',
-    'is',
+    'hr',
     'it',
     'lt',
     'lu',
@@ -89,24 +89,35 @@ GROUPS = (
 )
 
 
-def concurrent_loop(workers, timeout, func, items, *args):
-    results = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = [executor.submit(func, item, *args) for item in items]
-        LOGGER.info("Executing total %s jobs on %s workers", len(futures), workers)
-        for idx, future in enumerate(concurrent.futures.as_completed(futures, timeout=timeout)):
-            results.append(future.result())
-            LOGGER.info("Processed job %s", idx)
-    return results
+CONCURRENT = partial(utils.concurrent_loop, 16, 600.0)
 
 
-CONCURRENT = partial(concurrent_loop, 32, 600.0)
+def _get_group_members(group):
+    try:
+        return group.getGroupMembers()
+    except (TypeError, AttributeError):
+        return tuple()
+
+
+def _get_group(portal_groups, groupname):
+    try:
+        return portal_groups.getGroupById(groupname)
+    except AttributeError:
+        return None
 
 
 class Warmup(BrowserView):
     def __call__(self):
+        start_at = time()
         portal_groups = api.portal.get_tool('portal_groups')
-        plone_groups = CONCURRENT(portal_groups.getGroupById, GROUPS)
-        for group in plone_groups:
-            group.getGroupMembers()
-        return plone_groups
+        get_group = partial(_get_group, portal_groups)
+        plone_groups = CONCURRENT(get_group, GROUPS)
+        members = CONCURRENT(_get_group_members, plone_groups)
+
+        msg = 'OK. {} groups. {} unique members. Duration {} seconds.'.format(
+            len(plone_groups),
+            len(tuple(set(itertools.chain(*members)))),
+            time() - start_at
+        )
+
+        return msg

@@ -1,3 +1,4 @@
+import concurrent.futures
 from operator import itemgetter
 
 
@@ -19,3 +20,18 @@ def find_parent_with_interface(interface, context):
     if interface.providedBy(parent):
         return parent
     return find_parent_with_interface(interface, parent)
+
+
+def concurrent_loop(workers, timeout, func, items, *args):
+    """ Run as:
+        my_concurrent = partial(utils.concurrent_loop, 32, 600.0)
+        result = my_concurrent(lambda item: ..., [item, item, ...])
+    """
+    results = []
+    tpe = concurrent.futures.ThreadPoolExecutor
+    with tpe(max_workers=workers) as executor:
+        futures = [executor.submit(func, item, *args) for item in items]
+        for idx, future in enumerate(
+                concurrent.futures.as_completed(futures, timeout=timeout)):
+            results.append(future.result())
+    return results

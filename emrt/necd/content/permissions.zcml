@@ -78,6 +78,11 @@
     title="emrt.necd.content: Export an Observation"
     />
 
+    <permission
+          id="emrt.necd.content.Warmup"
+    title="emrt.necd.content: Warmup"
+    />
+
 
 
 </configure>
