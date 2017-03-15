@@ -5,7 +5,7 @@ VERSION = '2.0.7'
 
 setup(name='emrt.necd.content',
       version=VERSION,
-      description="Content-types for ESD Review Tool",
+      description="Content-types for EMRT-NECD Review Tool",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from

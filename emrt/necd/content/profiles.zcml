@@ -13,7 +13,7 @@
       name="default"
       title="emrt.necd.content: Content-types"
       directory="profiles/default"
-      description="Content-types for emrt.necd.content. Content-types for ESD Review Tool"
+      description="Content-types for emrt.necd.content. Content-types for EMRT-NECD Review Tool"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       post_handler=".setuphandlers.post_install"
       />
