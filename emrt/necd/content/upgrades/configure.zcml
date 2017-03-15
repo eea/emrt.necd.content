@@ -67,4 +67,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.6"
+    destination="2.0.7"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Assign MSExpert role to country groups in ReviewFolders."
+      description="#82444 - extranet-necd-review-countries-msexpert-es sees nothing in the My view tab. Add users that are part of the country mse groups as MSExpert in the tool."
+      handler="emrt.necd.content.upgrades.evolve207.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

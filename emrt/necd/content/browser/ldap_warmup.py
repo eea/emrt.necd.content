@@ -39,12 +39,8 @@ COUNTRIES = (
 )
 
 
-def append_string(sep, base, tail):
-    return '{}{}{}'.format(base, sep, tail)
-
-
-APPEND_MINUS = partial(append_string, '-')
-APPEND_EMPTY = partial(append_string, '')
+APPEND_MINUS = partial(utils.append_string, '-')
+APPEND_EMPTY = partial(utils.append_string, '')
 
 
 def partial_for_base(base):

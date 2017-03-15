@@ -5,6 +5,8 @@ from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
+from emrt.necd.content.constants import LDAP_MSEXPERT
+from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
@@ -36,5 +38,10 @@ def grant_local_roles(context):
         api.group.grant_roles(
             groupname='{}-{}'.format(LDAP_MSA, country),
             roles=[ROLE_MSA],
+            obj=obj,
+        )
+        api.group.grant_roles(
+            groupname='{}-{}'.format(LDAP_MSEXPERT, country),
+            roles=[ROLE_MSE],
             obj=obj,
         )

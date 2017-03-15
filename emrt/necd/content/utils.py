@@ -35,3 +35,7 @@ def concurrent_loop(workers, timeout, func, items, *args):
                 concurrent.futures.as_completed(futures, timeout=timeout)):
             results.append(future.result())
     return results
+
+
+def append_string(sep, base, tail):
+    return '{}{}{}'.format(base, sep, tail)
