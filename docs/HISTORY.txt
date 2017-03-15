@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.7 (unreleased)
+2.0.7 (2017-03-15)
 ------------------
 
 - Task #82527 - Caching, warmup and concurrent LDAP calls.
