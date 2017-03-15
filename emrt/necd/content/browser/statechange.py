@@ -281,6 +281,7 @@ class AssignAnswererForm(AssignFormMixin):
     def _get_wf_action(self):
         if api.content.get_state(self.context) in [
                 u'pending',
+                u'recalled-msa',
                 u'pending-answer-drafting']:
             return 'assign-answerer'
 

@@ -1486,7 +1486,8 @@ class AddAnswerAndRequestComments(grok.View):
         comment.text = text
 
         action = 'assign-answerer'
-        url = '%s/assign_answerer_form?workflow_action=%s&comment=%s' % (context.absolute_url(), action, item_id)
+        url = '%s/assign_answerer_form?workflow_action=%s&comment=%s' % (
+            context.absolute_url(), action, item_id)
 
         return self.request.response.redirect(url)
 

@@ -10,7 +10,11 @@ Changelog
 - Task #82444 - Renaming ESD strings to EMRT-NECD.
   [batradav]
 
-- Task #82444 - Setting MSExpert local role for LDAP_MSEXPERT-[country]
+- Task #82444 - Setting MSExpert local role for LDAP_MSEXPERT-[country].
+  [batradav]
+
+- Task #82444 - Fixing 'assign-answerer' transition not used
+  from 'recalled-msa' state of question.
   [batradav]
 
 

@@ -10,13 +10,29 @@ log = getLogger(__name__)
 log.info('Patching difftool excluded fields to add ghg_estimations')
 
 
-def _cachekey_lookupuserbyattr(meth, self, name, value, *args, **kwargs):
-    return (meth.__name__, '_'.join((name, value)))
+def _cachekey_lookupuserbyattr(meth, self, *args, **kwargs):
+    return (meth.__name__, '_'.join(args))
 
 
 @cache(_cachekey_lookupuserbyattr)
+def _lookupuserbyattr_cache_wrapper(result):
+    """ Wrapper to raise error when login was not successfull.
+        Needed to avoid caching unsuccessfull login attempts.
+    """
+    if not any(result):
+        raise ValueError
+    else:
+        return result
+
+
 def _lookupuserbyattr(self, name, value, pwd=None):
-    return self._old__lookupuserbyattr(name, value, pwd)
+    result = self._old__lookupuserbyattr(name, value, pwd)
+    try:
+        return _lookupuserbyattr_cache_wrapper(result)
+    except ValueError:
+        return result
+    finally:
+        return result
 
 
 def _cachekey_getGroupedUsers(meth, self, groups=None):
