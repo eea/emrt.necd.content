@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.8 (unreleased)
+2.0.9 (2017-03-16)
 ------------------
 
 - Task #82527 - Fixing eea.cache patches. Patching LDAPDelegate.search instead of
