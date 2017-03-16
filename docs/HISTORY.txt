@@ -4,7 +4,12 @@ Changelog
 2.0.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Task #82527 - Fixing eea.cache patches. Patching LDAPDelegate.search instead of
+  getGroupedUsers.
+
+- Task #82527 - Removing concurrent loop usage from counterpart query method
+  as concurrent.futures seem to not behave well in docker containers.
+  [batradav]
 
 
 2.0.7 (2017-03-15)

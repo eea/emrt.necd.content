@@ -14,10 +14,10 @@
     />
 
   <monkey:patch
-    description="Add eea.cache for Products.LDAPUserFolder.LDAPUserFolder.getGroupedUsers"
-    class="Products.LDAPUserFolder.LDAPUserFolder.LDAPUserFolder"
-    original="getGroupedUsers"
-    replacement=".patches.getGroupedUsers"
+    description="Add eea.cache for Products.LDAPUserFolder.LDAPDelegate.search"
+    class="Products.LDAPUserFolder.LDAPDelegate.LDAPDelegate"
+    original="search"
+    replacement=".patches.LDAPDelegate_search"
     preserveOriginal="true"
     />
 

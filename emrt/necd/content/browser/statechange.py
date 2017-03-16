@@ -1,4 +1,3 @@
-import concurrent.futures
 from functools import partial
 from Acquisition import aq_parent, aq_inner
 from emrt.necd.content import MessageFactory as _
@@ -20,7 +19,6 @@ from DateTime import DateTime
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.utils import find_parent_with_interface
 from emrt.necd.content.utils import principals_with_roles
-from emrt.necd.content.utils import concurrent_loop
 from emrt.necd.content.constants import LDAP_TERT
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_SECTOREXP
@@ -181,11 +179,13 @@ class AssignFormMixin(BrowserView):
 
     def get_users(self, groupname):
         users = api.user.get_users(groupname=groupname)
-        return [(u.getId(), u.getProperty('fullname', u.getId())) for u in users]
+        return [
+            (u.getId(), u.getProperty('fullname', u.getId())) for u in users]
 
     def get_users_from_group(self, group):
         users = group.getGroupMembers()
-        return [(u.getId(), u.getProperty('fullname', u.getId())) for u in users]
+        return [
+            (u.getId(), u.getProperty('fullname', u.getId())) for u in users]
 
     def get_counterpart_users(self):
         if self._counterpart_users is not None:
@@ -196,10 +196,9 @@ class AssignFormMixin(BrowserView):
         current_user_id = api.user.get_current().getId()
 
         group_tool = api.portal.get_tool('portal_groups')
-        get_users = partial(concurrent_loop, 4, 600.0)
         groups = map(group_tool.getGroupById, self._target_groupnames())
 
-        for res in get_users(self.get_users_from_group, groups):
+        for res in map(self.get_users_from_group, groups):
             data = [
                 (user_id, user_name, self._is_managed_role(user_id)) for
                 user_id, user_name in res if
