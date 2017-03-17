@@ -145,10 +145,6 @@ class IObservation(form.Schema, IImageScaleTraversable):
         title=u"MS key category",
     )
 
-    eu_key_catagory = schema.Bool(
-        title=u"EU key category",
-    )
-
     form.widget(parameter=CheckBoxFieldWidget)
     parameter = schema.List(
         title=u"Parameter",

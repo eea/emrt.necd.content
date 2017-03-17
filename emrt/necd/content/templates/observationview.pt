@@ -271,9 +271,6 @@
           <span tal:condition="here/ms_key_catagory|nothing">
               MS Key category
           </span><br tal:condition="here/ms_key_catagory|nothing"/>
-          <span tal:condition="here/eu_key_catagory|nothing">
-              EU Key category
-          </span>
         </div>
         <div class="cell position-11 width-4" tal:content="python:context.modified().strftime('%d %b %Y, %H:%M CET')">Last update</div>
       </div>

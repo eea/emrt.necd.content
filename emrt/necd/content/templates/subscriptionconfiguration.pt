@@ -91,13 +91,6 @@
             </span>
           </div>
         </div>
-        <div class="row">
-          <div class="cell position-0 width-4">
-            <span tal:condition="here/eu_key_catagory|nothing">
-              EU Key category
-            </span>
-          </div>
-        </div>
       </div>
 
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
