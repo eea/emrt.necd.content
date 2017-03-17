@@ -34,4 +34,11 @@
     handler="emrt.necd.content.setuphandlers.map_ldap_roles"
     />
 
+  <genericsetup:importStep
+    name="emrt.necd.content.setup.vocabularies"
+    title="Reimport missing vocabularies."
+    description="Reimport any missing vocabularies. Run after deleting a changed vocabulary."
+    handler="emrt.necd.content.setuphandlers.reimport_vocabularies"
+    />
+
 </configure>

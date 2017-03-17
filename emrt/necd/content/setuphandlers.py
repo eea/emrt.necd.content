@@ -90,6 +90,7 @@ def prepareVocabularies(context, profile):
 
     for vocabulary in VOCABULARIES:
         vocab = atvm.getVocabularyByName(vocabulary.get('id'))
+
         if vocab is None:
             create_vocabulary(
                 atvm,
@@ -188,10 +189,18 @@ def post_install(context):
 
 def setupVarious(context):
     """ various import steps for emrt.necd.content """
-    portal = context.getSite()
-
     if context.readDataFile('emrt.necd.content_various.txt') is None:
         return
 
+    portal = context.getSite()
+
     prepareVocabularies(portal, context)
     enable_atd_spellchecker(portal)
+
+
+def reimport_vocabularies(context):
+    if context.readDataFile('emrt.necd.content_various.txt') is None:
+        return
+
+    portal = context.getSite()
+    prepareVocabularies(portal, context)

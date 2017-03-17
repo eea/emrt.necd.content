@@ -80,4 +80,23 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.7"
+    destination="2.0.10"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Delete vocabularies."
+      description="Changed pollutant and fuel vocabularies. Will be reimported in next step."
+      handler="emrt.necd.content.upgrades.evolve2010.run"
+      />
+
+    <genericsetup:upgradeDepends
+      title="Reimport missing vocabularies."
+      description="Pollutant and fuel list."
+      import_steps="emrt.necd.content.setup.vocabularies"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
