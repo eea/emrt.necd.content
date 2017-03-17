@@ -1,3 +1,4 @@
+from copy import copy
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -174,9 +175,25 @@ class AddForm(dexterity.AddForm):
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
-        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
+
+        widget_highlight = self.widgets['highlight']
+        widget_highlight.template = Z3ViewPageTemplateFile(
             'templates/widget_highlight.pt'
         )
+
+    def update(self):
+        super(AddForm, self).update()
+
+        # grab highlight value from observation
+        widget_highlight = self.widgets['highlight']
+        def set_checked(item):
+            updated_item = copy(item)
+            updated_item['checked'] = (
+                updated_item['value'] in self.context.highlight
+            )
+            return updated_item
+
+        widget_highlight.items = map(set_checked, widget_highlight.items)
 
     def create(self, data={}):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
@@ -197,6 +214,11 @@ class AddForm(dexterity.AddForm):
         content.closing_reason = reason[0]
         adapted = IAllowDiscussion(content)
         adapted.allow_discussion = True
+
+        # Update highlight on parent observation
+        highlight = self.request.form.get('form.widgets.highlight')
+        container.highlight = highlight
+        notify(ObjectModifiedEvent(container))
 
         # Update Observation state
         api.content.transition(
