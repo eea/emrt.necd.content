@@ -1471,7 +1471,11 @@ class AddAnswerAndRequestComments(grok.View):
 
         context = questions[0]
 
-        text = u'For MS coordinator: please draft, edit and finalise your consolidated reply here.'
+        text = (
+            u'For MS coordinator: please draft, edit and finalize '
+            u'here your answer AFTER CLOSING COMMENT within your '
+            u'member state expert.'
+        )
 
         id = str(int(time()))
         item_id = context.invokeFactory(

@@ -138,7 +138,7 @@
             width:'50%'
         });
 
-        if ($(".commentanswer:last .answerContent").text() == "For MS coordinator: please draft, edit and finalise your consolidated reply here."){
+        if ($(".commentanswer:last .answerContent").text() == "For MS coordinator: please draft, edit and finalize here your answer AFTER CLOSING COMMENT within your member state expert."){
           $(".standardButton:contains('Edit answer')").addClass("defaultWFButton");
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
