@@ -23,6 +23,9 @@ from z3c.form import field
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.browsermenu.menu import getMenu
+from zope.browserpage.viewpagetemplatefile import (
+    ViewPageTemplateFile as Z3ViewPageTemplateFile
+)
 from zope.component import createObject
 from zope.component import getUtility
 from zope.globalrequest import getRequest
@@ -171,6 +174,9 @@ class AddForm(dexterity.AddForm):
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
+        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
+            'templates/widget_highlight.pt'
+        )
 
     def create(self, data={}):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
@@ -257,6 +263,9 @@ class EditForm(dexterity.EditForm):
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
         self.widgets['text'].rows = 15
+        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
+            'templates/widget_highlight.pt'
+        )
 
     def updateActions(self):
         super(EditForm, self).updateActions()
