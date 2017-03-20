@@ -85,22 +85,22 @@
               </div>
             </div>
           </div>
-          <div class="my-actions inboxSection"
-            tal:define="observations view/get_draft_observations"
-            tal:condition="observations">
-            <metal:obslist define-macro="observationlist">
-              <tal:block tal:define="b_size python:5;
-                b_size request/b_size | b_size;
-                b_start1 python:0;
-                b_start1 request/b_start1 | b_start1;
-                batch1 python:view.batch(observations, int(b_size), int(b_start1), orphan=1, b_start_str='b_start1');">
+            <div class="my-actions inboxSection">
               <div class="collapsibleListTitle" data-list="draft-observations">
                 <div>
                   Draft observations
                   <span class="eea-icon eea-icon-left"></span>
                 </div>
               </div>
-              <div class="draft-observations">
+              <div class="draft-observations"
+                tal:define="observations view/get_draft_observations; idx string:1">
+            <metal:obslist define-macro="observationlist"
+              tal:define="
+                b_size python:request.get('b_size', 5);
+                b_start_str python:'b_start'.format(idx);
+                b_start python:request.get(b_start_str, 0);
+                batch python:view.batch(observations, int(b_size), int(b_start), orphan=1, b_start_str=b_start_str);"
+              tal:condition="observations">
                 <table class="my-actions observationList listing">
                   <thead>
                     <tr>
@@ -120,7 +120,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tal:block tal:repeat="item batch1">
+                    <tal:block tal:repeat="item batch">
                       <tal:item define="observation nocall:item;
                                         toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
                         <tr tal:attributes="data-href observation/absolute_url;
@@ -163,10 +163,9 @@
                 </table>
                 <tal:batchnavigation
                     define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch1)" />
+                    replace="structure python:batchnavigation(batch)" />
+                </metal:obslist>
               </div>
-            </tal:block>
-            </metal:obslist>
           </div>
           <div class="my-actions inboxSection">
             <div class="collapsibleListTitle" data-list="draft-questions">
@@ -175,78 +174,10 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="questions" class="draft-questions"
-              tal:define="questions view/get_draft_questions;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start2 python:0;
-                  b_start2 request/b_start2 | b_start2;
-                  batch2 python:view.batch(questions, int(b_size), int(b_start2), orphan=1, b_start_str='b_start2');">
-            <table class="my-actions observationList listing" >
-              <thead>
-                <tr>
-                  <th style="width:17%">
-                    Observation
-                  </th>
-                  <th style="width:45%">
-                    In short
-                  </th>
-                  <th>
-                    NFR code
-                  </th>
-                  <th style="width:80px">
-                    Modification date
-                  </th>
-
-                </tr>
-              </thead>
-              <tbody>
-                <tal:block tal:repeat="item batch2">
-                  <tal:item define="observation nocall:item;
-                                    toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                    <tr tal:attributes="data-href observation/absolute_url;
-                        class string:clickableRow ${observation/observation_css_class};">
-                      <td class="observationRefCell">
-                          <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                          <span class="ref-num"
-                            tal:content="observation/getId">
-                            UK-WAS-13-001
-                          </span>
-                          <br/>
-                          <div class="potentialSignificantIssue"
-                            tal:condition="observation/observation_is_potential_significant_issue">
-                              Potential significant issue
-                          </div>
-                          <div class="potentialTechnicalCorrectionTag"
-                            tal:condition="observation/observation_is_potential_technical_correction">
-                              Potential technical correction
-                          </div>
-                          <div class="technicalCorrectionTag"
-                            tal:condition="observation/observation_is_technical_correction">
-                              Technical correction
-                          </div>
-                      </td>
-                      <td tal:content="observation/text"
-                          class="observationText">
-                        Observation description
-                      </td>
-                      <td tal:content="observation/nfr_code_value">
-                        1A1 Energy industries
-                      </td>
-                      <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                          tal:attributes="data-sorter python:observation.modified()">
-                        20 Jun 2014, 11:35 AM
-                      </td>
-                    </tr>
-                  </tal:item>
-                </tal:block>
-
-              </tbody>
-            </table>
-            <tal:batchnavigation
-                  define="batchnavigation nocall:context/@@batchnavigation"
-                  replace="structure python:batchnavigation(batch2)" />
-          </div>
+            <div class="draft-questions"
+                 tal:define="observations view/get_draft_questions; idx python:2">
+              <metal:obslist use-macro="template/macros/observationlist" />
+            </div>
           </div>
           <div class="my-actions inboxSection">
             <div class="collapsibleListTitle" data-list="counterpart-questions-to-comment">
@@ -255,77 +186,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="counterpart-questions-to-comment"
-              tal:define="observations view/get_counterpart_questions_to_comment;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start3 python:0;
-                  b_start3 request/b_start3 | b_start3;
-                  batch3 python:view.batch(observations, int(b_size), int(b_start3), orphan=1, b_start_str='b_start3');">
-              <table class="my-actions observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch3">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significan issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                  define="batchnavigation nocall:context/@@batchnavigation"
-                  replace="structure python:batchnavigation(batch3)" />
+            <div class="counterpart-questions-to-comment"
+                 tal:define="observations view/get_counterpart_questions_to_comment; idx python:3">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -335,77 +198,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="counterpart-conclusions-to-comment"
-              tal:define="observations view/get_counterpart_conclusion_to_comment;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start4 python:0;
-                  b_start4 request/b_start4 | b_start4;
-                  batch4 python:view.batch(observations, int(b_size), int(b_start4), orphan=1, b_start_str='b_start4');">
-              <table class="my-actions observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch4">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significan issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                  define="batchnavigation nocall:context/@@batchnavigation"
-                  replace="structure python:batchnavigation(batch4)" />
+            <div class="counterpart-conclusions-to-comment"
+                 tal:define="observations view/get_counterpart_conclusion_to_comment; idx python:4">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -415,77 +210,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="ms-answers-to-review"
-              tal:define="observations view/get_ms_answers_to_review;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start5 python:0;
-                  b_start5 request/b_start5 | b_start5;
-                  batch5 python:view.batch(observations, int(b_size), int(b_start5), orphan=1, b_start_str='b_start5');">
-              <table class="my-actions observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch5">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch5)" />
+            <div class="ms-answers-to-review"
+                 tal:define="observations view/get_ms_answers_to_review; idx python:5">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div>
@@ -504,77 +231,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="other-actions-for-my-observations approval-questions"
-              tal:define="observations view/get_approval_questions;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start6 python:0;
-                  b_start6 request/b_start6 | b_start6;
-                  batch6 python:view.batch(observations, int(b_size), int(b_start6), orphan=1, b_start_str='b_start6');">
-                <table class="observationList listing">
-                  <thead>
-                    <tr>
-                      <th style="width:17%">
-                        Observation
-                      </th>
-                      <th style="width:45%">
-                        In short
-                      </th>
-                      <th>
-                        NFR code
-                      </th>
-                      <th style="width:80px">
-                        Modification date
-                      </th>
-
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tal:block tal:repeat="item batch6">
-                      <tal:item define="observation nocall:item;
-                                        toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                        <tr tal:attributes="data-href observation/absolute_url;
-                            class string:clickableRow ${observation/observation_css_class};">
-                          <td class="observationRefCell">
-                              <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                              <span class="ref-num"
-                                tal:content="observation/getId">
-                                UK-WAS-13-001
-                              </span>
-                              <br/>
-                              <div class="potentialSignificantIssue"
-                                tal:condition="observation/observation_is_potential_significant_issue">
-                                  Potential significant issue
-                              </div>
-                              <div class="potentialTechnicalCorrectionTag"
-                                tal:condition="observation/observation_is_potential_technical_correction">
-                                  Potential technical correction
-                              </div>
-                              <div class="technicalCorrectionTag"
-                                tal:condition="observation/observation_is_technical_correction">
-                                  Technical correction
-                              </div>
-                          </td>
-                          <td tal:content="observation/text"
-                              class="observationText">
-                            Observation description
-                          </td>
-                          <td tal:content="observation/nfr_code_value">
-                            1A1 Energy industries
-                          </td>
-                          <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                              tal:attributes="data-sorter python:observation.modified()">
-                            20 Jun 2014, 11:35 AM
-                          </td>
-                        </tr>
-                      </tal:item>
-                    </tal:block>
-                  </tbody>
-                </table>
-                <tal:batchnavigation
-                      define="batchnavigation nocall:context/@@batchnavigation"
-                      replace="structure python:batchnavigation(batch6)" />
+            <div class="other-actions-for-my-observations approval-questions"
+                 tal:define="observations view/get_approval_questions; idx python:6">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
 
@@ -585,77 +244,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="other-actions-for-my-observations unanswered-questions"
-              tal:define="observations view/get_unanswered_questions;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start6 python:0;
-                  b_start6 request/b_start6 | b_start6;
-                  batch6 python:view.batch(observations, int(b_size), int(b_start6), orphan=1, b_start_str='b_start6');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch6">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch6)" />
+            <div class="other-actions-for-my-observations unanswered-questions"
+                 tal:define="observations view/get_unanswered_questions; idx python:7">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="other-actions-for-my-observations inboxSection">
@@ -665,77 +256,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="other-actions-for-my-observations waiting-for-comment-from-counterparts-for-question"
-              tal:define="observations view/get_waiting_for_comment_from_counterparts_for_question;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start7 python:0;
-                  b_start7 request/b_start7 | b_start7;
-                  batch7 python:view.batch(observations, int(b_size), int(b_start7), orphan=1, b_start_str='b_start7');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch7">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch7)" />
+            <div class="other-actions-for-my-observations waiting-for-comment-from-counterparts-for-question"
+                 tal:define="observations view/get_waiting_for_comment_from_counterparts_for_question; idx python:8">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="other-actions-for-my-observations inboxSection">
@@ -745,77 +268,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="other-actions-for-my-observations waiting-for-comment-from-counterparts-for-conclusion"
-              tal:define="observations view/get_waiting_for_comment_from_counterparts_for_conclusion;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start8 python:0;
-                  b_start8 request/b_start8 | b_start8;
-                  batch8 python:view.batch(observations, int(b_size), int(b_start8), orphan=1, b_start_str='b_start8');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch8">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch8)" />
+            <div class="other-actions-for-my-observations waiting-for-comment-from-counterparts-for-conclusion"
+                 tal:define="observations view/get_waiting_for_comment_from_counterparts_for_conclusion; idx python:9">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="other-actions-for-my-observations inboxSection">
@@ -825,77 +280,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="view/get_observation_for_finalisation" class="other-actions-for-my-observations observation-for-finalisation"
-              tal:define="observations view/get_observation_for_finalisation;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start9 python:0;
-                  b_start9 request/b_start9 | b_start9;
-                  batch9 python:view.batch(observations, int(b_size), int(b_start9), orphan=1, b_start_str='b_start9');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch9">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch9)" />
+            <div class="other-actions-for-my-observations observation-for-finalisation"
+                 tal:define="observations view/get_observation_for_finalisation; idx python:10">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
         </tal:block>
@@ -916,77 +303,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="view/get_questions_to_be_sent" class="my-actions questions-to-be-sent"
-              tal:define="observations view/get_questions_to_be_sent;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start10 python:0;
-                  b_start10 request/b_start10 | b_start10;
-                  batch10 python:view.batch(observations, int(b_size), int(b_start10), orphan=1, b_start_str='b_start10');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch10">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch10)" />
+            <div class="my-actions questions-to-be-sent"
+                 tal:define="observations view/get_questions_to_be_sent; idx python:11">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -996,77 +315,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="my-actions observations-to-finalise"
-              tal:define="observations view/get_observations_to_finalise;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start11 python:0;
-                  b_start11 request/b_start11 | b_start11;
-                  batch11 python:view.batch(observations, int(b_size), int(b_start11), orphan=1, b_start_str='b_start11');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch11">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch11)" />
+            <div class="my-actions observations-to-finalise"
+                 tal:define="observations view/get_observations_to_finalise; idx python:12">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -1076,77 +327,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="my-actions questions-to-comment"
-              tal:define="observations view/get_questions_to_comment;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start12 python:0;
-                  b_start12 request/b_start12 | b_start12;
-                  batch12 python:view.batch(observations, int(b_size), int(b_start12), orphan=1, b_start_str='b_start12');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch12">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch12)" />
+            <div class="my-actions questions-to-comment"
+                 tal:define="observations view/get_questions_to_comment; idx python:13">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -1156,77 +339,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="my-actions conclusions-to-comment"
-              tal:define="observations view/get_conclusions_to_comment;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start13 python:0;
-                  b_start13 request/b_start13 | b_start13;
-                  batch13 python:view.batch(observations, int(b_size), int(b_start13), orphan=1, b_start_str='b_start13');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch13">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch13)" />
+            <div class="my-actions conclusions-to-comment"
+                 tal:define="observations view/get_conclusions_to_comment; idx python:14">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div>
@@ -1244,77 +359,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="my-teams-actions questions-with-comments-from-reviewers"
-              tal:define="observations view/get_questions_with_comments_from_reviewers;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start14 python:0;
-                  b_start14 request/b_start14 | b_start14;
-                  batch14 python:view.batch(observations, int(b_size), int(b_start14), orphan=1, b_start_str='b_start14');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch14">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch14)" />
+            <div class="my-teams-actions questions-with-comments-from-reviewers"
+                 tal:define="observations view/get_questions_with_comments_from_reviewers; idx python:15">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="my-teams-actions inboxSection">
@@ -1324,77 +371,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="my-teams-actions answers-from-ms"
-              tal:define="observations view/get_answers_from_ms;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start15 python:0;
-                  b_start15 request/b_start15 | b_start15;
-                  batch15 python:view.batch(observations, int(b_size), int(b_start15), orphan=1, b_start_str='b_start15');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch15">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch15)" />
+            <div class="my-teams-actions answers-from-ms"
+                 tal:define="observations view/get_answers_from_ms; idx python:16">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div>
@@ -1412,77 +391,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="observations" class="my-ms-actions unanswered-questions-lr-que"
-              tal:define="observations view/get_unanswered_questions_lr;
-                  b_size python:5;
-                  b_size request/b_size | b_size;
-                  b_start16 python:0;
-                  b_start16 request/b_start16 | b_start16;
-                  batch16 python:view.batch(observations, int(b_size), int(b_start16), orphan=1, b_start_str='b_start16');">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item batch16">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
-              <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch16)" />
+            <div class="my-ms-actions unanswered-questions-lr-que"
+                 tal:define="observations view/get_unanswered_questions_lr; idx python:17">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
         </tal:block>
@@ -1503,68 +414,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="view/get_questions_to_be_answered" class="my-actions questions-to-be-answered">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item view/get_questions_to_be_answered">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
+            <div class="my-actions questions-to-be-answered"
+                 tal:define="observations view/get_questions_to_be_answered; idx python:18">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -1574,68 +426,9 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div tal:condition="view/get_questions_with_comments_received_from_mse" class="my-actions questions-with-comments-received-from-mse">
-              <table class="observationList listing">
-                <thead>
-                  <tr>
-                    <th style="width:17%">
-                      Observation
-                    </th>
-                    <th style="width:45%">
-                      In short
-                    </th>
-                    <th>
-                      NFR code
-                    </th>
-                    <th style="width:80px">
-                      Modification date
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tal:block tal:repeat="item view/get_questions_with_comments_received_from_mse">
-                    <tal:item define="observation nocall:item;
-                                      toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                      <tr tal:attributes="data-href observation/absolute_url;
-                          class string:clickableRow ${observation/observation_css_class};">
-                        <td class="observationRefCell">
-                            <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                            <span class="ref-num"
-                              tal:content="observation/getId">
-                              UK-WAS-13-001
-                            </span>
-                            <br/>
-                            <div class="potentialSignificantIssue"
-                              tal:condition="observation/observation_is_potential_significant_issue">
-                                Potential significant issue
-                            </div>
-                            <div class="potentialTechnicalCorrectionTag"
-                              tal:condition="observation/observation_is_potential_technical_correction">
-                                Potential technical correction
-                            </div>
-                            <div class="technicalCorrectionTag"
-                              tal:condition="observation/observation_is_technical_correction">
-                                Technical correction
-                            </div>
-                        </td>
-                        <td tal:content="observation/text"
-                            class="observationText">
-                          Observation description
-                        </td>
-                        <td tal:content="observation/nfr_code_value">
-                          1A1 Energy industries
-                        </td>
-                        <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                            tal:attributes="data-sorter python:observation.modified()">
-                          20 Jun 2014, 11:35 AM
-                        </td>
-                      </tr>
-                    </tal:item>
-                  </tal:block>
-                </tbody>
-              </table>
+            <div class="my-actions questions-with-comments-received-from-mse"
+                 tal:define="observations view/get_questions_with_comments_received_from_mse; idx python:19">
+              <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
           <div>
@@ -1653,69 +446,10 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <tal:block tal:condition="view/get_answers_requiring_comments_from_mse">
-            <table class="observationList listing mse-actions answers-requiring-comments-from-mse">
-              <thead>
-                <tr>
-                  <th style="width:17%">
-                    Observation
-                  </th>
-                  <th style="width:45%">
-                    In short
-                  </th>
-                  <th>
-                    NFR code
-                  </th>
-                  <th style="width:80px">
-                    Modification date
-                  </th>
-
-                </tr>
-              </thead>
-
-              <tbody>
-                <tal:block tal:repeat="item view/get_answers_requiring_comments_from_mse">
-                  <tal:item define="observation nocall:item;
-                                    toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                    <tr tal:attributes="data-href observation/absolute_url;
-                        class string:clickableRow ${observation/observation_css_class};">
-                      <td class="observationRefCell">
-                          <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                          <span class="ref-num"
-                            tal:content="observation/getId">
-                            UK-WAS-13-001
-                          </span>
-                          <br/>
-                          <div class="potentialSignificantIssue"
-                            tal:condition="observation/observation_is_potential_significant_issue">
-                              Potential significant issue
-                          </div>
-                          <div class="potentialTechnicalCorrectionTag"
-                            tal:condition="observation/observation_is_potential_technical_correction">
-                              Potential technical correction
-                          </div>
-                          <div class="technicalCorrectionTag"
-                            tal:condition="observation/observation_is_technical_correction">
-                              Technical correction
-                          </div>
-                      </td>
-                      <td tal:content="observation/text"
-                          class="observationText">
-                        Observation description
-                      </td>
-                      <td tal:content="observation/nfr_code_value">
-                        1A1 Energy industries
-                      </td>
-                      <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                          tal:attributes="data-sorter python:observation.modified()">
-                        20 Jun 2014, 11:35 AM
-                      </td>
-                    </tr>
-                  </tal:item>
-                </tal:block>
-              </tbody>
-            </table>
-            </tal:block>
+            <div class="mse-actions answers-requiring-comments-from-mse"
+                 tal:define="observations view/get_answers_requiring_comments_from_mse; idx python:20">
+              <metal:obslist use-macro="template/macros/observationlist" />
+            </div>
           </div>
           <div>
             <div class="collapsiblePanelTitle" data-panel="se-re-actions">
@@ -1732,69 +466,10 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <tal:block tal:condition="view/get_answers_sent_to_se_re">
-            <table class="observationList listing se-re-actions answers-sent-to-se-re">
-              <thead>
-                <tr>
-                  <th style="width:17%">
-                    Observation
-                  </th>
-                  <th style="width:45%">
-                    In short
-                  </th>
-                  <th>
-                    NFR code
-                  </th>
-                  <th style="width:80px">
-                    Modification date
-                  </th>
-
-                </tr>
-              </thead>
-
-              <tbody>
-                <tal:block tal:repeat="item view/get_answers_sent_to_se_re">
-                  <tal:item define="observation nocall:item;
-                                    toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                    <tr tal:attributes="data-href observation/absolute_url;
-                        class string:clickableRow ${observation/observation_css_class};">
-                      <td class="observationRefCell">
-                          <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                          <span class="ref-num"
-                            tal:content="observation/getId">
-                            UK-WAS-13-001
-                          </span>
-                          <br/>
-                          <div class="potentialSignificantIssue"
-                            tal:condition="observation/observation_is_potential_significant_issue">
-                              Potential significant issue
-                          </div>
-                          <div class="potentialTechnicalCorrectionTag"
-                            tal:condition="observation/observation_is_potential_technical_correction">
-                              Potential technical correction
-                          </div>
-                          <div class="technicalCorrectionTag"
-                            tal:condition="observation/observation_is_technical_correction">
-                              Technical correction
-                          </div>
-                      </td>
-                      <td tal:content="observation/text"
-                          class="observationText">
-                        Observation description
-                      </td>
-                      <td tal:content="observation/nfr_code_value">
-                        1A1 Energy industries
-                      </td>
-                      <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                          tal:attributes="data-sorter python:observation.modified()">
-                        20 Jun 2014, 11:35 AM
-                      </td>
-                    </tr>
-                  </tal:item>
-                </tal:block>
-              </tbody>
-            </table>
-            </tal:block>
+            <div class="se-re-actions answers-sent-to-se-re"
+                 tal:define="observations view/get_answers_sent_to_se_re; idx python:21">
+              <metal:obslist use-macro="template/macros/observationlist" />
+            </div>
           </div>
         </tal:block>
         <!-- MS Expert -->
@@ -1814,69 +489,10 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <tal:block tal:condition="view/get_questions_with_comments_for_answer_needed_by_msc">
-            <table class="observationList listing my-actions questions-with-comments-for-answer-needed-by-msc">
-              <thead>
-                <tr>
-                  <th style="width:17%">
-                    Observation
-                  </th>
-                  <th style="width:45%">
-                    In short
-                  </th>
-                  <th>
-                    NFR code
-                  </th>
-                  <th style="width:80px">
-                    Modification date
-                  </th>
-
-                </tr>
-              </thead>
-
-              <tbody>
-                <tal:block tal:repeat="item view/get_questions_with_comments_for_answer_needed_by_msc">
-                  <tal:item define="observation nocall:item;
-                                    toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                    <tr tal:attributes="data-href observation/absolute_url;
-                        class string:clickableRow ${observation/observation_css_class};">
-                      <td class="observationRefCell">
-                          <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                          <span class="ref-num"
-                            tal:content="observation/getId">
-                            UK-WAS-13-001
-                          </span>
-                          <br/>
-                          <div class="potentialSignificantIssue"
-                            tal:condition="observation/observation_is_potential_significant_issue">
-                              Potential significant issue
-                          </div>
-                          <div class="potentialTechnicalCorrectionTag"
-                            tal:condition="observation/observation_is_potential_technical_correction">
-                              Potential technical correction
-                          </div>
-                          <div class="technicalCorrectionTag"
-                            tal:condition="observation/observation_is_technical_correction">
-                              Technical correction
-                          </div>
-                      </td>
-                      <td tal:content="observation/text"
-                          class="observationText">
-                        Observation description
-                      </td>
-                      <td tal:content="observation/nfr_code_value">
-                        1A1 Energy industries
-                      </td>
-                      <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                          tal:attributes="data-sorter python:observation.modified()">
-                        20 Jun 2014, 11:35 AM
-                      </td>
-                    </tr>
-                  </tal:item>
-                </tal:block>
-              </tbody>
-            </table>
-            </tal:block>
+            <div class="my-actions questions-with-comments-for-answer-needed-by-msc"
+                 tal:define="observations view/get_questions_with_comments_for_answer_needed_by_msc; idx python:22">
+              <metal:obslist use-macro="template/macros/observationlist" />
+            </div>
           </div>
           <div>
             <div class="collapsiblePanelTitle" data-panel="msc-actions">
@@ -1893,69 +509,10 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <tal:block tal:condition="view/get_observations_with_my_comments">
-            <table class="observationList listing msc-actions observations-with-my-comments">
-              <thead>
-                <tr>
-                  <th style="width:17%">
-                    Observation
-                  </th>
-                  <th style="width:45%">
-                    In short
-                  </th>
-                  <th>
-                    NFR code
-                  </th>
-                  <th style="width:80px">
-                    Modification date
-                  </th>
-
-                </tr>
-              </thead>
-
-              <tbody>
-                <tal:block tal:repeat="item view/get_observations_with_my_comments">
-                  <tal:item define="observation nocall:item;
-                                    toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                    <tr tal:attributes="data-href observation/absolute_url;
-                        class string:clickableRow ${observation/observation_css_class};">
-                      <td class="observationRefCell">
-                          <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                          <span class="ref-num"
-                            tal:content="observation/getId">
-                            UK-WAS-13-001
-                          </span>
-                          <br/>
-                          <div class="potentialSignificantIssue"
-                            tal:condition="observation/observation_is_potential_significant_issue">
-                              Potential significant issue
-                          </div>
-                          <div class="potentialTechnicalCorrectionTag"
-                            tal:condition="observation/observation_is_potential_technical_correction">
-                              Potential technical correction
-                          </div>
-                          <div class="technicalCorrectionTag"
-                            tal:condition="observation/observation_is_technical_correction">
-                              Technical correction
-                          </div>
-                      </td>
-                      <td tal:content="observation/text"
-                          class="observationText">
-                        Observation description
-                      </td>
-                      <td tal:content="observation/nfr_code_value">
-                        1A1 Energy industries
-                      </td>
-                      <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                          tal:attributes="data-sorter python:observation.modified()">
-                        20 Jun 2014, 11:35 AM
-                      </td>
-                    </tr>
-                  </tal:item>
-                </tal:block>
-              </tbody>
-            </table>
-            </tal:block>
+            <div class="msc-actions observations-with-my-comments"
+                 tal:define="observations view/get_observations_with_my_comments; idx python:23">
+              <metal:obslist use-macro="template/macros/observationlist" />
+            </div>
           </div>
           <div>
             <div class="collapsiblePanelTitle" data-panel="sr-re-actions">
@@ -1972,69 +529,10 @@
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <tal:block tal:condition="view/get_observations_with_my_comments_sent_to_se_re">
-            <table class="observationList listing sr-re-actions observations-with-my-comments-sent-to-se-re">
-              <thead>
-                <tr>
-                  <th style="width:17%">
-                    Observation
-                  </th>
-                  <th style="width:45%">
-                    In short
-                  </th>
-                  <th>
-                    NFR code
-                  </th>
-                  <th style="width:80px">
-                    Modification date
-                  </th>
-
-                </tr>
-              </thead>
-
-              <tbody>
-                <tal:block tal:repeat="item view/get_observations_with_my_comments_sent_to_se_re">
-                  <tal:item define="observation nocall:item;
-                                    toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                    <tr tal:attributes="data-href observation/absolute_url;
-                        class string:clickableRow ${observation/observation_css_class};">
-                      <td class="observationRefCell">
-                          <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                          <span class="ref-num"
-                            tal:content="observation/getId">
-                            UK-WAS-13-001
-                          </span>
-                          <br/>
-                          <div class="potentialSignificantIssue"
-                            tal:condition="observation/observation_is_potential_significant_issue">
-                              Potential significant issue
-                          </div>
-                          <div class="potentialTechnicalCorrectionTag"
-                            tal:condition="observation/observation_is_potential_technical_correction">
-                              Potential technical correction
-                          </div>
-                          <div class="technicalCorrectionTag"
-                            tal:condition="observation/observation_is_technical_correction">
-                              Technical correction
-                          </div>
-                      </td>
-                      <td tal:content="observation/text"
-                          class="observationText">
-                        Observation description
-                      </td>
-                      <td tal:content="observation/nfr_code_value">
-                        1A1 Energy industries
-                      </td>
-                      <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                          tal:attributes="data-sorter python:observation.modified()">
-                        20 Jun 2014, 11:35 AM
-                      </td>
-                    </tr>
-                  </tal:item>
-                </tal:block>
-              </tbody>
-            </table>
-            </tal:block>
+            <div class="sr-re-actions observations-with-my-comments-sent-to-se-re"
+                 tal:define="observations view/get_observations_with_my_comments_sent_to_se_re; idx python:24">
+              <metal:obslist use-macro="template/macros/observationlist" />
+            </div>
           </div>
         </tal:block>
       </div>
