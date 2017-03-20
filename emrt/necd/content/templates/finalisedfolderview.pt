@@ -77,7 +77,9 @@
         </div>
       </div>
 
-      <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
+      <div id="observations" class="myview"
+        tal:condition="not:here/@@plone_portal_state/anonymous"
+        tal:define="reasons python:view.get_finalisation_reasons()">
         <div>
           <div class="collapsiblePanelTitle" data-panel="finalised-observations">
             <div>
@@ -86,30 +88,23 @@
             </div>
           </div>
         </div>
-        <div class="finalised-observations inboxSection">
-          <div class="collapsibleListTitle" data-list="resolved-observations">
-            <div>
-              Finalised with 'resolved'
-              <span class="eea-icon eea-icon-left"></span>
+        <tal:reason repeat="reason reasons">
+          <div class="finalised-observations inboxSection"
+            tal:define="reason_key python:reason[0]; reason_title python:reason[1]">
+            <div class="collapsibleListTitle" data-list="resolved-observations">
+              <div>
+                Finalised with <span tal:replace="reason_title">REASON</span>
+                <span class="eea-icon eea-icon-left"></span>
+              </div>
+            </div>
+            <div class="finalised-observations"
+              tal:define="
+                observations python:view.get_resolved_observations(reason_key);
+                idx python:repeat['reason'].index">
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
-          <div class="finalised-observations"
-            tal:define="observations view/get_resolved_observations; idx string:1">
-            <metal:obslist use-macro="macro_observationlist" />
-          </div>
-        </div>
-        <div class="finalised-observations inboxSection">
-          <div class="collapsibleListTitle" data-list="unresolved-observations">
-            <div>
-              Finalised with 'unresolved'
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div>
-          <div class="finalised-observations"
-            tal:define="observations view/get_unresolved_observations; idx string:2">
-            <metal:obslist use-macro="macro_observationlist" />
-          </div>
-        </div>
+        </tal:reason>
       </div>
 
 </div>

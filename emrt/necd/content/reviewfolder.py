@@ -1,5 +1,6 @@
 import time
 import tablib
+from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
 from AccessControl import getSecurityManager, Unauthorized
@@ -42,6 +43,48 @@ grok.templatedir('templates')
 def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
 
+
+def get_finalisation_reasons(reviewfolder):
+    """ Vocabularies are used to fetch available reasons.
+        This used to have hardcoded values for 2015 and 2016.
+        Currently it works like this:
+            - try to get vocabulary values that end
+              in the current folder title (e.g. "resolved2016")
+            - if no values match, get the values which don't
+              end in an year (e.g. "resolved")
+        This covers the previous functionality while also supporting
+        any number of upcoming years, as well as "Test"-type
+        review folders.
+    """
+    vtool = getToolByName(reviewfolder, 'portal_vocabularies')
+    reasons = [('open', 'open')]
+
+    context_title = reviewfolder.Title().strip()
+
+    vocab_ids = ('conclusion_reasons', )
+
+    to_add = []
+    all_terms = []
+
+    for vocab_id in vocab_ids:
+        voc = vtool.getVocabularyByName(vocab_id)
+        voc_terms = voc.getDisplayList(reviewfolder).items()
+        all_terms.extend(voc_terms)
+
+    # if term ends in the review folder title (e.g. 2016)
+    for term_key, term_title in all_terms:
+        if term_key.endswith(context_title):
+            to_add.append((term_key, term_title))
+
+    # if no matching term keys were found,
+    # use those that don't end in a year
+    if not to_add:
+        for term_key, term_title in all_terms:
+            if not term_key[-4:].isdigit():
+                to_add.append((term_key, term_title))
+
+    reasons.extend(to_add)
+    return reasons
 
 class IReviewFolder(form.Schema, IImageScaleTraversable):
     """
@@ -160,46 +203,7 @@ class ReviewFolderMixin(grok.View):
         return [(x.value, x.title) for x in vocabulary]
 
     def get_finalisation_reasons(self):
-        """ Vocabularies are used to fetch available reasons.
-            This used to have hardcoded values for 2015 and 2016.
-            Currently it works like this:
-                - try to get vocabulary values that end
-                  in the current folder title (e.g. "resolved2016")
-                - if no values match, get the values which don't
-                  end in an year (e.g. "resolved")
-            This covers the previous functionality while also supporting
-            any number of upcoming years, as well as "Test"-type
-            review folders.
-        """
-        vtool = getToolByName(self, 'portal_vocabularies')
-        reasons = [('open', 'open')]
-
-        context_title = self.context.Title().strip()
-
-        vocab_ids = ('conclusion_reasons', )
-
-        to_add = []
-        all_terms = []
-
-        for vocab_id in vocab_ids:
-            voc = vtool.getVocabularyByName(vocab_id)
-            voc_terms = voc.getDisplayList(self).items()
-            all_terms.extend(voc_terms)
-
-        # if term ends in the review folder title (e.g. 2016)
-        for term_key, term_title in all_terms:
-            if term_key.endswith(context_title):
-                to_add.append((term_key, term_title))
-
-        # if no matching term keys were found,
-        # use those that don't end in a year
-        if not to_add:
-            for term_key, term_title in all_terms:
-                if not term_key[-4:].isdigit():
-                    to_add.append((term_key, term_title))
-
-        reasons.extend(to_add)
-        return reasons
+        return get_finalisation_reasons(self.context)
 
     def is_member_state_coordinator(self):
         if api.user.is_anonymous():
@@ -1018,6 +1022,12 @@ class FinalisedFolderView(grok.View):
     grok.require('zope2.View')
     grok.name('finalisedfolderview')
 
+    def get_finalisation_reasons(self):
+        key = itemgetter(0)
+        not_open = lambda item: key(item) != 'open'
+        reasons = get_finalisation_reasons(self.context)
+        return tuple(filter(not_open, reasons))
+
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
         observationsBatch = Batch(observations, int(b_size), int(b_start), orphan=1)
         observationsBatch.batchformkeys = []
@@ -1092,63 +1102,13 @@ class FinalisedFolderView(grok.View):
         Finalised observations
     """
     @timeit
-    def get_no_response_needed_observations(self):
+    def get_resolved_observations(self, reason):
         """
-         Finalised with 'no response needed'
-        """
-        return self.get_observations(
-            observation_question_status=['closed'],
-            observation_finalisation_reason='no-response-needed',
-        )
-
-    @timeit
-    def get_resolved_observations(self):
-        """
-         Finalised with 'resolved'
+         Finalised with specified reason key.
         """
         return self.get_observations(
             observation_question_status=['closed'],
-            observation_finalisation_reason='resolved',
-        )
-
-    @timeit
-    def get_unresolved_observations(self):
-        """
-         Finalised with 'unresolved'
-        """
-        return self.get_observations(
-            observation_question_status=['closed'],
-            observation_finalisation_reason='unresolved',
-        )
-
-    @timeit
-    def get_partly_resolved_observations(self):
-        """
-         Finalised with 'partly resolved'
-        """
-        return self.get_observations(
-            observation_question_status=['closed'],
-            observation_finalisation_reason='partly-resolved',
-        )
-
-    @timeit
-    def get_technical_correction_observations(self):
-        """
-         Finalised with 'technical correction'
-        """
-        return self.get_observations(
-            observation_question_status=['closed'],
-            observation_finalisation_reason='technical-correction',
-        )
-
-    @timeit
-    def get_revised_estimate_observations(self):
-        """
-         Finalised with 'partly resolved'
-        """
-        return self.get_observations(
-            observation_question_status=['closed'],
-            observation_finalisation_reason='revised-estimate',
+            observation_finalisation_reason=reason,
         )
 
     def can_add_observation(self):
