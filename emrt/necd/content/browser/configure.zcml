@@ -15,6 +15,13 @@
         />
 
     <browser:page
+        name="macros"
+        for="..reviewfolder.IReviewFolder"
+        template="templates/macros.pt"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="assign_counterpart_form"
         for="..question.IQuestion"
         class=".statechange.AssignCounterPartForm"

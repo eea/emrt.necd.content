@@ -32,7 +32,10 @@
   </tal:block>
 <body>
 
-  <metal:main fill-slot="content-core">
+  <metal:main fill-slot="content-core"
+              tal:define="
+                macro_template python:here.restrictedTraverse('@@macros');
+                macro_observationlist python:macro_template['macros']['observationlist']">
     <metal:content-core define-macro="content-core">
 
   <div id="inbox-view-content">
@@ -94,77 +97,7 @@
               </div>
               <div class="draft-observations"
                 tal:define="observations view/get_draft_observations; idx string:1">
-            <metal:obslist define-macro="observationlist"
-              tal:define="
-                b_size python:request.get('b_size', 5);
-                b_start_str python:'b_start'.format(idx);
-                b_start python:request.get(b_start_str, 0);
-                batch python:view.batch(observations, int(b_size), int(b_start), orphan=1, b_start_str=b_start_str);"
-              tal:condition="observations">
-                <table class="my-actions observationList listing">
-                  <thead>
-                    <tr>
-                      <th style="width:17%">
-                        Observation
-                      </th>
-                      <th style="width:45%">
-                        In short
-                      </th>
-                      <th>
-                        NFR code
-                      </th>
-                      <th style="width:80px">
-                        Modification date
-                      </th>
-
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tal:block tal:repeat="item batch">
-                      <tal:item define="observation nocall:item;
-                                        toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
-                        <tr tal:attributes="data-href observation/absolute_url;
-                            class string:clickableRow ${observation/observation_css_class};">
-                          <td class="observationRefCell">
-                              <a tal:attributes="href observation/absolute_url;" target="_blank"/>
-                              <span class="ref-num"
-                                tal:content="observation/getId">
-                                UK-WAS-13-001
-                              </span>
-                              <br/>
-                              <div class="potentialSignificantIssue"
-                                tal:condition="observation/observation_is_potential_significant_issue">
-                                  Potential significant issue
-                              </div>
-                              <div class="potentialTechnicalCorrectionTag"
-                                tal:condition="observation/observation_is_potential_technical_correction">
-                                  Potential technical correction
-                              </div>
-                              <div class="technicalCorrectionTag"
-                                tal:condition="observation/observation_is_technical_correction">
-                                  Technical correction
-                              </div>
-                          </td>
-                          <td tal:content="observation/text"
-                              class="observationText">
-                            Observation description
-                          </td>
-                          <td tal:content="observation/nfr_code_value">
-                            1A1 Energy industries
-                          </td>
-                          <td tal:content="python:observation.modified().strftime('%d %b %Y, %H:%M CET')"
-                              tal:attributes="data-sorter python:observation.modified()">
-                            20 Jun 2014, 11:35 AM
-                          </td>
-                        </tr>
-                      </tal:item>
-                    </tal:block>
-                  </tbody>
-                </table>
-                <tal:batchnavigation
-                    define="batchnavigation nocall:context/@@batchnavigation"
-                    replace="structure python:batchnavigation(batch)" />
-                </metal:obslist>
+                <metal:obslist use-macro="macro_observationlist" />
               </div>
           </div>
           <div class="my-actions inboxSection">
@@ -176,7 +109,7 @@
             </div>
             <div class="draft-questions"
                  tal:define="observations view/get_draft_questions; idx python:2">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -188,7 +121,7 @@
             </div>
             <div class="counterpart-questions-to-comment"
                  tal:define="observations view/get_counterpart_questions_to_comment; idx python:3">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -200,7 +133,7 @@
             </div>
             <div class="counterpart-conclusions-to-comment"
                  tal:define="observations view/get_counterpart_conclusion_to_comment; idx python:4">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -212,7 +145,7 @@
             </div>
             <div class="ms-answers-to-review"
                  tal:define="observations view/get_ms_answers_to_review; idx python:5">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -224,7 +157,7 @@
             </div>
             <div class="draft-questions"
                  tal:define="observations view/get_denied_observations; idx python:60">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div>
@@ -245,7 +178,7 @@
             </div>
             <div class="other-actions-for-my-observations approval-questions"
                  tal:define="observations view/get_approval_questions; idx python:6">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
 
@@ -258,7 +191,7 @@
             </div>
             <div class="other-actions-for-my-observations unanswered-questions"
                  tal:define="observations view/get_unanswered_questions; idx python:7">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="other-actions-for-my-observations inboxSection">
@@ -270,7 +203,7 @@
             </div>
             <div class="other-actions-for-my-observations waiting-for-comment-from-counterparts-for-question"
                  tal:define="observations view/get_waiting_for_comment_from_counterparts_for_question; idx python:8">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="other-actions-for-my-observations inboxSection">
@@ -282,7 +215,7 @@
             </div>
             <div class="other-actions-for-my-observations waiting-for-comment-from-counterparts-for-conclusion"
                  tal:define="observations view/get_waiting_for_comment_from_counterparts_for_conclusion; idx python:9">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="other-actions-for-my-observations inboxSection">
@@ -294,7 +227,7 @@
             </div>
             <div class="other-actions-for-my-observations observation-for-finalisation"
                  tal:define="observations view/get_observation_for_finalisation; idx python:10">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
         </tal:block>
@@ -317,7 +250,7 @@
             </div>
             <div class="my-actions questions-to-be-sent"
                  tal:define="observations view/get_questions_to_be_sent; idx python:11">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -329,7 +262,7 @@
             </div>
             <div class="my-actions observations-to-finalise"
                  tal:define="observations view/get_observations_to_finalise; idx python:12">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -341,7 +274,7 @@
             </div>
             <div class="my-actions questions-to-comment"
                  tal:define="observations view/get_questions_to_comment; idx python:13">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -353,7 +286,7 @@
             </div>
             <div class="my-actions conclusions-to-comment"
                  tal:define="observations view/get_conclusions_to_comment; idx python:14">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div>
@@ -373,7 +306,7 @@
             </div>
             <div class="my-teams-actions questions-with-comments-from-reviewers"
                  tal:define="observations view/get_questions_with_comments_from_reviewers; idx python:15">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-teams-actions inboxSection">
@@ -385,7 +318,7 @@
             </div>
             <div class="my-teams-actions answers-from-ms"
                  tal:define="observations view/get_answers_from_ms; idx python:16">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div>
@@ -405,7 +338,7 @@
             </div>
             <div class="my-ms-actions unanswered-questions-lr-que"
                  tal:define="observations view/get_unanswered_questions_lr; idx python:17">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
         </tal:block>
@@ -428,7 +361,7 @@
             </div>
             <div class="my-actions questions-to-be-answered"
                  tal:define="observations view/get_questions_to_be_answered; idx python:18">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div class="my-actions inboxSection">
@@ -440,7 +373,7 @@
             </div>
             <div class="my-actions questions-with-comments-received-from-mse"
                  tal:define="observations view/get_questions_with_comments_received_from_mse; idx python:19">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div>
@@ -460,7 +393,7 @@
             </div>
             <div class="mse-actions answers-requiring-comments-from-mse"
                  tal:define="observations view/get_answers_requiring_comments_from_mse; idx python:20">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div>
@@ -480,7 +413,7 @@
             </div>
             <div class="se-re-actions answers-sent-to-se-re"
                  tal:define="observations view/get_answers_sent_to_se_re; idx python:21">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
         </tal:block>
@@ -503,7 +436,7 @@
             </div>
             <div class="my-actions questions-with-comments-for-answer-needed-by-msc"
                  tal:define="observations view/get_questions_with_comments_for_answer_needed_by_msc; idx python:22">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div>
@@ -523,7 +456,7 @@
             </div>
             <div class="msc-actions observations-with-my-comments"
                  tal:define="observations view/get_observations_with_my_comments; idx python:23">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
           <div>
@@ -543,7 +476,7 @@
             </div>
             <div class="sr-re-actions observations-with-my-comments-sent-to-se-re"
                  tal:define="observations view/get_observations_with_my_comments_sent_to_se_re; idx python:24">
-              <metal:obslist use-macro="template/macros/observationlist" />
+              <metal:obslist use-macro="macro_observationlist" />
             </div>
           </div>
         </tal:block>
