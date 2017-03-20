@@ -215,6 +215,18 @@
               <metal:obslist use-macro="template/macros/observationlist" />
             </div>
           </div>
+          <div class="my-actions inboxSection">
+            <div class="collapsibleListTitle" data-list="draft-questions">
+              <div>
+                Conclusion denied
+                <span class="eea-icon eea-icon-left"></span>
+              </div>
+            </div>
+            <div class="draft-questions"
+                 tal:define="observations view/get_denied_observations; idx python:60">
+              <metal:obslist use-macro="template/macros/observationlist" />
+            </div>
+          </div>
           <div>
             <div class="collapsiblePanelTitle" data-panel="other-actions-for-my-observations">
               <div>

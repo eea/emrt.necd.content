@@ -665,6 +665,26 @@ class InboxReviewFolderView(grok.View):
         return answered + pending
 
     @timeit
+    def get_denied_observations(self):
+        """
+        Role: Sector Expert
+        Observations that have been denied finalisation.
+        """
+        observations = self.get_observations(
+            rolecheck=ROLE_SE,
+            review_state=['conclusions'],
+        )
+
+        def get_last_wf_item(obs):
+            return obs.workflow_history.get('esd-review-workflow', [])[-1]
+
+        def is_denied(obs):
+            wf_item = get_last_wf_item(obs)
+            return wf_item['action'] == 'deny-finishing-observation'
+
+        return tuple(filter(is_denied, observations))
+
+    @timeit
     def get_approval_questions(self):
         """
          Role: Sector Expert
