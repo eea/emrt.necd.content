@@ -47,16 +47,37 @@
             return $target;
         };
 
-        function querystringConvert(){
-            var pairs = location.search.slice(1).split('&');
+        function encodeArrForRequest(param_name, arr){
+          function append_param_name(item) {
+            return param_name + '[]=' + encodeURIComponent(item);
+          }
+          return arr ? arr.map(append_param_name).join('&') : "";
+        };
 
-            var result = {};
-            pairs.forEach(function(pair) {
-                pair = pair.split('=');
-                result[pair[0]] = decodeURIComponent(pair[1] || '');
+        function querystringConvert(){
+          var url_params = location.search.slice(1).split('&');
+          var pairs = url_params
+            .map(function(p) { return p.split('='); })
+            .map(function(kv) {
+              var k = kv[0]; var v = kv[1];
+              var decoded_v = decodeURIComponent(v);
+              return [k, decoded_v];
             });
 
-            return result;
+          var params = pairs.reduce(function(acc, kv) {
+            var k = kv[0]; var v = kv[1];
+            acc[k] ? acc[k].push(v) : acc[k] = [v];
+            return acc;
+          }, {});
+
+          var normalized = Object.keys(params).reduce(
+            function(acc, key){
+              var val = params[key];
+              val.length > 1 ? acc[key] = val : acc[key] = val[0];
+              return acc;
+            }, {});
+
+          return normalized;
         }
 
         function replaceFolderContentsTable(overrides) {
@@ -163,7 +184,7 @@
                   }else{
                     filter += "&";
                   }
-                  filter += "nfrCode=" + $('#nfrFilter').val();
+                  filter += encodeArrForRequest("nfrCode", $('#nfrFilter').val());
                 }
                 window.location.href = window.location.pathname + filter;
 
@@ -286,14 +307,13 @@
         </div>
         <div class="row">
           <div class="cell position-1 width-9 esdLabel">
-            <select id="nfrFilter" class="chosen-select" data-placeholder="Select NFR category code">
+            <select id="nfrFilter" multiple="multiple" class="chosen-select" data-placeholder="Select NFR category code">
               <option></option>
               <tal:block tal:repeat="item view/get_nfr_categories">
                 <option
-                  tal:define="category python:'';
-                              category request/nfrCode | category"
+                  tal:define="category python:request.get('nfrCode[]', [])"
                   tal:attributes="value python:item[0];
-                                  selected python:item[0]==category"
+                                  selected python:item[0] in category"
                   tal:content="python:item[1]"></option>
               </tal:block>
             </select>

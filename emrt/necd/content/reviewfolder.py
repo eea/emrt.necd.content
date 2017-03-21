@@ -101,15 +101,16 @@ class ReviewFolderMixin(grok.View):
 
     @memoize
     def get_questions(self, sort_on="modified", sort_order="reverse"):
-        country = self.request.form.get('country', '')
-        reviewYear = self.request.form.get('reviewYear', '')
-        inventoryYear = self.request.form.get('inventoryYear', '')
-        status = self.request.form.get('status', '')
-        highlights = self.request.form.get('highlights', '')
-        freeText = self.request.form.get('freeText', '')
-        step = self.request.form.get('step', '')
-        wfStatus = self.request.form.get('wfStatus', '')
-        nfrCode = self.request.form.get('nfrCode', '')
+        req = self.request
+        country = req.get('country', '')
+        reviewYear = req.get('reviewYear', '')
+        inventoryYear = req.get('inventoryYear', '')
+        status = req.get('status', '')
+        highlights = req.get('highlights', '')
+        freeText = req.get('freeText', '')
+        step = req.get('step', '')
+        wfStatus = req.get('wfStatus', '')
+        nfrCode = req.get('nfrCode', req.get('nfrCode[]', []))
 
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
@@ -150,8 +151,8 @@ class ReviewFolderMixin(grok.View):
             query['SearchableText'] = freeText
         if wfStatus != "":
             query['observation_status'] = wfStatus
-        if nfrCode != "":
-            query['nfr_code'] = nfrCode
+        if nfrCode:
+            query['nfr_code'] = dict(query=nfrCode, operator='or')
 
         return catalog(query)
 
