@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.11 (unreleased)
+2.0.11 (2017-03-21)
 -------------------
 
-- Nothing changed yet.
+- Task #83333 - Inbox and Finalised views. NFR Code filter multiple values.
+  [batradav]
 
 
 2.0.10 (2017-03-20)
