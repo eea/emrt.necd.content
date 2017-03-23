@@ -99,4 +99,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.10"
+    destination="2.0.12"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Import jsregistry."
+      description="[refs #83488] Remove jquery superlink. Not needed since clickableRow does the same thing."
+      import_steps="jsregistry"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

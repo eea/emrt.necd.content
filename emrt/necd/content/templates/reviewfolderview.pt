@@ -17,7 +17,6 @@
                 $(this).attr("title", currentText);
               }
             });
-            $('tr', selector).superLink('a:first');
         }
 
         /* enable reloading of the table for a given selector and set of overrides

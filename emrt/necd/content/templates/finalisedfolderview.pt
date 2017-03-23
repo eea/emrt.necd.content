@@ -14,7 +14,6 @@
             $(this).attr("title", currentText);
           }
         });
-        $('table.observationList tr').superLink('a:first');
         $("#btnFilter").click(function(){
             var filter = "";
             if ($('#freeTextFilter').val() != ""){

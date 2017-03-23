@@ -14,9 +14,9 @@
     cacheable="True" compression="None" cookable="False"
     enabled="True" expression=""  inline="False"/>
 
+  <!-- Remove -->
   <javascript
     id="++resource++emrt.necd.content/superlink.jquery.js"
-    cacheable="True" compression="None" cookable="False"
-    enabled="True" expression=""  inline="False"/>
+    remove="True" />
 </object>
 
