@@ -164,5 +164,3 @@ def add_question(context, event):
 
         if api.content.get_state(observation) == 'draft':
             api.content.transition(obj=observation, transition='open')
-
-        context.manage_addProperty('creator_role', 'Sector Expert', 'string')
