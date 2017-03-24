@@ -121,11 +121,12 @@ class ReviewFolderMixin(grok.View):
             'sort_order': sort_order
         }
 
-        if self.is_member_state_coordinator():
-            query['observation_sent_to_msc'] = bool(True)
+        if not self.is_secretariat():
+            if self.is_member_state_coordinator():
+                query['observation_sent_to_msc'] = bool(True)
 
-        if self.is_member_state_expert():
-            query['observation_sent_to_mse'] = bool(True)
+            if self.is_member_state_expert():
+                query['observation_sent_to_mse'] = bool(True)
 
         if country != "":
             query['Country'] = country

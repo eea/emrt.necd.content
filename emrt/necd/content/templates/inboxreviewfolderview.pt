@@ -34,7 +34,12 @@
   <metal:main fill-slot="content-core"
               tal:define="
                 macro_template python:here.restrictedTraverse('@@macros');
-                macro_observationlist python:macro_template['macros']['observationlist']">
+                macro_observationlist python:macro_template['macros']['observationlist'];
+                is_secretariat python:view.is_secretariat();
+                is_se python:view.is_sector_expert();
+                is_lr python:view.is_lead_reviewer();
+                is_mse python:view.is_member_state_expert();
+                is_msc python:view.is_member_state_coordinator()">
     <metal:content-core define-macro="content-core">
 
   <div id="inbox-view-content">
@@ -78,11 +83,12 @@
 
       <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
         <!-- Sector Expert -->
-        <tal:block tal:condition="view/is_sector_expert">
+        <tal:block tal:condition="python:is_secretariat or is_se">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
-                My actions
+                <tal:se condition="is_se">My actions</tal:se>
+                <tal:secretariat condition="is_secretariat">Sector Expert actions</tal:secretariat>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -162,7 +168,8 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="other-actions-for-my-observations">
               <div>
-                Other actions for my observations
+                <tal:se condition="is_se">Other actions for my observations</tal:se>
+                <tal:secretariat condition="is_secretariat">Other Sector Expert actions</tal:secretariat>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -231,11 +238,12 @@
           </div>
         </tal:block>
         <!-- Lead Reviewer -->
-        <tal:block tal:condition="view/is_lead_reviewer">
+        <tal:block tal:condition="python:is_secretariat or is_lr">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
-                My actions
+                <tal:lr condition="is_lr">My actions</tal:lr>
+                <tal:secretariat condition="is_secretariat">Lead Reviewer actions</tal:secretariat>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -291,7 +299,8 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-teams-actions">
               <div>
-                My team's actions
+                <tal:lr condition="is_lr">My team's actions</tal:lr>
+                <tal:secretariat condition="is_secretariat">Lead Reviewer's team actions</tal:secretariat>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -323,7 +332,8 @@
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-ms-actions">
               <div>
-                My MS' actions
+                <tal:lr condition="is_lr">My MS' actions</tal:lr>
+                <tal:secretariat condition="is_secretariat">Lead Reviewer's MS' actions</tal:secretariat>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -342,11 +352,12 @@
           </div>
         </tal:block>
         <!-- MS Coordinator -->
-        <tal:block tal:condition="view/is_member_state_coordinator">
+        <tal:block tal:condition="python:is_secretariat or is_msc">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
-                My actions
+                <tal:msc condition="is_msc">My actions</tal:msc>
+                <tal:secretariat condition="is_secretariat">MS Coordinator actions</tal:secretariat>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
@@ -417,11 +428,12 @@
           </div>
         </tal:block>
         <!-- MS Expert -->
-        <tal:block tal:condition="view/is_member_state_expert">
+        <tal:block tal:condition="python:is_secretariat or is_mse">
           <div>
             <div class="collapsiblePanelTitle" data-panel="my-actions">
               <div>
-                My actions
+                <tal:mse condition="is_mse">My actions</tal:mse>
+                <tal:secretariat condition="is_secretariat">MS Expert actions</tal:secretariat>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>

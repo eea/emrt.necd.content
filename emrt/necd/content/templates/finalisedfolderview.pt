@@ -90,13 +90,13 @@
         <tal:reason repeat="reason reasons">
           <div class="finalised-observations inboxSection"
             tal:define="reason_key python:reason[0]; reason_title python:reason[1]">
-            <div class="collapsibleListTitle" data-list="resolved-observations">
+            <div class="collapsibleListTitle" tal:attributes="data-list reason_key">
               <div>
                 Finalised with <span tal:replace="reason_title">REASON</span>
                 <span class="eea-icon eea-icon-left"></span>
               </div>
             </div>
-            <div class="finalised-observations"
+            <div tal:attributes="class string:finalised-observations ${reason_key}"
               tal:define="
                 observations python:view.get_resolved_observations(reason_key);
                 idx python:repeat['reason'].index">
