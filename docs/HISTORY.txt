@@ -2,10 +2,12 @@ Changelog
 =========
 
 
-2.0.13 (unreleased)
+2.0.13 (2017-03-24)
 -------------------
 
-- Nothing changed yet.
+- 2.0.12 re-release. Nothing changed.
+  The 2.0.12 egg release was missing non-python file updates.
+  [batradav]
 
 
 2.0.12 (2017-03-24)
