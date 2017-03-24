@@ -2,10 +2,15 @@ Changelog
 =========
 
 
-2.0.12 (unreleased)
+2.0.12 (2017-03-24)
 -------------------
 
-- Nothing changed yet.
+- Task #83488 - Various fixes.
+    - Missing observation NFR code.
+    - Wrong link when clicking on observation.
+    - Allow Managers full access to the listings.
+    - Email "do not reply" rephrasing
+  [batradav]
 
 
 2.0.11 (2017-03-21)
