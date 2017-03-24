@@ -313,10 +313,11 @@ class Observation(dexterity.Container):
         )
 
     def nfr_code_value(self):
-        return self._vocabulary_value(
-            'emrt.necd.content.nfr_code',
-            self.nfr_code
-        )
+        # Same as ghg_source_sectors_value as the object reindex
+        # might be triggered by a user that doesn't have access
+        # to the current nfr code, resulting in an empty value
+        # getting indexed.
+        return self.ghg_source_sectors_value()
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
