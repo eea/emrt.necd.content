@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.14 (unreleased)
+2.0.14 (2017-03-27)
 -------------------
 
-- Nothing changed yet.
+- Task #83333 - Fixing workflow permissions.
+  [batradav]
 
 
 2.0.13 (2017-03-24)
