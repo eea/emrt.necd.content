@@ -204,3 +204,12 @@ def reimport_vocabularies(context):
 
     portal = context.getSite()
     prepareVocabularies(portal, context)
+
+
+def update_workflow_rolemap(context):
+    if context.readDataFile('emrt.necd.content_various.txt') is None:
+        return
+
+    site = context.getSite()
+    portal_workflow = getToolByName(site, 'portal_workflow')
+    portal_workflow.updateRoleMappings()

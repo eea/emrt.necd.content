@@ -41,4 +41,13 @@
     handler="emrt.necd.content.setuphandlers.reimport_vocabularies"
     />
 
+  <!-- Custom import step for re-applying workflow role mapping -->
+
+  <genericsetup:importStep
+    name="emrt.necd.content.setup.workflow_rolemap"
+    title="Reimport workflow rolemaps."
+    description="Run after re-importing the workflow."
+    handler="emrt.necd.content.setuphandlers.update_workflow_rolemap"
+    />
+
 </configure>

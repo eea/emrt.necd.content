@@ -112,4 +112,22 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.12"
+    destination="2.0.14"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Import workflows"
+      description="[refs #83333] View permission for 'conclusions' workflow step."
+      import_steps="workflow"
+      />
+
+    <genericsetup:upgradeDepends
+      title="Update workflows role mapping"
+      import_steps="emrt.necd.content.setup.workflow_rolemap"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
