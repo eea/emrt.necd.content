@@ -189,7 +189,7 @@ class AddForm(dexterity.AddForm):
         def set_checked(item):
             updated_item = copy(item)
             updated_item['checked'] = (
-                updated_item['value'] in self.context.highlight
+                updated_item['value'] in (self.context.highlight or [])
             )
             return updated_item
 
