@@ -77,10 +77,7 @@
             2014
           </td>
           <td>
-            <span
-              tal:replace="structure observation/overview_status">
-                Open
-            </span>
+            <span tal:replace="observation/overview_status">Open</span>
           </td>
           <td >
             <span tal:condition="python: observation.observation_status == 'SE'">
