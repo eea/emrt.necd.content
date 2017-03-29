@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.15 (unreleased)
+2.0.15 (2017-03-29)
 -------------------
 
-- Nothing changed yet.
+- Task #83685 - Fixing possible JS injection.
+  [batradav]
 
 
 2.0.14 (2017-03-27)
