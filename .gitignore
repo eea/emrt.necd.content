@@ -5,8 +5,8 @@
 *.mo
 *.egg
 *.EGG
-*.egg-info
-*.EGG-INFO
+*.egg-info/*
+*.EGG-INFO/*
 *.kpf
 *.swp
 *.wpr
@@ -19,8 +19,8 @@
 .project
 .pydevproject
 bin/
-build/
-build/lib/
+build/*
+build/lib/*
 develop-eggs/
 downloads/
 eggs/

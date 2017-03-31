@@ -1,16 +1,16 @@
 from functools import partial
-from Acquisition import aq_parent
-from zope.lifecycleevent.interfaces import IObjectAddedEvent
+from itertools import chain
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from five import grok
-from plone.app.discussion.interfaces import IComment
 import plone.api as api
 
 from emrt.necd.content.observation import IObservation
-from emrt.necd.content.notifications.utils import notify
+from emrt.necd.content.notifications import utils
 from emrt.necd.content.utils import find_parent_with_interface
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.constants import ROLE_CP
 
 
 def user_has_role_in_context(role, context):
@@ -18,49 +18,74 @@ def user_has_role_in_context(role, context):
     roles = user.getRolesInContext(context)
     return role in roles
 
-FIND_PARENT_OBSERVATION = partial(find_parent_with_interface, IObservation)
+
+def notify_role(rolename, tpl_name, notification_name, subject, context):
+    template = PageTemplateFile(tpl_name)
+    utils.notify(context, template, subject, rolename, notification_name)
+
+
+PARENT_OBSERVATION = partial(find_parent_with_interface, IObservation)
 USER_IS_MSE = partial(user_has_role_in_context, ROLE_MSE)
+USER_IS_SE = partial(user_has_role_in_context, ROLE_SE)
+USER_IS_CP = partial(user_has_role_in_context, ROLE_CP)
 
 
-@grok.subscribe(IComment, IObjectAddedEvent)
-def notification_mse(context, event):
+NOTIFY_MSE = partial(
+    notify_role, ROLE_MSE, 'comment_to_mse.pt', 'comment_to_mse')
+
+NOTIFY_MSA = partial(
+    notify_role, ROLE_MSA, 'comment_to_msa.pt', 'comment_to_msa')
+
+
+def notification_mse(comment, event):
     """
     To:     MSExperts
     When:   New comment from MSExpert for your country
     """
-    _temp = PageTemplateFile('comment_to_mse.pt')
-
-    observation = FIND_PARENT_OBSERVATION(context)
+    observation = PARENT_OBSERVATION(comment)
     if not USER_IS_MSE(observation):
         return
 
-    subject = u'New comment from MS Expert'
-    notify(
-        observation,
-        _temp,
-        subject,
-        ROLE_MSE,
-        'comment_to_mse'
-    )
+    NOTIFY_MSE(u'New comment from MS Expert', observation)
 
 
-@grok.subscribe(IComment, IObjectAddedEvent)
-def notification_msc(context, event):
+def notification_msa(comment, event):
     """
     To:     MSAuthority
     When:   New comment from MSExpert for your country
     """
-    _temp = PageTemplateFile('comment_to_msa.pt')
-
-    observation = FIND_PARENT_OBSERVATION(context)
+    observation = PARENT_OBSERVATION(comment)
     if not USER_IS_MSE(observation):
         return
 
-    subject = u'New comment from MS Expert'
-    notify(
-        observation,
-        _temp,
-        subject,
-        ROLE_MSA,
-        'comment_to_msa'
-    )
+    NOTIFY_MSA(u'New comment from MS Expert', observation)
+
+
+def notify_users(comment, event):
+    """
+    To:     SectorExpert / CounterPart / LeadReviewer
+    When:   New comment
+
+    This is a single function because a user might have multiple roles
+    (e.g. CounterPart and SectorExpert, resulting in duplicate emails.
+    """
+
+    TEMPLATE = 'new_comment.pt'
+    SUBJECT = u'New comment'
+    ROLES = (ROLE_CP, ROLE_SE, ROLE_LR)
+    CURRENT_USER = api.user.get_current()
+
+    observation = PARENT_OBSERVATION(comment)
+    if not any((USER_IS_SE(observation), USER_IS_CP(observation))):
+        return
+
+    get_obs_users = partial(utils.get_users_in_context, observation)
+    get_users = lambda role: get_obs_users(role, 'new_comment')
+    not_current = lambda user: user != CURRENT_USER
+
+    users = tuple(filter(not_current, set(chain(*map(get_users, ROLES)))))
+
+    template = PageTemplateFile(TEMPLATE)
+    content = template(**dict(observation=observation))
+
+    utils.send_mail(SUBJECT, utils.safe_unicode(content), users)

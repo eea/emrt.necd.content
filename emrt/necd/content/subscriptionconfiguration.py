@@ -37,6 +37,7 @@ NOTIFICATIONS_PER_ROLE = {
         'observation_finalised': True,
         'question_answered': True,
         'question_to_ms': True,
+        'new_comment': True,
     },
     ROLE_LR: {
         'conclusion_to_comment': True,
@@ -44,6 +45,7 @@ NOTIFICATIONS_PER_ROLE = {
         'question_answered': True,
         'question_ready_for_approval': True,
         'question_to_counterpart': True,
+        'new_comment': True,
     },
     ROLE_MSA: {
         'answer_acknowledged': True,
@@ -54,6 +56,7 @@ NOTIFICATIONS_PER_ROLE = {
     ROLE_CP: {
         'conclusion_to_comment': True,
         'question_to_counterpart': True,
+        'new_comment': True,
     },
     ROLE_MSE: {
         'answer_to_msexperts': True,
@@ -68,6 +71,7 @@ NOTIFICATION_NAMES = {
         'observation_finalised': 'Observation finalised by LR',
         'question_answered': 'Question answered by MS',
         'question_to_ms': 'Question sent to MS by LR',
+        'new_comment': 'New comment is added',
     },
     ROLE_LR: {
         'conclusion_to_comment': 'Conclusion to comment by you as LR',
@@ -75,6 +79,7 @@ NOTIFICATION_NAMES = {
         'question_answered': 'Question answered by MS',
         'question_ready_for_approval': 'Question ready for your approval as LR',
         'question_to_counterpart': 'Question to comment by you as LR',
+        'new_comment': 'New comment is added',
     },
     ROLE_MSA: {
         'answer_acknowledged': 'Answer acknowledged by sector expert',
@@ -85,6 +90,7 @@ NOTIFICATION_NAMES = {
     ROLE_CP: {
         'conclusion_to_comment': 'Conclusion to comment by you as counterpart',
         'question_to_counterpart': 'Question to comment by you as counterpart',
+        'new_comment': 'New comment is added',
     },
     ROLE_MSE: {
         'answer_to_msexperts': 'New question to comment by you as MS expert',
