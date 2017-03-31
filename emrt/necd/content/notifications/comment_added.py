@@ -24,10 +24,19 @@ def notify_role(rolename, tpl_name, notification_name, subject, context):
     utils.notify(context, template, subject, rolename, notification_name)
 
 
+def run_rolecheck(context, func):
+    """ Runs the `func` checker in the given `context`.
+        `func` is a `user_has_role_in_context` partial.
+        (e.g. run_rolecheck(observation, USER_IS_SE))
+    """
+    return func(context)
+
+
 PARENT_OBSERVATION = partial(find_parent_with_interface, IObservation)
 USER_IS_MSE = partial(user_has_role_in_context, ROLE_MSE)
 USER_IS_SE = partial(user_has_role_in_context, ROLE_SE)
 USER_IS_CP = partial(user_has_role_in_context, ROLE_CP)
+USER_IS_LR = partial(user_has_role_in_context, ROLE_LR)
 
 
 NOTIFY_MSE = partial(
@@ -76,7 +85,10 @@ def notify_users(comment, event):
     CURRENT_USER = api.user.get_current()
 
     observation = PARENT_OBSERVATION(comment)
-    if not any((USER_IS_SE(observation), USER_IS_CP(observation))):
+    checker = partial(run_rolecheck, observation)
+
+    has_valid_roles = map(checker, (USER_IS_SE, USER_IS_CP, USER_IS_LR))
+    if not any(has_valid_roles):
         return
 
     get_obs_users = partial(utils.get_users_in_context, observation)

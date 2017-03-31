@@ -1,0 +1,21 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="emrt.necd.content">
+
+  <subscriber
+    for="plone.app.discussion.interfaces.IComment zope.lifecycleevent.IObjectAddedEvent"
+    handler=".comment_added.notification_mse"
+    />
+
+  <subscriber
+    for="plone.app.discussion.interfaces.IComment zope.lifecycleevent.IObjectAddedEvent"
+    handler=".comment_added.notification_msa"
+    />
+
+  <subscriber
+    for="plone.app.discussion.interfaces.IComment zope.lifecycleevent.IObjectAddedEvent"
+    handler=".comment_added.notify_users"
+    />
+
+</configure>
+

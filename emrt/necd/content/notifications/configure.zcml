@@ -2,19 +2,6 @@
     xmlns="http://namespaces.zope.org/zope"
     i18n_domain="emrt.necd.content">
 
-  <subscriber
-    for="plone.app.discussion.interfaces.IComment zope.lifecycleevent.IObjectAddedEvent"
-    handler=".comment_added.notification_mse"
-    />
-
-  <subscriber
-    for="plone.app.discussion.interfaces.IComment zope.lifecycleevent.IObjectAddedEvent"
-    handler=".comment_added.notification_msa"
-    />
-
-  <subscriber
-    for="emrt.necd.content.comment.IComment plone.app.discussion.events.CommentAddedEvent"
-    handler=".comment_added.notify_users"
-    />
+  <include file="comment_added.zcml" />
 
 </configure>
