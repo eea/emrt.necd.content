@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="emrt.necd.content">
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler=".question_redraft.notification_se"
+    />
+
+</configure>
+
+

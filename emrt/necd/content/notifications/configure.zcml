@@ -3,5 +3,6 @@
     i18n_domain="emrt.necd.content">
 
   <include file="comment_added.zcml" />
+  <include file="question_redraft.zcml" />
 
 </configure>
