@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.16 (unreleased)
+2.0.16 (2017-04-03)
 -------------------
 
-- Nothing changed yet.
+- Task #83317 - Email notifications on SE comments and LR redraft request.
+  [batradav]
 
 
 2.0.15 (2017-03-29)
