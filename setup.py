@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-VERSION = '2.0.16'
+VERSION = '2.0.17'
 
 setup(name='emrt.necd.content',
       version=VERSION,
