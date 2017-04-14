@@ -130,4 +130,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.14"
+    destination="2.0.15"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Reindex observations"
+      description="Reindex observation_status index and overview_status column."
+      handler="emrt.necd.content.upgrades.evolve2015.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

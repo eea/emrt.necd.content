@@ -467,6 +467,8 @@ class Observation(dexterity.Container):
 
     def observation_status(self):
         status = self.observation_question_status()
+        my_status = self.get_status()
+
         if status in ['draft',
                       'counterpart-comments',
                       'observation-draft']:
@@ -484,26 +486,26 @@ class Observation(dexterity.Container):
             return 'conclusions'
         elif status in ['close-requested']:
             return 'close-requested'
-        elif status in ['closed']:
-            if status == 'closed':
-                conclusion = self.get_conclusion()
-                conclusion_reason =  conclusion and conclusion.closing_reason or ' '
-                if (conclusion_reason == 'no-conclusion-yet'):
-                    return "SE"
-                else:
-                    return "finalised"
+        elif status == 'closed':
+            conclusion = self.get_conclusion()
+            conclusion_reason = conclusion and conclusion.closing_reason or ''
+            if (conclusion_reason == 'no-conclusion-yet'):
+                return "SE"
+            elif not my_status.endswith('closed'):
+                return "answered"
+            else:
+                return "finalised"
         else:
             return status
 
 
     def overview_status(self):
         status = self.get_status()
+        closed_val = 'closed ({reason})'
         if status == 'closed':
             conclusion = self.get_conclusion()
             if conclusion:
-                return ' <br/> '.join(
-                    ['closed', '(' + conclusion.reason_value() + ')']
-                )
+                return closed_val.format(reason=conclusion.reason_value())
         else:
             return 'open'
 

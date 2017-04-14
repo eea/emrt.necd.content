@@ -8,6 +8,9 @@ Changelog
 - Task #84089 - Change into Description Flag and Draft/Final Conclusion Flags
   [batradav]
 
+- Task #83916 - Workflow "wrongly assigned "finalised"
+  [batradav]
+
 
 2.0.16 (2017-04-03)
 -------------------
