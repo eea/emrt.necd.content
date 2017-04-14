@@ -18,7 +18,10 @@ def run(_):
     for idx, observation in enumerate(observations, start=1):
         catalog.catalog_object(
             observation,
-            idxs=('observation_status', ),
+            idxs=(
+                'observation_status',
+                'observation_questions_workflow',
+            ),
             update_metadata=1
         )
         if idx % 50 == 0:

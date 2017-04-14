@@ -11,6 +11,8 @@ Changelog
 - Task #83916 - Workflow "wrongly assigned "finalised"
   [batradav]
 
+- Task #83915 - Change the column workflow in the overview list
+  [batradav]
 
 2.0.16 (2017-04-03)
 -------------------

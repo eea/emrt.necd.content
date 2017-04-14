@@ -179,6 +179,12 @@ def observation_question_status(context):
 def observation_status(context):
     return context.observation_status()
 
+
+@indexer(IObservation)
+def observation_questions_workflow(context):
+    return context.observation_questions_workflow()
+
+
 @indexer(IObservation)
 def last_answer_has_replies(context):
     try:

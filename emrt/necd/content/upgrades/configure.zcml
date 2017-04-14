@@ -135,9 +135,15 @@
     destination="2.0.15"
     profile="emrt.necd.content:default">
 
+    <genericsetup:upgradeDepends
+      title="Import catalog"
+      description="[refs #83915] New index and column added: observation_questions_workflow."
+      import_steps="catalog"
+      />
+
     <genericsetup:upgradeStep
       title="Reindex observations"
-      description="Reindex observation_status index and overview_status column."
+      description="Reindex observation_status, observation_questions_workflow indexes and overview_status column."
       handler="emrt.necd.content.upgrades.evolve2015.run"
       />
 

@@ -39,6 +39,17 @@ from emrt.necd.content.constants import ROLE_CP
 grok.templatedir('templates')
 
 
+QUESTION_WORKFLOW_MAP = {
+    'SE': 'Sector Reviewer / Sector Expert',
+    'LR': 'Lead Reviewer',
+    'MSC': 'MS Coordinator',
+    'answered': 'Answered',
+    'conclusions': 'Conclusions',
+    'close-requested': 'Close requested',
+    'finalised': 'Finalised',
+}
+
+
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
@@ -270,6 +281,7 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
 
         table.render = ViewPageTemplateFile("templates/reviewfolder_get_table.pt")
         table.is_secretariat = self.is_secretariat
+        table.question_workflow_map = QUESTION_WORKFLOW_MAP
 
         return table
 
@@ -307,7 +319,7 @@ EXPORT_FIELDS = OrderedDict([
     ('overview_status', 'Status'),
     ('observation_finalisation_reason', 'Conclusion'),
     ('observation_finalisation_text', 'Conclusion note'),
-    ('observation_status', 'Workflow'),
+    ('observation_questions_workflow', 'Question workflow'),
     ('get_author_name', 'Author')
 ])
 
@@ -430,19 +442,28 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     'observation_is_technical_correction'
                 ]:
                     row.append(observation[key] and 'Yes' or 'No')
-                elif key=='getURL':
+                elif key == 'getURL':
                     row.append(observation.getURL())
-                elif key=='get_highlight':
+                elif key == 'get_highlight':
                     row.append(
                         safe_unicode(', '.join(
                             self.translate_highlights(observation[key] or [])
                         ))
                     )
-                elif key=='overview_status':
+                elif key == 'observation_questions_workflow':
+                    row_val = ', '.join([
+                        '. '.join((
+                            str(idx),
+                            QUESTION_WORKFLOW_MAP.get(val, val)
+                        )) for idx, val
+                        in enumerate(observation[key], start=1)
+                    ])
                     row.append(
-                        safe_unicode(
-                            observation[key].replace('<br>', '').replace('<br/>', '')
-                        ),
+                        row_val if row_val else
+                        QUESTION_WORKFLOW_MAP.get(
+                            observation['observation_status'],
+                            'unknown'
+                        )
                     )
                 else:
                     row.append(safe_unicode(observation[key]))

@@ -499,6 +499,25 @@ class Observation(dexterity.Container):
             return status
 
 
+    def observation_questions_workflow(self):
+        questions = self.get_values_cat('Question')
+        if not questions:
+            return tuple()
+
+        # there is always only one question.
+        question = questions[0]
+
+        items = question.values()
+
+        comments = [i for i in items if i.portal_type == 'Comment']
+        answers = [i for i in items if i.portal_type == 'CommentAnswer']
+
+        len_comments = len(comments)
+        obs_status = self.observation_status()
+
+        return tuple(['Answered'] * (len_comments - 1) + [obs_status])
+
+
     def overview_status(self):
         status = self.get_status()
         closed_val = 'closed ({reason})'
