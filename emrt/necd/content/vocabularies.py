@@ -6,6 +6,10 @@ from zope.schema.vocabulary import SimpleVocabulary
 from emrt.necd.content.constants import LDAP_SECTOREXP
 
 
+def mk_term(key, value):
+    return SimpleVocabulary.createTerm(key, key, value)
+
+
 class MSVocabulary(object):
     grok.implements(IVocabularyFactory)
 
@@ -101,13 +105,12 @@ class Highlight(object):
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
         voc = pvoc.getVocabularyByName('highlight')
-        terms = []
-        if voc is not None:
-            for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
-                terms.append(SimpleVocabulary.createTerm(key, key, value))
+        if voc is None:
+            return SimpleVocabulary([])
+
+        terms = [mk_term(*pair) for pair in voc.getVocabularyLines()]
         return SimpleVocabulary(terms)
+
 
 grok.global_utility(Highlight,
     name=u"emrt.necd.content.highlight")

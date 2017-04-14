@@ -1,11 +1,11 @@
+adjustment,Adjustment
 ne,Not Estimated
-pgf,Gap Filling
+ptc,Potential technical correction (PTC)
 recalc-prev,Recalculation (compared to previous year submission)
 recalc-same,Recalculation (compared to same year submission)
+tsi,Time series inconsistency
 unece,UNECE recommendation
-ptc,Potential technical correction (PTC)
 nsms,Not sent to Member State
 tc,Technical Correction (TC)
 rev-est,Revised Estimate
 recommendation,Recommendation
-adjustment,Adjustment
