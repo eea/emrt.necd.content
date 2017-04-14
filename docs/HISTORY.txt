@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.0.17 (unreleased)
+2.0.17 (2017-04-14)
 -------------------
 
 - Task #84089 - Change into Description Flag and Draft/Final Conclusion Flags
@@ -13,6 +13,7 @@ Changelog
 
 - Task #83915 - Change the column workflow in the overview list
   [batradav]
+
 
 2.0.16 (2017-04-03)
 -------------------
