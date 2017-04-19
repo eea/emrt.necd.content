@@ -7,7 +7,7 @@
       tal:omit-tag="single_checkbox"
       tal:condition="python:len(items) > 0">
   <tal:item repeat="item items">
-    <tal:header condition="python:item['value'] == 'tsi'">
+    <tal:header condition="python:item['value'] == 'nsms'">
       <br />
       <div><strong>Draft/final conclusion flags</strong></div>
     </tal:header>

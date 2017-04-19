@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.18 (unreleased)
+2.0.18 (2017-04-19)
 -------------------
 
-- Nothing changed yet.
+- Task #84089 - Change into Description Flag and Draft/Final Conclusion Flags
+  [batradav]
 
 
 2.0.17 (2017-04-14)
