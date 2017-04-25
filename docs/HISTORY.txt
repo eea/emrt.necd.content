@@ -5,7 +5,8 @@ Changelog
 2.0.19 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Task #84390 - Export observations in XLS format
+  [batradav]
 
 
 2.0.18 (2017-04-19)

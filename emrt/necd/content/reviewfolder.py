@@ -308,17 +308,19 @@ EXPORT_FIELDS = OrderedDict([
     ('get_ghg_source_sectors', 'Sector'),
     ('country_value', 'Country'),
     ('text', 'Detail'),
-    ('observation_is_potential_significant_issue', 'Is potential significant issue'),
+    ('get_is_adjustment', 'Is an adjustment'),
     ('observation_is_potential_technical_correction', 'Is potential technical correction'),
-    ('observation_is_technical_correction', 'Is technical correction'),
+    ('get_is_time_series_inconsistency', 'Is time series inconsistency'),
+    ('get_is_not_estimated', 'Is not estimated'),
     ('nfr_code_value', 'NFR Code'),
     ('review_year', 'Review Year'),
     ('year', 'Inventory year'),
     ('pollutants_value', 'Pollutants'),
-    ('get_highlight', 'Highlight'),
+    ('get_description_flags', 'Description Flags'),
     ('overview_status', 'Status'),
     ('observation_finalisation_reason', 'Conclusion'),
     ('observation_finalisation_text', 'Conclusion note'),
+    ('get_conclusion_flags', 'Conclusion Flags'),
     ('observation_questions_workflow', 'Question workflow'),
     ('get_author_name', 'Author')
 ])
@@ -327,6 +329,21 @@ EXPORT_FIELDS = OrderedDict([
 EXCLUDE_FIELDS_FOR_MS = (
     'observation_finalisation_text',
 )
+
+
+IS_FIELD_MAP = {
+    'get_is_adjustment': 'Adjustment',
+    'get_is_time_series_inconsistency': 'Time series inconsistency',
+    'get_is_not_estimated': 'Not Estimated',
+}
+
+
+def yes_no_bool(boolean):
+    return boolean and 'Yes' or 'No'
+
+
+def get_common(iter1, iter2):
+    return tuple(set(iter1).intersection(iter2))
 
 
 @provider(IContextSourceBinder)
@@ -433,23 +450,44 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         ]
         data = tablib.Dataset()
         data.title = "Observations"
+
+        vocab_highlight = getUtility(
+            IVocabularyFactory,
+            'emrt.necd.content.highlight'
+        )(self.context)
+
+        vocab_highlight_values = tuple([
+            term.title for term in vocab_highlight
+        ])
+
+        # Split highlight to differentiate between
+        # description and conclusion flags.
+        highlight_split = [
+            term.value for term in vocab_highlight ].index('nsms')
+        vocab_description_flags = vocab_highlight_values[:highlight_split]
+        vocab_conclusion_flags = vocab_highlight_values[highlight_split:]
+
         for observation in observations:
             row = [observation.getId]
+            highlights = tuple(self.translate_highlights(
+                observation['get_highlight'] or []
+            ))
+
             for key in fields_to_export:
-                if key in [
-                    'observation_is_potential_significant_issue',
-                    'observation_is_potential_technical_correction',
-                    'observation_is_technical_correction'
-                ]:
+                if key == 'observation_is_potential_technical_correction':
                     row.append(observation[key] and 'Yes' or 'No')
                 elif key == 'getURL':
                     row.append(observation.getURL())
-                elif key == 'get_highlight':
-                    row.append(
-                        safe_unicode(', '.join(
-                            self.translate_highlights(observation[key] or [])
-                        ))
-                    )
+                elif key in IS_FIELD_MAP:
+                    row.append(yes_no_bool(IS_FIELD_MAP[key] in highlights))
+                elif key == 'get_description_flags':
+                    row.append(', '.join(
+                        get_common(highlights, vocab_description_flags)
+                    ))
+                elif key == 'get_conclusion_flags':
+                    row.append(', '.join(
+                        get_common(highlights, vocab_conclusion_flags)
+                    ))
                 elif key == 'observation_questions_workflow':
                     row_val = ', '.join([
                         '. '.join((
