@@ -2,10 +2,13 @@ Changelog
 =========
 
 
-2.0.19 (unreleased)
+2.0.19 (2017-04-25)
 -------------------
 
 - Task #84390 - Export observations in XLS format
+  [batradav]
+
+- Task #84510 - New values in "parameters" inside an Observation
   [batradav]
 
 
