@@ -149,4 +149,23 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.15"
+    destination="2.0.16"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Import catalog"
+      description="[refs #84510] New parameter_value catalog column."
+      import_steps="catalog"
+      />
+
+    <genericsetup:upgradeStep
+      title="Reindex observations"
+      description="Reindex observations for new column."
+      handler="emrt.necd.content.upgrades.evolve2016.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

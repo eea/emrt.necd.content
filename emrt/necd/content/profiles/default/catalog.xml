@@ -103,6 +103,7 @@
  <column value="observation_is_potential_significant_issue" />
  <column value="observation_is_potential_technical_correction" />
  <column value="observation_is_technical_correction" />
+ <column value="parameter_value" />
  <column value="text" />
  <column value="nfr_code_value" />
  <column value="review_year" />

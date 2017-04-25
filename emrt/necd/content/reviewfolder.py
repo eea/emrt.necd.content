@@ -307,6 +307,7 @@ EXPORT_FIELDS = OrderedDict([
     ('getURL', 'URL'),
     ('get_ghg_source_sectors', 'Sector'),
     ('country_value', 'Country'),
+    ('parameter_value', 'Parameter'),
     ('text', 'Detail'),
     ('get_is_adjustment', 'Is an adjustment'),
     ('observation_is_potential_technical_correction', 'Is potential technical correction'),
