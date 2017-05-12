@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.20 (unreleased)
+2.0.20 (2017-05-12)
 -------------------
 
-- Nothing changed yet.
+- Task #82446 - Various fixes (NFR Code list, JS fixes for table listings).
+  [batradav]
 
 
 2.0.19 (2017-04-25)
