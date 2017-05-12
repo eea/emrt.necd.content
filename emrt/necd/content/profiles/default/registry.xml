@@ -20,9 +20,11 @@
   <records interface="emrt.necd.content.nfr_code_matching.INECDSettings" />
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping">
     <value purge="True">
+      <element key="1A1">sector1|1A1|1A1, 1A2, 1A4 Energy: stationary combustion|1A1 Energy production</element>
       <element key="1A1a">sector1|1A1a|1A1, 1A2, 1A4 Energy: stationary combustion|1A1a Public electricity and heat production</element>
       <element key="1A1b">sector1|1A1b|1A1, 1A2, 1A4 Energy: stationary combustion|1A1b Petroleum refining</element>
       <element key="1A1c">sector1|1A1c|1A1, 1A2, 1A4 Energy: stationary combustion|1A1c Manufacture of solid fuels and other energy industries</element>
+      <element key="1A2">sector1|1A2|1A1, 1A2, 1A4 Energy: stationary combustion|1A2 Stationary combustion in manufacturing industries and construction</element>
       <element key="1A2a">sector1|1A2a|1A1, 1A2, 1A4 Energy: stationary combustion|1A2a Stationary combustion in manufacturing industries and construction: Iron and steel</element>
       <element key="1A2b">sector1|1A2b|1A1, 1A2, 1A4 Energy: stationary combustion|1A2b Stationary combustion in manufacturing industries and construction: Non-ferrous metals</element>
       <element key="1A2c">sector1|1A2c|1A1, 1A2, 1A4 Energy: stationary combustion|1A2c Stationary combustion in manufacturing industries and construction: Chemicals</element>
@@ -38,6 +40,7 @@
       <element key="1A3ai(ii)">sector2|1A3ai(ii)|1A3 Energy: transport including international|1A3ai(ii) International aviation cruise (civil) - Memo Item</element>
       <element key="1A3aii(i)">sector2|1A3aii(i)|1A3 Energy: transport including international|1A3aii(i) Domestic aviation LTO (civil)</element>
       <element key="1A3aii(ii)">sector2|1A3aii(ii)|1A3 Energy: transport including international|1A3aii(ii) Domestic aviation cruise (civil) - Memo Item</element>
+      <element key="1A3b">sector2|1A3b|1A3 Energy: transport including international|1A3b Road transport</element>
       <element key="1A3bi">sector2|1A3bi|1A3 Energy: transport including international|1A3bi Road transport: Passenger cars</element>
       <element key="1A3bii">sector2|1A3bii|1A3 Energy: transport including international|1A3bii Road transport: Light duty vehicles</element>
       <element key="1A3biii">sector2|1A3biii|1A3 Energy: transport including international|1A3biii Road transport: Heavy duty vehicles and buses</element>
@@ -59,12 +62,15 @@
       <element key="1A4ciii">sector3|1A4ciii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A4ciii Agriculture/Forestry/Fishing: National fishing</element>
       <element key="1A5b">sector3|1A5b|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A5b Other, Mobile (including military, land based and recreational boats)</element>
       <element key="1A5c">sector3|1A5c|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A5c Multilateral operations - Memo Item</element>
+      <element key="1B">sector4|1B|1B, 2A Fugitive and IPPU|1B Fugitive emission from fuels</element>
+      <element key="1B1">sector4|1B1|1B, 2A Fugitive and IPPU|1B1 Fugitive emission from solid fuels</element>
       <element key="1B1a">sector4|1B1a|1B, 2A Fugitive and IPPU|1B1a Fugitive emission from solid fuels: Coal mining and handling</element>
       <element key="1B1b">sector4|1B1b|1B, 2A Fugitive and IPPU|1B1b Fugitive emission from solid fuels: Solid fuel transformation</element>
       <element key="1B1c">sector4|1B1c|1B, 2A Fugitive and IPPU|1B1c Other fugitive emissions from solid fuels</element>
       <element key="1B2ai">sector4|1B2ai|1B, 2A Fugitive and IPPU|1B2ai Fugitive emissions oil: Exploration, production, transport</element>
       <element key="1B2aiv">sector4|1B2aiv|1B, 2A Fugitive and IPPU|1B2aiv Fugitive emissions oil: Refining / storage</element>
       <element key="1B2av">sector4|1B2av|1B, 2A Fugitive and IPPU|1B2av Distribution of oil products</element>
+      <element key="1B2">sector4|1B2|1B, 2A Fugitive and IPPU|1B2 Fugitive emission from oil and natural gas and others fugitive emissions</element>
       <element key="1B2b">sector4|1B2b|1B, 2A Fugitive and IPPU|1B2b Fugitive emissions from natural gas (exploration, production, processing, transmission, storage, distribution and other)</element>
       <element key="1B2c">sector4|1B2c|1B, 2A Fugitive and IPPU|1B2c Venting and flaring (oil, gas, combined oil and gas)</element>
       <element key="1B2d">sector4|1B2d|1B, 2A Fugitive and IPPU|1B2d Other fugitive emissions from energy production</element>
@@ -96,6 +102,7 @@
       <element key="2C7b">sector5|2C7b|2B, 2C IPPU: Industrial Processes|2C7b Nickel production</element>
       <element key="2C7c">sector5|2C7c|2B, 2C IPPU: Industrial Processes|2C7c Other metal production (please specify in the IIR)</element>
       <element key="2C7d">sector5|2C7d|2B, 2C IPPU: Industrial Processes|2C7d Storage, handling and transport of metal products (please specify in the IIR)</element>
+      <element key="2D">sector6|2D|2D, 2G-2L IPPU: Solvent and other product use|2D Non energy products from fuels and solvent uses</element>
       <element key="2D3a">sector6|2D3a|2D, 2G-2L IPPU: Solvent and other product use|2D3a Domestic solvent use including fungicides</element>
       <element key="2D3b">sector6|2D3b|2D, 2G-2L IPPU: Solvent and other product use|2D3b Road paving with asphalt</element>
       <element key="2D3c">sector6|2D3c|2D, 2G-2L IPPU: Solvent and other product use|2D3c Asphalt roofing</element>
@@ -105,7 +112,8 @@
       <element key="2D3g">sector6|2D3g|2D, 2G-2L IPPU: Solvent and other product use|2D3g Chemical products</element>
       <element key="2D3h">sector6|2D3h|2D, 2G-2L IPPU: Solvent and other product use|2D3h Printing</element>
       <element key="2D3i">sector6|2D3i|2D, 2G-2L IPPU: Solvent and other product use|2D3i Other solvent use (please specify in the IIR)</element>
-      <element key="2G ">sector6|2G|2D, 2G-2L IPPU: Solvent and other product use|2G Other product use (please specify in the IIR)</element>
+      <element key="2G">sector6|2G|2D, 2G-2L IPPU: Solvent and other product use|2G Other product use (please specify in the IIR)</element>
+      <element key="2H">sector6|2H|2D, 2G-2L IPPU: Solvent and other product use|2H Other industry production</element>
       <element key="2H1">sector6|2H1|2D, 2G-2L IPPU: Solvent and other product use|2H1 Pulp and paper industry</element>
       <element key="2H2">sector6|2H2|2D, 2G-2L IPPU: Solvent and other product use|2H2 Food and beverages industry</element>
       <element key="2H3 ">sector6|2H3|2D, 2G-2L IPPU: Solvent and other product use|2H3 Other industrial processes (please specify in the IIR)</element>
@@ -113,6 +121,7 @@
       <element key="2J">sector6|2J|2D, 2G-2L IPPU: Solvent and other product use|2J Production of POPs</element>
       <element key="2K">sector6|2K|2D, 2G-2L IPPU: Solvent and other product use|2K Consumption of POPs and heavy metals (e.g. electrical and scientific equipment)</element>
       <element key="2L">sector6|2L|2D, 2G-2L IPPU: Solvent and other product use|2L Other production, consumption, storage, transportation or handling of bulk products (please specify in the IIR)</element>
+      <element key="3B">sector7|3B|3B - 3I Agriculture|3B Manure management</element>
       <element key="3B1a">sector7|3B1a|3B - 3I Agriculture|3B1a Manure management - Dairy cattle</element>
       <element key="3B1b">sector7|3B1b|3B - 3I Agriculture|3B1b Manure management - Non-dairy cattle</element>
       <element key="3B2">sector7|3B2|3B - 3I Agriculture|3B2 Manure management - Sheep</element>
@@ -126,6 +135,7 @@
       <element key="3B4giii">sector7|3B4giii|3B - 3I Agriculture|3B4giii Manure mangement - Turkeys</element>
       <element key="3B4giv">sector7|3B4giv|3B - 3I Agriculture|3B4giv Manure management - Other poultry</element>
       <element key="3B4h">sector7|3B4h|3B - 3I Agriculture|3B4h Manure management - Other animals (please specify in IIR)</element>
+      <element key="3D">sector7|3D|3B - 3I Agriculture|3D Crop production and agricultural soils</element>
       <element key="3Da1">sector7|3Da1|3B - 3I Agriculture|3Da1 Inorganic N-fertilizers (includes also urea application)</element>
       <element key="3Da2a">sector7|3Da2a|3B - 3I Agriculture|3Da2a Animal manure applied to soils</element>
       <element key="3Da2b">sector7|3Da2b|3B - 3I Agriculture|3Da2b Sewage sludge applied to soils</element>
@@ -140,8 +150,10 @@
       <element key="3F">sector7|3F|3B - 3I Agriculture|3F Field burning of agricultural residues</element>
       <element key="3I">sector7|3I|3B - 3I Agriculture|3I Agriculture other (please specify in the IIR)</element>
       <element key="5A">sector8|5A|5A - 5E Waste|5A Biological treatment of waste - Solid waste disposal on land</element>
+      <element key="5B">sector8|5B|5A - 5E Waste|5B Biological treatment of waste</element>
       <element key="5B1">sector8|5B1|5A - 5E Waste|5B1 Biological treatment of waste - Composting</element>
       <element key="5B2">sector8|5B2|5A - 5E Waste|5B2 Biological treatment of waste - Anaerobic digestion at biogas facilities</element>
+      <element key="5C">sector8|5C|5A - 5E Waste|5C Waste incineration</element>
       <element key="5C1a">sector8|5C1a|5A - 5E Waste|5C1a Municipal waste incineration</element>
       <element key="5C1bi">sector8|5C1bi|5A - 5E Waste|5C1bi Industrial waste incineration</element>
       <element key="5C1bii">sector8|5C1bii|5A - 5E Waste|5C1bii Hazardous waste incineration</element>
@@ -150,6 +162,7 @@
       <element key="5C1bv">sector8|5C1bv|5A - 5E Waste|5C1bv Cremation</element>
       <element key="5C1bvi">sector8|5C1bvi|5A - 5E Waste|5C1bvi Other waste incineration (please specify in the IIR)</element>
       <element key="5C2">sector8|5C2|5A - 5E Waste|5C2 Open burning of waste</element>
+      <element key="5D">sector8|5D|5A - 5E Waste|5D Wastewater handling</element>
       <element key="5D1">sector8|5D1|5A - 5E Waste|5D1 Domestic wastewater handling</element>
       <element key="5D2">sector8|5D2|5A - 5E Waste|5D2 Industrial wastewater handling</element>
       <element key="5D3">sector8|5D3|5A - 5E Waste|5D3 Other wastewater handling</element>
