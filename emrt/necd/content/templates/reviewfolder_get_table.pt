@@ -47,7 +47,7 @@
             tal:attributes="data-href observation/getURL;
             class string:clickableRow ${observation/observation_css_class};">
           <td class="observationRefCell">
-              <a tal:attributes="href observation/getURL;"/>
+              <a onclick="return false" tal:attributes="href observation/getURL;"/>
               <span class="ref-num"
                 tal:content="observation/getId">
                 UK-WAS-13-001
