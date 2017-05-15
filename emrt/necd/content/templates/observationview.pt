@@ -446,7 +446,7 @@
         <div class="files" tal:condition="conclusion/get_files">
           Files:
           <div class="file" tal:repeat="file conclusion/get_files">
-            <p>
+            <p tal:condition="file/file">
               <span class="eea-icon eea-icon-lg attachment"></span>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
@@ -683,7 +683,7 @@
         <div class="files" tal:condition="question/get_files">
           Files:
           <div class="file" tal:repeat="file question/get_files">
-            <p>
+            <p tal:condition="file/file">
               <span class="eea-icon eea-icon-lg attachment"></span>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">

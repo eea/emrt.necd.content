@@ -8,7 +8,7 @@
 
     <role name="SectorExpert" />
     <role name="LeadReviewer" />
- 
+
   </roles>
   <permissions>
     <!-- -*- extra stuff goes here -*- -->
@@ -43,6 +43,7 @@
     <permission name="emrt.necd.content: View Comment Discussion" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />
+      <role name="LeadReviewer" />
     </permission>
     <permission name="emrt.necd.content: Export Observations" acquire="False">
       <role name="Manager" />
@@ -55,6 +56,8 @@
     </permission>
     <permission name="emrt.necd.content: View Answer Discussion" acquire="False">
       <role name="Manager" />
+      <role name="MSAuthority" />
+      <role name="MSExpert" />
     </permission>
     <permission name="emrt.necd.content: Add Question" acquire="False">
       <role name="Manager" />

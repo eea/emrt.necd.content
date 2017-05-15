@@ -181,4 +181,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.17"
+    destination="2.0.21"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update roles."
+      description="[refs #82446] Fixing permissions. Similar to esdrt.content."
+      import_steps="rolemap sharing workflow update-workflow-rolemap"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

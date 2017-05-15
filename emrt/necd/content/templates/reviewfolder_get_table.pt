@@ -104,6 +104,7 @@
   <script>
     $(".clickableRow").click(function() {
       window.open($(this).data("href"), "_blank");
+      evt.stopPropagation();
     });
   </script>
   <div class="visualClear" id="clear-space-before-navigation"><!-- --></div>

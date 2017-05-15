@@ -42,6 +42,7 @@
   <permission-map name="emrt.necd.content: Add Observation" acquired="False">
    <permission-role>Manager</permission-role>
    <permission-role>SectorExpert</permission-role>
+   <permission-role>LeadReviewer</permission-role>
   </permission-map>
  </state>
  <state state_id="pending" title="Pending review">
