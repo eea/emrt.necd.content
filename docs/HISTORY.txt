@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.21 (unreleased)
+2.0.21 (2017-05-15)
 -------------------
 
-- Nothing changed yet.
+- Task #82446 - Permission fixes.
+  [batradav]
 
 
 2.0.20 (2017-05-12)
