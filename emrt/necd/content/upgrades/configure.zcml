@@ -205,6 +205,18 @@
       import_steps="plone.app.registry"
       />
 
+    <genericsetup:upgradeDepends
+      title="Import catalog"
+      description="[refs #84390] New parameter_value catalog column."
+      import_steps="catalog"
+      />
+
+    <genericsetup:upgradeStep
+      title="Reindex observations"
+      description="Reindex observations for new column."
+      handler="emrt.necd.content.upgrades.evolve2022.run"
+      />
+
   </genericsetup:upgradeSteps>
 
 </configure>

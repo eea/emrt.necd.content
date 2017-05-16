@@ -33,6 +33,10 @@
   <indexed_attr value="get_highlight"/>
  </index>
 
+ <index name="ms_key_category" meta_type="FieldIndex">
+   <indexed_attr value="ms_key_category" />
+ </index>
+
  <index name="year" meta_type="FieldIndex">
     <indexed_attr value="year"/>
  </index>
@@ -97,6 +101,7 @@
  <column value="get_status" />
  <column value="get_nfr_code" />
  <column value="get_highlight" />
+ <column value="ms_key_category" />
  <column value="observation_finalisation_reason" />
  <column value="get_author_name" />
  <column value="observation_css_class" />

@@ -318,11 +318,12 @@ EXPORT_FIELDS = OrderedDict([
     ('review_year', 'Review Year'),
     ('year', 'Inventory year'),
     ('pollutants_value', 'Pollutants'),
+    ('get_is_ms_key_category', 'MS Key Category'),
     ('get_description_flags', 'Description Flags'),
     ('overview_status', 'Status'),
     ('observation_finalisation_reason', 'Conclusion'),
-    ('observation_finalisation_text', 'Conclusion note'),
     ('get_conclusion_flags', 'Conclusion Flags'),
+    ('observation_finalisation_text', 'Conclusion note'),
     ('observation_questions_workflow', 'Question workflow'),
     ('get_author_name', 'Author')
 ])
@@ -498,6 +499,11 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     row.append(', '.join(
                         get_common(highlights, vocab_conclusion_flags)
                     ))
+                elif key == 'get_is_ms_key_category':
+                    row.append(
+                        observation.ms_key_category
+                        and 'Yes' or 'No'
+                    )
                 elif key == 'observation_questions_workflow':
                     row_val = ', '.join([
                         '. '.join((

@@ -86,7 +86,7 @@
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
         <div class="row">
           <div class="cell position-0 width-4">
-            <span tal:condition="here/ms_key_catagory|nothing">
+            <span tal:condition="here/ms_key_category|nothing">
               MS Key category
             </span>
           </div>

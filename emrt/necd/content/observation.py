@@ -141,7 +141,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
         required=False,
     )
 
-    ms_key_catagory = schema.Bool(
+    ms_key_category = schema.Bool(
         title=u"MS key category",
     )
 
@@ -1251,10 +1251,8 @@ class ExportAsDocView(ObservationMixin):
         row_cells = table.add_row().cells
         row_cells[0].text = "%s" % self.context.review_year or ''
         row_cells[1].text = self.context.parameter_value() or ''
-        if self.context.ms_key_catagory:
+        if self.context.ms_key_category:
             row_cells[2].text = "MS Key category"
-        elif self.context.ms_key_catagory:
-            row_cells[2].text = "EU Key category"
         else:
             row_cells[2].text = ""
         row_cells[3].text = self.context.modified().strftime(

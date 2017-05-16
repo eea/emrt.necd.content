@@ -268,9 +268,9 @@
         <div class="cell position-0 width-2" tal:content="context/review_year">Year</div>
         <div class="cell position-2 width-5" tal:content="context/parameter_value">Parameter</div>
         <div class="cell position-7 width-4">
-          <span tal:condition="here/ms_key_catagory|nothing">
+          <span tal:condition="here/ms_key_category|nothing">
               MS Key category
-          </span><br tal:condition="here/ms_key_catagory|nothing"/>
+          </span><br tal:condition="here/ms_key_category|nothing"/>
         </div>
         <div class="cell position-11 width-4" tal:content="python:context.modified().strftime('%d %b %Y, %H:%M CET')">Last update</div>
       </div>
