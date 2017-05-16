@@ -1,3 +1,4 @@
+import urllib
 import time
 import tablib
 from operator import itemgetter
@@ -525,16 +526,19 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         """ Export filtered observations in xls
         """
         now = datetime.now()
-        filename = 'EMRT-observations-%s-%s.xls' % (
+        filename = 'EMRT-observations-{}_{}.xls'.format(
             self.context.getId(),
-            now.strftime("%Y%M%d%H%m")
+            now.strftime("%d-%m-%Y_%H:%M")
         )
 
         book = tablib.Databook((self.extract_data(data),))
 
         response = self.request.response
         response.setHeader("content-type", "application/vnc.ms-excel")
-        response.setHeader("Content-disposition", "attachment;filename=" + filename)
+        response.setHeader(
+            'Content-disposition',
+            'attachment;filename="{filename}"'.format(filename=filename)
+        )
         response.write(book.xls)
         return
 
