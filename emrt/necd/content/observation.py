@@ -54,7 +54,7 @@ from .nfr_code_matching import get_category_value_from_nfr_code
 from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions
 )
-from emrt.necd.content.utilities.ms_user import IUserIsMS
+from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
@@ -944,10 +944,10 @@ class ObservationMixin(DefaultView):
             question = questions[-1]
             return sm.checkPermission('View', question.getObject())
         else:
-            return not getUtility(IUserIsMS)(self.context)
+            ms_user.hide_from_ms(self.context)
 
     def show_internal_notes(self):
-        return not getUtility(IUserIsMS)(self.context)
+        ms_user.hide_from_ms(self.context)
 
     def add_question_form(self):
         from plone.z3cform.interfaces import IWrappedForm

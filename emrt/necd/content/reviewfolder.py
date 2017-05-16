@@ -350,11 +350,16 @@ def get_common(iter1, iter2):
 @provider(IContextSourceBinder)
 def fields_vocabulary_factory(context):
     terms = []
+
     user_is_ms = getUtility(IUserIsMS)(context)
+    user_is_manager = 'Manager' in api.user.get_roles()
+    skip_for_user = user_is_ms and not user_is_manager
+
     for key, value in EXPORT_FIELDS.items():
-        if user_is_ms and key in EXCLUDE_FIELDS_FOR_MS:
+        if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
             continue
         terms.append(SimpleVocabulary.createTerm(key, key, value))
+
     return SimpleVocabulary(terms)
 
 
@@ -444,11 +449,14 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         observations = self.get_questions()
 
         user_is_ms = getUtility(IUserIsMS)(self.context)
+        user_is_manager = 'Manager' in api.user.get_roles()
+        skip_for_user = user_is_ms and not user_is_manager
 
         fields_to_export = [
             name for name in data.get('exportFields', []) if
-            not user_is_ms or name not in EXCLUDE_FIELDS_FOR_MS
+            not skip_for_user or name not in EXCLUDE_FIELDS_FOR_MS
         ]
+
         data = tablib.Dataset()
         data.title = "Observations"
 
