@@ -194,4 +194,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.21"
+    destination="2.0.22"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update NFR codes."
+      description="[refs #82446] Will overwrite existing NFR code data!"
+      import_steps="plone.app.registry"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

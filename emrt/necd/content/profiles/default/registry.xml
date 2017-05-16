@@ -36,10 +36,10 @@
       <element key="1A4bi">sector1|1A4bi|1A1, 1A2, 1A4 Energy: stationary combustion|1A4bi Residential: Stationary</element>
       <element key="1A4ci">sector1|1A4ci|1A1, 1A2, 1A4 Energy: stationary combustion|1A4ci Agriculture/Forestry/Fishing: Stationary</element>
       <element key="1A5a">sector1|1A5a|1A1, 1A2, 1A4 Energy: stationary combustion|1A5a Other stationary (including military)</element>
-      <element key="1A3ai(i)">sector2|1A3ai(i)|1A3 Energy: transport including international|1A3ai(i) International aviation LTO (civil)</element>
-      <element key="1A3ai(ii)">sector2|1A3ai(ii)|1A3 Energy: transport including international|1A3ai(ii) International aviation cruise (civil) - Memo Item</element>
-      <element key="1A3aii(i)">sector2|1A3aii(i)|1A3 Energy: transport including international|1A3aii(i) Domestic aviation LTO (civil)</element>
-      <element key="1A3aii(ii)">sector2|1A3aii(ii)|1A3 Energy: transport including international|1A3aii(ii) Domestic aviation cruise (civil) - Memo Item</element>
+      <element key="1A3ai(i)">sector3|1A3ai(i)|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3ai(i) International aviation LTO (civil)</element>
+      <element key="1A3ai(ii)">sector3|1A3ai(ii)|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3ai(ii) International aviation cruise (civil) - Memo Item</element>
+      <element key="1A3aii(i)">sector3|1A3aii(i)|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3aii(i) Domestic aviation LTO (civil)</element>
+      <element key="1A3aii(ii)">sector3|1A3aii(ii)|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3aii(ii) Domestic aviation cruise (civil) - Memo Item</element>
       <element key="1A3b">sector2|1A3b|1A3 Energy: transport including international|1A3b Road transport</element>
       <element key="1A3bi">sector2|1A3bi|1A3 Energy: transport including international|1A3bi Road transport: Passenger cars</element>
       <element key="1A3bii">sector2|1A3bii|1A3 Energy: transport including international|1A3bii Road transport: Light duty vehicles</element>
@@ -48,9 +48,9 @@
       <element key="1A3bv">sector2|1A3bv|1A3 Energy: transport including international|1A3bv Road transport: Gasoline evaporation</element>
       <element key="1A3bvi">sector2|1A3bvi|1A3 Energy: transport including international|1A3bvi Road transport: Automobile tyre and brake wear</element>
       <element key="1A3bvii">sector2|1A3bvii|1A3 Energy: transport including international|1A3bvii Road transport: Automobile road abrasion</element>
-      <element key="1A3di(ii)">sector2|1A3di(ii)|1A3 Energy: transport including international|1A3di(ii) International inland waterways</element>
-      <element key="1A3di(i)">sector2|1A3di(i)|1A3 Energy: transport including international|1A3di(i) International maritime navigation - Memo Item</element>
-      <element key="1A3dii">sector2|1A3dii|1A3 Energy: transport including international|1A3dii National navigation (shipping)</element>
+      <element key="1A3di(ii)">sector3|1A3di(ii)|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3di(ii) International inland waterways</element>
+      <element key="1A3di(i)">sector3|1A3di(i)|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3di(i) International maritime navigation - Memo Item</element>
+      <element key="1A3dii">sector3|1A3dii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3dii National navigation (shipping)</element>
       <element key="1A3">sector2|1A3|1A3 Energy: transport including international|1A3 Transport: Fuel Used - Memo Item</element>
       <element key="1A2gvii ">sector3|1A2gvii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A2gvii Mobile Combustion in manufacturing industries and construction: (please specify in the IIR)</element>
       <element key="1A3c">sector3|1A3c|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A3c Railways</element>
@@ -61,7 +61,7 @@
       <element key="1A4cii">sector3|1A4cii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A4cii Agriculture/Forestry/Fishing: Off-road vehicles and other machinery</element>
       <element key="1A4ciii">sector3|1A4ciii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A4ciii Agriculture/Forestry/Fishing: National fishing</element>
       <element key="1A5b">sector3|1A5b|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A5b Other, Mobile (including military, land based and recreational boats)</element>
-      <element key="1A5c">sector3|1A5c|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A5c Multilateral operations - Memo Item</element>
+      <element key="1A5c">sector1|1A5c|1A1, 1A2, 1A4 Energy: stationary combustion|1A5c Multilateral operations - Memo Item</element>
       <element key="1B">sector4|1B|1B, 2A Fugitive and IPPU|1B Fugitive emission from fuels</element>
       <element key="1B1">sector4|1B1|1B, 2A Fugitive and IPPU|1B1 Fugitive emission from solid fuels</element>
       <element key="1B1a">sector4|1B1a|1B, 2A Fugitive and IPPU|1B1a Fugitive emission from solid fuels: Coal mining and handling</element>
