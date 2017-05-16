@@ -944,10 +944,10 @@ class ObservationMixin(DefaultView):
             question = questions[-1]
             return sm.checkPermission('View', question.getObject())
         else:
-            ms_user.hide_from_ms(self.context)
+            return ms_user.hide_from_ms(self.context)
 
     def show_internal_notes(self):
-        ms_user.hide_from_ms(self.context)
+        return ms_user.hide_from_ms(self.context)
 
     def add_question_form(self):
         from plone.z3cform.interfaces import IWrappedForm
