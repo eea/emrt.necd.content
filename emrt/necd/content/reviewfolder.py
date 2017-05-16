@@ -40,7 +40,7 @@ grok.templatedir('templates')
 
 
 QUESTION_WORKFLOW_MAP = {
-    'SE': 'Sector Reviewer / Sector Expert',
+    'SE': 'Sector Expert',
     'LR': 'Lead Reviewer',
     'MSC': 'MS Coordinator',
     'answered': 'Answered',
