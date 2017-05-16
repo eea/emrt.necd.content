@@ -2,10 +2,16 @@ Changelog
 =========
 
 
-2.0.22 (unreleased)
+2.0.22 (2017-05-16)
 -------------------
 
-- Nothing changed yet.
+- Task #82446 - Don't hide things from Manager.
+- Task #85157 - Update sector list.
+- Task #84721 - Extract Excel file.
+- Task #84722 - Add Timestamp to the Extract File.
+- Task #84723 - Additional column to Extract File.
+- Task #84390 - Export observations in XLS format.
+  [batradav]
 
 
 2.0.21 (2017-05-15)
