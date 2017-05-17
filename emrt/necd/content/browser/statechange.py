@@ -1,3 +1,4 @@
+import re
 from functools import partial
 from Acquisition import aq_parent, aq_inner
 from emrt.necd.content import MessageFactory as _
@@ -29,6 +30,30 @@ from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
 
 PARENT_REVIEWFOLDER = partial(find_parent_with_interface, IReviewFolder)
+
+
+RE_EXTRACT_SECTOR_COUNTRY = re.compile(r'(sector\d)?-([a-z]{2})$')
+def group_matches_sector_and_country(name, pass_sector, pass_country):
+    """ If neither sector nor country is found in the group name,
+        validate it as True in order to cover lead groups.
+    """
+    sector, country = RE_EXTRACT_SECTOR_COUNTRY.search(name).groups()
+    result = []
+    if sector:
+        result.append(sector == pass_sector)
+    if country:
+        result.append(country == pass_country)
+
+    return all(result) if result else True
+
+
+def filter_groups_for_context(context, names):
+    validate_group = partial(
+        group_matches_sector_and_country,
+        pass_sector=context.ghg_source_category_value(),
+        pass_country=context.country,
+    )
+    return tuple(filter(validate_group, names))
 
 
 def revoke_roles(username=None, user=None, obj=None, roles=None, inherit=True):
@@ -143,11 +168,12 @@ class AssignFormMixin(BrowserView):
 
     _managed_role = None
 
-    _counterpart_users = None
-
     _revoke_on_call = None
 
     _msg_no_usernames = None
+
+    _cache_counterpart_users = None
+    _cache_managed_role = None
 
     def _get_wf_action(self):
         raise NotImplementedError
@@ -159,11 +185,19 @@ class AssignFormMixin(BrowserView):
         raise NotImplementedError
 
     def _is_managed_role(self, username):
-        return self._managed_role in api.user.get_roles(
-            username=username,
-            obj=self._assignation_target(),
-            inherit=False
-        )
+        if self._cache_managed_role is None:
+            self._cache_managed_role = {}
+
+        if username not in self._cache_managed_role:
+            self._cache_managed_role[username] = (
+                    self._managed_role in api.user.get_roles(
+                    username=username,
+                    obj=self._assignation_target(),
+                    inherit=False
+                )
+            )
+
+        return self._cache_managed_role[username]
 
     def revoke_all_roles(self):
         with api.env.adopt_roles(['Manager']):
@@ -177,19 +211,14 @@ class AssignFormMixin(BrowserView):
                         inherit=False,
                     )
 
-    def get_users(self, groupname):
-        users = api.user.get_users(groupname=groupname)
-        return [
-            (u.getId(), u.getProperty('fullname', u.getId())) for u in users]
-
     def get_users_from_group(self, group):
         users = group.getGroupMembers()
         return [
             (u.getId(), u.getProperty('fullname', u.getId())) for u in users]
 
     def get_counterpart_users(self):
-        if self._counterpart_users is not None:
-            return self._counterpart_users
+        if self._cache_counterpart_users is not None:
+            return self._cache_counterpart_users
 
         users = []
 
@@ -206,8 +235,8 @@ class AssignFormMixin(BrowserView):
             ]
             users.extend(data)
 
-        self._counterpart_users = list(set(users))
-        return self._counterpart_users
+        self._cache_counterpart_users = list(set(users))
+        return self._cache_counterpart_users
 
     def __call__(self):
         """ Perform the update and redirect if necessary, or render the page
@@ -340,8 +369,10 @@ class AssignCounterPartForm(AssignFormMixin):
         reviewfolder = PARENT_REVIEWFOLDER(self.context)
         rolenames = (ROLE_SE, ROLE_LR)
         from_reviewfolder = principals_with_roles(reviewfolder, rolenames)
+        validated_groups = filter_groups_for_context(
+            self.context, from_reviewfolder)
         static = (LDAP_LEADREVIEW, LDAP_SECTOREXP)
-        return static + from_reviewfolder
+        return static + validated_groups
 
     def get_current_counterparters(self):
         """ Return list of current counterparters
@@ -424,8 +455,10 @@ class AssignConclusionReviewerForm(AssignFormMixin):
         reviewfolder = PARENT_REVIEWFOLDER(self.context)
         rolenames = (ROLE_SE, ROLE_LR)
         from_reviewfolder = principals_with_roles(reviewfolder, rolenames)
+        validated_groups = filter_groups_for_context(
+            self.context, from_reviewfolder)
         static = (LDAP_LEADREVIEW, LDAP_SECTOREXP)
-        return static + from_reviewfolder
+        return static + validated_groups
 
     def _get_wf_action(self):
         return 'request-comments'
