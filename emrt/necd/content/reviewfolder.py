@@ -326,6 +326,7 @@ EXPORT_FIELDS = OrderedDict([
     ('get_conclusion_flags', 'Conclusion Flags'),
     ('observation_finalisation_text', 'Conclusion note'),
     ('observation_questions_workflow', 'Question workflow'),
+    ('observation_questions_workflow_current', 'Current question workflow'),
     ('get_author_name', 'Author')
 ])
 
@@ -533,6 +534,11 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                             'unknown'
                         )
                     )
+                elif key == 'observation_questions_workflow_current':
+                    row.append(QUESTION_WORKFLOW_MAP.get(
+                        observation['observation_status'],
+                        observation['observation_status'],
+                    ))
                 else:
                     row.append(safe_unicode(observation[key]))
 
