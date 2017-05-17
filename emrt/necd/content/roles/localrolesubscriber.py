@@ -45,3 +45,4 @@ def grant_local_roles(context):
             roles=[ROLE_MSE],
             obj=obj,
         )
+        obj.reindexObjectSecurity()

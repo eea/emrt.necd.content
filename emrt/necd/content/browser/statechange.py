@@ -258,6 +258,7 @@ class AssignFormMixin(BrowserView):
                     roles=[self._managed_role],
                     obj=target
                 )
+            target.reindexObjectSecurity()
 
             wf_action = self._get_wf_action()
             if wf_action:
@@ -331,6 +332,7 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
                 api.user.grant_roles(username=username,
                     roles=[self._managed_role],
                     obj=target)
+            target.reindexObjectSecurity()
 
             return self.request.response.redirect(target.absolute_url())
 
@@ -414,6 +416,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
                 api.user.grant_roles(username=username,
                     roles=[self._managed_role],
                     obj=target)
+            target.reindexObjectSecurity()
 
             status = IStatusMessage(self.request)
             msg = _(u'CounterParts reassigned correctly')
