@@ -219,4 +219,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.22"
+    destination="2.0.24"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Allow MSAuthority to view Q&amp;A threads."
+      description="[refs #85233] Update question workflow permissions."
+      import_steps="workflow update-workflow-rolemap"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
