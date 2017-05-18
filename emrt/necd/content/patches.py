@@ -1,3 +1,4 @@
+import hashlib
 from logging import getLogger
 from Products.CMFDiffTool import dexteritydiff
 from eea.cache import cache
@@ -10,8 +11,13 @@ log = getLogger(__name__)
 log.info('Patching difftool excluded fields to add ghg_estimations')
 
 
+def sha_cachekey(sig):
+    return hashlib.sha256(str(sig)).hexdigest()
+
+
 def _cachekey_lookupuserbyattr(meth, self, *args, **kwargs):
-    return (meth.__name__, self.__name__, args, kwargs.items())
+    sig = (meth.__name__, self.__name__, args, kwargs.items())
+    return sha_cachekey(sig)
 
 
 @cache(_cachekey_lookupuserbyattr)
@@ -35,7 +41,8 @@ def _lookupuserbyattr(self, *args, **kwargs):
 
 def _cachekey_LDAPDelegate_search(meth, self, *args, **kwargs):
     kw = tuple([(k, v) for k, v in kwargs.items() if k != 'bind_pwd'])
-    return (meth.__name__, self.__name__, args, kw)
+    sig = (meth.__name__, self.__name__, args, kw)
+    return sha_cachekey(sig)
 
 
 @cache(_cachekey_LDAPDelegate_search)
