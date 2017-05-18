@@ -2,10 +2,15 @@ Changelog
 =========
 
 
-2.0.23 (unreleased)
+2.0.23 (2017-05-18)
 -------------------
 
-- Nothing changed yet.
+- Task #85212 - "Submit Answer" button has been disappeared
+- Task #85222 - "Overview List" Empty for a user
+- Task #85170 - My View Menu doesnt work
+- Task #84723 - Additional column to Extract File
+- Task #85192 - "Request Comment" and "Select new counterpart" buttons are not working
+  [batradav]
 
 
 2.0.22 (2017-05-16)
