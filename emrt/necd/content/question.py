@@ -90,10 +90,7 @@ class Question(dexterity.Container):
 
     def has_answers(self):
         items = self.values()
-        questions = [q for q in items if q.portal_type == 'Comment']
-        answers = [q for q in items if q.portal_type == 'CommentAnswer']
-
-        return len(questions) == len(answers)
+        return len(items) and items[-1].portal_type == 'CommentAnswer' or False
 
     def can_be_sent_to_lr(self):
         items = self.values()
