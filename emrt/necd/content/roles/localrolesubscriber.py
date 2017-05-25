@@ -40,9 +40,4 @@ def grant_local_roles(context):
             roles=[ROLE_MSA],
             obj=obj,
         )
-        api.group.grant_roles(
-            groupname='{}-{}'.format(LDAP_MSEXPERT, country),
-            roles=[ROLE_MSE],
-            obj=obj,
-        )
         obj.reindexObjectSecurity()

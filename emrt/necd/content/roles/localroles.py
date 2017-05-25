@@ -36,8 +36,6 @@ def get_user_roles_in_context(context, principal_id):
             roles.append(ROLE_LR)
         if '{}-{}'.format(LDAP_MSA, country) in groups:
             roles.append(ROLE_MSA)
-        if '{}-{}'.format(LDAP_MSEXPERT, country) in groups:
-            roles.append(ROLE_MSE)
     return roles
 
 
