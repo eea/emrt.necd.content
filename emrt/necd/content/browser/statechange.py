@@ -234,6 +234,9 @@ class AssignFormMixin(BrowserView):
                 (user_id, user_name, self._is_managed_role(user_id)) for
                 user_id, user_name in res if
                 user_id != current_user_id
+                # [refs #85316] exclude test users
+                and 'necd_' not in user_id
+                and '_necd' not in user_id
             ]
             users.extend(data)
 
