@@ -2,10 +2,13 @@ Changelog
 =========
 
 
-2.0.24 (unreleased)
+2.0.24 (2017-05-25)
 -------------------
 
-- Nothing changed yet.
+- Task #85233 - Observation history problems
+- Task #85343 - Email notification to MS Expert
+- Task #85316 - Selection of Member State Expert
+  [batradav]
 
 
 2.0.23 (2017-05-18)

@@ -230,17 +230,10 @@
       import_steps="workflow update-workflow-rolemap"
       />
 
-  </genericsetup:upgradeSteps>
-
-  <genericsetup:upgradeSteps
-    source="2.0.24"
-    destination="2.0.25"
-    profile="emrt.necd.content:default">
-
     <genericsetup:upgradeStep
       title="Cleanup MSExpert role from LDAP groups."
       description="[refs #85343] LDAP group should not be granted MSExpert role. This is done by assigning MS 'counterparts'."
-      handler="emrt.necd.content.upgrades.evolve2025.run"
+      handler="emrt.necd.content.upgrades.evolve2024.run"
       />
 
   </genericsetup:upgradeSteps>
