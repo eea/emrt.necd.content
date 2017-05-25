@@ -17,6 +17,8 @@ from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from eea.cache import cache
 from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
+from emrt.necd.content.notifications import answer_to_msexperts
+from emrt.necd.content.notifications import question_to_counterpart
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.utils import find_parent_with_interface
 from emrt.necd.content.utils import principals_with_roles
@@ -334,6 +336,8 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
                     obj=target)
             target.reindexObjectSecurity()
 
+            answer_to_msexperts.notification_mse(self.context, reassign=True)
+
             return self.request.response.redirect(target.absolute_url())
 
         else:
@@ -423,15 +427,8 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             status.addStatusMessage(msg, "info")
             url = self.context.absolute_url()
 
-            subject = u'New draft question to comment'
-            _temp = PageTemplateFile('../notifications/question_to_counterpart.pt')
-            notify(
-                target,
-                _temp,
-                subject,
-                role=self._managed_role,
-                notification_name='question_to_counterpart'
-            )
+            question_to_counterpart.notification_cp(
+                self.context, reassign=True)
 
             return self.request.response.redirect(url)
 

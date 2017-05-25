@@ -1074,7 +1074,7 @@ class ObservationMixin(DefaultView):
             question = self.question()
             if question is not None:
                 qs = question.get_questions()
-                return qs[-1].getObject()
+                return qs[-1].getObject() if qs else None
 
         return None
 

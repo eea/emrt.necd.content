@@ -9,14 +9,20 @@ from emrt.necd.content.constants import ROLE_LR
 
 
 @grok.subscribe(IQuestion, IActionSucceededEvent)
-def notification_cp(context, event):
+def notification_cp(context, event=None, reassign=False):
     """
     To:     CounterParts
     When:   New draft question to comment on
     """
     _temp = PageTemplateFile('question_to_counterpart.pt')
 
-    if event.action in ['request-for-counterpart-comments']:
+    should_run = (
+        event
+        and event.action in ['request-for-counterpart-comments']
+        or reassign
+    )
+
+    if should_run:
         observation = aq_parent(context)
         subject = u'New draft question to comment'
         notify(
