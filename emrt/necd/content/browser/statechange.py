@@ -1,5 +1,7 @@
 import re
 from functools import partial
+from operator import itemgetter
+import Globals
 from Acquisition import aq_parent, aq_inner
 from emrt.necd.content import MessageFactory as _
 from plone import api
@@ -89,6 +91,24 @@ def revoke_roles(username=None, user=None, obj=None, roles=None, inherit=True):
         obj.manage_delLocalRoles([user.getId()])
     else:
         obj.manage_setLocalRoles(user.getId(), roles)
+
+
+def exclude_test_users(userdata):
+    """ Filter out test user ids if not in development mode.
+    """
+    if Globals.DevelopmentMode:
+        return userdata
+
+    exclude = ('_necd', 'necd_', 'sectorrevnecd')
+    userid = itemgetter(0)
+
+    def drop(data):
+        return not tuple(
+            ex for ex in exclude
+            if ex in userid(data)
+        )
+
+    return filter(drop, userdata)
 
 
 class IFinishObservationReasonForm(Interface):
@@ -230,15 +250,13 @@ class AssignFormMixin(BrowserView):
         groups = map(group_tool.getGroupById, self._target_groupnames())
 
         for res in map(self.get_users_from_group, groups):
-            data = [
+            matched = [
                 (user_id, user_name, self._is_managed_role(user_id)) for
                 user_id, user_name in res if
                 user_id != current_user_id
-                # [refs #85316] exclude test users
-                and 'necd_' not in user_id
-                and '_necd' not in user_id
             ]
-            users.extend(data)
+            no_test_users = exclude_test_users(matched)
+            users.extend(no_test_users)
 
         self._cache_counterpart_users = list(set(users))
         return self._cache_counterpart_users
