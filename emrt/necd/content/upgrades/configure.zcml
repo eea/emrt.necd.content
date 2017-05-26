@@ -238,4 +238,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.24"
+    destination="2.0.25"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Cleanup LR, SE and MSA roles from users."
+      description="[refs #85341] These roles should only be assigned to LDAP groups, not individual users."
+      handler="emrt.necd.content.upgrades.evolve2025.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
