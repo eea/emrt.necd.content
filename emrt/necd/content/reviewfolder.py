@@ -99,6 +99,41 @@ def get_finalisation_reasons(reviewfolder):
     reasons.extend(to_add)
     return reasons
 
+
+def filter_for_ms(brains):
+    user = api.user.get_current()
+    roles_ms = (ROLE_MSA, ROLE_MSE)
+    map_role_to_prop = {
+        ROLE_MSA: 'observation_sent_to_msc',
+        ROLE_MSE: 'observation_sent_to_mse'
+    }
+
+    def ms_user(obs, roles):
+        has_ms  = set(roles).intersection(roles_ms)
+        has_other = set(roles).difference(roles_ms)
+        return has_ms if not has_other else tuple()
+
+    result = []
+
+    for brain in brains:
+        obs = brain.getObject()
+        roles = tuple(
+            role for role in api.user.get_roles(user=user, obj=obs)
+            if role not in ('Authenticated', 'Owner')
+        )
+
+        has_ms_roles = ms_user(obs, roles)
+        append = any(
+            getattr(brain, map_role_to_prop[ms_role], None)
+            for ms_role in has_ms_roles
+        )
+
+        if (has_ms_roles and append) or not has_ms_roles:
+            result.append(brain)
+
+    return result
+
+
 class IReviewFolder(form.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
@@ -161,7 +196,7 @@ class ReviewFolderMixin(grok.View):
         if nfrCode:
             query['nfr_code'] = dict(query=nfrCode, operator='or')
 
-        return catalog(query)
+        return filter_for_ms(catalog(query))
 
     def can_add_observation(self):
         sm = getSecurityManager()
@@ -254,38 +289,10 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
     def folderitems(self, sort_on="modified", sort_order="reverse"):
         """
         """
-        user = api.user.get_current()
-        questions = self.get_questions(sort_on, sort_order)
-        roles_ms = (ROLE_MSA, ROLE_MSE)
-        map_role_to_prop = {
-            ROLE_MSA: 'observation_sent_to_msc',
-            ROLE_MSE: 'observation_sent_to_mse'
-        }
-
-        def ms_user(obs, roles):
-            has_ms  = set(roles).intersection(roles_ms)
-            has_other = set(roles).difference(roles_ms)
-            return has_ms if not has_other else tuple()
-
-        result = []
-
-        for brain in questions:
-            obs = brain.getObject()
-            roles = tuple(
-                role for role in api.user.get_roles(user=user, obj=obs)
-                if role not in ('Authenticated', 'Owner')
-            )
-
-            has_ms_roles = ms_user(obs, roles)
-            append = any(
-                getattr(brain, map_role_to_prop[ms_role], None)
-                for ms_role in has_ms_roles
-            )
-
-            if (has_ms_roles and append) or not has_ms_roles:
-                result.append(dict(brain=brain))
-
-        return result
+        return [
+            dict(brain=brain) for brain in
+            self.get_questions(sort_on, sort_order)
+        ]
 
     def table(self, context, request, sort_on='modified', sort_order="reverse"):
         pagesize = int(self.request.get('pagesize', 20))
