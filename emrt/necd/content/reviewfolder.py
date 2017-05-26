@@ -254,15 +254,38 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
     def folderitems(self, sort_on="modified", sort_order="reverse"):
         """
         """
-
+        user = api.user.get_current()
         questions = self.get_questions(sort_on, sort_order)
-        results = []
-        for i, obj in enumerate(questions):
-            results.append(dict(
-                brain=obj
-            ))
+        roles_ms = (ROLE_MSA, ROLE_MSE)
+        map_role_to_prop = {
+            ROLE_MSA: 'observation_sent_to_msc',
+            ROLE_MSE: 'observation_sent_to_mse'
+        }
 
-        return results
+        def ms_user(obs, roles):
+            has_ms  = set(roles).intersection(roles_ms)
+            has_other = set(roles).difference(roles_ms)
+            return has_ms if not has_other else tuple()
+
+        result = []
+
+        for brain in questions:
+            obs = brain.getObject()
+            roles = tuple(
+                role for role in api.user.get_roles(user=user, obj=obs)
+                if role not in ('Authenticated', 'Owner')
+            )
+
+            has_ms_roles = ms_user(obs, roles)
+            append = any(
+                getattr(brain, map_role_to_prop[ms_role], None)
+                for ms_role in has_ms_roles
+            )
+
+            if (has_ms_roles and append) or not has_ms_roles:
+                result.append(dict(brain=brain))
+
+        return result
 
     def table(self, context, request, sort_on='modified', sort_order="reverse"):
         pagesize = int(self.request.get('pagesize', 20))

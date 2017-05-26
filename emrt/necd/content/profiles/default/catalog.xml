@@ -122,4 +122,6 @@
  <column value="observation_finalisation_reason" />
  <column value="observation_finalisation_text" />
  <column value="pollutants_value" />
+ <column value="observation_sent_to_msc" />
+ <column value="observation_sent_to_mse" />
 </object>

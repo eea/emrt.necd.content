@@ -243,8 +243,14 @@
     destination="2.0.25"
     profile="emrt.necd.content:default">
 
+    <genericsetup:upgradeDepends
+      title="Import catalog"
+      description="[refs #85209] New observation_sent_to_msc and observation_sent_to_mse columns."
+      import_steps="catalog"
+      />
+
     <genericsetup:upgradeStep
-      title="Cleanup LR, SE and MSA roles from users."
+      title="Cleanup LR, SE and MSA roles from users. And reindex observations."
       description="[refs #85341] These roles should only be assigned to LDAP groups, not individual users."
       handler="emrt.necd.content.upgrades.evolve2025.run"
       />

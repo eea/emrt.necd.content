@@ -61,8 +61,11 @@ def do_upgrade(obj):
             obj.absolute_url(1)
         )
 
+    # new brain metadata is added by catalog.xml
+    # observation_sent_to_msc and observation_sent_to_mse
+    obj.reindexObject()
+
 
 def get_objects(catalog, portal_type):
     brains = catalog(portal_type=portal_type)
     return tuple(brain.getObject() for brain in brains)
-
