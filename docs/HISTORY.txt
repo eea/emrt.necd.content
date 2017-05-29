@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.26 (unreleased)
+2.0.26 (2017-05-29)
 -------------------
 
-- Nothing changed yet.
+- Task #85413 - SE attach file to a question: the file is not visible
+  [batradav]
 
 
 2.0.25 (2017-05-26)
