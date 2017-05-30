@@ -5,7 +5,9 @@ Changelog
 2.0.27 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Task #85477 - New Sector List
+- Task #85464 - MS Expert have too many email notification
+  [batradav]
 
 
 2.0.26 (2017-05-29)
