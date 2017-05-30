@@ -2,7 +2,13 @@ Changelog
 =========
 
 
-2.0.27 (unreleased)
+2.0.28 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+2.0.27 (2017-05-29)
 -------------------
 
 - Task #85477 - New Sector List
