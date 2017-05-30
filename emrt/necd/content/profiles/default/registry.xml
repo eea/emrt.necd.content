@@ -172,6 +172,8 @@
       <element key="11A">sector9|11A|11A Other Sources|11A Volcanoes</element>
       <element key="11B">sector9|11B|11B Other Sources|11B Forest fires</element>
       <element key="11C">sector9|11C|11C Other Sources|11C Other natural emissions (please specify in the IIR)</element>
+      <element key="0A">sector9|0A|0A Other Sources|0A National total - National total for the entire territory - Based on fuel sold/fuel used</element>
+      <element key="0B">sector9|0B|0B Other Sources|0B National total for compliance assessment</element>
     </value>
   </record>
 </registry>
