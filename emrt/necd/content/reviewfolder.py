@@ -2,6 +2,7 @@ import itertools
 import urllib
 import time
 import tablib
+from functools import partial
 from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
@@ -37,6 +38,10 @@ from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_CP
+from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import LDAP_LEADREVIEW
+from emrt.necd.content.constants import LDAP_MSA
+from emrt.necd.content.constants import LDAP_MSEXPERT
 
 grok.templatedir('templates')
 
@@ -50,6 +55,15 @@ QUESTION_WORKFLOW_MAP = {
     'close-requested': 'Close requested',
     'finalised': 'Finalised',
 }
+
+
+def user_has_ldap_role(ldap_name):
+    user = api.user.get_current()
+    groups = user.getGroups()
+    return tuple(
+        group for group in groups
+        if group.startswith(ldap_name)
+    )
 
 
 # Cache helper methods
@@ -248,23 +262,8 @@ class ReviewFolderMixin(grok.View):
     def get_finalisation_reasons(self):
         return get_finalisation_reasons(self.context)
 
-    def is_member_state_coordinator(self):
-        if api.user.is_anonymous():
-            raise Unauthorized
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_MSA in roles
-
-    def is_member_state_expert(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_MSE in roles
+    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
+    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
 
 
 class ReviewFolderView(ReviewFolderMixin):
@@ -1152,37 +1151,10 @@ class InboxReviewFolderView(grok.View):
 
         return sectors
 
-    def is_sector_expert(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_SE in roles
-
-    def is_lead_reviewer(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_LR in roles
-
-    def is_member_state_coordinator(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_MSA in roles
-
-    def is_member_state_expert(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_MSE in roles
+    is_sector_expert = partial(user_has_ldap_role, LDAP_SECTOREXP)
+    is_lead_reviewer = partial(user_has_ldap_role, LDAP_LEADREVIEW)
+    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
+    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
 
 
 class FinalisedFolderView(grok.View):
@@ -1312,34 +1284,7 @@ class FinalisedFolderView(grok.View):
 
         return sectors
 
-    def is_sector_expert(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_SE in roles
-
-    def is_lead_reviewer(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_LR in roles
-
-    def is_member_state_coordinator(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_MSA in roles
-
-    def is_member_state_expert(self):
-        user = api.user.get_current()
-        roles = api.user.get_roles(
-            user=user,
-            obj=self.context
-        )
-        return ROLE_MSE in roles
+    is_sector_expert = partial(user_has_ldap_role, LDAP_SECTOREXP)
+    is_lead_reviewer = partial(user_has_ldap_role, LDAP_LEADREVIEW)
+    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
+    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
