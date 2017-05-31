@@ -32,6 +32,7 @@ from zope.schema import List, Choice, TextLine, Bool
 from zope.interface import Interface
 from zope.interface import provider
 from z3c.form.interfaces import HIDDEN_MODE
+from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
@@ -55,15 +56,6 @@ QUESTION_WORKFLOW_MAP = {
     'close-requested': 'Close requested',
     'finalised': 'Finalised',
 }
-
-
-def user_has_ldap_role(ldap_name):
-    user = api.user.get_current()
-    groups = user.getGroups()
-    return tuple(
-        group for group in groups
-        if group.startswith(ldap_name)
-    )
 
 
 # Cache helper methods

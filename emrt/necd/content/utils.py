@@ -1,5 +1,15 @@
 import concurrent.futures
 from operator import itemgetter
+import plone.api as api
+
+
+def user_has_ldap_role(ldap_name, user=None, groups=None):
+    _user = user if user else api.user.get_current()
+    _groups = groups if groups else _user.getGroups()
+    return any(tuple(
+        group for group in _groups
+        if group.startswith(ldap_name)
+    ))
 
 
 def principals_with_roles(context, rolenames):

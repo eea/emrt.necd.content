@@ -1,3 +1,4 @@
+from functools import partial
 from plone import api
 from Products.statusmessages.interfaces import IStatusMessage
 from five import grok
@@ -15,11 +16,24 @@ from zope.annotation.interfaces import IAnnotations
 
 import copy
 
+from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import LDAP_LEADREVIEW
+from emrt.necd.content.constants import LDAP_MSA
+from emrt.necd.content.constants import LDAP_MSEXPERT
+
+
+LDAP_TO_LOCAL = {
+    ROLE_SE: partial(user_has_ldap_role, LDAP_SECTOREXP),
+    ROLE_LR: partial(user_has_ldap_role, LDAP_LEADREVIEW),
+    ROLE_MSA: partial(user_has_ldap_role, LDAP_MSA),
+    ROLE_MSE: partial(user_has_ldap_role, LDAP_MSEXPERT),
+}
 
 
 ROLE_TRANSLATOR = {
@@ -120,7 +134,7 @@ class SubscriptionConfigurationMixin(grok.View):
 
         user = self.user()
         roles = []
-        for role in api.user.get_roles(user=user, obj=context):
+        for role in self._user_roles(context, user):
             if translated_roles:
                 translated = ROLE_TRANSLATOR.get(role)
                 if translated is not None:
@@ -183,9 +197,20 @@ class SubscriptionConfigurationReview(SubscriptionConfigurationMixin):
     grok.name('subscription-configuration')
     grok.require('zope2.View')
 
+    def _user_roles(self, context, user):
+        groups = user.getGroups()
+        return tuple(
+            role for role, checker in LDAP_TO_LOCAL.items()
+            if checker(groups=groups)
+        )
+
 
 class SubscriptionConfiguration(SubscriptionConfigurationReview, ObservationView):
     grok.context(IObservation)
+
+    def _user_roles(self, context, user):
+        return api.user.get_roles(user=user, obj=context)
+
 
     def has_local_notifications_settings(self):
         user = api.user.get_current()
