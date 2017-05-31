@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.28 (unreleased)
+2.0.28 (2017-05-31)
 -------------------
 
-- Nothing changed yet.
+- Task #85445 - Configure notification for MS Expert
+  [batradav]
 
 
 2.0.27 (2017-05-29)
