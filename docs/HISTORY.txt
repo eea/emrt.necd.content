@@ -2,10 +2,12 @@ Changelog
 =========
 
 
-2.0.29 (unreleased)
+2.0.29 (2017-06-07)
 -------------------
 
-- Nothing changed yet.
+- Task #85626 - SE asked for comment - System provide error feedback
+- Task #85775 - no response or too long time in order to load the page
+  [batradav]
 
 
 2.0.28 (2017-05-31)
