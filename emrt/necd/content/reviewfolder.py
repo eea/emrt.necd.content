@@ -106,35 +106,32 @@ def get_finalisation_reasons(reviewfolder):
     return reasons
 
 
-def filter_for_ms(brains):
+def filter_for_ms(brains, context):
     user = api.user.get_current()
-    roles_ms = (ROLE_MSA, ROLE_MSE)
-    map_role_to_prop = {
-        ROLE_MSA: 'observation_sent_to_msc',
-        ROLE_MSE: 'observation_sent_to_mse'
-    }
+    roles = api.user.get_roles(user=user, obj=context)
+    groups = user.getGroups()
 
-    def ms_user(obs, roles):
-        has_ms  = set(roles).intersection(roles_ms)
-        has_other = set(roles).difference(roles_ms)
-        return has_ms if not has_other else tuple()
+    # Don't filter the list if user is SE, LR or Manager
+    if set(roles).intersection(ROLE_SE, ROLE_LR, 'Manager'):
+        return brains
 
     result = []
-
     for brain in brains:
-        obs = brain.getObject()
-        roles = tuple(
-            role for role in api.user.get_roles(user=user, obj=obs)
-            if role not in ('Authenticated', 'Owner')
-        )
+        country = brain.country
 
-        has_ms_roles = ms_user(obs, roles)
-        append = any(
-            getattr(brain, map_role_to_prop[ms_role], None)
-            for ms_role in has_ms_roles
-        )
+        group_msa = '{}-{}'.format(LDAP_MSA, country)
+        group_mse = '{}-{}'.format(LDAP_MSEXPERT, country)
 
-        if (has_ms_roles and append) or not has_ms_roles:
+        is_msa = group_msa in groups
+        is_mse = group_mse in groups
+
+        if not any((is_msa, is_mse)):
+            result.append(brain)
+
+        elif is_msa and brain.observation_sent_to_msc:
+            result.append(brain)
+
+        elif is_mse and brain.observation_sent_to_mse:
             result.append(brain)
 
     return result
@@ -202,7 +199,7 @@ class ReviewFolderMixin(grok.View):
         if nfrCode:
             query['nfr_code'] = dict(query=nfrCode, operator='or')
 
-        return filter_for_ms(catalog(query))
+        return filter_for_ms(catalog(query), context=self.context)
 
     def can_add_observation(self):
         sm = getSecurityManager()
