@@ -270,4 +270,23 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.27"
+    destination="2.0.29"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Clean NFR codes."
+      description="[refs #85626] Will overwrite existing NFR code data!"
+      import_steps="plone.app.registry"
+      />
+
+    <genericsetup:upgradeStep
+      title="Strip NFR code values that have trailing whitespace."
+      description="[refs #85626] Some NFR codes contain a trailing whitespace as the key, this causes issues."
+      handler="emrt.necd.content.upgrades.evolve2029.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

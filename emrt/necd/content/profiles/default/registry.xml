@@ -52,7 +52,7 @@
       <element key="1A3di(i)">sector3|1A3di(i)|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3di(i) International maritime navigation - Memo Item</element>
       <element key="1A3dii">sector3|1A3dii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: off-road transport|1A3dii National navigation (shipping)</element>
       <element key="1A3">sector2|1A3|1A3 Energy: transport including international|1A3 Transport: Fuel Used - Memo Item</element>
-      <element key="1A2gvii ">sector3|1A2gvii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A2gvii Mobile Combustion in manufacturing industries and construction: (please specify in the IIR)</element>
+      <element key="1A2gvii">sector3|1A2gvii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A2gvii Mobile Combustion in manufacturing industries and construction: (please specify in the IIR)</element>
       <element key="1A3c">sector3|1A3c|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A3c Railways</element>
       <element key="1A3ei">sector3|1A3ei|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A3ei Pipeline transport</element>
       <element key="1A3eii">sector3|1A3eii|1A2gvii, 1A3c, 1A3ei, 1A3eii, 1A4, 1A5 Energy: Non-road mobile machinery|1A3eii Other (please specify in the IIR)</element>
@@ -116,7 +116,7 @@
       <element key="2H">sector6|2H|2D, 2G-2L IPPU: Solvent and other product use|2H Other industry production</element>
       <element key="2H1">sector6|2H1|2D, 2G-2L IPPU: Solvent and other product use|2H1 Pulp and paper industry</element>
       <element key="2H2">sector6|2H2|2D, 2G-2L IPPU: Solvent and other product use|2H2 Food and beverages industry</element>
-      <element key="2H3 ">sector6|2H3|2D, 2G-2L IPPU: Solvent and other product use|2H3 Other industrial processes (please specify in the IIR)</element>
+      <element key="2H3">sector6|2H3|2D, 2G-2L IPPU: Solvent and other product use|2H3 Other industrial processes (please specify in the IIR)</element>
       <element key="2I">sector6|2I|2D, 2G-2L IPPU: Solvent and other product use|2I Wood processing</element>
       <element key="2J">sector6|2J|2D, 2G-2L IPPU: Solvent and other product use|2J Production of POPs</element>
       <element key="2K">sector6|2K|2D, 2G-2L IPPU: Solvent and other product use|2K Consumption of POPs and heavy metals (e.g. electrical and scientific equipment)</element>

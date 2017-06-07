@@ -247,7 +247,8 @@ class AssignFormMixin(BrowserView):
         current_user_id = api.user.get_current().getId()
 
         group_tool = api.portal.get_tool('portal_groups')
-        groups = map(group_tool.getGroupById, self._target_groupnames())
+        _groups = map(group_tool.getGroupById, self._target_groupnames())
+        groups = filter(bool, _groups) # filter out None
 
         for res in map(self.get_users_from_group, groups):
             matched = [
