@@ -112,7 +112,7 @@ def filter_for_ms(brains, context):
     groups = user.getGroups()
 
     # Don't filter the list if user is SE, LR or Manager
-    if set(roles).intersection(ROLE_SE, ROLE_LR, 'Manager'):
+    if set(roles).intersection((ROLE_SE, ROLE_LR, 'Manager')):
         return brains
 
     result = []
