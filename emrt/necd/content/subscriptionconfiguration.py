@@ -1,7 +1,7 @@
 from functools import partial
 from plone import api
 from Products.statusmessages.interfaces import IStatusMessage
-from five import grok
+from Products.Five import BrowserView
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from AccessControl import Unauthorized
@@ -116,11 +116,7 @@ NOTIFICATION_NAMES = {
 }
 
 
-grok.templatedir('templates')
-
-
-class SubscriptionConfigurationMixin(grok.View):
-    grok.baseclass()
+class SubscriptionConfigurationMixin(BrowserView):
 
     @memoize
     def user(self):
@@ -193,9 +189,6 @@ class SubscriptionConfigurationMixin(grok.View):
 
 
 class SubscriptionConfigurationReview(SubscriptionConfigurationMixin):
-    grok.context(IReviewFolder)
-    grok.name('subscription-configuration')
-    grok.require('zope2.View')
 
     def _user_roles(self, context, user):
         groups = user.getGroups()
@@ -205,12 +198,10 @@ class SubscriptionConfigurationReview(SubscriptionConfigurationMixin):
         )
 
 
-class SubscriptionConfiguration(SubscriptionConfigurationReview, ObservationView):
-    grok.context(IObservation)
+class SubscriptionConfiguration(SubscriptionConfigurationMixin, ObservationView):
 
     def _user_roles(self, context, user):
         return api.user.get_roles(user=user, obj=context)
-
 
     def has_local_notifications_settings(self):
         user = api.user.get_current()
@@ -220,10 +211,7 @@ class SubscriptionConfiguration(SubscriptionConfigurationReview, ObservationView
         return data and True or False
 
 
-class SaveSubscriptionsReview(SubscriptionConfigurationMixin):
-    grok.context(IReviewFolder)
-    grok.require('zope2.View')
-    grok.name('save-subscriptions')
+class SaveSubscriptionsMixin(BrowserView):
 
     def render(self):
         user_roles = []
@@ -253,15 +241,16 @@ class SaveSubscriptionsReview(SubscriptionConfigurationMixin):
         return self.request.response.redirect(self.context.absolute_url())
 
 
-class SaveSubscriptions(SaveSubscriptionsReview):
-    grok.context(IObservation)
+class SaveSubscriptionsReview(
+    SubscriptionConfigurationReview, SaveSubscriptionsMixin):
+    """ Save class for Review folder """
+
+
+class SaveSubscriptions(SubscriptionConfiguration, SaveSubscriptionsMixin):
+    """ Save class for Observation """
 
 
 class ClearSubscriptions(SubscriptionConfigurationMixin):
-    grok.context(IObservation)
-    grok.require('zope2.View')
-    grok.name('clear-subscriptions')
-
     def render(self):
         user = self.user()
         adapted = INotificationUnsubscriptions(self.context)
