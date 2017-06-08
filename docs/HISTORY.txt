@@ -2,10 +2,12 @@ Changelog
 =========
 
 
-2.0.30 (unreleased)
+2.0.30 (2017-06-08)
 -------------------
 
-- Nothing changed yet.
+- Task #85804 - Problem with Export observations in XLS format
+- Task #85806 - Problem in overview list filtering
+  [batradav]
 
 
 2.0.29 (2017-06-07)
