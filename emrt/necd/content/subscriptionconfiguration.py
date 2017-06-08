@@ -145,8 +145,9 @@ class SubscriptionConfigurationMixin(BrowserView):
             context = self.context
 
         if not(
-            IReviewFolder.providedBy(context) or IObservation.providedBy(context)
-        ):
+                IReviewFolder.providedBy(context)
+                or IObservation.providedBy(context)
+            ):
             return {}
 
         user = self.user()
@@ -242,7 +243,7 @@ class SaveSubscriptionsMixin(BrowserView):
 
 
 class SaveSubscriptionsReview(
-    SubscriptionConfigurationReview, SaveSubscriptionsMixin):
+        SubscriptionConfigurationReview, SaveSubscriptionsMixin):
     """ Save class for Review folder """
 
 
