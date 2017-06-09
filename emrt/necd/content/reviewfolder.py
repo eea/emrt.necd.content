@@ -107,6 +107,9 @@ def get_finalisation_reasons(reviewfolder):
 
 
 def filter_for_ms(brains, context):
+    if api.user.is_anonymous():
+        return brains
+
     user = api.user.get_current()
     roles = api.user.get_roles(user=user, obj=context)
     groups = user.getGroups()
