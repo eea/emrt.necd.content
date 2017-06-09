@@ -2,7 +2,13 @@ Changelog
 =========
 
 
-2.0.31 (unreleased)
+2.0.32 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
+2.0.31 (2017-06-09)
 -------------------
 
 - Task #85805 - [Speed issue] - Create observation
