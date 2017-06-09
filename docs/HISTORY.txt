@@ -5,7 +5,9 @@ Changelog
 2.0.31 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Task #85805 - [Speed issue] - Create observation
+- Task #85445 - Configure notification
+  [batradav]
 
 
 2.0.30 (2017-06-08)
