@@ -289,4 +289,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.29"
+    destination="2.0.32"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Assign MSE role to necd_ test users."
+      description="[refs #85588] MSE test users need to have access to MSE shared observations."
+      handler="emrt.necd.content.upgrades.evolve2032.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

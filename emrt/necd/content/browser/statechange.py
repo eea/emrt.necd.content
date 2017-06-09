@@ -194,9 +194,6 @@ class AssignFormMixin(BrowserView):
 
     _msg_no_usernames = None
 
-    _cache_counterpart_users = None
-    _cache_managed_role = None
-
     def _get_wf_action(self):
         raise NotImplementedError
 
@@ -206,25 +203,20 @@ class AssignFormMixin(BrowserView):
     def _target_groupnames(self):
         raise NotImplementedError
 
+    def _extra_usernames(self, target):
+        return []
+
     def _is_managed_role(self, username):
-        if self._cache_managed_role is None:
-            self._cache_managed_role = {}
-
-        if username not in self._cache_managed_role:
-            self._cache_managed_role[username] = (
-                    self._managed_role in api.user.get_roles(
-                    username=username,
-                    obj=self._assignation_target(),
-                    inherit=False
-                )
-            )
-
-        return self._cache_managed_role[username]
+        return self._managed_role in api.user.get_roles(
+            username=username,
+            obj=self._assignation_target(),
+            inherit=False
+        )
 
     def revoke_all_roles(self):
         with api.env.adopt_roles(['Manager']):
             target = self._assignation_target()
-            for userId, username, cp in self.get_counterpart_users():
+            for userId, username, cp in self.get_counterpart_users(False):
                 if cp:
                     revoke_roles(
                         username=userId,
@@ -238,10 +230,7 @@ class AssignFormMixin(BrowserView):
         return [
             (u.getId(), u.getProperty('fullname', u.getId())) for u in users]
 
-    def get_counterpart_users(self):
-        if self._cache_counterpart_users is not None:
-            return self._cache_counterpart_users
-
+    def get_counterpart_users(self, exclude_test=True):
         users = []
 
         current_user_id = api.user.get_current().getId()
@@ -256,11 +245,15 @@ class AssignFormMixin(BrowserView):
                 user_id, user_name in res if
                 user_id != current_user_id
             ]
-            no_test_users = exclude_test_users(matched)
-            users.extend(no_test_users)
+            users.extend(matched)
 
-        self._cache_counterpart_users = list(set(users))
-        return self._cache_counterpart_users
+        result = list(set(users))
+
+        if exclude_test:
+            return exclude_test_users(result)
+        else:
+            return result
+
 
     def __call__(self):
         """ Perform the update and redirect if necessary, or render the page
@@ -276,12 +269,14 @@ class AssignFormMixin(BrowserView):
 
             self.revoke_all_roles()
 
+            usernames.extend(self._extra_usernames(target))
             for username in usernames:
                 api.user.grant_roles(
                     username=username,
                     roles=[self._managed_role],
                     obj=target
                 )
+
             target.reindexObjectSecurity()
 
             wf_action = self._get_wf_action()
@@ -325,6 +320,10 @@ class AssignAnswererForm(AssignFormMixin):
     def _assignation_target(self):
         return aq_parent(aq_inner(self.context))
 
+    def _extra_usernames(self, target):
+        country = target.country
+        return ['necd_eea_{}_exp'.format(country)]
+
     def _target_groupnames(self):
         context = aq_inner(self.context)
         observation = aq_parent(context)
@@ -352,6 +351,8 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
                 return self.index()
 
             self.revoke_all_roles()
+
+            usernames.extend(self._extra_usernames(target))
             for username in usernames:
                 api.user.grant_roles(username=username,
                     roles=[self._managed_role],
@@ -410,7 +411,13 @@ class AssignCounterPartForm(AssignFormMixin):
         users = [
             u[0] for u in local_roles if self._managed_role in u[1]
         ]
-        return [api.user.get(user) for user in users]
+
+        skipped_extra_users = self._extra_usernames(target)
+        return [
+            api.user.get(user)
+            for user in users
+            if user not in skipped_extra_users
+        ]
 
 
 class IAssignConclusionReviewerForm(Interface):
