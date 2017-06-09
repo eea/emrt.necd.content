@@ -152,10 +152,11 @@ class Question(dexterity.Container):
 
     def one_pending_answer(self):
         if self.has_answers():
-            answers = [q for q in self.values() if q.portal_type == 'CommentAnswer']
-            answer = answers[-1]
-            user = api.user.get_current()
-            return answer.Creator() == user.getId()
+            answers = [
+                q for q in self.values()
+                if q.portal_type == 'CommentAnswer'
+            ]
+            return len(answers) > 0
         else:
             return False
 
