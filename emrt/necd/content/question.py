@@ -457,6 +457,7 @@ class ApproveAndSendView(BrowserView):
             self.context.redraft_message = ''
             api.content.transition(
                 obj=question,
-                transition='approve-question'
+                transition='approve-question',
+                comment=self.context.getId(),
             )
         return self.request.response.redirect(question.absolute_url())

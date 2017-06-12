@@ -40,7 +40,11 @@ class RedraftQuestionForm(form.Form):
             self.context.redraft_date = datetime.now()
 
         question = self.context.aq_parent
-        api.content.transition(obj=question, transition='redraft')
+        api.content.transition(
+            obj=question,
+            transition='redraft',
+            comment=self.context.getId(),
+        )
         self.request.response.redirect(question.absolute_url())
 
     @button.buttonAndHandler(u'Cancel')
