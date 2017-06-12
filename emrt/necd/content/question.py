@@ -5,6 +5,7 @@ from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.comment import IComment
+from emrt.necd.content.constants import ROLE_LR
 from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
@@ -13,6 +14,7 @@ from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.statusmessages.interfaces import IStatusMessage
+from Products.Five import BrowserView
 from time import time
 from z3c.form import button
 from z3c.form import field
@@ -444,3 +446,17 @@ class DeleteLastAnswer(grok.View):
                 url += '/content_status_modify?workflow_action=delete-answer'
             return self.request.response.redirect(url)
         return self.request.response.redirect(url)
+
+
+class ApproveAndSendView(BrowserView):
+    def render(self):
+        question = self.context.aq_parent
+        roles = api.user.get_roles(obj=question)
+        is_lr = ROLE_LR in roles or 'Manager' in roles
+        if is_lr:
+            self.context.redraft_message = ''
+            api.content.transition(
+                obj=question,
+                transition='approve-question'
+            )
+        return self.request.response.redirect(question.absolute_url())

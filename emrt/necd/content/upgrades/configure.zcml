@@ -302,4 +302,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.32"
+    destination="2.0.33"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Upgrade rolemap"
+      description="[refs #85296] Grant P_OBS_REDRAFT_REASON_VIEW permission to LR and SE."
+      import_steps="rolemap workflow"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

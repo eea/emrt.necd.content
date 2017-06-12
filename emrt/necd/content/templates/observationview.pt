@@ -158,7 +158,10 @@
 
 <metal:main fill-slot="content-core">
   <metal:content-core define-macro="content-core"
-      tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime; show_internal_notes view/show_internal_notes">
+      tal:define="
+        toLocalizedTime nocall:here/@@plone/toLocalizedTime;
+        show_internal_notes view/show_internal_notes;
+        can_view_redraft_reason view/can_view_redraft_reason">
 
   <metal:observation define-macro="observation-info"
     tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
@@ -706,6 +709,27 @@
             </p>
           </div>
         </div>
+        <tal:redraft tal:define="redraft_message question/redraft_message/output|question/redraft_message|string:">
+          <tal:message condition="python:can_view_redraft_reason and redraft_message">
+            <br />
+            <div class="question comment">
+              <div class="arrow-right-border"></div>
+              <div class="arrow-right"></div>
+              <div class="from">
+                <span class="esdLabel">from</span>
+                <span class="value">Lead reviewer</span>
+                <span class="esdLabel">to</span>
+                <span class="value">TERTs</span>
+                <span class="messageDate">
+                  <tal:sent condition="question/redraft_date">
+                    Sent on: <span tal:content="python:question.redraft_date.strftime('%d %b %Y, %H:%M CET')">11/12/2013 12:00</span>
+                  </tal:sent>
+                </span>
+               </div>
+              <div tal:content="redraft_message" class="answerContent"></div>
+            </div>
+          </tal:message>
+        </tal:redraft>
         <div class="changes" tal:condition="question/can_edit">
           <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
             <div class="cell position-0 width-16">
@@ -970,9 +994,18 @@
                 </a>
               </tal:block>
             </tal:block>
-            <tal:block tal:condition="python: 'send-comment' in action['action'] or 'send-to-lr' in action['action'] or 'approve-question' in action['action'] or 'ask-answer-approval' in action['action'] or 'answer-to-lr' in action['action'] or 'validate-answer-msa' in action['action']">
+            <tal:block tal:condition="python: 'send-comment' in action['action'] or 'send-to-lr' in action['action'] or 'ask-answer-approval' in action['action'] or 'answer-to-lr' in action['action'] or 'validate-answer-msa' in action['action']">
               <a href=""
                 tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+                                title action/description|nothing;"
+                class="standardButton defaultWFButton"
+                tal:content="action/title">
+                Action
+              </a>
+            </tal:block>
+            <tal:block tal:condition="python:'approve-question' in action['action']">
+              <a href=""
+                 tal:attributes="href string:${question/absolute_url}/approve-question;
                                 title action/description|nothing;"
                 class="standardButton defaultWFButton"
                 tal:content="action/title">
@@ -991,7 +1024,16 @@
                 </a>
               </tal:block>
             </tal:block>
-            <tal:block tal:condition="python: '/assign_counterpart_form' not in action['action'] and 'send-comment' not in action['action'] and 'send-to-lr' not in action['action'] and 'approve-question' not in action['action'] and 'ask-answer-approval' not in action['action'] and 'answer-to-lr' not in action['action'] and 'validate-answer-msa' not in action['action'] and 'draft-conclusions' not in action['action'] and 'edit-highlights' not in action['action']">
+            <tal:block tal:condition="python:'redraft' in action['action']">
+              <a href=""
+                 tal:attributes="href string:${question/absolute_url}/redraft;
+                                title action/description|nothing;"
+                class="standardButton"
+                tal:content="action/title">
+                Action
+              </a>
+            </tal:block>
+            <tal:block tal:condition="python: '/assign_counterpart_form' not in action['action'] and 'send-comment' not in action['action'] and 'send-to-lr' not in action['action'] and 'approve-question' not in action['action'] and 'ask-answer-approval' not in action['action'] and 'answer-to-lr' not in action['action'] and 'validate-answer-msa' not in action['action'] and 'draft-conclusions' not in action['action'] and 'edit-highlights' not in action['action'] and 'redraft' not in action['action']">
               <a href=""
                 tal:attributes="href string:${action/action}&amp;comment=${question/getId};
                                 title action/description|nothing;"

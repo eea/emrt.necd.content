@@ -7,6 +7,7 @@ from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from Acquisition import Implicit
 from emrt.necd.content import MessageFactory as _
+from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from persistent import Persistent
 from plone.app.discussion.browser.comments import CommentForm
 from plone.app.discussion.comment import Comment
@@ -29,6 +30,16 @@ class ICommentExtenderFields(Interface):
         required=False,
     )
 
+    redraft_message = schema.Text(
+        title=_(u'Redraft reason'),
+        required=False,
+    )
+
+    redraft_date = schema.Datetime(
+        title=_(u'Redraft request date'),
+        required=False,
+    )
+
 
 class CommentExtenderFields(Implicit, Persistent):
     interface.implements(ICommentExtenderFields)
@@ -37,6 +48,9 @@ class CommentExtenderFields(Implicit, Persistent):
 
     security.declareProtected(permissions.View, 'attachment')
     attachment = u""
+
+    security.declareProtected(P_OBS_REDRAFT_REASON_VIEW, 'redraft_message')
+    redraft_message = u""
 
 InitializeClass(CommentExtenderFields)
 

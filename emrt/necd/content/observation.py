@@ -59,6 +59,7 @@ from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 import datetime
 
 
@@ -948,6 +949,10 @@ class ObservationMixin(DefaultView):
 
     def show_internal_notes(self):
         return ms_user.hide_from_ms(self.context)
+
+    def can_view_redraft_reason(self):
+        sm = getSecurityManager()
+        return sm.checkPermission(P_OBS_REDRAFT_REASON_VIEW, self.context)
 
     def add_question_form(self):
         from plone.z3cform.interfaces import IWrappedForm
