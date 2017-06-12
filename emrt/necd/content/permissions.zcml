@@ -1,88 +1,86 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
-    i18n_domain="emrt.necd.content">
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:i18n="http://namespaces.zope.org/i18n"
+  i18n_domain="emrt.necd.content">
 
 
-      <!-- -*- extra stuff goes here -*- -->
-       <permission
-          id="emrt.necd.content.AddConclusions"
-	  title="emrt.necd.content: Add Conclusions"
-	  />
+  <!-- -*- extra stuff goes here -*- -->
+  <permission
+    id="emrt.necd.content.AddConclusions"
+    title="emrt.necd.content: Add Conclusions"
+    />
 
-       <permission
-          id="emrt.necd.content.AddReviewFolder"
+  <permission
+    id="emrt.necd.content.AddReviewFolder"
     title="emrt.necd.content: Add ReviewFolder"
     />
 
 
-       <permission
-          id="emrt.necd.content.AddNECDFile"
+  <permission
+    id="emrt.necd.content.AddNECDFile"
     title="emrt.necd.content: Add NECDFile"
     />
 
 
-       <permission
-          id="emrt.necd.content.AddCommentAnswer"
+  <permission
+    id="emrt.necd.content.AddCommentAnswer"
     title="emrt.necd.content: Add CommentAnswer"
     />
 
-       <permission
-          id="emrt.necd.content.EditCommentAnswer"
+  <permission
+    id="emrt.necd.content.EditCommentAnswer"
     title="emrt.necd.content: Edit CommentAnswer"
     />
 
 
-       <permission
-          id="emrt.necd.content.AddComment"
+  <permission
+    id="emrt.necd.content.AddComment"
     title="emrt.necd.content: Add Comment"
     />
 
-       <permission
-          id="emrt.necd.content.EditComment"
+  <permission
+    id="emrt.necd.content.EditComment"
     title="emrt.necd.content: Edit Comment"
     />
 
-       <permission
-          id="emrt.necd.content.AddQuestion"
+  <permission
+    id="emrt.necd.content.AddQuestion"
     title="emrt.necd.content: Add Question"
     />
 
-       <permission
-          id="emrt.necd.content.ViewCommentDiscussion"
+  <permission
+    id="emrt.necd.content.ViewCommentDiscussion"
     title="emrt.necd.content: View Comment Discussion"
     />
 
-       <permission
-          id="emrt.necd.content.ViewAnswerDiscussion"
+  <permission
+    id="emrt.necd.content.ViewAnswerDiscussion"
     title="emrt.necd.content: View Answer Discussion"
     />
 
-       <permission
-          id="emrt.necd.content.ViewConclusionDiscussion"
+  <permission
+    id="emrt.necd.content.ViewConclusionDiscussion"
     title="emrt.necd.content: View Conclusion Discussion"
     />
 
-       <permission
-          id="emrt.necd.content.AddObservation"
+  <permission
+    id="emrt.necd.content.AddObservation"
     title="emrt.necd.content: Add Observation"
     />
 
-    <permission
-          id="emrt.necd.content.ExportObservations"
+  <permission
+    id="emrt.necd.content.ExportObservations"
     title="emrt.necd.content: Export Observations"
     />
 
-    <permission
-          id="emrt.necd.content.ExportAnObservation"
+  <permission
+    id="emrt.necd.content.ExportAnObservation"
     title="emrt.necd.content: Export an Observation"
     />
 
-    <permission
-          id="emrt.necd.content.Warmup"
+  <permission
+    id="emrt.necd.content.Warmup"
     title="emrt.necd.content: Warmup"
     />
-
-
 
 </configure>
