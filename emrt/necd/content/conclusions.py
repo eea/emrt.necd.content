@@ -308,3 +308,4 @@ class EditForm(dexterity.EditForm):
         container.highlight = highlight
         notify(ObjectModifiedEvent(context))
         notify(ObjectModifiedEvent(container))
+        api.content.transition(obj=container, transition='draft-conclusions')
