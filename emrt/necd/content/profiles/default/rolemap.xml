@@ -59,6 +59,12 @@
       <role name="MSAuthority" />
       <role name="MSExpert" />
     </permission>
+    <permission name="emrt.necd.content: View Observation Redraft Reason" acquire="False">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+      <role name="LeadReviewer" />
+      <role name="SectorExpert" />
+    </permission>
     <permission name="emrt.necd.content: Add Question" acquire="False">
       <role name="Manager" />
       <role name="Site Administrator" />

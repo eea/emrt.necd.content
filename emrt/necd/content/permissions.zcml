@@ -64,6 +64,11 @@
     />
 
   <permission
+    id="emrt.necd.content.ViewObservationRedraftReason"
+    title="emrt.necd.content: View Observation Redraft Reason"
+    />
+
+  <permission
     id="emrt.necd.content.AddObservation"
     title="emrt.necd.content: Add Observation"
     />

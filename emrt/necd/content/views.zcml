@@ -70,4 +70,14 @@
     permission="zope2.View"
     />
 
+  <!-- Observation actions -->
+
+  <browser:page
+    name="approve-question"
+    for=".comment.IComment"
+    class=".question.ApproveAndSendView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
 </configure>

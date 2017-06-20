@@ -22,6 +22,7 @@
   <include package=".roles" />
   <include package=".subscriptions" />
   <include package=".notifications" />
+  <include package=".forms" />
 
   <!-- Grok the package to initialise schema interfaces and content classes -->
   <grok:grok package="." />

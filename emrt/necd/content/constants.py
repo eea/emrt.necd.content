@@ -24,6 +24,11 @@ ROLE_MSA = 'MSAuthority'
 ROLE_MSE = 'MSExpert'
 
 
+P_OBS_REDRAFT_REASON_VIEW = (
+'emrt.necd.content: View Observation Redraft Reason'
+)
+
+
 __all__ = (
     'LDAP_BASE',
     'LDAP_SECRETARIAT',
