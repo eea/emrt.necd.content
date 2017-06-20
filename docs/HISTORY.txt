@@ -2,10 +2,11 @@ Changelog
 =========
 
 
-2.0.33 (unreleased)
+2.0.33 (2017-06-20)
 -------------------
 
 - Task #86161 - Send Conclusion problem
+- Task #85296 - Box text after using "Ask SE to redraft"
   [batradav]
 
 
