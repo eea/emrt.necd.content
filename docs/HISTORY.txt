@@ -5,7 +5,8 @@ Changelog
 2.0.33 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Task #86161 - Send Conclusion problem
+  [batradav]
 
 
 2.0.32 (2017-06-09)
