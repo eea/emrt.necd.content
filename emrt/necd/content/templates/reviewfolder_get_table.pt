@@ -15,29 +15,32 @@
          tal:condition="view/items">
     <thead>
       <tr>
-        <th style="width:17%"
+        <th style="width:13%"
             class="nosort"
             id="reviewfolder-title">
           Observation
         </th>
-        <th style="width:45%" class="nosort">
+        <th class="nosort">
           In short
         </th>
         <th id="reviewfolder-nfr" class="nosort">
           NFR code
         </th>
-        <th style="width:47px" class="nosort"
+        <th style="width:5%" class="nosort"
             id="reviewfolder-year">
           Review year
         </th>
-        <th id="reviewfolder-status" class="nosort">
+        <th style="width:6%" id="reviewfolder-status" class="nosort">
           Status
         </th>
-        <th id="reviewfolder-workflow" class="nosort">
+        <th style="width:8%" id="reviewfolder-workflow" class="nosort">
           Question workflow
         </th>
-        <th tal:condition="view/is_secretariat">
+        <th style="width:9%" tal:condition="view/is_secretariat">
           Author
+        </th>
+        <th style="width:6%" id="reviewfolder-date" class="nosort">
+          Date
         </th>
       </tr>
     </thead>
@@ -96,6 +99,9 @@
           </td>
           <td tal:condition="view/is_secretariat">
             <span tal:replace="observation/get_author_name" />
+          </td>
+          <td>
+            <time style="display: block" tal:content="python:observation.modified.strftime('%d %b %Y')"></time>
           </td>
         </tr>
       </tal:item>
