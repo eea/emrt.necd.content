@@ -104,6 +104,7 @@
             ccore.enableTableReload("#reviewfolder-year", { "sort_on": "review_year", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-status", { "sort_on": "observation_status", "sort_order": "ascending" });
             ccore.enableTableReload("#reviewfolder-workflow", { "sort_on": "observation_finalisation_reason", "sort_order": "ascending" });
+            ccore.enableTableReload("#reviewfolder-date", { "sort_on": "modified", "sort_order": "ascending" });
             ccore.delegate("div.listingBar a", "click", function(event) {
                 event.preventDefault();
                 var link = $(this).attr("href");

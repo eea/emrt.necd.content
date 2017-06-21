@@ -7,11 +7,13 @@
 </div>
 
 <div id="observations" tal:condition="view/batch">
-  <table tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime;"
+  <table tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime;
+                     sort_on request/sort_on|string:modified;
+                     sort_order request/sort_order|string:reverse;"
          class="observationList listing"
          id="observations-table"
-         tal:attributes="data-sort_on request/sort_on|string:modified;
-                         data-sort_order request/sort_order|string:reverse"
+         tal:attributes="data-sort_on sort_on;
+                         data-sort_order sort_order"
          tal:condition="view/items">
     <thead>
       <tr>
@@ -19,28 +21,52 @@
             class="nosort"
             id="reviewfolder-title">
           Observation
+          <span
+            tal:condition="python:sort_on == 'getId'"
+            tal:attributes="class string:sort-order-${sort_order}">
+          </span>
         </th>
         <th class="nosort">
           In short
         </th>
         <th id="reviewfolder-nfr" class="nosort">
           NFR code
+          <span
+            tal:condition="python:sort_on == 'nfr_code'"
+            tal:attributes="class string:sort-order-${sort_order}">
+          </span>
         </th>
         <th style="width:5%" class="nosort"
             id="reviewfolder-year">
           Review year
+          <span
+            tal:condition="python:sort_on == 'review_year'"
+            tal:attributes="class string:sort-order-${sort_order}">
+          </span>
         </th>
         <th style="width:6%" id="reviewfolder-status" class="nosort">
           Status
+          <span
+            tal:condition="python:sort_on == 'observation_status'"
+            tal:attributes="class string:sort-order-${sort_order}">
+          </span>
         </th>
         <th style="width:8%" id="reviewfolder-workflow" class="nosort">
           Question workflow
+          <span
+            tal:condition="python:sort_on == 'observation_finalisation_reason'"
+            tal:attributes="class string:sort-order-${sort_order}">
+          </span>
         </th>
         <th style="width:9%" tal:condition="view/is_secretariat">
           Author
         </th>
         <th style="width:6%" id="reviewfolder-date" class="nosort">
           Date
+          <span
+            tal:condition="python:sort_on == 'modified'"
+            tal:attributes="class string:sort-order-${sort_order}">
+          </span>
         </th>
       </tr>
     </thead>
@@ -101,7 +127,7 @@
             <span tal:replace="observation/get_author_name" />
           </td>
           <td>
-            <time style="display: block" tal:content="python:observation.modified.strftime('%d %b %Y')"></time>
+            <time tal:content="python:observation.modified.strftime('%d %b %Y')"></time>
           </td>
         </tr>
       </tal:item>
