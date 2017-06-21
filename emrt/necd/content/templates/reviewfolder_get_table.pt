@@ -26,10 +26,10 @@
             tal:attributes="class string:sort-order-${sort_order}">
           </span>
         </th>
-        <th class="nosort">
+        <th style="width:26%" class="nosort">
           In short
         </th>
-        <th id="reviewfolder-nfr" class="nosort">
+        <th style="width:26%" id="reviewfolder-nfr" class="nosort">
           NFR code
           <span
             tal:condition="python:sort_on == 'nfr_code'"
