@@ -2,11 +2,12 @@ Changelog
 =========
 
 
-2.0.34 (unreleased)
+2.0.34 (2017-06-22)
 -------------------
 
 - Task #83491 - Low priority taks from testing
     * Sorting by date functionality
+- Task #86258 - Error message displayed when Sector Expert Save Conclusion
   [batradav]
 
 
