@@ -1,17 +1,18 @@
-from five import grok
 from plone import api
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.nfr_code_matching import nfr_codes
 
 
 def mk_term(key, value):
     return SimpleVocabulary.createTerm(key, key, value)
 
 
+@implementer(IVocabularyFactory)
 class MSVocabulary(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -24,11 +25,9 @@ class MSVocabulary(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(MSVocabulary, name=u"emrt.necd.content.eea_member_states")
 
-
+@implementer(IVocabularyFactory)
 class GHGSourceCategory(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -41,12 +40,9 @@ class GHGSourceCategory(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(GHGSourceCategory,
-    name=u"emrt.necd.content.ghg_source_category")
 
-
+@implementer(IVocabularyFactory)
 class GHGSourceSectors(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -59,12 +55,9 @@ class GHGSourceSectors(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(GHGSourceSectors,
-    name=u"emrt.necd.content.ghg_source_sectors")
 
-
+@implementer(IVocabularyFactory)
 class Pollutants(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -77,12 +70,9 @@ class Pollutants(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Pollutants,
-    name=u"emrt.necd.content.pollutants")
 
-
+@implementer(IVocabularyFactory)
 class Fuel(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -95,12 +85,9 @@ class Fuel(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Fuel,
-    name=u"emrt.necd.content.fuel")
 
-
+@implementer(IVocabularyFactory)
 class Highlight(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -112,12 +99,8 @@ class Highlight(object):
         return SimpleVocabulary(terms)
 
 
-grok.global_utility(Highlight,
-    name=u"emrt.necd.content.highlight")
-
-
+@implementer(IVocabularyFactory)
 class Parameter(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -130,12 +113,9 @@ class Parameter(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(Parameter,
-    name=u"emrt.necd.content.parameter")
 
-
+@implementer(IVocabularyFactory)
 class StatusFlag(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -148,14 +128,9 @@ class StatusFlag(object):
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
 
-grok.global_utility(StatusFlag,
-    name=u"emrt.necd.content.status_flag")
 
-
-from .nfr_code_matching import nfr_codes
-
+@implementer(IVocabularyFactory)
 class NFRCode(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
 
@@ -206,11 +181,8 @@ class NFRCode(object):
         return vocab_from_terms(*nfr_codes().items())
 
 
-grok.global_utility(NFRCode, name=u"emrt.necd.content.nfr_code")
-
-
+@implementer(IVocabularyFactory)
 class Conclusions(object):
-    grok.implements(IVocabularyFactory)
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
@@ -222,5 +194,3 @@ class Conclusions(object):
                 # the title (optional)
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
-
-grok.global_utility(Conclusions, name=u"emrt.necd.content.conclusion_reasons")

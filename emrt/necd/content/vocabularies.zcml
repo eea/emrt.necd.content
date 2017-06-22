@@ -1,0 +1,55 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  i18n_domain="emrt.necd.content">
+
+  <utility
+    name="emrt.necd.content.eea_member_states"
+    factory=".vocabularies.MSVocabulary"
+    />
+
+  <utility
+    name="emrt.necd.content.ghg_source_category"
+    factory=".vocabularies.GHGSourceCategory"
+    />
+
+  <utility
+    name="emrt.necd.content.ghg_source_sectors"
+    factory=".vocabularies.GHGSourceSectors"
+    />
+
+  <utility
+    name="emrt.necd.content.pollutants"
+    factory=".vocabularies.Pollutants"
+    />
+
+  <utility
+    name="emrt.necd.content.fuel"
+    factory=".vocabularies.Fuel"
+    />
+
+  <utility
+    name="emrt.necd.content.highlight"
+    factory=".vocabularies.Highlight"
+    />
+
+  <utility
+    name="emrt.necd.content.parameter"
+    factory=".vocabularies.Parameter"
+    />
+
+  <utility
+    name="emrt.necd.content.status_flag"
+    factory=".vocabularies.StatusFlag"
+    />
+
+  <utility
+    name="emrt.necd.content.nfr_code"
+    factory=".vocabularies.NFRCode"
+    />
+
+  <utility
+    name="emrt.necd.content.conclusion_reasons"
+    factory=".vocabularies.Conclusions"
+    />
+
+</configure>
