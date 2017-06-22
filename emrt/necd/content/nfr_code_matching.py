@@ -22,6 +22,15 @@ class INECDSettings(Interface):
         ),
     )
 
+    sectorNames = schema.Dict(
+        title=_(u"Sector names"),
+        description=_(u"Maps sector IDs to names"),
+        key_type=schema.TextLine(title=_(u"Sector ID")),
+        value_type=schema.TextLine(
+            title=_(u"Sector name"),
+        ),
+    )
+
 
 def nfr_codes():
     """ get the NFR code mapping from portal_registry

@@ -176,4 +176,17 @@
       <element key="0B">sector9|0B|0B Other Sources|0B National total for compliance assessment</element>
     </value>
   </record>
+  <record name="emrt.necd.content.nfr_code_matching.INECDSettings.sectorNames">
+    <value purge="True">
+      <element key="sector1">Energy: stationary combustion</element>
+      <element key="sector2">Energy: transport including international</element>
+      <element key="sector3">Energy: Non-road mobile machinery</element>
+      <element key="sector4">Fugitive and IPPU</element>
+      <element key="sector5">IPPU: Industrial Processes</element>
+      <element key="sector6">IPPU: Solvent and other product use</element>
+      <element key="sector7">Agriculture</element>
+      <element key="sector8">Waste</element>
+      <element key="sector9">Other Sources</element>
+    </value>
+  </record>
 </registry>

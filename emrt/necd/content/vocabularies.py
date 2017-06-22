@@ -1,7 +1,11 @@
-from plone import api
 from zope.interface import implementer
+from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
+
+from plone.registry.interfaces import IRegistry
+
+import plone.api as api
 
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.nfr_code_matching import nfr_codes
@@ -194,3 +198,17 @@ class Conclusions(object):
                 # the title (optional)
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
         return SimpleVocabulary(terms)
+
+
+@implementer(IVocabularyFactory)
+class SectorNames(object):
+
+    def __call(self, context):
+        registry = getUtility(IRegistry)
+        sectorNames = registry.forInterface(INECDSettings).sectorNames
+
+        return SimpleVocabulary([
+            mk_term(sector, name)
+            for sector, name
+            in sectorNames.items()
+        ])

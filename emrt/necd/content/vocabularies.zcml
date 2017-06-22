@@ -52,4 +52,9 @@
     factory=".vocabularies.Conclusions"
     />
 
+  <utility
+    name="emrt.necd.content.sector_names"
+    factory=".vocabularies.SectorNames"
+    />
+
 </configure>
