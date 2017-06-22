@@ -1,4 +1,5 @@
 from copy import copy
+from logging import getLogger
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -308,4 +309,15 @@ class EditForm(dexterity.EditForm):
         container.highlight = highlight
         notify(ObjectModifiedEvent(context))
         notify(ObjectModifiedEvent(container))
-        api.content.transition(obj=container, transition='draft-conclusions')
+        try:
+            api.content.transition(
+                obj=container,
+                transition='draft-conclusions'
+            )
+        except api.exc.InvalidParameterError:
+            # This is normal when editing a conclusion.
+            # Should not happen when re-submitting a conclusion.
+            getLogger(__name__).info(
+                'Cannot transition to draft-conclusions: %s!',
+                container.absolute_url(1)
+            )
