@@ -2,6 +2,14 @@ Changelog
 =========
 
 
+2.0.34 (unreleased)
+-------------------
+
+- Task #83491 - Low priority taks from testing
+    * Sorting by date functionality
+  [batradav]
+
+
 2.0.33 (2017-06-20)
 -------------------
 

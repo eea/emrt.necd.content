@@ -1,3 +1,4 @@
+from operator import itemgetter
 from zope.interface import implementer
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
@@ -210,5 +211,5 @@ class SectorNames(object):
         return SimpleVocabulary([
             mk_term(sector, name)
             for sector, name
-            in sectorNames.items()
+            in sorted(sectorNames.items(), key=itemgetter(0))
         ])
