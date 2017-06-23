@@ -186,6 +186,14 @@
                   }
                   filter += encodeArrForRequest("nfrCode", $('#nfrFilter').val());
                 }
+                if ($('#sectorFilter').val() != ""){
+                  if (filter == ""){
+                    filter += "?";
+                  }else{
+                    filter += "&";
+                  }
+                  filter += encodeArrForRequest("sectorId", $('#sectorFilter').val());
+                }
                 window.location.href = window.location.pathname + filter;
 
             });
@@ -303,10 +311,11 @@
           </div>
         </div>
         <div class="row" style="padding-top:30px">
-          <div class="cell position-1 width-3 esdLabel">NFR category code</div>
+          <div class="cell position-1 width-5 esdLabel">NFR category code</div>
+          <div class="cell position-6 width-4 esdLabel">Sector name</div>
         </div>
         <div class="row">
-          <div class="cell position-1 width-9 esdLabel">
+          <div class="cell position-1 width-5 esdLabel">
             <select id="nfrFilter" multiple="multiple" class="chosen-select" data-placeholder="Select NFR category code">
               <option></option>
               <tal:block tal:repeat="item view/get_nfr_categories">
@@ -314,6 +323,18 @@
                   tal:define="category python:request.get('nfrCode[]', [])"
                   tal:attributes="value python:item[0];
                                   selected python:item[0] in category"
+                  tal:content="python:item[1]"></option>
+              </tal:block>
+            </select>
+          </div>
+          <div class="cell position-6 width-4 esdLabel">
+            <select id="sectorFilter" multiple="multiple" class="chosen-select" data-placeholder="Select sector name">
+              <option></option>
+              <tal:block tal:repeat="item view/get_sector_names">
+                <option
+                  tal:define="sectors python:request.get('sectorId[]', [])"
+                  tal:attributes="value python:item[0];
+                                  selected python:item[0] in sectors"
                   tal:content="python:item[1]"></option>
               </tal:block>
             </select>

@@ -9,6 +9,8 @@ from plone.registry.interfaces import IRegistry
 import plone.api as api
 
 from emrt.necd.content.constants import LDAP_SECTOREXP
+
+from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
 
 
@@ -204,7 +206,7 @@ class Conclusions(object):
 @implementer(IVocabularyFactory)
 class SectorNames(object):
 
-    def __call(self, context):
+    def __call__(self, context):
         registry = getUtility(IRegistry)
         sectorNames = registry.forInterface(INECDSettings).sectorNames
 

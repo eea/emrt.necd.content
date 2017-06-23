@@ -165,6 +165,7 @@ class ReviewFolderMixin(grok.View):
         step = req.get('step', '')
         wfStatus = req.get('wfStatus', '')
         nfrCode = req.get('nfrCode', req.get('nfrCode[]', []))
+        sectorId = req.get('sectorId', req.get('sectorId[]', []))
 
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
@@ -201,6 +202,8 @@ class ReviewFolderMixin(grok.View):
             query['observation_status'] = wfStatus
         if nfrCode:
             query['nfr_code'] = dict(query=nfrCode, operator='or')
+        if sectorId:
+            query['GHG_Source_Category'] = dict(query=sectorId, operator='or')
 
         return filter_for_ms(catalog(query), context=self.context)
 
@@ -250,6 +253,12 @@ class ReviewFolderMixin(grok.View):
             IVocabularyFactory, name='emrt.necd.content.nfr_code')
         vocabulary = vocab_factory(self.context)
         return [(x.value, x.title) for x in vocabulary]
+
+    def get_sector_names(self):
+        vocab_factory = getUtility(
+            IVocabularyFactory, name='emrt.necd.content.sector_names')
+        vocabulary = vocab_factory(self.context)
+        return tuple((x.value, x.title) for x in vocabulary)
 
     def get_finalisation_reasons(self):
         return get_finalisation_reasons(self.context)
