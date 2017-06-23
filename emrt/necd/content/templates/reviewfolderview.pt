@@ -246,7 +246,7 @@
           </div>
         </div>
       </div>
-      <div id="filters">
+      <div id="filters" tal:define="is_lr view/is_lr">
         <div class="row" style="padding-top:25px">
           <div class="cell position-1 width-3 esdLabel">Country</div>
           <div class="cell position-4 width-3 esdLabel tooltipIconBlue" title="Review year is the year in which the emissions inventory was submitted and the review was carried out.">Review year</div>
@@ -311,11 +311,11 @@
           </div>
         </div>
         <div class="row" style="padding-top:30px">
-          <div class="cell position-1 width-5 esdLabel">NFR category code</div>
-          <div class="cell position-6 width-4 esdLabel">Sector name</div>
+            <div class="cell position-1 width-5 esdLabel">NFR category code</div>
+            <div class="cell position-6 width-4 esdLabel" tal:condition="is_lr">Sector name</div>
         </div>
-        <div class="row">
-          <div class="cell position-1 width-5 esdLabel">
+        <div class="row" tal:define="width python:'width-5' if is_lr else 'width-9'">
+          <div tal:attributes="class string:cell position-1 ${width} esdLabel">
             <select id="nfrFilter" multiple="multiple" class="chosen-select" data-placeholder="Select NFR category code">
               <option></option>
               <tal:block tal:repeat="item view/get_nfr_categories">
@@ -327,7 +327,7 @@
               </tal:block>
             </select>
           </div>
-          <div class="cell position-6 width-4 esdLabel">
+          <div class="cell position-6 width-4 esdLabel" tal:condition="is_lr">
             <select id="sectorFilter" multiple="multiple" class="chosen-select" data-placeholder="Select sector name">
               <option></option>
               <tal:block tal:repeat="item view/get_sector_names">

@@ -153,6 +153,11 @@ class ReviewFolder(dexterity.Container):
 class ReviewFolderMixin(grok.View):
     grok.baseclass()
 
+    def __call__(self):
+        if api.user.is_anonymous():
+            raise Unauthorized
+        return super(ReviewFolderMixin, self).__call__()
+
     @memoize
     def get_questions(self, sort_on="modified", sort_order="reverse"):
         req = self.request
@@ -214,6 +219,10 @@ class ReviewFolderMixin(grok.View):
     def is_secretariat(self):
         user = api.user.get_current()
         return 'Manager' in user.getRoles()
+
+    def is_lr(self):
+        roles = api.user.get_roles(obj=self.context)
+        return set(roles).intersection((ROLE_LR, 'Manager'))
 
     def get_countries(self):
         vtool = getToolByName(self, 'portal_vocabularies')
