@@ -53,6 +53,7 @@ QUESTION_WORKFLOW_MAP = {
     'MSC': 'MS Coordinator',
     'answered': 'Answered',
     'conclusions': 'Conclusions',
+    'conclusions-lr-denied': 'Conclusions - LR denied',
     'close-requested': 'Close requested',
     'finalised': 'Finalised',
 }
@@ -192,6 +193,7 @@ class ReviewFolderMixin(grok.View):
                     'close-requested',
                     'draft',
                     'conclusions',
+                    'conclusions-lr-denied',
                     'conclusion-discussion',
                 ]
 
@@ -853,7 +855,7 @@ class InboxReviewFolderView(grok.View):
         """
         observations = self.get_observations(
             rolecheck=ROLE_SE,
-            review_state=['conclusions'],
+            review_state=['conclusions', 'conclusions-lr-denied'],
         )
 
         def get_last_wf_item(obs):

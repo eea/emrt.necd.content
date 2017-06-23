@@ -71,6 +71,13 @@
         permission="zope2.View"
         />
 
+    <browser:page
+        name="recall-observation"
+        for="..observation.IObservation"
+        class=".statechange.RecallObservation"
+        permission="zope2.View"
+        />
+
     <browser:viewletManager
         name="emrt.necd.content.commentmanager"
         provides=".interfaces.ICommentDiscussion"

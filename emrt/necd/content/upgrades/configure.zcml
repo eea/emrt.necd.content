@@ -328,4 +328,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.34"
+    destination="2.0.35"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update workflows"
+      description="[refs #83491] Recall step for LR."
+      import_steps="workflow"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

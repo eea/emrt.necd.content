@@ -138,6 +138,7 @@
  </state>
  <state state_id="published" title="Published">
   <exit-transition transition_id="redraft"/>
+  <exit-transition transition_id="ask-approval"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>

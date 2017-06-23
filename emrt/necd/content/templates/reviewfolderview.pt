@@ -384,6 +384,8 @@
                 value="answered">Answered</option>
               <option tal:attributes="selected python:'conclusions'==wfStatus"
                 value="conclusions">Conclusions</option>
+              <option tal:attributes="selected python:'conclusions-lr-denied'==wfStatus"
+                value="conclusions-lr-denied">Conclusions - LR denied</option>
               <option tal:attributes="selected python:'close-requested'==wfStatus"
                 value="close-requested">Close requested</option>
               <option tal:attributes="selected python:'finalised'==wfStatus"
