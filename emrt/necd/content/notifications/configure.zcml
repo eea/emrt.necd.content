@@ -4,5 +4,6 @@
 
   <include file="comment_added.zcml" />
   <include file="question_redraft.zcml" />
+  <include file="observation_recalled.zcml" />
 
 </configure>

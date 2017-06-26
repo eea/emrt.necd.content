@@ -1,0 +1,19 @@
+<html>
+    <body>
+        <p>
+            FYI: a previously closed observation for your country was recalled.
+        </p>
+        <ul>
+            <li>
+                Ref. Number: <span tal:replace="options/observation/getId" />
+            </li>
+            <li>
+                Link: <a href="" tal:attributes="href options/observation/absolute_url"
+                    tal:content="options/observation/absolute_url">
+                    http://esddemo.eea.europa.eu
+                </a>
+            </li>
+        </ul>
+         <p>Please do not respond to this email.</p>
+    </body>
+</html>

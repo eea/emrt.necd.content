@@ -1,0 +1,17 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="emrt.necd.content">
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler=".observation_recalled.notification_se"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler=".observation_recalled.notification_ms"
+    />
+
+</configure>

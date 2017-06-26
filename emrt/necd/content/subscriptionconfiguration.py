@@ -49,6 +49,7 @@ NOTIFICATIONS_PER_ROLE = {
     ROLE_SE: {
         'observation_finalisation_denied': True,
         'observation_finalised': True,
+        'observation_recalled': True,
         'question_answered': True,
         'question_redraft': True,
         'question_to_ms': True,
@@ -65,6 +66,7 @@ NOTIFICATIONS_PER_ROLE = {
     ROLE_MSA: {
         'answer_acknowledged': True,
         'observation_finalised': True,
+        'observation_recalled': True,
         'question_to_ms': True,
         'comment_to_msa': True,
     },
@@ -84,6 +86,7 @@ NOTIFICATION_NAMES = {
     ROLE_SE: {
         'observation_finalisation_denied': 'Observation finalisation denied by LR',
         'observation_finalised': 'Observation finalised by LR',
+        'observation_recalled': 'Observation recalled by LR',
         'question_answered': 'Question answered by MS',
         'question_redraft': 'Question redraft requested by LR',
         'question_to_ms': 'Question sent to MS by LR',
@@ -100,6 +103,7 @@ NOTIFICATION_NAMES = {
     ROLE_MSA: {
         'answer_acknowledged': 'Answer acknowledged by sector expert',
         'observation_finalised': 'Observation finalised by LR',
+        'observation_recalled': 'Observation recalled by LR',
         'question_to_ms': 'Question to be answered by your country',
         'comment_to_msa': 'New comment from MS Expert',
     },
