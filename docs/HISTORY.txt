@@ -2,6 +2,15 @@ Changelog
 =========
 
 
+2.0.35 (2017-06-26)
+-------------------
+
+- Task #83491 - Low priority taks from testing
+    * Filter on sector name
+- Task #86308 - Lead Reviewer Overview List Filtering
+  [batradav]
+
+
 2.0.34 (2017-06-22)
 -------------------
 
