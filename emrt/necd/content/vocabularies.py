@@ -9,6 +9,7 @@ from plone.registry.interfaces import IRegistry
 import plone.api as api
 
 from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import ROLE_LR
 
 from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
@@ -167,16 +168,19 @@ class NFRCode(object):
         user = get_valid_user()
 
         if user:
+            user_roles = api.user.get_roles(obj=context)
             user_groups = tuple(user.getGroups())
             user_has_sectors = tuple([
                 group for group in user_groups
                 if '-sector' in group
             ])
+            user_is_lr_or_manager = set(user_roles).intersection(
+                (ROLE_LR, 'Manager'))
 
             # if user has no 'sector' assignments, return all codes
             # this results in sector experts having a filtered list while
             # other users (e.g. MS, LR) will see all codes.
-            if user_has_sectors:
+            if not user_is_lr_or_manager and user_has_sectors:
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
                     nfr_codes().items() if validate_term(
