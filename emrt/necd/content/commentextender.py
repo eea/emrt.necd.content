@@ -15,6 +15,7 @@ from plone.namedfile.field import NamedBlobFile
 from plone.z3cform.fieldsets import extensible
 from Products.CMFCore import permissions
 from z3c.form.field import Fields
+from z3c.form import interfaces
 from zope import interface
 from zope import schema
 from zope.annotation import factory
@@ -75,3 +76,5 @@ class CommentExtender(extensible.FormExtender):
                 u'and send the password per email to the EMRT-NECD Secretariat mailbox. '
                 u'Your password will only be shared with the lead reviewer and sector Expert. '
         )
+        self.form.fields['redraft_message'].mode = interfaces.HIDDEN_MODE
+        self.form.fields['redraft_date'].mode = interfaces.HIDDEN_MODE
