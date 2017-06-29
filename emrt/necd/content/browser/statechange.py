@@ -184,6 +184,20 @@ class DenyFinishObservationReasonForm(Form):
             self.actions[k].addClass('standardButton')
 
 
+class RecallObservation(BrowserView):
+    def __call__(self):
+        state = api.content.get_state(self.context)
+        if state == 'conclusions-lr-denied':
+            self.context.closing_deny_comments = ''
+
+        with api.env.adopt_roles(['Manager']):
+            return self.context.content_status_modify(
+                workflow_action='recall-lr',
+            )
+
+        return self.response.redirect(self.context.absolute_url())
+
+
 class AssignFormMixin(BrowserView):
 
     index = None

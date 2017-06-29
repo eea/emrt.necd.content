@@ -396,15 +396,14 @@ class Observation(dexterity.Container):
         return False
 
     def wf_location(self):
-        if self.get_status() == 'draft':
+        status = self.get_status()
+        if status in ('draft', 'conclusions', 'conclusions-lr-denied'):
             return 'Sector Expert'
-        elif self.get_status() == 'closed':
+        elif status == 'closed':
             return 'Lead reviewer'
-        elif self.get_status() == 'conclusions':
-            return 'Sector Expert'
-        elif self.get_status() in ['conclusion-discussion']:
+        elif status == 'conclusion-discussion':
             return 'Counterpart'
-        elif self.get_status() == 'close-requested':
+        elif status  == 'close-requested':
             return 'Lead reviewer'
         else:
             questions = self.get_values_cat('Question')
@@ -435,7 +434,7 @@ class Observation(dexterity.Container):
             return ['Observation finished', "observationIcon"]
         elif self.get_status() in ['close-requested']:
             return ['Observation finish requested', "observationIcon"]
-        elif self.get_status() in ['conclusions']:
+        elif self.get_status() in ['conclusions', 'conclusions-lr-denied']:
             return ["Conclusion ongoing", "conclusionIcon"]
         elif self.get_status() in ['conclusion-discussion']:
             return ["Counterparts comments requested", "conclusionIcon"]
@@ -483,6 +482,7 @@ class Observation(dexterity.Container):
         elif status in ['answered']:
             return 'answered'
         elif status in ['conclusions',
+                        'conclusions-lr-denied',
                         'conclusion-discussion']:
             return 'conclusions'
         elif status in ['close-requested']:
@@ -579,8 +579,16 @@ class Observation(dexterity.Container):
                 item['state'] = 'Finalisation requested'
                 item['role'] = "Sector Expert"
                 observation_wf.append(item)
-            elif item['review_state'] == 'conclusions' and item['action'] == "deny-finishing-observation":
+            elif item['review_state'] in ('conclusions', 'conclusions-lr-denied') and item['action'] == "deny-finishing-observation":
                 item['state'] = 'Finalisation denied'
+                item['role'] = "Lead reviewer"
+                observation_wf.append(item)
+            elif item['review_state'] == 'conclusions-lr-denied' and item['action'] == "recall-lr":
+                item['state'] = 'Recalled by LR'
+                item['role'] = "Lead reviewer"
+                observation_wf.append(item)
+            elif item['review_state'] == 'closed' and item['action'] == "recall-lr":
+                item['state'] = 'Recalled by LR'
                 item['role'] = "Lead reviewer"
                 observation_wf.append(item)
             elif item['review_state'] == 'conclusion-discussion':
@@ -698,7 +706,7 @@ class Observation(dexterity.Container):
     def observation_question_status(self):
         questions = self.get_values_cat('Question')
         if self.get_status() != 'pending':
-            if self.get_status() in ['conclusions']:
+            if self.get_status() in ['conclusions', 'conclusions-lr-denied']:
                 if questions:
                     question = questions[-1]
                     question_state = api.content.get_state(question)
@@ -799,7 +807,7 @@ class Observation(dexterity.Container):
 
     def can_add_followup(self):
         status = self.get_status()
-        return status in ['conclusions']
+        return status in ['conclusions', 'conclusions-lr-denied']
 
 # View class
 # The view will automatically use a similarly named template in
@@ -1052,6 +1060,7 @@ class ObservationMixin(DefaultView):
         state = self.context.get_status()
         return state in [
             'conclusions',
+            'conclusions-lr-denied',
             'conclusion-discussion',
             'close-requested',
             'closed',
@@ -1060,6 +1069,7 @@ class ObservationMixin(DefaultView):
     def get_last_editable_thing(self):
         CONCLUSIONS_PHASE_2 = [
             'conclusions',
+            'conclusions-lr-denied',
             'conclusion-discussion',
             'close-requested',
         ]

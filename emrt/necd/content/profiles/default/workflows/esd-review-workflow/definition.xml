@@ -53,6 +53,7 @@
  </state>
  <state state_id="closed" title="closed">
   <exit-transition transition_id="reopen-closed-observation"/>
+  <exit-transition transition_id="recall-lr"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -140,6 +141,57 @@
   <exit-transition transition_id="reopen-qa-chat"/>
   <exit-transition transition_id="request-comments"/>
   <exit-transition transition_id="edit-highlights"/>
+  <permission-map name="Access contents information" acquired="False">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>SectorExpert</permission-role>
+  </permission-map>
+  <permission-map name="Delete objects" acquired="True">
+  </permission-map>
+  <permission-map name="List folder contents" acquired="False">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>SectorExpert</permission-role>
+  </permission-map>
+  <permission-map name="Modify portal content" acquired="False">
+   <permission-role>SectorExpert</permission-role>
+   <permission-role>LeadReviewer</permission-role>
+  </permission-map>
+  <permission-map name="Sharing page: Delegate roles" acquired="False">
+  </permission-map>
+  <permission-map name="View" acquired="False">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>MSAuthority</permission-role>
+   <permission-role>MSExpert</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>SectorExpert</permission-role>
+  </permission-map>
+  <permission-map name="emrt.necd.content: Add Conclusions" acquired="False">
+   <permission-role>SectorExpert</permission-role>
+   <permission-role>LeadReviewer</permission-role>
+  </permission-map>
+  <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
+  </permission-map>
+  <permission-map name="emrt.necd.content: Add Question" acquired="False">
+  </permission-map>
+  <permission-map name="emrt.necd.content: View Answer Discussion" acquired="True">
+  </permission-map>
+  <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
+  </permission-map>
+  <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
+   <permission-role>SectorExpert</permission-role>
+  </permission-map>
+ </state>
+ <state state_id="conclusions-lr-denied" title="conclusions-lr-denied">
+  <exit-transition transition_id="finish-observation"/>
+  <exit-transition transition_id="reopen-qa-chat"/>
+  <exit-transition transition_id="request-comments"/>
+  <exit-transition transition_id="edit-highlights"/>
+  <exit-transition transition_id="recall-lr"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -295,8 +347,14 @@
    <guard-role>LeadReviewer</guard-role>
   </guard>
  </transition>
- <transition transition_id="deny-finishing-observation" title="Deny finishing observation" new_state="conclusions" trigger="USER" before_script="" after_script="">
+ <transition transition_id="deny-finishing-observation" title="Deny finishing observation" new_state="conclusions-lr-denied" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/deny-finish-observation?workflow_action=deny-finishing-observation" category="workflow" icon="">Deny finishing observation</action>
+  <guard>
+   <guard-role>LeadReviewer</guard-role>
+  </guard>
+ </transition>
+ <transition transition_id="recall-lr" title="Recall denied/confirmed close observation." new_state="close-requested" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/recall-observation?workflow_action=recall-lr" category="workflow" icon="">Recall</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
   </guard>
