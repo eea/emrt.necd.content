@@ -330,7 +330,7 @@
 
   <genericsetup:upgradeSteps
     source="2.0.34"
-    destination="2.0.35"
+    destination="2.0.36"
     profile="emrt.necd.content:default">
 
     <genericsetup:upgradeDepends

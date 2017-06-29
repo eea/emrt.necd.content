@@ -2,6 +2,15 @@ Changelog
 =========
 
 
+2.0.36 (2017-06-29)
+-------------------
+
+- Task #83491 - Low priority taks from testing
+    * Recall button for LR
+- Task #86313 - Misleading appeareance in the Comment Looping Box
+  [batradav]
+
+
 2.0.35 (2017-06-26)
 -------------------
 
