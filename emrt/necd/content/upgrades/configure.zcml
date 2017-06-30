@@ -341,4 +341,23 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.36"
+    destination="2.0.37"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Fix delete permission."
+      description="[refs #86446] Roles with the 'Delete objects' permission need to also have the 'Delete portal content' permission."
+      import_steps="workflow update-workflow-rolemap"
+      />
+
+    <genericsetup:upgradeStep
+      title="Update existing content"
+      description="[refs #86446] Grant the 'Delete portal content' permission on conclusions."
+      handler="emrt.necd.content.upgrades.evolve2037.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
