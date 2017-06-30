@@ -49,6 +49,9 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="closed" title="closed">
@@ -87,6 +90,9 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>Manager</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
  <state state_id="conclusion-discussion" title="conclusion-discussion">
@@ -183,6 +189,8 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>Manager</permission-role>
    <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>
@@ -234,6 +242,8 @@
   <permission-map name="emrt.necd.content: View Comment Discussion" acquired="True">
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="True">
+   <permission-role>LeadReviewer</permission-role>
+   <permission-role>Manager</permission-role>
    <permission-role>SectorExpert</permission-role>
   </permission-map>
  </state>

@@ -348,13 +348,15 @@
 
     <genericsetup:upgradeDepends
       title="Fix delete permission."
-      description="[refs #86446] Roles with the 'Delete objects' permission need to also have the 'Delete portal content' permission."
+      description="[refs #86446] Roles with the 'Delete objects' permission
+        need to also have the 'Delete portal content' permission. Adding 'View Conclusion Discussion' on Observation states."
       import_steps="workflow update-workflow-rolemap"
       />
 
     <genericsetup:upgradeStep
       title="Update existing content"
-      description="[refs #86446] Grant the 'Delete portal content' permission on conclusions."
+      description="[refs #86446] Grant the 'Delete portal content' permission on Conclusions and
+        the 'View Conclusion Discussion' permission on Observations."
       handler="emrt.necd.content.upgrades.evolve2037.run"
       />
 
