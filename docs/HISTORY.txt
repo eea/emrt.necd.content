@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+2.0.37 (2017-06-30)
+-------------------
+
+- Task #86446 - LR can't remove file from Conclusion
+  [batradav]
+
+
 2.0.36 (2017-06-29)
 -------------------
 
