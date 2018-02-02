@@ -3,3 +3,14 @@ NOx,NOx
 NH3,NH3
 NMVOC,NMVOC
 PM2.5,PM2.5
+PAHs,PAHs
+benzo(a)pyrene,benzo(a)pyrene
+benzo(b)fluoranthene,benzo(b)fluoranthene
+benzo(k)fluoranthene,benzo(k)fluoranthene
+indeno-pyrene,indeno(1.2.3-cd)pyrene
+dioxins-or-furans,dioxins/furans
+PCBs,PCBs
+HCB,HCB
+Cd,Cd
+Hg,Hg
+Pb,Pb

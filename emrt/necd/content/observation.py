@@ -832,6 +832,9 @@ class EditForm(dexterity.EditForm):
         self.widgets['highlight'].template = Z3ViewPageTemplateFile(
             'templates/widget_highlight.pt'
         )
+        self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
+            'templates/widget_pollutants.pt'
+        )
 
 
 class AddForm(dexterity.AddForm):
@@ -850,6 +853,9 @@ class AddForm(dexterity.AddForm):
         self.widgets['text'].rows = 15
         self.widgets['highlight'].template = Z3ViewPageTemplateFile(
             'templates/widget_highlight.pt'
+        )
+        self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
+            'templates/widget_pollutants.pt'
         )
         self.groups = [
             g for g in self.groups if
