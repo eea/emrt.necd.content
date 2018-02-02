@@ -362,4 +362,23 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.37"
+    destination="2.0.38"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Delete vocabulares."
+      description="Changed highlight and pollutants vocabularies. Will be reimported in next step."
+      handler="emrt.necd.content.upgrades.evolve2038.run"
+      />
+
+    <genericsetup:upgradeDepends
+      title="Reimport missing vocabularies."
+      description="highlight and pollutants vocabularies"
+      import_steps="emrt.necd.content.setup.vocabularies"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
