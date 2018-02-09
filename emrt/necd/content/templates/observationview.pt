@@ -143,14 +143,14 @@
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
 
-
-
-
+        $('.standardButton').click(function(e) {
+          if('Add Conclusions' == $(this).html() || 'Go to Conclusions' == $(this).html()){
+            e.preventDefault();
+            $('#add-conclusion-wrapper').show();
+          }
+        });
     });
-
-
-
-</script>
+    </script>
   </tal:block>
 
 
@@ -616,7 +616,6 @@
             Add conclusions
         </a> -->
       </div>
-
       <div class="actions" tal:condition="view/can_add_question">
         <a id="add-question-link"
           tal:attributes="href string:${here/absolute_url}/++add++Question"
@@ -857,7 +856,7 @@
 
       <tal:conclu condition="python:view.in_conclusions() and not here.get_conclusion()">
         <div class="actions">
-        <a href=""
+        <a href="#"
             id="add-conclusion-link"
             tal:condition="view/can_add_conclusion"
             tal:attributes="href string:${here/absolute_url}/++add++Conclusions"
@@ -1082,6 +1081,10 @@
 
     </div>
   </div>
+   <div id="add-conclusion-wrapper" class="eea-tabs-panels" style="display: none">
+     <span tal:replace="structure view/add_conclusion_form" />
+   </div>
+
   </metal:content-core>
 </metal:main>
 </body>
