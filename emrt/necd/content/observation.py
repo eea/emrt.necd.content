@@ -9,7 +9,6 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
-from Acquisition import aq_parent
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 from five import grok
 from plone import api
@@ -61,7 +60,6 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
-
 from emrt.necd.content import conclusions
 from emrt.necd.content.utils import hidden
 
@@ -983,7 +981,6 @@ class ObservationMixin(DefaultView):
         question = self.question()
         if question:
             values = [v for v in question.values() if sm.checkPermission('View', v)]
-            # return question.values()
             return values
 
     def actions(self):
@@ -1003,7 +1000,6 @@ class ObservationMixin(DefaultView):
             )
 
             menu_items = question_menu_items + observation_menu_items
-        # import pdb;pdb.set_trace()
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_user_name(self, userid, question=None):
