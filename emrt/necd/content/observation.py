@@ -15,6 +15,7 @@ from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.browser.view import DefaultView
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.app.discussion.interfaces import IConversation
 from plone.directives import dexterity
 from plone.directives import form
@@ -60,20 +61,9 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
-import datetime
 
-
-HIDDEN_ACTIONS = [
-    '/content_status_history',
-    '/placeful_workflow_configuration',
-]
-
-
-def hidden(menuitem):
-    for action in HIDDEN_ACTIONS:
-        if menuitem.get('action').endswith(action):
-            return True
-    return False
+from emrt.necd.content import conclusions
+from emrt.necd.content.utils import hidden
 
 
 # Cache helper methods
@@ -276,6 +266,7 @@ def set_title_to_observation(object, event):
 class Observation(dexterity.Container):
     grok.implements(IObservation)
     # Add your class methods and properties here
+
 
     def get_values(self):
         """
@@ -1012,8 +1003,8 @@ class ObservationMixin(DefaultView):
             )
 
             menu_items = question_menu_items + observation_menu_items
+        # import pdb;pdb.set_trace()
         return [mitem for mitem in menu_items if not hidden(mitem)]
-
 
     def get_user_name(self, userid, question=None):
         # check users
@@ -1059,6 +1050,12 @@ class ObservationMixin(DefaultView):
 
     def add_comment_form(self):
         form_instance = AddCommentForm(self.context, self.request)
+        alsoProvides(form_instance, IWrappedForm)
+        return form_instance()
+
+    def add_conclusion_form(self):
+        ti = getUtility(IDexterityFTI, name='Conclusions')
+        form_instance = conclusions.AddForm(self.context, self.request, ti=ti)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
