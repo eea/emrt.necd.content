@@ -8,7 +8,7 @@ from Acquisition.interfaces import IAcquirer
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
 from emrt.necd.content import MessageFactory as _
-from emrt.necd.content.observation import hidden
+from emrt.necd.content.utils import hidden
 from five import grok
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
@@ -17,7 +17,6 @@ from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from time import time
-from types import IntType
 from types import ListType
 from types import TupleType
 from types import FloatType
@@ -35,7 +34,6 @@ from zope.interface import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
-from z3c.form import interfaces
 
 
 DEFAULTCONCLUSIONTEXT = u"""For category x and pollutants a, b, c for year[s]... the TERT noted that...
