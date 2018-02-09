@@ -80,4 +80,37 @@
     permission="zope2.View"
     />
 
+  <!--Conclusion views and forms-->
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.conclusions.AddView"
+    name="emrt.necd.content.conclusions"
+    />
+
+  <class class=".conclusions.AddView">
+      <require
+          permission="emrt.necd.content.AddConclusions"
+          interface=" emrt.necd.content.conclusions.IConclusions"
+          />
+  </class>
+
+  <browser:page
+    name="view"
+    for=".conclusions.IConclusions"
+    class=".conclusions.ConclusionsView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="edit"
+    for=".conclusions.IConclusions"
+    class=".conclusions.EditForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
 </configure>
