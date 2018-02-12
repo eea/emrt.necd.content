@@ -801,3 +801,8 @@ form[action$="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping"]
     width: 100%;
     overflow-y: visible;
 }
+@-moz-document url-prefix() {
+    #btnFilter {
+        margin-bottom: 50px;
+    }
+}
