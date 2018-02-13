@@ -2,7 +2,7 @@
                tal:define="
                extra_classes extra_classes|nothing;
                b_size python:request.get('b_size', 5);
-               b_start_str python:'b_start'.format(idx);
+               b_start_str python:'b_start_{}'.format(idx);
                b_start python:request.get(b_start_str, 0);
                batch python:view.batch(observations, int(b_size), int(b_start), orphan=1, b_start_str=b_start_str);"
                tal:condition="observations">
