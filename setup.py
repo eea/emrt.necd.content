@@ -42,6 +42,7 @@ setup(name='emrt.necd.content',
           'python-docx == 0.8.5',
           'zc.dict',
           'collective.monkeypatcher',
+          'five.pt',
       ],
       entry_points="""
       # -*- Entry points: -*-

@@ -1,5 +1,4 @@
 import itertools
-import urllib
 import time
 import tablib
 from functools import partial
@@ -13,7 +12,6 @@ from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.directives import dexterity
 from plone.directives import form
-from plone.memoize import ram
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.CMFCore.utils import getToolByName
@@ -35,7 +33,6 @@ from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 from emrt.necd.content.constants import ROLE_MSA
-from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_CP
@@ -43,6 +40,8 @@ from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
 from emrt.necd.content.constants import LDAP_MSEXPERT
+from emrt.necd.content.inbox_sections import SECTIONS
+
 
 grok.templatedir('templates')
 
@@ -711,6 +710,10 @@ class InboxReviewFolderView(grok.View):
     grok.context(IReviewFolder)
     grok.require('zope2.View')
     grok.name('inboxview')
+
+    @staticmethod
+    def get_sections():
+        return SECTIONS
 
     @memoize
     def get_current_user(self):
