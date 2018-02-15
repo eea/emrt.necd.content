@@ -80,23 +80,7 @@
     permission="zope2.View"
     />
 
-  <!--Conclusion views and forms-->
-
-  <adapter
-    for="Products.CMFCore.interfaces.IFolderish
-         zope.publisher.interfaces.browser.IDefaultBrowserLayer
-         plone.dexterity.interfaces.IDexterityFTI"
-    provides="zope.publisher.interfaces.browser.IBrowserPage"
-    factory="emrt.necd.content.conclusions.AddView"
-    name="emrt.necd.content.conclusions"
-    />
-
-  <class class=".conclusions.AddView">
-      <require
-          permission="emrt.necd.content.AddConclusions"
-          interface=" emrt.necd.content.conclusions.IConclusions"
-          />
-  </class>
+  <!--Conclusion view-->
 
   <browser:page
     name="view"
@@ -106,11 +90,43 @@
     permission="zope2.View"
     />
 
+  <!--Observation views-->
+
   <browser:page
-    name="edit"
-    for=".conclusions.IConclusions"
-    class=".conclusions.EditForm"
+    name="modifications"
+    for=".observation.IObservation"
+    class=".observation.ModificationForm"
     permission="cmf.ModifyPortalContent"
     />
 
+  <browser:page
+    name="add-answer-and-request-comments"
+    for=".observation.IObservation"
+    class=".observation.AddAnswerAndRequestComments"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="edit-conclusions-and-close-comments"
+    for=".observation.IObservation"
+    class=".observation.EditConclusionP2AndCloseComments"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="edit-highlights"
+    for=".observation.IObservation"
+    class=".observation.EditHighlightsForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <browser:page
+    name="add-conclusions"
+    for=".observation.IObservation"
+    class=".observation.AddConclusions"
+    attribute="render"
+    permission="zope2.View"
+    />
 </configure>
