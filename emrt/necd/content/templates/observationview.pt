@@ -106,16 +106,9 @@
           $('#comment-add-form').toggle();
         });
 
-
         $('#add-answer-link').click(function(e){
           e.preventDefault();
           $('#answer-add-form').toggle();
-        });
-
-
-        $('#add-conclusion-link').click(function(e){
-          e.preventDefault();
-          $('#conclusion-add-form').toggle();
         });
 
         $('.file .deleteButton').prepOverlay({
@@ -142,12 +135,13 @@
           $(".standardButton:contains('Edit answer')").addClass("defaultWFButton");
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
-
         $('.standardButton').click(function(e) {
-          if('Add Conclusions' == $(this).html() || 'Go to Conclusions' == $(this).html()){
+          var inner_html = $(this).html().toLowerCase()
+          if(inner_html.indexOf('conclusions') >= 0){
             e.preventDefault();
             $('#add-conclusion-wrapper').show();
           }
+
         });
     });
     </script>
@@ -1029,11 +1023,13 @@
         <span tal:replace="structure view/add_answer_form" />
       </div>
 
+     <div id="add-conclusion-wrapper" style="display: none">
+        <span tal:replace="structure view/add_conclusion_form" />
+      </div>
+
     </div>
   </div>
-   <div id="add-conclusion-wrapper" class="eea-tabs-panels" style="display: none">
-     <span tal:replace="structure view/add_conclusion_form" />
-   </div>
+
 
   </metal:content-core>
 </metal:main>
