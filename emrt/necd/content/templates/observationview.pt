@@ -135,6 +135,7 @@
           $(".standardButton:contains('Edit answer')").addClass("defaultWFButton");
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
+
         $('.standardButton').click(function(e) {
           var inner_html = $(this).html().toLowerCase()
           if(inner_html.indexOf('conclusions') >= 0){
@@ -1025,12 +1026,10 @@
 
      <div id="add-conclusion-wrapper" style="display: none">
         <span tal:replace="structure view/add_conclusion_form" />
-      </div>
+     </div>
 
     </div>
   </div>
-
-
   </metal:content-core>
 </metal:main>
 </body>
