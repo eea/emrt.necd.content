@@ -9,7 +9,6 @@ from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.utils import hidden
-from five import grok
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.browser import add
@@ -158,6 +157,7 @@ class Conclusions(dexterity.Container):
 
 
 class AddForm(add.DefaultAddForm):
+
     label = 'Conclusions'
     description = ''
 
