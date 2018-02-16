@@ -13,6 +13,11 @@ SEC_SE_ME = (
         getter=methodcaller('get_draft_questions'),
     ),
     dict(
+        title='Draft conclusion',
+        slug='se-my-draft-con',
+        getter=methodcaller('get_draft_conclusions'),
+    ),
+    dict(
         title='Counterpart questions to comment',
         slug='se-cp-que-com',
         getter=methodcaller('get_counterpart_questions_to_comment'),
