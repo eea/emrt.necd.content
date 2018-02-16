@@ -291,6 +291,9 @@ class ReviewFolderView(ReviewFolderMixin):
         sm = getSecurityManager()
         return sm.checkPermission('emrt.necd.content: Export Observations', self)
 
+    def can_import_observation(self):
+        return 'Manager' in api.user.get_roles()
+
 
 class ReviewFolderBrowserView(ReviewFolderMixin):
     grok.context(IReviewFolder)
