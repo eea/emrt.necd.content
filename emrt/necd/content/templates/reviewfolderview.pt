@@ -225,7 +225,7 @@
           </li>
           <li tal:condition="view/can_import_observation">
             <a class="standardButton import_obs" href=""
-               tal:attributes="href string:${context/absolute_url}/observation_import" >
+               tal:attributes="href string:${context/absolute_url}/observation_import_form" >
                Import observation
             </a>
           </li>

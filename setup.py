@@ -42,6 +42,7 @@ setup(name='emrt.necd.content',
           'python-docx == 0.8.5',
           'zc.dict',
           'collective.monkeypatcher',
+          'openpyxl',
       ],
       entry_points="""
       # -*- Entry points: -*-
