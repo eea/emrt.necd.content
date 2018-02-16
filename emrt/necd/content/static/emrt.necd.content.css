@@ -795,9 +795,15 @@ body.portaltype-conclusion #form-buttons-cancel {
 form[action$="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping"] input[type=text]{
 	width: 98%;
 }
+
 form[action$="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping"] div.multi-widget .inner{
 	height: 480px;
     overflow: hidden;
     width: 100%;
     overflow-y: visible;
+}
+
+input[name="xls_file"]{
+    margin-bottom: 10px;
+    display: block;
 }

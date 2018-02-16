@@ -1,9 +1,10 @@
 <metal:page use-macro="here/main_template/macros/master">
-  <metal:content fill-slot="content-core">
+  <metal:content fill-slot="main">
+    <h1 class="documentFirstHeading">Import an observation as a xls file</h1>
 
     <form method="post" action="" enctype="">
       <input type="file" name="xls_file" />
-      <input type="submit" value="Upload" />
+      <input type="submit" value="Import" class="standardButton" />
     </form>
 
   </metal:content>
