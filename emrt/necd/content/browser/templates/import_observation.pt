@@ -1,0 +1,11 @@
+<metal:page use-macro="here/main_template/macros/master">
+  <metal:content fill-slot="content-core">
+
+    <form method="post" action="" enctype="">
+      <input type="file" name="xls_file" />
+      <input type="submit" value="Upload" />
+    </form>
+
+  </metal:content>
+
+</metal:page>

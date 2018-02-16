@@ -130,4 +130,11 @@
         permission="cmf.ManagePortal"
         />
 
+    <browser:page
+        name="observation_import"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        template="templates/import_observation.pt"
+        permission="cmf.ManagePortal"
+        />
+
 </configure>
