@@ -80,4 +80,53 @@
     permission="zope2.View"
     />
 
+  <!--Conclusion view-->
+
+  <browser:page
+    name="view"
+    for=".conclusions.IConclusions"
+    class=".conclusions.ConclusionsView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <!--Observation views-->
+
+  <browser:page
+    name="modifications"
+    for=".observation.IObservation"
+    class=".observation.ModificationForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <browser:page
+    name="add-answer-and-request-comments"
+    for=".observation.IObservation"
+    class=".observation.AddAnswerAndRequestComments"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="edit-conclusions-and-close-comments"
+    for=".observation.IObservation"
+    class=".observation.EditConclusionP2AndCloseComments"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="edit-highlights"
+    for=".observation.IObservation"
+    class=".observation.EditHighlightsForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <browser:page
+    name="add-conclusions"
+    for=".observation.IObservation"
+    class=".observation.AddConclusions"
+    attribute="render"
+    permission="zope2.View"
+    />
 </configure>

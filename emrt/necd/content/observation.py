@@ -9,12 +9,13 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
-from Acquisition import aq_parent
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
-from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.app.discussion.interfaces import IConversation
 from plone.directives import dexterity
 from plone.directives import form
@@ -25,6 +26,7 @@ from plone.z3cform.interfaces import IWrappedForm
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
 from Products.CMFPlone.utils import safe_unicode
+from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 from time import time
 from z3c.form import button
@@ -41,9 +43,8 @@ from zope.browserpage.viewpagetemplatefile import (
 from zope.component import getUtility
 from zope.i18n import translate
 from zope.interface import alsoProvides
+from zope.interface import implementer
 from zope.interface import Invalid
-from zope.lifecycleevent.interfaces import IObjectAddedEvent
-from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 from emrt.necd.content import MessageFactory as _
 from eea.cache import cache
@@ -60,20 +61,8 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
-import datetime
-
-
-HIDDEN_ACTIONS = [
-    '/content_status_history',
-    '/placeful_workflow_configuration',
-]
-
-
-def hidden(menuitem):
-    for action in HIDDEN_ACTIONS:
-        if menuitem.get('action').endswith(action):
-            return True
-    return False
+from emrt.necd.content import conclusions
+from emrt.necd.content.utils import hidden
 
 
 # Cache helper methods
@@ -262,8 +251,6 @@ def default_year(data):
     return datetime.datetime.now().year
 
 
-@grok.subscribe(IObservation, IObjectAddedEvent)
-@grok.subscribe(IObservation, IObjectModifiedEvent)
 def set_title_to_observation(object, event):
     sector = safe_unicode(object.ghg_source_category_value())
     pollutants = safe_unicode(object.pollutants_value())
@@ -273,10 +260,8 @@ def set_title_to_observation(object, event):
     grant_local_roles(object)
 
 
+@implementer(IObservation)
 class Observation(dexterity.Container):
-    grok.implements(IObservation)
-    # Add your class methods and properties here
-
     def get_values(self):
         """
         Memoized version of values, to speed-up
@@ -819,14 +804,7 @@ class Observation(dexterity.Container):
 # This will make this view the default view for your content-type
 
 
-grok.templatedir('templates')
-
-
-class EditForm(dexterity.EditForm):
-    grok.name('edit')
-    grok.context(IObservation)
-    grok.require('cmf.ModifyPortalContent')
-
+class EditForm(edit.DefaultEditForm):
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
         self.widgets['highlight'].template = Z3ViewPageTemplateFile(
@@ -837,11 +815,7 @@ class EditForm(dexterity.EditForm):
         )
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('emrt.necd.content.observation')
-    grok.context(IObservation)
-    grok.require('emrt.necd.content.AddObservation')
-
+class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
 
@@ -870,6 +844,10 @@ class AddForm(dexterity.AddForm):
 
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
+
+
+class AddView(add.DefaultAddView):
+    form = AddForm
 
 
 class ObservationMixin(DefaultView):
@@ -992,7 +970,6 @@ class ObservationMixin(DefaultView):
         question = self.question()
         if question:
             values = [v for v in question.values() if sm.checkPermission('View', v)]
-            # return question.values()
             return values
 
     def actions(self):
@@ -1013,7 +990,6 @@ class ObservationMixin(DefaultView):
 
             menu_items = question_menu_items + observation_menu_items
         return [mitem for mitem in menu_items if not hidden(mitem)]
-
 
     def get_user_name(self, userid, question=None):
         # check users
@@ -1059,6 +1035,12 @@ class ObservationMixin(DefaultView):
 
     def add_comment_form(self):
         form_instance = AddCommentForm(self.context, self.request)
+        alsoProvides(form_instance, IWrappedForm)
+        return form_instance()
+
+    def add_conclusion_form(self):
+        ti = getUtility(IDexterityFTI, name='Conclusions')
+        form_instance = conclusions.AddForm(self.context, self.request, ti=ti)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
@@ -1402,11 +1384,7 @@ class AddQuestionForm(Form):
             self.actions[k].addClass('defaultWFButton')
 
 
-class ModificationForm(dexterity.EditForm):
-    grok.name('modifications')
-    grok.context(IObservation)
-    grok.require('cmf.ModifyPortalContent')
-
+class ModificationForm(edit.DefaultEditForm):
     def updateFields(self):
         super(ModificationForm, self).updateFields()
 
@@ -1488,12 +1466,8 @@ class AddAnswerForm(Form):
             self.actions[k].addClass('standardButton')
 
 
-class AddAnswerAndRequestComments(grok.View):
-    grok.context(IObservation)
-    grok.name('add-answer-and-request-comments')
-    grok.require('zope2.View')
-
-    def render(self):
+class AddAnswerAndRequestComments(BrowserView):
+     def render(self):
         observation = aq_inner(self.context)
         questions = [q for q in observation.values() if q.portal_type == 'Question']
         if questions:
@@ -1568,11 +1542,7 @@ class AddCommentForm(Form):
             self.actions[k].addClass('standardButton')
 
 
-class EditConclusionP2AndCloseComments(grok.View):
-    grok.name('edit-conclusions-and-close-comments')
-    grok.context(IObservation)
-    grok.require('zope2.View')
-
+class EditConclusionP2AndCloseComments(BrowserView):
     def update(self):
         # Some checks:
         waction = self.request.get('workflow_action')
@@ -1593,11 +1563,7 @@ class EditConclusionP2AndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditHighlightsForm(dexterity.EditForm):
-    grok.name('edit-highlights')
-    grok.context(IObservation)
-    grok.require('cmf.ModifyPortalContent')
-
+class EditHighlightsForm(edit.DefaultEditForm):
     def updateFields(self):
         super(EditHighlightsForm, self).updateFields()
         self.fields = field.Fields(IObservation).select('highlight')
@@ -1611,11 +1577,7 @@ class EditHighlightsForm(dexterity.EditForm):
         )
 
 
-class AddConclusions(grok.View):
-    grok.context(IObservation)
-    grok.name('add-conclusions')
-    grok.require('zope2.View')
-
+class AddConclusions(BrowserView):
     def render(self):
         context = aq_inner(self.context)
         conclusions_folder = self.context.get_values_cat('Conclusions')

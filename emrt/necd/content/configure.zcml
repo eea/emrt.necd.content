@@ -67,6 +67,66 @@
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
 
+  <!--Add and Edit conclusion forms-->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.conclusions.AddView"
+    name="emrt.necd.content.conclusions"
+    />
+
+  <class class=".conclusions.AddView">
+      <require
+          permission="emrt.necd.content.AddConclusions"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="emrt.necd.content.conclusions.IConclusions"
+    class=".conclusions.EditForm"
+    permission="cmf.ModifyPortalContent"
+  />
+
+  <!--Observation forms and events-->
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="emrt.necd.content.observation.set_title_to_observation"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="emrt.necd.content.observation.set_title_to_observation"
+    />
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.observation.AddView"
+    name="emrt.necd.content.observation"
+    />
+
+  <class class=".observation.AddView">
+      <require
+          permission="emrt.necd.content.AddObservation"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="emrt.necd.content.observation.IObservation"
+    class="emrt.necd.content.observation.EditForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
   <!-- Crons view -->
   <browser:page
       name="cron_update_vocabularies"

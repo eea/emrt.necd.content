@@ -106,16 +106,9 @@
           $('#comment-add-form').toggle();
         });
 
-
         $('#add-answer-link').click(function(e){
           e.preventDefault();
           $('#answer-add-form').toggle();
-        });
-
-
-        $('#add-conclusion-link').click(function(e){
-          e.preventDefault();
-          $('#conclusion-add-form').toggle();
         });
 
         $('.file .deleteButton').prepOverlay({
@@ -143,14 +136,16 @@
           $(".standardButton:contains('Submit Answer')").removeClass("defaultWFButton")
         }
 
+        $('.standardButton').click(function(e) {
+          var inner_html = $(this).html().toLowerCase()
+          if(inner_html.indexOf('conclusions') >= 0){
+            e.preventDefault();
+            $('#add-conclusion-wrapper').show();
+          }
 
-
-
+        });
     });
-
-
-
-</script>
+    </script>
   </tal:block>
 
 
@@ -225,7 +220,6 @@
           <i class="eea-icon eea-icon-4x observation"></i>
         </div>
         <div class="cell position-1 width-4 esdLabel">Ref. Number</div>
-        <!--div class="cell position-5 width-11 esdLabel">Observation</div-->
       </div>
       <div class="row">
         <div class="cell position-1 width-4 value">
@@ -233,11 +227,6 @@
              UK-WAS-13-001
           </span>
         </div>
-        <!--div class="cell position-5 width-13 value">
-          <span tal:content="context/title">
-             Title
-          </span>
-        </div-->
       </div>
       <div class="row" style="margin-top:15px">
         <div class="cell position-1 width-2 esdLabel">Country</div>
@@ -471,12 +460,6 @@
         <div id="conclusion-discussion-wrapper"
           tal:define="context nocall:conclusion">
         <div class="changes" tal:condition="context/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -495,7 +478,6 @@
                   <label for="two">
                     <span tal:omit-tag="" i18n:translate="">First revision</span>
                     <select id="two" name="two" tal:define="rev request/form/two|string:current">
-                       <!-- <option i18n:translate="label_current" value="current" tal:attributes="selected python:rev=='current' and 'yes' or None">Current</option> -->
                        <option tal:repeat="version view/history"
                                tal:attributes="value version/version_id; selected python:str(rev)==str(version['version_id']) and 'yes' or None"
                                i18n:translate="label_history_version"><tal:version i18n:name="version" content="version/version_id">1</tal:version>
@@ -505,7 +487,6 @@
                   <label for="one">
                     <span tal:omit-tag="" i18n:translate="">Second revision</span>
                     <select id="one" name="one" tal:define="rev request/one|string:current">
-                       <!-- <option i18n:translate="label_current" value="current" tal:attributes="selected python:rev=='current' and 'yes' or None">Current</option> -->
                        <option tal:repeat="version view/history"
                                tal:attributes="value version/version_id; selected python:str(rev)==str(version['version_id']) and 'yes' or None"
                                i18n:translate="label_history_version"><tal:version i18n:name="version" content="version/version_id">1</tal:version>
@@ -606,17 +587,6 @@
     </div>
     <div class="eea-tabs-panel questions">
       <tal:qactions condition="python:not view.in_conclusions()">
-      <div class="actions"
-        tal:condition="python:not view.get_questions() and view.can_add_conclusion()">
-        <!-- <a href=""
-            tal:condition="view/can_add_conclusion"
-            id="add-conclusion-link"
-            tal:attributes="href string:${here/absolute_url}/++add++Conclusion"
-            class="standardButton">
-            Add conclusions
-        </a> -->
-      </div>
-
       <div class="actions" tal:condition="view/can_add_question">
         <a id="add-question-link"
           tal:attributes="href string:${here/absolute_url}/++add++Question"
@@ -669,7 +639,6 @@
           <span class="value" tal:condition="python:portalType == 'comment'">Member State</span>
           <span class="value" tal:condition="python:portalType == 'commentanswer'">TERTs</span>
           <span class="tooltipIconBlue" tal:condition="python:portalType == 'comment'" title="Draft a question for the MS. MS can only see the question once it has been approved and sent by the LR">&nbsp;</span>
-          <!--span class="value" tal:content="python:view.get_user_name(question.Creator(), question)">John Smith</span-->
           <span class="messageDate">
             <tal:effective condition="question/effective_date">
               Sent on: <span tal:content="python:question.effective().strftime('%d %b %Y, %H:%M CET')">11/12/2013 12:00</span>
@@ -679,7 +648,6 @@
             </tal:noteffective>
          </span>
         </div>
-        <!--h3 tal:condition="question/can_edit">Current text</h3-->
         <div tal:content="question/text/output|question/text|string:" class="answerContent">
           Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </div>
@@ -731,12 +699,6 @@
           </tal:message>
         </tal:redraft>
         <div class="changes" tal:condition="question/can_edit">
-          <!--div class="row collapsiblePanelTitle collapsed" data-panel="question-history">
-            <div class="cell position-0 width-16">
-              History
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
-          </div-->
           <div class="question-history" style="display:none">
             <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
               This object has no revision information.
@@ -755,7 +717,6 @@
                   <label for="two">
                     <span tal:omit-tag="" i18n:translate="">First revision</span>
                     <select id="two" name="two" tal:define="rev request/form/two|string:current">
-                       <!-- <option i18n:translate="label_current" value="current" tal:attributes="selected python:rev=='current' and 'yes' or None">Current</option> -->
                        <option tal:repeat="version view/history"
                                tal:attributes="value version/version_id; selected python:str(rev)==str(version['version_id']) and 'yes' or None"
                                i18n:translate="label_history_version"><tal:version i18n:name="version" content="version/version_id">1</tal:version>
@@ -765,7 +726,6 @@
                   <label for="one">
                     <span tal:omit-tag="" i18n:translate="">Second revision</span>
                     <select id="one" name="one" tal:define="rev request/one|string:current">
-                       <!-- <option i18n:translate="label_current" value="current" tal:attributes="selected python:rev=='current' and 'yes' or None">Current</option> -->
                        <option tal:repeat="version view/history"
                                tal:attributes="value version/version_id; selected python:str(rev)==str(version['version_id']) and 'yes' or None"
                                i18n:translate="label_history_version"><tal:version i18n:name="version" content="version/version_id">1</tal:version>
@@ -886,14 +846,6 @@
 
           </tal:block>
 
-          <!--tal:block condition="view/can_edit">
-            <a href=""
-                tal:attributes="href string:${here/absolute_url}/modifications"
-                class="standardButton">
-                Edit Observation
-            </a>
-          </tal:block-->
-
           <tal:block condition="view/can_delete_observation">
             <a href="./delete_confirmation"
               id="observation-delete"
@@ -902,14 +854,6 @@
               Delete observation
             </a>
           </tal:block>
-
-          <!-- <a href=""
-            tal:condition="view/can_add_conclusion"
-            id="add-conclusion-link"
-            tal:attributes="href string:${here/absolute_url}/++add++Conclusion"
-            class="standardButton">
-            Add conclusions
-          </a> -->
 
           <tal:block  tal:define="portalType question/portal_type/lower"
             tal:condition="python:portalType == 'comment'">
@@ -1079,6 +1023,10 @@
       <div id="answer-add-form" style="display: none" tal:condition="view/can_add_answer">
         <span tal:replace="structure view/add_answer_form" />
       </div>
+
+     <div id="add-conclusion-wrapper" style="display: none">
+        <span tal:replace="structure view/add_conclusion_form" />
+     </div>
 
     </div>
   </div>

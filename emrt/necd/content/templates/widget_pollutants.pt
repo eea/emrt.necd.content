@@ -35,7 +35,7 @@
       /><label tal:attributes="for item/id">
         <span class="label" tal:content="item/label">Label</span>
       </label>
-      <tal:row condition="python:item['value'] in ['PM2.5', 'indeno-pyrene', 'HCB']  ">
+      <tal:row condition="python:item['value'] in ['PM2.5', 'HCB', 'PAHs']  ">
           <br/>
       </tal:row>
     </span>
