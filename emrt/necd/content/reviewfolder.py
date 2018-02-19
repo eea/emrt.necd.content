@@ -2,6 +2,7 @@ import itertools
 import time
 import tablib
 from functools import partial
+from operator import methodcaller
 from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
@@ -710,15 +711,40 @@ class RoleMapItem(object):
         return False
 
 
+def _do_section_queries(view, action):
+    action['num_obs'] = 0
+
+    for section in action['sec']:
+        brains = section['getter'](view)
+        len_brains = len(brains)
+        section['brains'] = brains
+        section['num_obs'] = len_brains
+        action['num_obs'] += len_brains
+
+    return action['num_obs']
+
+
 class InboxReviewFolderView(BrowserView):
 
     def __call__(self):
         self.rolemap_observations = dict()
         return super(InboxReviewFolderView, self).__call__()
 
-    @staticmethod
-    def get_sections():
-        return SECTIONS
+    def get_sections(self):
+        is_sec = self.is_secretariat()
+
+        viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)]
+
+        total_sum = 0
+        for section in viewable:
+            section['num_obs'] = 0
+
+            for action in section['actions']:
+                section['num_obs'] += _do_section_queries(self, action)
+
+            total_sum += section['num_obs']
+
+        return dict(viewable=viewable, total_sum=total_sum)
 
     @memoize
     def get_current_user(self):

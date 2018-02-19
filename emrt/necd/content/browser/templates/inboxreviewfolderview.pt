@@ -29,7 +29,17 @@
       }
       .page-content { display: flex }
       .menu { min-width: 350px; }
-      .menu-body { margin-left: 1em; }
+      .menu-body {
+        margin-left: 1em;
+        width: 100%;
+      }
+      .menu-body-message {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+      }
       .section-title {
         font-weight: bold;
       }
@@ -69,6 +79,8 @@
                 macro_template python:here.restrictedTraverse('@@macros');
                 macro_observationlist python:macro_template['macros']['observationlist'];
                 sections view/get_sections;
+                sections_viewable sections/viewable;
+                sections_total_obs sections/total_sum;
                 sec_cur python:request.get('section', '');
                 req_params python:[(k, v) for k, v in request.form.items() if k != 'section' and 'b_start' not in k];
                 is_secretariat python:view.is_secretariat();
@@ -122,40 +134,37 @@
   <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
     <div class="page-content">
       <div class="menu">
-        <button class="pull-right" style="display: none" id="toggleEmpty">Hide empty</button>
+        <button class="pull-right" style="display: none" id="toggleEmpty">Collapse view</button>
         <ul class="menu-role">
-          <tal:section repeat="role sections">
-            <tal:role condition="python:is_secretariat or role['check'](view)">
-              <li>
-                <span class="section-role">${role/title}</span>
-                <ul class="menu-section">
-                  <li tal:repeat="sec role/sec">
-                    <span class="section-title">${sec/title}</span>
-                    <ul class="menu-subsection">
-                      <tal:subsec repeat="subsec sec/sec">
-                        <tal:subsec-def define="current python:subsec['slug'] == sec_cur; num_obs python:len(subsec['getter'](view))">
-                          <li class="section-subsection ${python:'current' if current else ''}">
-                            <span tal:condition="not:num_obs" class="muted">${subsec/title}</span>
-                            <a tal:condition="num_obs"
-                              href="./inboxview?${python:'&'.join(['='.join(x) for x in req_params + [('section', subsec['slug'])]])}">${subsec/title}</a>
-                            <span tal:condition="num_obs" class="obs-count">(${num_obs})</span>
-                          </li>
-                        </tal:subsec-def>
-                      </tal:subsec>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </tal:role>
+          <tal:section repeat="role sections_viewable">
+            <li>
+              <span class="section-role">${role/title}</span>
+              <ul class="menu-section">
+                <li tal:repeat="action python:role['actions']">
+                  <span class="section-title">${action/title}</span>
+                  <ul class="menu-subsection">
+                    <tal:subsec repeat="subsec action/sec">
+                    <tal:subsec-def define="current python:subsec['slug'] == sec_cur; num_obs subsec/num_obs">
+                    <li class="section-subsection ${python:'current' if current else ''}">
+                      <span tal:condition="not:num_obs" class="muted">${subsec/title}</span>
+                      <a tal:condition="num_obs" href="./inboxview?${python:'&'.join(['='.join(x) for x in req_params + [('section', subsec['slug'])]])}">${subsec/title}</a>
+                      <span tal:condition="num_obs" class="obs-count">(${num_obs})</span>
+                    </li>
+                    </tal:subsec-def>
+                    </tal:subsec>
+                  </ul>
+                </li>
+              </ul>
+            </li>
           </tal:section>
         </ul>
         <script>
           (function(){
-            var targets =  $('.menu-section li, .menu-role li').filter(function(i, o){ return $('a', o).length === 0});
+            var targets =  $('.menu-section li').filter(function(i, o){ return $('a', o).length === 0});
 
             function do_toggle(btn, elems, toggle) {
               var COOKIE = 'necd.inbox.showempty';
-              var cookie = docCookies.getItem(COOKIE) || 'hide';
+              var cookie = docCookies.getItem(COOKIE) || 'show';
 
               var action = toggle ? (cookie === 'show' ? 'hide' : 'show') : cookie;
 
@@ -163,11 +172,11 @@
 
               if (action === 'hide') {
                 elems.fadeOut();
-                btn_text = 'Show empty';
+                btn_text = 'Expand view';
               }
               else if (action === 'show') {
                 elems.fadeIn();
-                btn_text = 'Hide empty';
+                btn_text = 'Collapse view';
               }
 
               btn.text(btn_text);
@@ -194,20 +203,33 @@
         </script>
       </div>
       <div class="menu-body">
-        <tal:section repeat="role sections">
-          <tal:role condition="python:is_secretariat or role['check'](view)">
-            <tal:sec repeat="sec role/sec">
-              <tal:subsec repeat="subsec sec/sec">
-                <tal:content condition="python:subsec['slug'] == sec_cur">
-                  <h2>${sec/title} - ${subsec/title}</h2>
-                  <div tal:define="observations python:subsec['getter'](view); idx subsec/slug">
-                    <metal:obslist use-macro="macro_observationlist" />
-                  </div>
-                </tal:content>
-              </tal:subsec>
-            </tal:sec>
-          </tal:role>
+        <tal:section repeat="role sections_viewable">
+          <tal:action repeat="action role/actions">
+            <tal:subsec repeat="subsec action/sec">
+              <tal:content condition="python:subsec['slug'] == sec_cur">
+                <h2>${action/title} - ${subsec/title}</h2>
+                <div tal:define="observations subsec/brains; idx subsec/slug">
+                  <metal:obslist use-macro="macro_observationlist" />
+                </div>
+              </tal:content>
+            </tal:subsec>
+          </tal:action>
         </tal:section>
+        <tal:content condition="python:sec_cur and not sections_total_obs">
+          <div class="menu-body-message">
+            <p>You have no pending actions.</p>
+          </div>
+        </tal:content>
+        <tal:content condition="python:not sec_cur and sections_total_obs">
+          <div class="menu-body-message">
+            <p>Please select a section on the left.</p>
+          </div>
+        </tal:content>
+        <tal:content condition="python:not sec_cur and not sections_total_obs">
+          <div class="menu-body-message">
+            <p>You have no pending actions.</p>
+          </div>
+        </tal:content>
       </div>
     </div>
   </div>

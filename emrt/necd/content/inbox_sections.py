@@ -1,3 +1,5 @@
+from functools import partial
+from functools import wraps
 from operator import methodcaller
 
 
@@ -181,17 +183,15 @@ SECTIONS = (
     dict(
         title='Sector expert',
         check=methodcaller('is_sector_expert'),
-        sec=(
+        actions=(
             dict(title='My actions', sec=SEC_SE_ME),
-            dict(
-                title='Other actions for my observations',
-                sec=SEC_SE_OTHER),
+            dict(title='Other actions for my observations', sec=SEC_SE_OTHER),
         )
     ),
     dict(
         title='Lead reviewer',
         check=methodcaller('is_lead_reviewer'),
-        sec=(
+        actions=(
             dict(title='My actions', sec=SEC_LR_ME),
             dict(title='My teams\'s actions', sec=SEC_LR_TEAM),
             dict(title='My MS\'s actions', sec=SEC_LR_MS),
@@ -200,7 +200,7 @@ SECTIONS = (
     dict(
         title='MS coordinator',
         check=methodcaller('is_member_state_coordinator'),
-        sec=(
+        actions=(
             dict(title='My actions', sec=SEC_MSC_ME),
             dict(title='MS experts actions', sec=SEC_MSC_MSE),
             dict(title='Sector expert actions', sec=SEC_MSC_SE),
@@ -209,7 +209,7 @@ SECTIONS = (
     dict(
         title='MS expert',
         check=methodcaller('is_member_state_expert'),
-        sec=(
+        actions=(
             dict(title='My actions', sec=SEC_MSE_ME),
             dict(title='MSC actions', sec=SEC_MSE_MSC),
             dict(title='Sector expert actions', sec=SEC_MSE_SE),
