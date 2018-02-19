@@ -2,6 +2,15 @@ Changelog
 =========
 
 
+2.0.40 (2018-02-19)
+-------------------
+
+- Task #92565 - Writing conclusion
+- Task #92457 - Add additional pollutants into "Create and observation"
+  [boteziri]
+
+- Task #88825 - Insert information from this workflow status "Draft Conclusion" into My View Option
+
 2.0.39 (2018-02-15)
 -------------------
 
