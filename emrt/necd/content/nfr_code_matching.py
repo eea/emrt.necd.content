@@ -70,6 +70,7 @@ def get_category_ldap_from_nfr_code(value):
         According to the rules previously set
         for LDAP Matching
     """
+    # import pdb;pdb.set_trace()
     nfrcodes = nfr_codes()
     return nfrcodes.get(value, {}).get('ldap', '')
 

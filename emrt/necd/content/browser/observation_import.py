@@ -1,3 +1,4 @@
+from emrt.necd.content.observation import IObservation, set_title_to_observation
 from functools import partial
 from itertools import takewhile
 from operator import itemgetter
@@ -6,12 +7,11 @@ from Products.Five.browser import BrowserView
 from zope import component
 from z3c.relationfield import RelationValue
 
+from Products.CMFPlone.utils import safe_unicode
+from emrt.necd.content.nfr_code_matching import get_category_ldap_from_nfr_code
+
 import logging
 import openpyxl
-
-from emrt.necd.content.vocabularies import Parameter
-
-# LOG =
 
 
 def _read_row(idx, row):
@@ -21,6 +21,7 @@ def _read_row(idx, row):
 COL_TITLE = partial(_read_row, 0)
 COL_POLLUTANTS = partial(_read_row, 1)
 COL_PARAMS = partial(_read_row, 2)
+COL_DESC = "Bla bla bla"
 
 
 PORTAL_TYPE = 'Observation'
@@ -32,7 +33,13 @@ class Entry(object):
 
     @property
     def title(self):
-        return COL_TITLE(self.row)
+        nfr_code = getattr(self, 'nfr_code')
+        sector = safe_unicode(get_category_ldap_from_nfr_code(nfr_code[:3]))
+        pollutants = safe_unicode(getattr(self, 'pollutants'))
+        inventory_year = safe_unicode(str(getattr(self, 'year')))
+        parameter = safe_unicode(getattr(self, 'parameter'))
+        # import pdb;pdb.set_trace()
+        return u' '.join([sector, pollutants, inventory_year, parameter])
 
     @property
     def pollutants(self):
@@ -42,23 +49,68 @@ class Entry(object):
     def parameter(self):
         return COL_PARAMS(self.row)
 
-def _log_created(portal_type, title, content):
+    @property
+    def text(self):
+        return COL_DESC
+
+    @property
+    def closing_deny_comments(self):
+        pass
+
+    @property
+    def country(self):
+        return 'Austria'
+
+    @property
+    def fuel(self):
+        pass
+
+    @property
+    def nfr_code(self):
+        return '1A1 Energy production'
+
+    @property
+    def review_year(self):
+        return 2018
+
+    @property
+    def year(self):
+        return 2017
+
+    @property
+    def ms_key_category(self):
+        pass
+
+    @property
+    def highlight(self):
+        pass
+
+    @property
+    def closing_comments(self):
+        pass
+
+    def get_fields(self):
+        for name in IObservation:
+            getattr(self, name)
+        return {name: getattr(self, name) for name in IObservation}
+
+def _log_created(portal_type, content):
     # LOG.info(
     print(
         u'Created new %s for %s: %s!',
-        portal_type, title, content.absolute_url(1))
+        portal_type, content.absolute_url(1))
 
 
-def _create_observation(context, portal_type, title, pollutants, parameter):
+def _create_observation(entry, context, portal_type):
+
 
     content = api.content.create(
         context,
         type=portal_type,
-        title=title,
-        pollutants=pollutants,
-        parameter=parameter,
+        title = getattr(entry, 'title'),
+        **entry.get_fields()
     )
-    _log_created(portal_type, title, content)
+    _log_created(portal_type, content)
     return content
 
 class ObservationXLSImport(BrowserView):
@@ -72,7 +124,7 @@ class ObservationXLSImport(BrowserView):
         entries = map(Entry, sheet.rows)
 
         for entry in entries:
-            _create_observation(self.context, PORTAL_TYPE, entry.title, entry.pollutants, entry.parameter)
+            _create_observation(entry, self.context, PORTAL_TYPE)
 
         return 'DONE!'
 
