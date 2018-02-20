@@ -270,6 +270,7 @@ def set_title_to_observation(object, event):
     inventory_year = safe_unicode(str(object.year))
     parameter = safe_unicode(object.parameter_value())
     object.title = u' '.join([sector, pollutants, inventory_year, parameter])
+    import pdb;pdb.set_trace()
     grant_local_roles(object)
 
 

@@ -2,7 +2,7 @@
   <metal:content fill-slot="main">
     <h1 class="documentFirstHeading">Import an observation as a xls file</h1>
 
-    <form method="post" action="" enctype="">
+    <form method="post" action="./observation_import" enctype="multipart/form-data">
       <input type="file" name="xls_file" />
       <input type="submit" value="Import" class="standardButton" />
     </form>

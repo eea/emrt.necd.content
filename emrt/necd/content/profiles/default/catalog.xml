@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
 
+ <index name="Pollutants" meta_type="FieldIndex">
+  <indexed_attr value="observation_pollutants"/>
+ </index>
+
  <index name="Country" meta_type="FieldIndex">
   <indexed_attr value="Country"/>
  </index>
