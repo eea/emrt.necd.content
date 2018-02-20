@@ -11,6 +11,14 @@
         permission="emrt.necd.content.Warmup"
         />
 
+
+    <browser:page
+        name="tableau.json"
+        for="..reviewfolder.IReviewFolder"
+        class=".tableau.TableauView"
+        permission="cmf.ManagePortal"
+        />
+
     <browser:page
         name="macros"
         for="..reviewfolder.IReviewFolder"

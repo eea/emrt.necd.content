@@ -1,6 +1,7 @@
 import concurrent.futures
 from operator import itemgetter
 import plone.api as api
+import json
 
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
@@ -79,3 +80,11 @@ def get_vocabulary_value(context, vocabulary, term):
         return value.title
     except LookupError:
         return term
+
+
+def jsonify(request, data, cache=False):
+    header = request.RESPONSE.setHeader
+    header("Content-Type", "application/json")
+    if cache:
+        header("Expires", "Sun, 17-Jan-2038 19:14:07 GMT")
+    return json.dumps(data, indent=2, sort_keys=True)
