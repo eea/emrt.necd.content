@@ -23,7 +23,10 @@ def reduce_count_brains(acc, b):
 
 def get_qa(catalog, brain):
     path = brain.getPath()
-    return catalog(portal_type=['Comment', 'CommentAnswer'], path=path)
+    return catalog.unrestrictedSearchResults(
+        portal_type=['Comment', 'CommentAnswer'],
+        path=path
+    )
 
 
 def current_status(brain):
@@ -72,9 +75,12 @@ class TableauView(BrowserView):
             catalog = getToolByName(self.context, 'portal_catalog')
             timestamp = datetime.now().isoformat()
             entry = partial(extract_entry, catalog, timestamp)
+            folder = self.context
 
-            brains = self.context.getFolderContents(
-                dict(portal_type=['Observation']))
+            brains = catalog.unrestrictedSearchResults(
+                portal_type=['Observation'],
+                path='/'.join(folder.getPhysicalPath())
+            )
 
             data = map(entry, brains)
         else:
