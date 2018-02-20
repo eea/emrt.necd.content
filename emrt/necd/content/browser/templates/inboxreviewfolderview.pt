@@ -1,0 +1,240 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="emrt.necd.content">
+  <tal:block metal:fill-slot="javascript_head_slot">
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $(".observationText").text(function(index, currentText){
+          if (currentText.length > 500){
+            $(this).text(currentText.substr(0, 500) + "...");
+            $(this).attr("title", currentText);
+          }
+        });
+      });
+    </script>
+    <script src="${portal_url}/++resource++emrt.necd.content/cookies.js"></script>
+  </tal:block>
+  <tal:block metal:fill-slot="style_slot">
+    <style>
+      #observations.myview .menu a { border-bottom: none }
+      #observations.myview .menu ul { list-style-type: none }
+      #observations.myview .menu { padding-right: 1em;}
+      #observations.myview .menu-section,
+      #observations.myview .menu-subsection {
+        margin-left: 0;
+      }
+      .page-content { display: flex }
+      .menu { min-width: 350px; }
+      .menu-body {
+        margin-left: 1em;
+        width: 100%;
+      }
+      .menu-body-message {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+      }
+      .section-title {
+        font-weight: bold;
+      }
+      .section-role {
+          font-size: larger;
+          border-bottom: 3px solid #38758a;
+          width: 100%;
+          display: inline-block;
+      }
+
+      .menu-section .current {
+        border-right: 2px solid #f6a800;
+      }
+
+      .menu-section {
+          margin-top: 1em;
+          margin-bottom: 1em;
+      }
+      .menu-subsection {
+          margin-bottom: 1em;
+      }
+
+      .muted { color: gray }
+
+      #toggleEmpty {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+      }
+
+    </style>
+  </tal:block>
+<body>
+
+  <metal:main fill-slot="content-core"
+              tal:define="
+                macro_template python:here.restrictedTraverse('@@macros');
+                macro_observationlist python:macro_template['macros']['observationlist'];
+                sections view/get_sections;
+                sections_viewable sections/viewable;
+                sections_total_obs sections/total_sum;
+                sec_cur python:request.get('section', '');
+                req_params python:[(k, v) for k, v in request.form.items() if k != 'section' and 'b_start' not in k];
+                is_secretariat python:view.is_secretariat();
+                is_se python:view.is_sector_expert();
+                is_lr python:view.is_lead_reviewer();
+                is_mse python:view.is_member_state_expert();
+                is_msc python:view.is_member_state_coordinator()">
+    <metal:content-core define-macro="content-core">
+
+  <div id="inbox-view-content">
+  <div class="actions" tal:condition="view/can_add_observation">
+    <a href="./++add++Observation"
+      tal:attributes="href string:${here/absolute_url}/++add++Observation"
+      class="standardButton defaultWFButton">
+        New observation
+    </a>
+  </div>
+
+  <div id="tabs">
+    <div class="tabs">
+      <div>
+        <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+      </div>
+      <div class="active">
+        <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
+      </div>
+      <div>
+        <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="filters">
+    <div class="row" style="padding-top:30px">
+      <div class="cell position-1 width-3 esdLabel">Free text</div>
+    </div>
+    <div class="row">
+      <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
+        <div class="cell position-1 width-12 esdLabel">
+          <tal:params repeat="req_param python:[x for x in req_params if x[0] != 'freeText']">
+            <input type="hidden" name="${python:req_param[0]}" value="${python:req_param[1]}" />
+          </tal:params>
+          <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" value="${freeText}" />
+        </div>
+        <div class="cell position-14 width-1">
+          <input type="submit" class="standardButton" id="btnFilter" value="Search" />
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
+    <div class="page-content">
+      <div class="menu">
+        <button class="pull-right" style="display: none" id="toggleEmpty">Collapse view</button>
+        <ul class="menu-role">
+          <tal:section repeat="role sections_viewable">
+            <li>
+              <span class="section-role">${role/title}</span>
+              <ul class="menu-section">
+                <li tal:repeat="action python:role['actions']">
+                  <span class="section-title">${action/title}</span>
+                  <ul class="menu-subsection">
+                    <tal:subsec repeat="subsec action/sec">
+                    <tal:subsec-def define="current python:subsec['slug'] == sec_cur; num_obs subsec/num_obs">
+                    <li class="section-subsection ${python:'current' if current else ''}">
+                      <span tal:condition="not:num_obs" class="muted">${subsec/title}</span>
+                      <a tal:condition="num_obs" href="./inboxview?${python:'&'.join(['='.join(x) for x in req_params + [('section', subsec['slug'])]])}">${subsec/title}</a>
+                      <span tal:condition="num_obs" class="obs-count">(${num_obs})</span>
+                    </li>
+                    </tal:subsec-def>
+                    </tal:subsec>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </tal:section>
+        </ul>
+        <script>
+          (function(){
+            var targets =  $('.menu-section li').filter(function(i, o){ return $('a', o).length === 0});
+
+            function do_toggle(btn, elems, toggle) {
+              var COOKIE = 'necd.inbox.showempty';
+              var cookie = docCookies.getItem(COOKIE) || 'show';
+
+              var action = toggle ? (cookie === 'show' ? 'hide' : 'show') : cookie;
+
+              var btn_text;
+
+              if (action === 'hide') {
+                elems.fadeOut();
+                btn_text = 'Expand view';
+              }
+              else if (action === 'show') {
+                elems.fadeIn();
+                btn_text = 'Collapse view';
+              }
+
+              btn.text(btn_text);
+
+              if (toggle) {
+                docCookies.setItem(COOKIE, action);
+              };
+            };
+
+            var toggler = $('#toggleEmpty');
+
+            if (targets.length > 0) {
+              toggler.on('click', function(){
+                do_toggle(toggler, targets, true);
+              });
+              do_toggle(toggler, targets, false);
+              toggler.show();
+            } else {
+              toggler.remove();
+            }
+
+
+          })();
+        </script>
+      </div>
+      <div class="menu-body">
+        <tal:section repeat="role sections_viewable">
+          <tal:action repeat="action role/actions">
+            <tal:subsec repeat="subsec action/sec">
+              <tal:content condition="python:subsec['slug'] == sec_cur">
+                <h2>${action/title} - ${subsec/title}</h2>
+                <div tal:define="observations subsec/brains; idx subsec/slug">
+                  <metal:obslist use-macro="macro_observationlist" />
+                </div>
+              </tal:content>
+            </tal:subsec>
+          </tal:action>
+        </tal:section>
+        <tal:content condition="python:sec_cur and not sections_total_obs">
+          <div class="menu-body-message">
+            <p>You have no pending actions.</p>
+          </div>
+        </tal:content>
+        <tal:content condition="python:not sec_cur and sections_total_obs">
+          <div class="menu-body-message">
+            <p>Please select a section on the left.</p>
+          </div>
+        </tal:content>
+        <tal:content condition="python:not sec_cur and not sections_total_obs">
+          <div class="menu-body-message">
+            <p>You have no pending actions.</p>
+          </div>
+        </tal:content>
+      </div>
+    </div>
+  </div>
+</div>
+</metal:content-core>
+</metal:main>
+</body>
+</html>

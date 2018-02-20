@@ -8,16 +8,17 @@ from Acquisition.interfaces import IAcquirer
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
 from emrt.necd.content import MessageFactory as _
-from emrt.necd.content.observation import hidden
-from five import grok
+from emrt.necd.content.utils import hidden
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
+from Products.Five import BrowserView
 from time import time
-from types import IntType
 from types import ListType
 from types import TupleType
 from types import FloatType
@@ -32,10 +33,10 @@ from zope.component import createObject
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 from zope.interface import Invalid
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
-from z3c.form import interfaces
 
 
 DEFAULTCONCLUSIONTEXT = u"""For category x and pollutants a, b, c for year[s]... the TERT noted that...
@@ -101,8 +102,8 @@ def check_ghg_estimations(value):
 # be instances of this class. Use this class to add content-type specific
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
+@implementer(IConclusions)
 class Conclusions(dexterity.Container):
-    grok.implements(IConclusions)
 
     def reason_value(self):
         return self._vocabulary_value(
@@ -155,10 +156,7 @@ class Conclusions(dexterity.Container):
         return [item for item in items if mtool.checkPermission('View', item)]
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('emrt.necd.content.conclusions')
-    grok.context(IConclusions)
-    grok.require('emrt.necd.content.AddConclusions')
+class AddForm(add.DefaultAddForm):
 
     label = 'Conclusions'
     description = ''
@@ -235,11 +233,11 @@ class AddForm(dexterity.AddForm):
             self.actions[k].addClass('standardButton')
 
 
-class ConclusionsView(grok.View):
-    grok.context(IConclusions)
-    grok.require('zope2.View')
-    grok.name('view')
+class AddView(add.DefaultAddView):
+    form = AddForm
 
+
+class ConclusionsView(BrowserView):
     def render(self):
         context = aq_inner(self.context)
         parent = aq_parent(context)
@@ -248,11 +246,7 @@ class ConclusionsView(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditForm(dexterity.EditForm):
-    grok.name('edit')
-    grok.context(IConclusions)
-    grok.require('cmf.ModifyPortalContent')
-
+class EditForm(edit.DefaultEditForm):
     label = 'Conclusions'
     description = ''
     ignoreContext = False
@@ -268,7 +262,6 @@ class EditForm(dexterity.EditForm):
             data['closing_reason'] = context.closing_reason[0]
         else:
             data['closing_reason'] = context.closing_reason
-        #data['ghg_estimations'] = context.ghg_estimations
         data['highlight'] = container.highlight
         return data
 
@@ -304,7 +297,6 @@ class EditForm(dexterity.EditForm):
         context.text = text
         if type(closing_reason) in (ListType, TupleType):
             context.closing_reason = closing_reason[0]
-        #context.ghg_estimations = data['ghg_estimations']
         highlight = self.request.form.get('form.widgets.highlight')
         container.highlight = highlight
         notify(ObjectModifiedEvent(context))

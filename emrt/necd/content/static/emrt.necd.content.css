@@ -806,4 +806,10 @@ form[action$="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping"]
 input[name="xls_file"]{
     margin-bottom: 10px;
     display: block;
+    }
+
+@-moz-document url-prefix() {
+    #btnFilter {
+        margin-bottom: 50px;
+    }
 }

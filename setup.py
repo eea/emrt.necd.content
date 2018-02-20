@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-VERSION = '2.0.37'
+VERSION = '2.0.41'
 
 setup(name='emrt.necd.content',
       version=VERSION,
@@ -43,6 +43,7 @@ setup(name='emrt.necd.content',
           'zc.dict',
           'collective.monkeypatcher',
           'openpyxl',
+          'five.pt',
       ],
       entry_points="""
       # -*- Entry points: -*-

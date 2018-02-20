@@ -49,3 +49,16 @@ def concurrent_loop(workers, timeout, func, items, *args):
 
 def append_string(sep, base, tail):
     return '{}{}{}'.format(base, sep, tail)
+
+
+HIDDEN_ACTIONS = [
+    '/content_status_history',
+    '/placeful_workflow_configuration',
+]
+
+
+def hidden(menuitem):
+    for action in HIDDEN_ACTIONS:
+        if menuitem.get('action').endswith(action):
+            return True
+    return False

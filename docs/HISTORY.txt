@@ -2,12 +2,35 @@ Changelog
 =========
 
 
+2.0.41 (2018-02-19)
+-------------------
+
+- Feature #88826 - My View improvement
+  [batradav]
+
+2.0.40 (2018-02-19)
+-------------------
+
+- Task #92565 - Writing conclusion
+- Task #92457 - Add additional pollutants into "Create and observation"
+  [boteziri]
+
+- Task #88825 - Insert information from this workflow status "Draft Conclusion" into My View Option
+  [batradav]
+
+2.0.39 (2018-02-15)
+-------------------
+
+- Feature #88826 - My View improvement
+  [batradav]
+
 2.0.38 (2018-02-02)
 -------------------
 
 - Feature #92459 - Add additional options to "Description Flags"
 - Feature #92457 - Add additional pollutants into "Create and observation"
     * split pollutants in 4 different rows for an user point of view
+  [boteziri]
 
 2.0.37 (2017-06-30)
 -------------------
