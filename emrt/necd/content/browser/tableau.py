@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from collections import defaultdict
@@ -10,6 +11,9 @@ from Products.CMFCore.utils import getToolByName
 
 from emrt.necd.content.utils import jsonify
 from emrt.necd.content.reviewfolder import QUESTION_WORKFLOW_MAP
+
+
+TOKEN = os.environ.get("TABLEAU_TOKEN")
 
 
 def reduce_count_brains(acc, b):
@@ -55,15 +59,25 @@ def extract_entry(catalog, timestamp, brain):
     }
 
 
+def validate_token(request):
+    return request.get('tableau_token') == TOKEN if TOKEN else False
+
+
 class TableauView(BrowserView):
     def __call__(self):
-        catalog = getToolByName(self.context, 'portal_catalog')
-        timestamp = datetime.now().isoformat()
-        entry = partial(extract_entry, catalog, timestamp)
+        data = dict(status=401)
+        request = self.request
 
-        brains = self.context.getFolderContents(
-            dict(portal_type=['Observation']))
+        if validate_token(request):
+            catalog = getToolByName(self.context, 'portal_catalog')
+            timestamp = datetime.now().isoformat()
+            entry = partial(extract_entry, catalog, timestamp)
 
-        data = map(entry, brains)
+            brains = self.context.getFolderContents(
+                dict(portal_type=['Observation']))
 
-        return jsonify(self.request, data)
+            data = map(entry, brains)
+        else:
+            request.RESPONSE.setStatus(401)
+
+        return jsonify(request, data)

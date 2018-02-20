@@ -16,7 +16,7 @@
         name="tableau.json"
         for="..reviewfolder.IReviewFolder"
         class=".tableau.TableauView"
-        permission="cmf.ManagePortal"
+        permission="zope2.View"
         />
 
     <browser:page
