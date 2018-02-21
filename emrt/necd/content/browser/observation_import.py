@@ -13,18 +13,28 @@ from emrt.necd.content.nfr_code_matching import get_category_ldap_from_nfr_code
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
+from Products.statusmessages.interfaces import IStatusMessage
+from emrt.necd.content import MessageFactory as _
+
 import logging
 import openpyxl
 
 
 def _read_row(idx, row):
-    return itemgetter(idx)(row).value.strip()
+    val = itemgetter(idx)(row).value
+
+    if isinstance(val, (int, long)):
+        val = safe_unicode(str(val))
+    return val.strip()
 
 
-COL_TITLE = partial(_read_row, 0)
-COL_POLLUTANTS = partial(_read_row, 1)
-COL_PARAMS = partial(_read_row, 2)
-COL_DESC = "Bla bla bla"
+COL_DESC = partial(_read_row, 0)
+COL_COUNTRY = partial(_read_row, 1)
+COL_NFR = partial(_read_row, 2)
+COL_YEAR = partial(_read_row, 3)
+COL_POLLUTANTS = partial(_read_row, 4)
+COL_REVIEW_YEAR = partial(_read_row, 5)
+COL_PARAMS = partial(_read_row, 6)
 
 
 PORTAL_TYPE = 'Observation'
@@ -39,48 +49,40 @@ class Entry(object):
         return True
 
     @property
-    def pollutants(self):
-        # pvoc = api.portal.get_tool('portal_vocabularies')
-        # voc = pvoc.getVocabularyByName('pollutants')
-
-        return ['PAHs']
-        # return COL_POLLUTANTS(self.row)
-
-    @property
-    def parameter(self):
-        return COL_PARAMS(self.row)
-
-    @property
     def text(self):
-        return COL_DESC
-
-    @property
-    def closing_deny_comments(self):
-        pass
+        return COL_DESC(self.row)
 
     @property
     def country(self):
-        return 'at'
+        return COL_COUNTRY(self.row)
+
+    @property
+    def nfr_code(self):
+        return COL_NFR(self.row)
+
+    @property
+    def year(self):
+        return COL_YEAR(self.row)
+
+    @property
+    def pollutants(self):
+        return [COL_POLLUTANTS(self.row)]
+
+    @property
+    def review_year(self):
+        return COL_REVIEW_YEAR(self.row)
 
     @property
     def fuel(self):
         pass
 
     @property
-    def nfr_code(self):
-        return '1A1'
-
-    @property
-    def review_year(self):
-        return 2018
-
-    @property
-    def year(self):
-        return 2017
-
-    @property
     def ms_key_category(self):
         pass
+
+    @property
+    def parameter(self):
+        return [COL_PARAMS(self.row)]
 
     @property
     def highlight(self):
@@ -90,18 +92,21 @@ class Entry(object):
     def closing_comments(self):
         pass
 
+    @property
+    def closing_deny_comments(self):
+        pass
+
     def get_fields(self):
         return {name: getattr(self, name) for name in IObservation}
 
 def _log_created(portal_type, content):
-    # LOG.info(
+
     print(
         u'Created new %s for %s: %s!',
         portal_type, content.absolute_url(1))
 
 
 def _create_observation(entry, context, portal_type):
-
 
     content = api.content.create(
         context,
@@ -112,8 +117,7 @@ def _create_observation(entry, context, portal_type):
     _log_created(portal_type, content)
     return content
 
-from Products.statusmessages.interfaces import IStatusMessage
-from emrt.necd.content import MessageFactory as _
+
 class ObservationXLSImport(BrowserView):
 
 

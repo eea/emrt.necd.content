@@ -317,13 +317,13 @@ class Observation(dexterity.Container):
     def parameter_value(self):
         parameters = [self._vocabulary_value('emrt.necd.content.parameter',
             p) for p in self.parameter]
-        return u', '.join(parameters)
+        return u', '.join(filter(None, parameters))
 
     def pollutants_value(self):
         pollutants = [self._vocabulary_value('emrt.necd.content.pollutants',
             p) for p in self.pollutants]
 
-        return u', '.join(pollutants)
+        return u', '.join(filter(None, pollutants))
 
     def highlight_value(self):
         if self.highlight:
