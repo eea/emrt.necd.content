@@ -1202,7 +1202,10 @@ class FinalisedFolderView(BrowserView):
 
     def get_finalisation_reasons(self):
         key = itemgetter(0)
-        not_open = lambda item: key(item) != 'open'
+
+        def not_open(item):
+            return key(item) != 'open'
+
         reasons = get_finalisation_reasons(self.context)
         return tuple(filter(not_open, reasons))
 

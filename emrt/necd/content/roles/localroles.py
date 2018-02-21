@@ -14,9 +14,7 @@ from emrt.necd.content.conclusions import IConclusions
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
-from emrt.necd.content.constants import LDAP_MSEXPERT
 from emrt.necd.content.constants import ROLE_MSA
-from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
 

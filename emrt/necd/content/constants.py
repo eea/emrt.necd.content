@@ -25,7 +25,7 @@ ROLE_MSE = 'MSExpert'
 
 
 P_OBS_REDRAFT_REASON_VIEW = (
-'emrt.necd.content: View Observation Redraft Reason'
+    'emrt.necd.content: View Observation Redraft Reason'
 )
 
 
