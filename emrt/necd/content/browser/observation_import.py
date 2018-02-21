@@ -1,4 +1,4 @@
-from emrt.necd.content.observation import IObservation, set_title_to_observation
+from emrt.necd.content.observation import IObservation
 from functools import partial
 from itertools import takewhile
 from operator import itemgetter
@@ -9,6 +9,9 @@ from z3c.relationfield import RelationValue
 
 from Products.CMFPlone.utils import safe_unicode
 from emrt.necd.content.nfr_code_matching import get_category_ldap_from_nfr_code
+
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 import logging
 import openpyxl
@@ -33,17 +36,15 @@ class Entry(object):
 
     @property
     def title(self):
-        nfr_code = getattr(self, 'nfr_code')
-        sector = safe_unicode(get_category_ldap_from_nfr_code(nfr_code[:3]))
-        pollutants = safe_unicode(getattr(self, 'pollutants'))
-        inventory_year = safe_unicode(str(getattr(self, 'year')))
-        parameter = safe_unicode(getattr(self, 'parameter'))
-        # import pdb;pdb.set_trace()
-        return u' '.join([sector, pollutants, inventory_year, parameter])
+        return True
 
     @property
     def pollutants(self):
-        return COL_POLLUTANTS(self.row)
+        # pvoc = api.portal.get_tool('portal_vocabularies')
+        # voc = pvoc.getVocabularyByName('pollutants')
+
+        return ['PAHs']
+        # return COL_POLLUTANTS(self.row)
 
     @property
     def parameter(self):
@@ -59,7 +60,7 @@ class Entry(object):
 
     @property
     def country(self):
-        return 'Austria'
+        return 'at'
 
     @property
     def fuel(self):
@@ -67,7 +68,7 @@ class Entry(object):
 
     @property
     def nfr_code(self):
-        return '1A1 Energy production'
+        return '1A1'
 
     @property
     def review_year(self):
@@ -90,8 +91,6 @@ class Entry(object):
         pass
 
     def get_fields(self):
-        for name in IObservation:
-            getattr(self, name)
         return {name: getattr(self, name) for name in IObservation}
 
 def _log_created(portal_type, content):
@@ -113,11 +112,21 @@ def _create_observation(entry, context, portal_type):
     _log_created(portal_type, content)
     return content
 
+from Products.statusmessages.interfaces import IStatusMessage
+from emrt.necd.content import MessageFactory as _
 class ObservationXLSImport(BrowserView):
 
 
     def do_import(self):
         xls_file = self.request.get('xls_file', None)
+
+        if xls_file.filename == '':
+            status = IStatusMessage(self.request)
+            msg = _(u'Please upload a xls file before importing!')
+            status.addStatusMessage(msg, "error")
+            url = self.context.absolute_url() + '/observation_import_form'
+            return self.request.response.redirect(url)
+
         wb = openpyxl.load_workbook(xls_file, read_only=True)
         sheet = wb.worksheets[0]
 
