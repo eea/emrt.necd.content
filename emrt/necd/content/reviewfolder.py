@@ -256,9 +256,8 @@ class ReviewFolderMixin(BrowserView):
         return review_years
 
     def get_inventory_years(self):
-        catalog = api.portal.get_tool('portal_catalog')
-        inventory_years = catalog.uniqueValuesFor('year')
-        return inventory_years
+        return set(b.year for b in self.context.getFolderContents(
+            dict(portal_type='Observation')))
 
     def get_nfr_categories(self):
         vocab_factory = getUtility(
