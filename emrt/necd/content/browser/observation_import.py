@@ -11,7 +11,6 @@ from Products.CMFPlone.utils import safe_unicode
 from Products.statusmessages.interfaces import IStatusMessage
 from emrt.necd.content import MessageFactory as _
 
-import logging
 import openpyxl
 
 
@@ -22,7 +21,7 @@ UNCOMPLETED_ERR = 'The observation you uploaded seems to be a bit off. Please' \
                   ' fill all the fields as shown in the import file sample. '
 
 
-def _read_row(idx, row, obj):
+def _read_row(idx, row):
     val = itemgetter(idx)(row).value
 
     if not val:
@@ -57,44 +56,37 @@ class Entry(object):
 
     @property
     def text(self):
-        return COL_DESC(self.row, self)
+        return COL_DESC(self.row)
 
     @property
     def country(self):
-        return COL_COUNTRY(self.row, self)
+        return COL_COUNTRY(self.row)
 
     @property
     def nfr_code(self):
-        return COL_NFR(self.row, self)
+        return COL_NFR(self.row)
 
     @property
     def year(self):
-        return COL_YEAR(self.row, self)
+        return COL_YEAR(self.row)
 
     @property
     def pollutants(self):
-        return _multi_rows(COL_POLLUTANTS(self.row, self))
+        return _multi_rows(COL_POLLUTANTS(self.row))
 
     @property
     def review_year(self):
-        return int(COL_REVIEW_YEAR(self.row, self))
+        return int(COL_REVIEW_YEAR(self.row))
 
     @property
     def parameter(self):
-        return _multi_rows(COL_PARAMS(self.row, self))
+        return _multi_rows(COL_PARAMS(self.row))
 
     def get_fields(self):
         return {name: getattr(self, name)
                 for name in IObservation
                 if name not in UNREQUIERED_FIELDS
                 }
-
-
-def _log_created(portal_type, content):
-
-    print(
-        u'Created new %s for %s: %s!',
-        portal_type, content.absolute_url(1))
 
 
 def _create_observation(entry, context, request, portal_type):
@@ -112,7 +104,6 @@ def _create_observation(entry, context, request, portal_type):
         title = getattr(entry, 'title'),
         **entry.get_fields()
     )
-    _log_created(portal_type, content)
     return content
 
 
@@ -140,5 +131,3 @@ class ObservationXLSImport(BrowserView):
             _create_observation(entry, self.context, self.request, PORTAL_TYPE)
 
         return 'DONE!'
-
-
