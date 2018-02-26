@@ -20,6 +20,10 @@ import logging
 import openpyxl
 
 
+UNREQUIERED_FIELDS = ['fuel', 'ms_key_category', 'highlight',
+                      'closing_comments', 'closing_deny_comments']
+
+
 def _read_row(idx, row):
     val = itemgetter(idx)(row).value
 
@@ -73,31 +77,14 @@ class Entry(object):
         return int(COL_REVIEW_YEAR(self.row))
 
     @property
-    def fuel(self):
-        pass
-
-    @property
-    def ms_key_category(self):
-        pass
-
-    @property
     def parameter(self):
         return [COL_PARAMS(self.row)]
 
-    @property
-    def highlight(self):
-        pass
-
-    @property
-    def closing_comments(self):
-        pass
-
-    @property
-    def closing_deny_comments(self):
-        pass
-
     def get_fields(self):
-        return {name: getattr(self, name) for name in IObservation}
+        return {name: getattr(self, name)
+                for name in IObservation
+                if name not in UNREQUIERED_FIELDS
+                }
 
 def _log_created(portal_type, content):
 
