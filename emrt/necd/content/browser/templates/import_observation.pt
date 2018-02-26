@@ -7,6 +7,10 @@
       <input type="submit" value="Import" class="standardButton" />
     </form>
 
+    <br />
+
+    <p>You can download a sample import file by clicking <a href="${portal_url}/++resource++emrt.necd.content/observation_import.xlsx">here</a>.</p>
+
   </metal:content>
 
 </metal:page>
