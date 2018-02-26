@@ -4,8 +4,6 @@ from itertools import islice
 from operator import itemgetter
 from plone import api
 from Products.Five.browser import BrowserView
-from zope import component
-from z3c.relationfield import RelationValue
 
 from Products.CMFPlone.utils import safe_unicode
 
@@ -20,9 +18,15 @@ import openpyxl
 UNREQUIERED_FIELDS = ['fuel', 'ms_key_category', 'highlight',
                       'closing_comments', 'closing_deny_comments']
 
+UNCOMPLETED_ERR = 'The observation you uploaded seems to be a bit off. Please' \
+                  ' fill all the fields as shown in the import file sample. '
 
-def _read_row(idx, row):
+
+def _read_row(idx, row, obj):
     val = itemgetter(idx)(row).value
+
+    if not val:
+        return ''
 
     if isinstance(val, (int, long)):
         val = safe_unicode(str(val))
@@ -53,37 +57,38 @@ class Entry(object):
 
     @property
     def text(self):
-        return COL_DESC(self.row)
+        return COL_DESC(self.row, self)
 
     @property
     def country(self):
-        return COL_COUNTRY(self.row)
+        return COL_COUNTRY(self.row, self)
 
     @property
     def nfr_code(self):
-        return COL_NFR(self.row)
+        return COL_NFR(self.row, self)
 
     @property
     def year(self):
-        return COL_YEAR(self.row)
+        return COL_YEAR(self.row, self)
 
     @property
     def pollutants(self):
-        return _multi_rows(COL_POLLUTANTS(self.row))
+        return _multi_rows(COL_POLLUTANTS(self.row, self))
 
     @property
     def review_year(self):
-        return int(COL_REVIEW_YEAR(self.row))
+        return int(COL_REVIEW_YEAR(self.row, self))
 
     @property
     def parameter(self):
-        return _multi_rows(COL_PARAMS(self.row))
+        return _multi_rows(COL_PARAMS(self.row, self))
 
     def get_fields(self):
         return {name: getattr(self, name)
                 for name in IObservation
                 if name not in UNREQUIERED_FIELDS
                 }
+
 
 def _log_created(portal_type, content):
 
@@ -92,7 +97,14 @@ def _log_created(portal_type, content):
         portal_type, content.absolute_url(1))
 
 
-def _create_observation(entry, context, portal_type):
+def _create_observation(entry, context, request, portal_type):
+
+    if '' in entry.get_fields().values():
+        status = IStatusMessage(request)
+        msg = _(safe_unicode(UNCOMPLETED_ERR))
+        status.addStatusMessage(msg, "error")
+        url = context.absolute_url() + '/observation_import_form'
+        return request.response.redirect(url)
 
     content = api.content.create(
         context,
@@ -105,7 +117,6 @@ def _create_observation(entry, context, portal_type):
 
 
 class ObservationXLSImport(BrowserView):
-
 
     def do_import(self):
         xls_file = self.request.get('xls_file', None)
@@ -126,7 +137,7 @@ class ObservationXLSImport(BrowserView):
         entries = map(Entry, valid_rows)
 
         for entry in entries:
-            _create_observation(entry, self.context, PORTAL_TYPE)
+            _create_observation(entry, self.context, self.request, PORTAL_TYPE)
 
         return 'DONE!'
 
