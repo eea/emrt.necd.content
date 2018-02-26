@@ -1,6 +1,6 @@
 from emrt.necd.content.observation import IObservation
 from functools import partial
-from itertools import takewhile
+from itertools import islice
 from operator import itemgetter
 from plone import api
 from Products.Five.browser import BrowserView
@@ -120,7 +120,10 @@ class ObservationXLSImport(BrowserView):
         wb = openpyxl.load_workbook(xls_file, read_only=True)
         sheet = wb.worksheets[0]
 
-        entries = map(Entry, sheet.rows)
+        # skip the document header
+        valid_rows = tuple(islice(sheet, 2))[1:]
+
+        entries = map(Entry, valid_rows)
 
         for entry in entries:
             _create_observation(entry, self.context, PORTAL_TYPE)
