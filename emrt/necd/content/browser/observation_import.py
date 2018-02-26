@@ -70,7 +70,7 @@ class Entry(object):
 
     @property
     def review_year(self):
-        return COL_REVIEW_YEAR(self.row)
+        return int(COL_REVIEW_YEAR(self.row))
 
     @property
     def fuel(self):
