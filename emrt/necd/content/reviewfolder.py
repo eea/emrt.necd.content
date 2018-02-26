@@ -2,7 +2,6 @@ import itertools
 import time
 import tablib
 from functools import partial
-from operator import methodcaller
 from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
@@ -866,9 +865,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Sector Expert
          that need review
         """
-        # user = api.user.get_current()
-        # mtool = api.portal.get_tool('portal_membership')
-
         answered = self.get_observations(
             rolecheck=ROLE_SE,
             observation_question_status=[
@@ -934,7 +930,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Sector Expert
          my questions sent to LR and MS and waiting for reply
         """
-
         statuses = [
             'pending',
             'recalled-msa',
@@ -972,7 +967,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Sector Expert
          waiting approval from LR
         """
-
         return self.get_observations(
             rolecheck=ROLE_SE,
             observation_question_status=[
@@ -999,7 +993,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Lead Reviewer
          Observations waiting for me to confirm finalisation
         """
-
         return self.get_observations(
             rolecheck=ROLE_LR,
             observation_question_status=[
@@ -1053,7 +1046,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Lead Reviewer
          questions waiting for comments from MS
         """
-
         return self.get_observations(
             rolecheck=ROLE_LR,
             observation_question_status=[
