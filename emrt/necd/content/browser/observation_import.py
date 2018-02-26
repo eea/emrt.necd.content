@@ -8,10 +8,7 @@ from zope import component
 from z3c.relationfield import RelationValue
 
 from Products.CMFPlone.utils import safe_unicode
-from emrt.necd.content.nfr_code_matching import get_category_ldap_from_nfr_code
 
-from zope.component import getUtility
-from zope.schema.interfaces import IVocabularyFactory
 
 from Products.statusmessages.interfaces import IStatusMessage
 from emrt.necd.content import MessageFactory as _
@@ -31,6 +28,9 @@ def _read_row(idx, row):
         val = safe_unicode(str(val))
     return val.strip()
 
+def _multi_rows(row):
+    return tuple(val.strip() for val in row.split('\n'))
+
 
 COL_DESC = partial(_read_row, 0)
 COL_COUNTRY = partial(_read_row, 1)
@@ -39,7 +39,6 @@ COL_YEAR = partial(_read_row, 3)
 COL_POLLUTANTS = partial(_read_row, 4)
 COL_REVIEW_YEAR = partial(_read_row, 5)
 COL_PARAMS = partial(_read_row, 6)
-
 
 PORTAL_TYPE = 'Observation'
 
@@ -70,7 +69,7 @@ class Entry(object):
 
     @property
     def pollutants(self):
-        return [COL_POLLUTANTS(self.row)]
+        return _multi_rows(COL_POLLUTANTS(self.row))
 
     @property
     def review_year(self):
@@ -78,7 +77,7 @@ class Entry(object):
 
     @property
     def parameter(self):
-        return [COL_PARAMS(self.row)]
+        return _multi_rows(COL_PARAMS(self.row))
 
     def get_fields(self):
         return {name: getattr(self, name)
