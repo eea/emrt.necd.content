@@ -2,7 +2,6 @@ import itertools
 import time
 import tablib
 from functools import partial
-from operator import methodcaller
 from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
@@ -11,6 +10,7 @@ from plone import api
 from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.dexterity.content import Container
+from plone.dexterity.browser import add
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.CMFCore.utils import getToolByName
@@ -35,6 +35,7 @@ from zope.interface import implementer
 from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utilities.ms_user import IUserIsMS
+
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
@@ -44,6 +45,8 @@ from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
 from emrt.necd.content.constants import LDAP_MSEXPERT
 from emrt.necd.content.inbox_sections import SECTIONS
+
+from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
 
 
 QUESTION_WORKFLOW_MAP = {
@@ -253,9 +256,8 @@ class ReviewFolderMixin(BrowserView):
         return review_years
 
     def get_inventory_years(self):
-        catalog = api.portal.get_tool('portal_catalog')
-        inventory_years = catalog.uniqueValuesFor('year')
-        return inventory_years
+        return set(b.year for b in self.context.getFolderContents(
+            dict(portal_type='Observation')))
 
     def get_nfr_categories(self):
         vocab_factory = getUtility(
@@ -1199,7 +1201,10 @@ class FinalisedFolderView(BrowserView):
 
     def get_finalisation_reasons(self):
         key = itemgetter(0)
-        not_open = lambda item: key(item) != 'open'
+
+        def not_open(item):
+            return key(item) != 'open'
+
         reasons = get_finalisation_reasons(self.context)
         return tuple(filter(not_open, reasons))
 
@@ -1293,3 +1298,16 @@ class FinalisedFolderView(BrowserView):
     is_lead_reviewer = partial(user_has_ldap_role, LDAP_LEADREVIEW)
     is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
     is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
+
+
+class AddForm(add.DefaultAddForm):
+
+    def create(self, *args, **kwargs):
+        folder = super(AddForm, self).create(*args, **kwargs)
+        updated = getUtility(ISetupReviewFolderRoles)(folder)
+        updated.reindexObjectSecurity()
+        return updated
+
+
+class AddView(add.DefaultAddView):
+    form = AddForm

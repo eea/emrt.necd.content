@@ -1,12 +1,13 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+
 import plone.api as api
+
 from emrt.necd.content.reviewfolder import IReviewFolder
+
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
-from emrt.necd.content.constants import LDAP_MSEXPERT
-from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
