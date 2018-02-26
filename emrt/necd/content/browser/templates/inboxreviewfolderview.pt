@@ -164,7 +164,7 @@
 
             function do_toggle(btn, elems, toggle) {
               var COOKIE = 'necd.inbox.showempty';
-              var cookie = docCookies.getItem(COOKIE) || 'show';
+              var cookie = docCookies.getItem(COOKIE) || 'hide';
 
               var action = toggle ? (cookie === 'show' ? 'hide' : 'show') : cookie;
 
@@ -183,8 +183,8 @@
 
               if (toggle) {
                 docCookies.setItem(COOKIE, action);
-              };
-            };
+              }
+            }
 
             var toggler = $('#toggleEmpty');
 
