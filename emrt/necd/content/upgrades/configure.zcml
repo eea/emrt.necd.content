@@ -393,6 +393,12 @@
       handler="emrt.necd.content.upgrades.evolve2042.run"
       />
 
+    <genericsetup:upgradeDepends
+        title="Update NFR codes."
+        description="[refs #93173] Will overwrite existing NFR code data!"
+        import_steps="plone.app.registry"
+    />
+
   </genericsetup:upgradeSteps>
 
 </configure>
