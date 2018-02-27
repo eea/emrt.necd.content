@@ -123,7 +123,8 @@ class ObservationXLSImport(BrowserView):
         sheet = wb.worksheets[0]
 
         # skip the document header
-        valid_rows = tuple(islice(sheet, 2))[1:]
+        valid_rows = tuple(islice(sheet, sheet.max_row))[1:]
+
 
         entries = map(Entry, valid_rows)
 
