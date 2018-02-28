@@ -399,6 +399,13 @@
         import_steps="plone.app.registry"
     />
 
+
+    <genericsetup:upgradeStep
+        title="Reindex GHG_Source_Category"
+        description="Update the observation sectors."
+        handler="emrt.necd.content.upgrades.evolve2042.catalog"
+    />
+
   </genericsetup:upgradeSteps>
 
 </configure>
