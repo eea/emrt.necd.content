@@ -226,7 +226,7 @@
           <li tal:condition="view/can_import_observation">
             <a class="standardButton import_obs" href=""
                tal:attributes="href string:${context/absolute_url}/observation_import_form" >
-               Import observation
+               Bulk import from XLS
             </a>
           </li>
           <li class="deleteButton" tal:condition="view/can_add_observation">
