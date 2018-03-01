@@ -209,7 +209,7 @@
         <ul class="observationActionsMenu visualNoMarker">
           <li class="configurationButton">
             <a href=""
-              tal:attributes="href string:${here/absolute_url}/sucbscription-configuration"
+              tal:attributes="href string:${here/absolute_url}/subscription-configuration"
               class="standardButton">
                 <span class="eea-icon"><!-- --></span>
                   Configure notifications
