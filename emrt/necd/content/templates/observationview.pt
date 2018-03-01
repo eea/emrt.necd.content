@@ -143,6 +143,8 @@
             $('#add-conclusion-wrapper').show();
           }
 
+          }
+
         });
     });
     </script>
@@ -1027,6 +1029,10 @@
      <div id="add-conclusion-wrapper" style="display: none">
         <span tal:replace="structure view/add_conclusion_form" />
      </div>
+
+     <!--<div id="add-followup-wrapper" style="display: none">-->
+        <!--<span tal:replace="structure view/add_followup_question_form" />-->
+     <!--</div>-->
 
     </div>
   </div>

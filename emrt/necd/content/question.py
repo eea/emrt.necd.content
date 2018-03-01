@@ -248,7 +248,6 @@ def add_question(context, event):
 
 
 class AddCommentForm(Form):
-
     ignoreContext = True
     fields = field.Fields(IComment).select('text')
 

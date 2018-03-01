@@ -62,6 +62,7 @@ from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content import conclusions
+from emrt.necd.content.question import AddFollowUpQuestion
 from emrt.necd.content.utils import hidden
 
 
@@ -1043,6 +1044,11 @@ class ObservationMixin(DefaultView):
         form_instance = conclusions.AddForm(self.context, self.request, ti=ti)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
+
+    # def add_followup_question_form(self):
+    #     form_instance =  AddFollowUpQuestion(self.context, self.request)
+    #     alsoProvides(form_instance, IWrappedForm)
+    #     return form_instance
 
     def in_conclusions(self):
         state = self.context.get_status()
