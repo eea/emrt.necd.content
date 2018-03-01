@@ -9,7 +9,7 @@
 
     <br />
 
-    <p>You can download a sample import file by clicking <a href="${portal_url}/++resource++emrt.necd.content/observation_import.xlsx">here</a>.</p>
+    <p>You can download a sample import file by clicking <a href="${portal_url}/get_sample_xls">here</a>.</p>
 
   </metal:content>
 
