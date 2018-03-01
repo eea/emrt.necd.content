@@ -142,7 +142,10 @@
             e.preventDefault();
             $('#add-conclusion-wrapper').show();
           }
-
+          else if(inner_html.indexOf('follow up') >= 0){
+            console.log('click');
+            e.preventDefault();
+            $('#add-followup-wrapper').show();
           }
 
         });
@@ -1030,9 +1033,9 @@
         <span tal:replace="structure view/add_conclusion_form" />
      </div>
 
-     <!--<div id="add-followup-wrapper" style="display: none">-->
-        <!--<span tal:replace="structure view/add_followup_question_form" />-->
-     <!--</div>-->
+     <div id="add-followup-wrapper" style="display: none">
+        <span tal:replace="structure view/add_followup_question_form" />
+     </div>
 
     </div>
   </div>

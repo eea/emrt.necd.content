@@ -56,13 +56,13 @@ from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions
 )
 from emrt.necd.content.utilities import ms_user
+from emrt.necd.content.comment import AddForm as FollowUpQuestionForm
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content import conclusions
-from emrt.necd.content.question import AddFollowUpQuestion
 from emrt.necd.content.utils import hidden
 
 
@@ -1045,10 +1045,11 @@ class ObservationMixin(DefaultView):
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
-    # def add_followup_question_form(self):
-    #     form_instance =  AddFollowUpQuestion(self.context, self.request)
-    #     alsoProvides(form_instance, IWrappedForm)
-    #     return form_instance
+    def add_followup_question_form(self):
+        ti = getUtility(IDexterityFTI, name='Comment')
+        form_instance = FollowUpQuestionForm(self.context, self.request, ti=ti)
+        alsoProvides(form_instance, IWrappedForm)
+        return form_instance()
 
     def in_conclusions(self):
         state = self.context.get_status()
