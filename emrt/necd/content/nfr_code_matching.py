@@ -70,7 +70,6 @@ def get_category_ldap_from_nfr_code(value):
         According to the rules previously set
         for LDAP Matching
     """
-    # import pdb;pdb.set_trace()
     nfrcodes = nfr_codes()
     return nfrcodes.get(value, {}).get('ldap', '')
 
@@ -78,5 +77,4 @@ def get_category_ldap_from_nfr_code(value):
 def get_category_value_from_nfr_code(value):
     """ get the NFR category value to show it in the observation metadata """
     nfrcodes = nfr_codes()
-    # return nfr_codes.get(value, {}).get('sectorname', '')
     return nfrcodes.get(value, {}).get('title', '')
