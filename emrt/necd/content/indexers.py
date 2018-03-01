@@ -15,10 +15,6 @@ from types import TupleType
 from types import UnicodeType
 from zope.schema import getFieldsInOrder
 
-@indexer(IObservation)
-def observation_pollutants(obj):
-    return obj.pollutants
-
 
 @indexer(IObservation)
 def observation_country(context):

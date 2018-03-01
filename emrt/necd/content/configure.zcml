@@ -135,8 +135,4 @@
       permission="zope.Public"
   />
 
-
-  <adapter name="observation_pollutants"
-           factory=".indexers.observation_pollutants"/>
-
 </configure>
