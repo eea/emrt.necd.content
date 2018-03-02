@@ -22,6 +22,12 @@ UNREQUIERED_FIELDS = ['fuel', 'ms_key_category', 'highlight',
 UNCOMPLETED_ERR = 'The observation you uploaded seems to be a bit off. Please' \
                   ' fill all the fields as shown in the import file sample. '
 
+WRONG_DATA_ERR = 'The information you entered in the {} section is not correct.' \
+                 ' Please consult the columns in the sample xls file to see the ' \
+                 'correct set of data.'
+
+NO_FILE_ERR = 'Please upload a xls file before importing!'
+
 
 def _read_row(idx, row):
     val = itemgetter(idx)(row).value
@@ -64,6 +70,12 @@ def find_dict_key(vocabulary, value):
             return key
 
     return False
+
+def error_status_message(context, request, message):
+    status = IStatusMessage(request)
+    status.addStatusMessage(_(safe_unicode(message)), "error")
+    url = context.absolute_url() + '/observation_import_form'
+    return request.response.redirect(url)
 
 
 class Entry(object):
@@ -127,19 +139,12 @@ def _create_observation(entry, context, request, portal_type):
     fields = entry.get_fields()
 
     if '' in fields.values():
-        status = IStatusMessage(request)
-        msg = _(safe_unicode(UNCOMPLETED_ERR))
-        status.addStatusMessage(msg, "error")
-        url = context.absolute_url() + '/observation_import_form'
-        return request.response.redirect(url)
+        return error_status_message(context, request, UNCOMPLETED_ERR)
 
     elif False in fields.values():
-        status = IStatusMessage(request)
         key = find_dict_key(fields, False)
-        msg = _(safe_unicode('The information you entered in the {} section is not correct. Please consult the columns in the sample xls file to see the correct set of data.'.format(key)))
-        status.addStatusMessage(msg, "error")
-        url = context.absolute_url() + '/observation_import_form'
-        return request.response.redirect(url)
+        msg = WRONG_DATA_ERR.format(key)
+        return error_status_message(context, request, msg)
 
     content = api.content.create(
         context,
@@ -156,11 +161,7 @@ class ObservationXLSImport(BrowserView):
         xls_file = self.request.get('xls_file', None)
 
         if xls_file.filename == '':
-            status = IStatusMessage(self.request)
-            msg = _(u'Please upload a xls file before importing!')
-            status.addStatusMessage(msg, "error")
-            url = self.context.absolute_url() + '/observation_import_form'
-            return self.request.response.redirect(url)
+            return error_status_message(self.context, self.request, NO_FILE_ERR)
 
         wb = openpyxl.load_workbook(xls_file, read_only=True)
         sheet = wb.worksheets[0]
