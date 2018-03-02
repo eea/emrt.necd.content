@@ -13,6 +13,8 @@ from emrt.necd.content import MessageFactory as _
 
 import openpyxl
 
+import Acquisition
+
 
 UNREQUIERED_FIELDS = ['fuel', 'ms_key_category', 'highlight',
                       'closing_comments', 'closing_deny_comments']
@@ -50,10 +52,18 @@ def get_vocabulary(name):
     return portal_voc.getVocabularyByName(name)
 
 
-def find_voc_key(vocabulary, value):
+def find_dict_key(vocabulary, value):
     for key, val in vocabulary.items():
-        if val.title == value:
+        if isinstance(val, list):
+            if value in val:
+                return key
+        elif isinstance(val, Acquisition.ImplicitAcquisitionWrapper):
+            if val.title == value:
+                return key
+        elif val == value:
             return key
+
+    return False
 
 
 class Entry(object):
@@ -73,7 +83,7 @@ class Entry(object):
     def country(self):
         country_voc = get_vocabulary('eea_member_states')
         cell_value = COL_COUNTRY(self.row)
-        return find_voc_key(country_voc, cell_value)
+        return find_dict_key(country_voc, cell_value)
 
     @property
     def nfr_code(self):
@@ -87,7 +97,9 @@ class Entry(object):
     def pollutants(self):
         pollutants_voc = get_vocabulary('pollutants')
         cell_value = _multi_rows(COL_POLLUTANTS(self.row))
-        keys = [find_voc_key(pollutants_voc, key) for key in cell_value]
+        keys = [find_dict_key(pollutants_voc, key) for key in cell_value]
+        if False in keys:
+            return False
         return keys
 
     @property
@@ -98,7 +110,9 @@ class Entry(object):
     def parameter(self):
         parameter_voc = get_vocabulary('parameter')
         cell_value = _multi_rows(COL_PARAMS(self.row))
-        keys = [find_voc_key(parameter_voc, key) for key in cell_value]
+        keys = [find_dict_key(parameter_voc, key) for key in cell_value]
+        if False in keys:
+            return False
         return keys
 
     def get_fields(self):
@@ -110,9 +124,19 @@ class Entry(object):
 
 def _create_observation(entry, context, request, portal_type):
 
-    if '' in entry.get_fields().values():
+    fields = entry.get_fields()
+
+    if '' in fields.values():
         status = IStatusMessage(request)
         msg = _(safe_unicode(UNCOMPLETED_ERR))
+        status.addStatusMessage(msg, "error")
+        url = context.absolute_url() + '/observation_import_form'
+        return request.response.redirect(url)
+
+    elif False in fields.values():
+        status = IStatusMessage(request)
+        key = find_dict_key(fields, False)
+        msg = _(safe_unicode('The information you entered in the {} section is not correct. Please consult the columns in the sample xls file to see the correct set of data.'.format(key)))
         status.addStatusMessage(msg, "error")
         url = context.absolute_url() + '/observation_import_form'
         return request.response.redirect(url)
@@ -121,7 +145,7 @@ def _create_observation(entry, context, request, portal_type):
         context,
         type=portal_type,
         title = getattr(entry, 'title'),
-        **entry.get_fields()
+        **fields
     )
     return content
 
