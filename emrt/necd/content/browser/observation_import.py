@@ -157,6 +157,19 @@ def _create_observation(entry, context, request, portal_type):
 
 class ObservationXLSImport(BrowserView):
 
+    def valid_rows_index(self, sheet):
+        """There are some cases when deleted rows from an xls file are seen
+        as empty rows and the importer tries to create an object with no data
+        """
+        idx = 1
+        for row in sheet:
+            if all(isinstance(cell, openpyxl.cell.read_only.EmptyCell)
+                   for cell in row):
+                break
+            idx += 1
+
+        return idx
+
     def do_import(self):
         xls_file = self.request.get('xls_file', None)
 
@@ -166,8 +179,10 @@ class ObservationXLSImport(BrowserView):
         wb = openpyxl.load_workbook(xls_file, read_only=True)
         sheet = wb.worksheets[0]
 
-        # skip the document header
-        valid_rows = islice(sheet, 1, sheet.max_row)
+        max = self.valid_rows_index(sheet)
+
+            # skip the document header
+        valid_rows = islice(sheet, 1, max-1)
 
         entries = map(Entry, valid_rows)
 
