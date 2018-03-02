@@ -1,4 +1,5 @@
 from openpyxl import Workbook
+from openpyxl.styles import Alignment
 from plone import api
 from Products.Five.browser import BrowserView
 from StringIO import StringIO
@@ -42,7 +43,8 @@ class GetSampleXLS(BrowserView):
         #wrap text for multi line cells
         for row in sheet.iter_rows():
             for cell in row:
-                cell.alignment = cell.alignment.copy(wrapText=True)
+                cell.alignment = Alignment(wrap_text=True)
+
 
         #set cell max width
         for column_cells in sheet.columns:
