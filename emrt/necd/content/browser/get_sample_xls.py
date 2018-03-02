@@ -1,9 +1,8 @@
+from openpyxl import Workbook
+from plone import api
 from Products.Five.browser import BrowserView
 from StringIO import StringIO
 
-from openpyxl import Workbook
-
-from plone import api
 
 XLS_SAMPLE_HEADER = ['Observation description', 'Country', 'NFR Code',
                      'Inventory Year', 'Pollutants', 'Review Year', 'Parameter']

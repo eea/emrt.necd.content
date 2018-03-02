@@ -47,6 +47,16 @@ PORTAL_TYPE = 'Observation'
 
 
 class Entry(object):
+
+    def get_vocabulary(name):
+        portal_voc = api.portal.get_tool('portal_vocabularies')
+        return portal_voc.getVocabularyByName(name)
+
+    def find_voc_key(vocabulary, value):
+        for key, val in vocabulary.items():
+            if val.title == value:
+                return key
+
     def __init__(self, row):
         self.row = row
 
@@ -60,7 +70,9 @@ class Entry(object):
 
     @property
     def country(self):
-        return COL_COUNTRY(self.row)
+        country_voc = self.get_vocabulary('eea_member_states')
+        cell_value = COL_COUNTRY(self.row)
+        return self.find_voc_key(country_voc, cell_value)
 
     @property
     def nfr_code(self):
@@ -72,7 +84,10 @@ class Entry(object):
 
     @property
     def pollutants(self):
-        return _multi_rows(COL_POLLUTANTS(self.row))
+        pollutants_voc = self.get_vocabulary('pollutants')
+        cell_value = _multi_rows(COL_POLLUTANTS(self.row))
+        keys = [self.find_voc_key(pollutants_voc, key) for key in cell_value]
+        return keys
 
     @property
     def review_year(self):
@@ -80,7 +95,10 @@ class Entry(object):
 
     @property
     def parameter(self):
-        return _multi_rows(COL_PARAMS(self.row))
+        parameter_voc = self.get_vocabulary('parameter')
+        cell_value = _multi_rows(COL_PARAMS(self.row))
+        keys = [self.find_voc_key(parameter_voc, key) for key in cell_value]
+        return keys
 
     def get_fields(self):
         return {name: getattr(self, name)
@@ -124,7 +142,6 @@ class ObservationXLSImport(BrowserView):
 
         # skip the document header
         valid_rows = islice(sheet, 1, sheet.max_row)
-
 
         entries = map(Entry, valid_rows)
 
