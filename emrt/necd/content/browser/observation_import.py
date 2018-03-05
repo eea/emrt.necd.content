@@ -1,32 +1,27 @@
+from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.observation import IObservation
 from functools import partial
 from itertools import islice
 from operator import itemgetter
 from plone import api
-from Products.Five.browser import BrowserView
-
 from Products.CMFPlone.utils import safe_unicode
-
-
+from Products.Five.browser import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
-from emrt.necd.content import MessageFactory as _
-
-import openpyxl
-
 import Acquisition
+import openpyxl
 
 
 UNREQUIERED_FIELDS = ['fuel', 'ms_key_category', 'highlight',
                       'closing_comments', 'closing_deny_comments']
 
-UNCOMPLETED_ERR = 'The observation you uploaded seems to be a bit off. Please' \
-                  ' fill all the fields as shown in the import file sample. '
+UNCOMPLETED_ERR = u'The observation you uploaded seems to be a bit off. Please' \
+                  u' fill all the fields as shown in the import file sample. '
 
-WRONG_DATA_ERR = 'The information you entered in the {} section is not correct.' \
-                 ' Please consult the columns in the sample xls file to see the ' \
-                 'correct set of data.'
+WRONG_DATA_ERR = u'The information you entered in the {} section is not correct.' \
+                 u' Please consult the columns in the sample xls file to see the ' \
+                 u'correct set of data.'
 
-NO_FILE_ERR = 'Please upload a xls file before importing!'
+NO_FILE_ERR = u'Please upload a xls file before importing!'
 
 
 def _read_row(idx, row):
@@ -73,7 +68,7 @@ def find_dict_key(vocabulary, value):
 
 def error_status_message(context, request, message):
     status = IStatusMessage(request)
-    status.addStatusMessage(_(safe_unicode(message)), "error")
+    status.addStatusMessage(_(message), "error")
     url = context.absolute_url() + '/observation_import_form'
     return request.response.redirect(url)
 
