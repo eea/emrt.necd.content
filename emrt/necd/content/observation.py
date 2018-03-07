@@ -56,7 +56,6 @@ from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions
 )
 from emrt.necd.content.utilities import ms_user
-from emrt.necd.content.comment import AddForm as FollowUpQuestionForm
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
@@ -1042,12 +1041,6 @@ class ObservationMixin(DefaultView):
     def add_conclusion_form(self):
         ti = getUtility(IDexterityFTI, name='Conclusions')
         form_instance = conclusions.AddForm(self.context, self.request, ti=ti)
-        alsoProvides(form_instance, IWrappedForm)
-        return form_instance()
-
-    def add_followup_question_form(self):
-        ti = getUtility(IDexterityFTI, name='Comment')
-        form_instance = FollowUpQuestionForm(self.context, self.request, ti=ti)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
