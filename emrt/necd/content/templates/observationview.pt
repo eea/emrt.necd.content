@@ -16,7 +16,6 @@
     <script type="text/javascript">
 
     $(document).ready(function(){
-
         update_display = function() {
             var style = $(this).attr('value');
             if (! this.checked) {
@@ -101,11 +100,6 @@
           $('#question-add-form').toggle();
         });
 
-        $('#add-comment-link').click(function(e){
-          e.preventDefault();
-          $('#comment-add-form').toggle();
-        });
-
         $('#add-answer-link').click(function(e){
           e.preventDefault();
           $('#answer-add-form').toggle();
@@ -143,9 +137,8 @@
             $('#add-conclusion-wrapper').show();
           }
           else if(inner_html.indexOf('follow up') >= 0){
-            console.log('click');
             e.preventDefault();
-            $('#add-followup-wrapper').show();
+            $('#comment-add-form').toggle();
           }
 
         });
@@ -1021,7 +1014,7 @@
 
       </div>
 
-      <div id="comment-add-form" style="display: none" tal:condition="view/can_add_comment">
+      <div id="comment-add-form" style="display: none">
         <span tal:replace="structure view/add_comment_form" />
       </div>
 
@@ -1031,10 +1024,6 @@
 
      <div id="add-conclusion-wrapper" style="display: none">
         <span tal:replace="structure view/add_conclusion_form" />
-     </div>
-
-     <div id="add-followup-wrapper" style="display: none">
-        <span tal:replace="structure view/add_followup_question_form" />
      </div>
 
     </div>
