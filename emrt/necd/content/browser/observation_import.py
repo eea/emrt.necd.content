@@ -23,6 +23,8 @@ WRONG_DATA_ERR = u'The information you entered in the {} section is not correct.
 
 NO_FILE_ERR = u'Please upload a xls file before importing!'
 
+DONE_MSG = u'Successfully imported {} observations!'
+
 
 def _read_row(idx, row):
     val = itemgetter(idx)(row).value
@@ -158,11 +160,8 @@ class ObservationXLSImport(BrowserView):
         """
         idx = 1
         for row in sheet:
-            if all(isinstance(cell, openpyxl.cell.read_only.EmptyCell)
-                   for cell in row):
-                break
-            idx += 1
-
+            if any(cell.value for cell in row):
+                idx += 1
         return idx
 
     def do_import(self):
@@ -176,12 +175,17 @@ class ObservationXLSImport(BrowserView):
 
         max = self.valid_rows_index(sheet)
 
-            # skip the document header
+        # skip the document header
         valid_rows = islice(sheet, 1, max-1)
 
         entries = map(Entry, valid_rows)
 
+        num_entries = 0
         for entry in entries:
             _create_observation(entry, self.context, self.request, PORTAL_TYPE)
+            num_entries += 1
 
-        return 'DONE!'
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(DONE_MSG.format(num_entries)))
+
+        return self.request.response.redirect(self.context.absolute_url())
