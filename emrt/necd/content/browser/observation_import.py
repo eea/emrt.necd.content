@@ -36,6 +36,7 @@ def _read_row(idx, row):
         val = safe_unicode(str(val))
     return val.strip()
 
+
 def _multi_rows(row):
     return tuple(val.strip() for val in row.split('\n'))
 
@@ -67,6 +68,7 @@ def find_dict_key(vocabulary, value):
             return key
 
     return False
+
 
 def error_status_message(context, request, message):
     status = IStatusMessage(request)

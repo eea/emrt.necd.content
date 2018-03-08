@@ -184,7 +184,7 @@
 
     <browser:page
         name="get_sample_xls"
-        for="*"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
         class=".get_sample_xls.GetSampleXLS"
         permission="cmf.ManagePortal"
         />
