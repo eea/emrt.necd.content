@@ -16,7 +16,6 @@
     <script type="text/javascript">
 
     $(document).ready(function(){
-
         update_display = function() {
             var style = $(this).attr('value');
             if (! this.checked) {
@@ -101,11 +100,6 @@
           $('#question-add-form').toggle();
         });
 
-        $('#add-comment-link').click(function(e){
-          e.preventDefault();
-          $('#comment-add-form').toggle();
-        });
-
         $('#add-answer-link').click(function(e){
           e.preventDefault();
           $('#answer-add-form').toggle();
@@ -141,6 +135,18 @@
           if(inner_html.indexOf('conclusions') >= 0){
             e.preventDefault();
             $('#add-conclusion-wrapper').show();
+          }
+          else if(inner_html.indexOf('follow up') >= 0){
+            var comment_add_form = $('#comment-add-form');
+            if(comment_add_form.length > 0){
+              // No permission check is done in the "add-folowup-question" worlkflow transition.
+              // The view/can_add_comment checks if all questions have been answered.
+              // This check is to preserve old button behavior in case the form is missing from the markup
+              // (i.e view/can_add_comment returned False).
+              // TODO: This should be resolved by adding the check in the workflow transition and removing this if.
+              e.preventDefault();
+              comment_add_form.toggle();
+            }
           }
 
         });
@@ -1024,7 +1030,7 @@
         <span tal:replace="structure view/add_answer_form" />
       </div>
 
-     <div id="add-conclusion-wrapper" style="display: none">
+     <div id="add-conclusion-wrapper" style="display: none" tal:condition="view/can_add_conclusion">
         <span tal:replace="structure view/add_conclusion_form" />
      </div>
 
