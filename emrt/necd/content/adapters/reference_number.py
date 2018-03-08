@@ -1,19 +1,8 @@
-from Acquisition import aq_inner
-from Acquisition import aq_parent
 from emrt.necd.content.observation import IObservation
 from plone.app.content.interfaces import INameFromTitle
 from plone.app.content.namechooser import NormalizingNameChooser
-from plone.i18n.normalizer import FILENAME_REGEX
-from plone.i18n.normalizer.interfaces import IURLNormalizer
-from plone.i18n.normalizer.interfaces import IUserPreferredURLNormalizer
-from zExceptions import BadRequest
 from zope.component import adapts
-from zope.component import getUtility
-from zope.container.interfaces import INameChooser
 from zope.interface import implements
-
-
-import time
 
 
 ATTEMPTS = 100

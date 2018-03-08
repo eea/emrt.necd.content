@@ -289,6 +289,9 @@ class ReviewFolderView(ReviewFolderMixin):
         return sm.checkPermission(
             'emrt.necd.content: Export Observations', self)
 
+    def can_import_observation(self):
+        return 'Manager' in api.user.get_roles()
+
 
 class ReviewFolderBrowserView(ReviewFolderMixin):
 
@@ -865,9 +868,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Sector Expert
          that need review
         """
-        # user = api.user.get_current()
-        # mtool = api.portal.get_tool('portal_membership')
-
         answered = self.get_observations(
             rolecheck=ROLE_SE,
             observation_question_status=[
@@ -933,7 +933,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Sector Expert
          my questions sent to LR and MS and waiting for reply
         """
-
         statuses = [
             'pending',
             'recalled-msa',
@@ -971,7 +970,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Sector Expert
          waiting approval from LR
         """
-
         return self.get_observations(
             rolecheck=ROLE_SE,
             observation_question_status=[
@@ -998,7 +996,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Lead Reviewer
          Observations waiting for me to confirm finalisation
         """
-
         return self.get_observations(
             rolecheck=ROLE_LR,
             observation_question_status=[
@@ -1052,7 +1049,6 @@ class InboxReviewFolderView(BrowserView):
          Role: Lead Reviewer
          questions waiting for comments from MS
         """
-
         return self.get_observations(
             rolecheck=ROLE_LR,
             observation_question_status=[
