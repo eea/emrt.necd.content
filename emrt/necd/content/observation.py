@@ -12,10 +12,10 @@ from Acquisition import aq_inner
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
+from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
-from plone.dexterity.interfaces import IDexterityFTI
 from plone.app.discussion.interfaces import IConversation
 from plone.directives import dexterity
 from plone.directives import form
@@ -56,12 +56,12 @@ from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions
 )
 from emrt.necd.content.utilities import ms_user
+from emrt.necd.content.conclusions import IConclusions
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
-from emrt.necd.content import conclusions
 from emrt.necd.content.utils import hidden
 
 
@@ -1039,8 +1039,7 @@ class ObservationMixin(DefaultView):
         return form_instance()
 
     def add_conclusion_form(self):
-        ti = getUtility(IDexterityFTI, name='Conclusions')
-        form_instance = conclusions.AddForm(self.context, self.request, ti=ti)
+        form_instance = AddConclusionForm(self.context, self.request)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
@@ -1538,6 +1537,54 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
+        for k in self.actions.keys():
+            self.actions[k].addClass('standardButton')
+
+
+class AddConclusionForm(Form):
+    ignoreContext = True
+    fields = field.Fields(IConclusions).select('closing_reason', 'text')
+
+    @button.buttonAndHandler(u'Add conclusion')
+    def create_conclusion(self, action):
+        observation = aq_inner(self.context)
+        id = str(int(time()))
+        item_id = self.context.invokeFactory(
+            type_name='Conclusions',
+            id=id,
+        )
+        text = self.request.form.get('form.widgets.text', '')
+        reason = self.request.form.get('form.widgets.closing_reason', '')
+        conclusion = self.context.get(item_id)
+        conclusion.title = id
+        conclusion.id = id
+        conclusion.text = text
+        conclusion.closing_reason = reason[0]
+        adapted = IAllowDiscussion(conclusion)
+        adapted.allow_discussion = True
+
+        api.content.transition(
+            obj=observation,
+            transition='draft-conclusions'
+        )
+
+        return self.request.response.redirect(observation.absolute_url())
+
+    def updateFields(self):
+        super(AddConclusionForm, self).updateFields()
+
+        self.fields = field.Fields(IConclusions).select(
+            'closing_reason', 'text')
+        self.groups = [g for g in self.groups if
+                       g.label == 'label_schema_default']
+
+    def updateWidgets(self):
+        super(AddConclusionForm, self).updateWidgets()
+        self.widgets['text'].rows = 15
+
+
+    def updateActions(self):
+        super(AddConclusionForm, self).updateActions()
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
 

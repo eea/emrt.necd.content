@@ -48,7 +48,7 @@
         for="..reviewfolder.IReviewFolder"
         class="..reviewfolder.ReviewFolderBrowserView"
         permission="zope2.View"
-        template="templates/reviewfolder_get_table.pt"
+        attribute="render"
         />
 
     <browser:page

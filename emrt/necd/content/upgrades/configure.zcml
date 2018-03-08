@@ -381,4 +381,31 @@
 
   </genericsetup:upgradeSteps>
 
+
+  <genericsetup:upgradeSteps
+    source="2.0.38"
+    destination="2.0.42"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="#93175 Grant roles to LDAP groups."
+      description="Iterate over all LDAP MSA, LR and SE groups and grant them appropiate Zope roles."
+      handler="emrt.necd.content.upgrades.evolve2042.run"
+      />
+
+    <genericsetup:upgradeDepends
+        title="Update NFR codes."
+        description="[refs #93173] Will overwrite existing NFR code data!"
+        import_steps="plone.app.registry"
+    />
+
+
+    <genericsetup:upgradeStep
+        title="Reindex GHG_Source_Category"
+        description="Update the observation sectors."
+        handler="emrt.necd.content.upgrades.evolve2042.catalog"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

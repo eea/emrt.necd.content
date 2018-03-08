@@ -67,6 +67,23 @@
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
 
+  <!-- ReviewFolder custom add form -->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.reviewfolder.AddView"
+    name="emrt.necd.content.reviewfolder"
+    />
+
+  <class class=".reviewfolder.AddView">
+      <require
+          permission="emrt.necd.content.AddReviewFolder"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
   <!--Add and Edit conclusion forms-->
   <adapter
     for="Products.CMFCore.interfaces.IFolderish
