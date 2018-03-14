@@ -63,6 +63,7 @@ from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.utils import hidden
+from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 
 
 # Cache helper methods
@@ -987,6 +988,10 @@ class ObservationMixin(DefaultView):
                 question,
                 self.request
             )
+            #remove add-followup-question action if the permission check is False
+            if not self.can_add_comment():
+                question_menu_items = [item for item in question_menu_items
+                                       if not item['action'].endswith('add-followup-question')]
 
             menu_items = question_menu_items + observation_menu_items
         return [mitem for mitem in menu_items if not hidden(mitem)]
@@ -1007,15 +1012,7 @@ class ObservationMixin(DefaultView):
         return ''
 
     def can_add_comment(self):
-        sm = getSecurityManager()
-        question = self.question()
-        if question:
-            permission = sm.checkPermission('emrt.necd.content: Add Comment', question)
-            questions = [q for q in question.values() if q.portal_type == 'Comment']
-            answers = [q for q in question.values() if q.portal_type == 'CommentAnswer']
-            return permission and len(questions) == len(answers)
-        else:
-            return False
+        return getUtility(IFollowUpPermission)(self.question())
 
     def can_add_answer(self):
         sm = getSecurityManager()
@@ -1450,7 +1447,6 @@ class AddAnswerForm(Form):
         comment = context.get(item_id)
         comment.text = text
         action = 'add-answer'
-
         api.content.transition(obj=context, transition=action)
 
         return self.request.response.redirect(observation.absolute_url())

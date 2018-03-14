@@ -138,18 +138,17 @@
           }
           else if(inner_html.indexOf('follow up') >= 0){
             var comment_add_form = $('#comment-add-form');
-            if(comment_add_form.length > 0){
-              // No permission check is done in the "add-folowup-question" worlkflow transition.
-              // The view/can_add_comment checks if all questions have been answered.
-              // This check is to preserve old button behavior in case the form is missing from the markup
-              // (i.e view/can_add_comment returned False).
-              // TODO: This should be resolved by adding the check in the workflow transition and removing this if.
-              e.preventDefault();
-              comment_add_form.toggle();
-            }
+            e.preventDefault();
+            comment_add_form.toggle();
           }
 
         });
+
+        //avoid duplicate 'Add follow up question' buttons
+        var followup = $(".standardButton:contains('follow up')");
+        if(followup.length > 1){
+          $("#add-comment-link").hide();
+        }
     });
     </script>
   </tal:block>

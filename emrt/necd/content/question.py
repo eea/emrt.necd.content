@@ -6,6 +6,7 @@ from Acquisition.interfaces import IAcquirer
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
@@ -50,6 +51,9 @@ CLOSED_STATUS_NAME = 'closed'
 
 class Question(dexterity.Container):
     grok.implements(IQuestion)    # Add your class methods and properties here
+
+    def can_add_comment(self):
+        return getUtility(IFollowUpPermission)(self)
 
     def get_state_api(self):
         return api.content.get_state(self)

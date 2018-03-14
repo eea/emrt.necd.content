@@ -564,7 +564,9 @@
   <action url="%(content_url)s/add-follow-up-question?workflow_action=add-followup-question" category="workflow" icon="">Add follow up question</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
-   <guard-expression>python:here.has_answers() and here.aq_parent.get_status() not in ['conclusion-discussion', 'close-requested']</guard-expression>
+   <guard-expression>
+    python:here.has_answers() and here.aq_parent.get_status() not in ['conclusion-discussion', 'close-requested'] and here.can_add_comment()
+   </guard-expression>
   </guard>
  </transition>
  <transition transition_id="answer-to-lr" title="Submit Answer" new_state="answered" trigger="USER" before_script="" after_script="">

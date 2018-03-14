@@ -408,4 +408,18 @@
 
   </genericsetup:upgradeSteps>
 
+
+  <genericsetup:upgradeSteps
+    source="2.0.42"
+    destination="2.0.43"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+        title="Fix follow up queastion permision"
+        description="[refs #86364] Add follow up question transition guard-expression change"
+        import_steps="workflow"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
