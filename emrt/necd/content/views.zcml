@@ -129,4 +129,90 @@
     attribute="render"
     permission="zope2.View"
     />
+
+  <!--Comment view-->
+
+  <browser:page
+    name="view"
+    for=".comment.IComment"
+    class=".comment.CommentView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <!--Question views-->
+  <browser:page
+    name="view"
+    for=".question.IQuestion"
+    class=".question.QuestionView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="edit-and-close-comments"
+    for=".question.IQuestion"
+    class=".question.EditAndCloseComments"
+    permission="zope2.View"
+    attribute="render"
+    />
+
+  <browser:page
+    name="edit-answer-and-close-comments"
+    for=".question.IQuestion"
+    class=".question.EditAnswerAndCloseComments"
+    permission="zope2.View"
+    attribute="render"
+    />
+
+  <browser:page
+    name="add-follow-up-question"
+    for=".question.IQuestion"
+    class=".question.AddFollowUpQuestion"
+    permission="zope2.View"
+    attribute="render"
+    />
+
+  <browser:page
+    name="add-conclusions"
+    for=".question.IQuestion"
+    class=".question.AddConclusions"
+    permission="zope2.View"
+    attribute="render"
+    />
+
+  <browser:page
+    name="delete-last-comment"
+    for=".question.IQuestion"
+    class=".question.DeleteLastComment"
+    permission="zope2.View"
+    attribute="render"
+    />
+
+  <browser:page
+    name="delete-last-answer"
+    for=".question.IQuestion"
+    class=".question.DeleteLastAnswer"
+    permission="zope2.View"
+    attribute="render"
+    />
+
+  <!--CommentAnswer  views-->
+  <browser:page
+    name="view"
+    for=".commentanswer.ICommentAnswer"
+    class=".commentanswer.CommentAnswerView"
+    attribute="render"
+    permission="zope2.View"
+    />
+
+  <!--CopyFileToAnswer-->
+  <browser:page
+    name="copy-attachment-to-answer"
+    for="plone.app.discussion.interfaces.IComment"
+    class=".browser.copyfiles.CopyFileToAnswer"
+    attribute="render"
+    permission="zope2.View"
+    />
+
 </configure>

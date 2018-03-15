@@ -7,9 +7,9 @@ from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
-from five import grok
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
+from plone.dexterity.browser import add
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.directives import dexterity
 from plone.directives import form
@@ -23,9 +23,8 @@ from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
 from zope.component import createObject
 from zope.component import getUtility
+from zope.interface import implementer
 from zope.interface import Invalid
-from zope.lifecycleevent import IObjectAddedEvent
-from zope.lifecycleevent import IObjectModifiedEvent
 
 
 class IQuestion(form.Schema, IImageScaleTraversable):
@@ -48,9 +47,9 @@ DRAFT_STATUS_NAME = 'draft'
 OPEN_STATUS_NAME = 'open'
 CLOSED_STATUS_NAME = 'closed'
 
-
+@implementer(IQuestion)
 class Question(dexterity.Container):
-    grok.implements(IQuestion)    # Add your class methods and properties here
+    # Add your class methods and properties here
 
     def can_add_comment(self):
         return getUtility(IFollowUpPermission)(self)
@@ -175,33 +174,19 @@ class Question(dexterity.Container):
         return sm.checkPermission('emrt.necd.content: View Answer Discussion', self)
 
 # View class
-# The view will automatically use a similarly named template in
-# templates called questionview.pt .
-# Template filenames should be all lower case.
 # The view will render when you request a content object with this
 # interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
 # This will make this view the default view for your content-type
 
-grok.templatedir('templates')
 
-
-class QuestionView(grok.View):
-    grok.context(IQuestion)
-    grok.require('zope2.View')
-    grok.name('view')
-
+class QuestionView(BrowserView):
     def render(self):
         context = aq_inner(self.context)
         parent = aq_parent(context)
         return self.request.response.redirect(parent.absolute_url())
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('emrt.necd.content.question')
-    grok.context(IQuestion)
-    grok.require('emrt.necd.content.AddQuestion')
-
+class AddForm(add.DefaultAddForm):
     def updateFields(self):
         super(AddForm, self).updateFields()
         self.fields = field.Fields(IComment).select('text')
@@ -242,7 +227,10 @@ class AddForm(dexterity.AddForm):
         comment.text = text
 
 
-@grok.subscribe(IQuestion, IObjectModifiedEvent)
+class AddView(add.DefaultAddView):
+    form = AddForm
+
+
 def add_question(context, event):
     """ When adding a question, go directly to
         'open' status on the observation
@@ -320,11 +308,7 @@ class AddAnswerForm(Form):
             self.actions[k].addClass('standardButton')
 
 
-class EditAndCloseComments(grok.View):
-    grok.name('edit-and-close-comments')
-    grok.context(IQuestion)
-    grok.require('zope2.View')
-
+class EditAndCloseComments(BrowserView):
     def update(self):
         # Some checks:
         waction = self.request.get('workflow_action')
@@ -348,11 +332,7 @@ class EditAndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class EditAnswerAndCloseComments(grok.View):
-    grok.name('edit-answer-and-close-comments')
-    grok.context(IQuestion)
-    grok.require('zope2.View')
-
+class EditAnswerAndCloseComments(BrowserView):
     def update(self):
         # Some checks:
         waction = self.request.get('workflow_action')
@@ -377,11 +357,7 @@ class EditAnswerAndCloseComments(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddFollowUpQuestion(grok.View):
-    grok.context(IQuestion)
-    grok.name('add-follow-up-question')
-    grok.require('zope2.View')
-
+class AddFollowUpQuestion(BrowserView):
     def render(self):
         api.content.transition(
             obj=self.context,
@@ -391,11 +367,7 @@ class AddFollowUpQuestion(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddConclusions(grok.View):
-    grok.context(IQuestion)
-    grok.name('add-conclusions')
-    grok.require('zope2.View')
-
+class AddConclusions(BrowserView):
     def render(self):
         parent = aq_parent(self.context)
         conclusions = parent.get_conclusion()
@@ -407,11 +379,7 @@ class AddConclusions(grok.View):
         return self.request.response.redirect(url)
 
 
-class DeleteLastComment(grok.View):
-    grok.context(IQuestion)
-    grok.name('delete-last-comment')
-    grok.require('zope2.View')
-
+class DeleteLastComment(BrowserView):
     def render(self):
         comments = [c for c in self.context.values() if c.portal_type == 'Comment']
         if comments:
@@ -432,11 +400,7 @@ class DeleteLastComment(grok.View):
                 return self.request.response.redirect(url)
 
 
-class DeleteLastAnswer(grok.View):
-    grok.context(IQuestion)
-    grok.name('delete-last-answer')
-    grok.require('zope2.View')
-
+class DeleteLastAnswer(BrowserView):
     def render(self):
         question = aq_inner(self.context)
         url = question.absolute_url()

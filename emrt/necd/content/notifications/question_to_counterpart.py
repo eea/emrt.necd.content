@@ -1,14 +1,10 @@
 from Acquisition import aq_parent
-from emrt.necd.content.question import IQuestion
-from five import grok
-from Products.CMFCore.interfaces import IActionSucceededEvent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
+from Products.Five.browser.pagetemplatefile import PageTemplateFile
+from utils import notify
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_cp(context, event=None, reassign=False):
     """
     To:     CounterParts
@@ -34,7 +30,6 @@ def notification_cp(context, event=None, reassign=False):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_lr(context, event):
     """
     To:     LeadReviewer

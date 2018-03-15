@@ -4,17 +4,21 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from emrt.necd.content import MessageFactory as _
-from five import grok
 from plone import api
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
+from Products.Five import BrowserView
 from time import time
 from z3c.form import field
 from zope.component import createObject
 from zope.component import getUtility
+from zope.interface import implementer
 from zope import schema
+
 
 # Interface class; used to define content-type schema.
 class ICommentAnswer(form.Schema, IImageScaleTraversable):
@@ -36,8 +40,8 @@ class ICommentAnswer(form.Schema, IImageScaleTraversable):
 # be instances of this class. Use this class to add content-type specific
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
+@implementer(ICommentAnswer)
 class CommentAnswer(dexterity.Container):
-    grok.implements(ICommentAnswer)
     # Add your class methods and properties here
 
     def can_edit(self):
@@ -62,21 +66,12 @@ class CommentAnswer(dexterity.Container):
 
 
 # View class
-# The view will automatically use a similarly named template in
-# templates called commentanswerview.pt .
-# Template filenames should be all lower case.
 # The view will render when you request a content object with this
 # interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
 # This will make this view the default view for your content-type
-grok.templatedir('templates')
 
 
-class CommentAnswerView(grok.View):
-    grok.context(ICommentAnswer)
-    grok.require('zope2.View')
-    grok.name('view')
-
+class CommentAnswerView(BrowserView):
     def render(self):
         context = aq_inner(self.context)
         parent = aq_parent(context)
@@ -85,11 +80,7 @@ class CommentAnswerView(grok.View):
         return self.request.response.redirect(url)
 
 
-class AddForm(dexterity.AddForm):
-    grok.name('emrt.necd.content.commentanswer')
-    grok.context(ICommentAnswer)
-    grok.require('emrt.necd.content.AddCommentAnswer')
-
+class AddForm(add.DefaultAddForm):
     label = 'Answer'
     description = ''
 
@@ -103,8 +94,6 @@ class AddForm(dexterity.AddForm):
         self.widgets['text'].rows = 15
 
     def create(self, data={}):
-        # import pdb; pdb.set_trace()
-        # return super(AddForm, self).create(data)
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -124,11 +113,11 @@ class AddForm(dexterity.AddForm):
         return aq_base(content)
 
 
-class EditForm(dexterity.EditForm):
-    grok.name('edit')
-    grok.context(ICommentAnswer)
-    grok.require('emrt.necd.content.EditCommentAnswer')
+class AddView(add.DefaultAddView):
+    form = AddForm
 
+
+class EditForm(edit.DefaultEditForm):
     label = 'Answer'
     description = ''
 

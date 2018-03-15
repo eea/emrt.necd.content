@@ -1,12 +1,8 @@
-from emrt.necd.content.observation import IObservation
-from five import grok
-from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from utils import notify
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_cp(context, event):
     """
     To:     CounterParts
@@ -26,7 +22,6 @@ def notification_cp(context, event):
         )
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def notification_lr(context, event):
     """
     To:     LeadReviewer

@@ -1,18 +1,9 @@
-from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from Acquisition import aq_parent
 from DateTime import DateTime
-from emrt.necd.content.comment import IComment
-from emrt.necd.content.commentanswer import ICommentAnswer
-from emrt.necd.content.observation import IObservation
-from emrt.necd.content.question import IQuestion
-from five import grok
 from plone import api
-from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.CMFCore.utils import getToolByName
-from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def question_transition(question, event):
     if event.action in ['approve-question']:
         wf = getToolByName(question, 'portal_workflow')
@@ -65,9 +56,7 @@ def question_transition(question, event):
     observation.reindexObject()
 
 
-@grok.subscribe(IObservation, IActionSucceededEvent)
 def observation_transition(observation, event):
-
     if event.action == 'reopen-qa-chat':
         with api.env.adopt_roles(roles=['Manager']):
             qs = [q for q in observation.values() if q.portal_type == 'Question']

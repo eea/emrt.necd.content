@@ -189,4 +189,20 @@
         permission="cmf.ManagePortal"
         />
 
+    <browser:page
+        name="statistics"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        class=".statisticsview.StatisticsView"
+        permission="cmf.ManagePortal"
+        template="templates/statisticsview.pt"
+        />
+
+    <browser:page
+        name="download-statistics"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        class=".statisticsview.DownloadStatisticsView"
+        permission="cmf.ManagePortal"
+        attribute="render"
+        />
+
 </configure>
