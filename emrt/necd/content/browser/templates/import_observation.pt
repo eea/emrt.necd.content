@@ -4,7 +4,13 @@
 
     <br />
 
-    <p class="import-info"><b>Important: </b>when writing to your excel file, in case of fields such as 'Pollutants' or 'Parameter', if your observation has multiple values, please write them one per line, as in the sample import file.</p>
+    <p class="import-info"><b>Important: </b>
+      <br />When writing to your excel file, in case of fields such as 'Pollutants' or 'Parameter',
+      if your observation has multiple values, please write them one per line, as in the sample import file.
+      <br/> The 'Fuel' field can be left empty as it is not a mandatory field.
+      <br /> The MS Key Category field can be set to 'True' if the observation belongs to this category
+      or it can be left empty if it doesn't.
+    </p>
     <p>You can download a sample import file by clicking <a href="./get_sample_xls">here</a>.</p>
 
     <form method="post" action="./observation_import" enctype="multipart/form-data">
