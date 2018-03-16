@@ -33,9 +33,10 @@ def _read_row(idx, row):
         val = safe_unicode(str(val))
     return val.strip()
 
-
+import re
 def _multi_rows(row):
-    return tuple(val.strip() for val in row.split('\n'))
+    splitted = re.split(r'[,\n]\s*', row)
+    return tuple(val.strip() for val in splitted)
 
 
 COL_DESC = partial(_read_row, 0)
@@ -216,8 +217,8 @@ class ObservationXLSImport(BrowserView):
         for entry in entries:
             _create_observation(entry, self.context, self.request, PORTAL_TYPE, self)
 
-
-        status = IStatusMessage(self.request)
-        status.addStatusMessage(_(DONE_MSG.format(self.num_entries)))
+        if self.num_entries > 0:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(_(DONE_MSG.format(self.num_entries)))
 
         return self.request.response.redirect(self.context.absolute_url())
