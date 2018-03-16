@@ -11,8 +11,7 @@ import Acquisition
 import openpyxl
 
 
-UNREQUIERED_FIELDS = ['fuel', 'ms_key_category', 'highlight',
-                      'closing_comments', 'closing_deny_comments']
+UNUSED_FIELDS = ['highlight', 'closing_comments', 'closing_deny_comments']
 
 UNCOMPLETED_ERR = u'The observation you uploaded seems to be a bit off. Please' \
                   u' fill all the fields as shown in the import file sample. '
@@ -47,7 +46,9 @@ COL_NFR = partial(_read_row, 2)
 COL_YEAR = partial(_read_row, 3)
 COL_POLLUTANTS = partial(_read_row, 4)
 COL_REVIEW_YEAR = partial(_read_row, 5)
-COL_PARAMS = partial(_read_row, 6)
+COL_FUEL = partial(_read_row, 6)
+COL_MS_KEY = partial(_read_row, 7)
+COL_PARAMS = partial(_read_row, 8)
 
 PORTAL_TYPE = 'Observation'
 
@@ -118,6 +119,25 @@ class Entry(object):
         return int(COL_REVIEW_YEAR(self.row))
 
     @property
+    def fuel(self):
+        fuel_voc = get_vocabulary('fuel')
+        cell_value = COL_FUEL(self.row)
+        if cell_value != '':
+            return find_dict_key(fuel_voc, cell_value)
+
+        #This field can be none because it's not manadatory
+        return None
+
+    @property
+    def ms_key_category(self):
+        cell_value = COL_MS_KEY(self.row).title()
+        if cell_value in ['True', 'False']:
+            return cell_value
+
+        # For the incorrect data check
+        return False
+
+    @property
     def parameter(self):
         parameter_voc = get_vocabulary('parameter')
         cell_value = _multi_rows(COL_PARAMS(self.row))
@@ -129,7 +149,7 @@ class Entry(object):
     def get_fields(self):
         return {name: getattr(self, name)
                 for name in IObservation
-                if name not in UNREQUIERED_FIELDS
+                if name not in UNUSED_FIELDS
                 }
 
 
