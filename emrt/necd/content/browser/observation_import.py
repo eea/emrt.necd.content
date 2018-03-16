@@ -131,8 +131,14 @@ class Entry(object):
     @property
     def ms_key_category(self):
         cell_value = COL_MS_KEY(self.row).title()
-        if cell_value in ['True', 'False']:
+
+        if cell_value == 'True':
             return cell_value
+        elif cell_value == '':
+            #openpyxl takes False cell values as empty strings so it is easier
+            #to assume that an empty cell of the MS Key Category column evaluates
+            #to false
+            return 'False'
 
         # For the incorrect data check
         return False
@@ -198,7 +204,7 @@ class ObservationXLSImport(BrowserView):
         if xls_file.filename == '':
             return error_status_message(self.context, self.request, NO_FILE_ERR)
 
-        wb = openpyxl.load_workbook(xls_file, read_only=True)
+        wb = openpyxl.load_workbook(xls_file, read_only=True, data_only=True)
         sheet = wb.worksheets[0]
 
         max = self.valid_rows_index(sheet)

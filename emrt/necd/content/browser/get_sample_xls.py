@@ -49,7 +49,7 @@ class GetSampleXLS(BrowserView):
         fuels = map(get_title, fuel_voc)
         #not a mandatory field, value can be none
         fuels.append(None)
-        ms_key_categ = ['True', 'False']
+        ms_key_categ = ['True', None]
         pollutants = '\n'.join(map(get_title, pollutants_voc))
         parameter = '\n'.join(map(get_title, parameter_voc))
 
