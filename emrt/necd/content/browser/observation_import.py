@@ -165,6 +165,12 @@ def _create_observation(entry, context, request, portal_type):
         msg = WRONG_DATA_ERR.format(key)
         return error_status_message(context, request, msg)
 
+    #Values must be boolean
+    if fields['ms_key_category'] == 'True':
+        fields['ms_key_category'] = True
+    else:
+        fields['ms_key_category'] = False
+
     content = api.content.create(
         context,
         type=portal_type,
