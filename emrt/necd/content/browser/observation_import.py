@@ -20,8 +20,6 @@ WRONG_DATA_ERR = u'The information you entered in the {} section is not correct.
                  u' Please consult the columns in the sample xls file to see the ' \
                  u'correct set of data.'
 
-NO_FILE_ERR = u'Please upload a xls file before importing!'
-
 DONE_MSG = u'Successfully imported {} observations!'
 
 
@@ -159,7 +157,7 @@ class Entry(object):
                 }
 
 
-def _create_observation(entry, context, request, portal_type):
+def _create_observation(entry, context, request, portal_type, obj):
 
     fields = entry.get_fields()
 
@@ -183,10 +181,14 @@ def _create_observation(entry, context, request, portal_type):
         title = getattr(entry, 'title'),
         **fields
     )
+
+    obj.num_entries +=1
     return content
 
 
 class ObservationXLSImport(BrowserView):
+
+    num_entries = 0
 
     def valid_rows_index(self, sheet):
         """There are some cases when deleted rows from an xls file are seen
@@ -201,9 +203,6 @@ class ObservationXLSImport(BrowserView):
     def do_import(self):
         xls_file = self.request.get('xls_file', None)
 
-        if xls_file.filename == '':
-            return error_status_message(self.context, self.request, NO_FILE_ERR)
-
         wb = openpyxl.load_workbook(xls_file, read_only=True, data_only=True)
         sheet = wb.worksheets[0]
 
@@ -214,12 +213,11 @@ class ObservationXLSImport(BrowserView):
 
         entries = map(Entry, valid_rows)
 
-        num_entries = 0
         for entry in entries:
-            _create_observation(entry, self.context, self.request, PORTAL_TYPE)
-            num_entries += 1
+            _create_observation(entry, self.context, self.request, PORTAL_TYPE, self)
+
 
         status = IStatusMessage(self.request)
-        status.addStatusMessage(_(DONE_MSG.format(num_entries)))
+        status.addStatusMessage(_(DONE_MSG.format(self.num_entries)))
 
         return self.request.response.redirect(self.context.absolute_url())
