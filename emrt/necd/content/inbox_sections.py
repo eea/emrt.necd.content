@@ -1,5 +1,3 @@
-from functools import partial
-from functools import wraps
 from operator import methodcaller
 
 

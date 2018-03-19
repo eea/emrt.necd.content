@@ -8,16 +8,11 @@ from plone import api
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-from zope.annotation.interfaces import IAnnotations
 from z3c.form import button
 from z3c.form import field
 from z3c.form.form import Form
 from zope import schema
 from zope.interface import Interface
-from emrt.necd.content.notifications.utils import notify
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from eea.cache import cache
-from Products.CMFCore.utils import getToolByName
 from DateTime import DateTime
 from emrt.necd.content.notifications import answer_to_msexperts
 from emrt.necd.content.notifications import question_to_counterpart

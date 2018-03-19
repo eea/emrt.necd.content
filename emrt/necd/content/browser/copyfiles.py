@@ -9,7 +9,6 @@ class CopyFileToAnswer(BrowserView):
         context = aq_inner(self.context)
         conversation = aq_parent(context)
         answer = aq_parent(conversation)
-        import pdb; pdb.set_trace()
         file = getattr(context, 'attachment', None)
         candidate_id = file.filename
         while candidate_id in answer.keys():
