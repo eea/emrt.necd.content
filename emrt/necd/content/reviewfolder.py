@@ -33,6 +33,7 @@ from zope.interface import Interface
 from zope.interface import provider
 from zope.interface import implementer
 from z3c.form.interfaces import HIDDEN_MODE
+from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 
@@ -472,22 +473,10 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
     def translate_highlights(self, highlights):
         return [
-            self._vocabulary_value(
-                'emrt.necd.content.highlight',
-                highlight
+            get_vocabulary_value(
+                self, 'emrt.necd.content.highlight', highlight
             ) for highlight in highlights
         ]
-
-    def _vocabulary_value(self, vocabulary, term):
-        vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
-        vocabulary = vocab_factory(self)
-        if not term:
-            return u''
-        try:
-            value = vocabulary.getTerm(term)
-            return value.title
-        except LookupError:
-            return term
 
     def extract_data(self, form_data):
         """ Create xls file
