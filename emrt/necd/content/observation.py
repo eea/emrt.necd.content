@@ -17,7 +17,7 @@ from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
 from plone.app.discussion.interfaces import IConversation
-from plone.directives import dexterity
+from plone.dexterity.content import Container
 from plone.directives import form
 from plone.directives.form import default_value
 from plone.memoize import instance
@@ -262,7 +262,7 @@ def set_title_to_observation(object, event):
 
 
 @implementer(IObservation)
-class Observation(dexterity.Container):
+class Observation(Container):
     def get_values(self):
         """
         Memoized version of values, to speed-up

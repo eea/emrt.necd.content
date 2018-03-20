@@ -7,8 +7,8 @@ from emrt.necd.content import MessageFactory as _
 from plone import api
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.Five import BrowserView
@@ -41,7 +41,7 @@ class IComment(form.Schema, IImageScaleTraversable):
 # in separate view classes.
 
 @implementer(IComment)
-class Comment(dexterity.Container):
+class Comment(Container):
     # Add your class methods and properties here
 
     def can_edit(self):

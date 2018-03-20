@@ -2,7 +2,7 @@ from AccessControl import getSecurityManager
 from Acquisition import aq_parent
 from emrt.necd.content import MessageFactory as _
 from plone.dexterity.browser import add
-from plone.directives import dexterity
+from plone.dexterity.content import Item
 from plone.directives import form
 from plone.namedfile.field import NamedBlobFile
 from plone.namedfile.interfaces import IImageScaleTraversable
@@ -34,7 +34,7 @@ class INECDFile(form.Schema, IImageScaleTraversable):
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
 @implementer(INECDFile)
-class NECDFile(dexterity.Item):
+class NECDFile(Item):
     # Add your class methods and properties here
 
     def can_edit(self):

@@ -10,8 +10,8 @@ from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.browser import add
+from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.statusmessages.interfaces import IStatusMessage
@@ -48,7 +48,7 @@ OPEN_STATUS_NAME = 'open'
 CLOSED_STATUS_NAME = 'closed'
 
 @implementer(IQuestion)
-class Question(dexterity.Container):
+class Question(Container):
     # Add your class methods and properties here
 
     def can_add_comment(self):

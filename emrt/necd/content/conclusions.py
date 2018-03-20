@@ -14,8 +14,8 @@ from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.Five import BrowserView
@@ -103,7 +103,7 @@ def check_ghg_estimations(value):
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
 @implementer(IConclusions)
-class Conclusions(dexterity.Container):
+class Conclusions(Container):
 
     def reason_value(self):
         return get_vocabulary_value(
