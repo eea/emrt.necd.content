@@ -22,7 +22,7 @@ QUERY_LDAP_ROLES = ldap_utils.format_or(
     'cn', (
         LDAP_MSA + '-*',
         LDAP_LEADREVIEW + '-*',
-        LDAP_SECTOREXP + '-sector*'
+        LDAP_SECTOREXP + '-sector*-*'
     )
 )
 
