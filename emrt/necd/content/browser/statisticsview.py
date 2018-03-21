@@ -12,12 +12,7 @@ import tablib
 
 class StatisticsView(BrowserView):
 
-    def __init__(self, context, request):
-        super(StatisticsView, self).__init__(context, request)
-        self.observations = self.get_all_observations()
-        self.questions = self.get_all_questions()
-
-    def update(self):
+    def __call__(self):
         self.observations = self.get_all_observations()
         self.questions = self.get_all_questions()
 
