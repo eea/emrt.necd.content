@@ -19,7 +19,6 @@ from emrt.necd.content.notifications import question_to_counterpart
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.utils import find_parent_with_interface
 from emrt.necd.content.utils import principals_with_roles
-from emrt.necd.content.constants import LDAP_TERT
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_MSEXPERT

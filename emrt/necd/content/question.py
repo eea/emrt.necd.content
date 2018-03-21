@@ -307,56 +307,6 @@ class AddAnswerForm(Form):
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
 
-
-class EditAndCloseComments(BrowserView):
-    def update(self):
-        # Some checks:
-        waction = self.request.get('workflow_action')
-        comment = self.request.get('comment')
-        if waction not in ['send-comments'] and \
-            comment not in self.context.keys():
-                status = IStatusMessage(self.request)
-                msg = _(u'There was an error, try again please')
-                status.addStatusMessage(msg, "error")
-        else:
-            self.comment = comment
-
-    def render(self):
-        # Execute the transition
-        api.content.transition(
-            obj=self.context,
-            transition='send-comments'
-        )
-
-        url = '%s/%s/edit' % (self.context.absolute_url(), self.comment)
-        return self.request.response.redirect(url)
-
-
-class EditAnswerAndCloseComments(BrowserView):
-    def update(self):
-        # Some checks:
-        waction = self.request.get('workflow_action')
-        comment = self.request.get('comment')
-        if waction not in ['ask-answer-aproval'] and \
-            comment not in self.context.keys():
-            status = IStatusMessage(self.request)
-            msg = _(u'There was an error, try again please')
-            status.addStatusMessage(msg, "error")
-            return
-        else:
-            self.comment = comment
-
-    def render(self):
-        # Execute the transition
-        api.content.transition(
-            obj=self.context,
-            transition='ask-answer-aproval'
-        )
-
-        url = '%s/%s/edit' % (self.context.absolute_url(), self.comment)
-        return self.request.response.redirect(url)
-
-
 class AddFollowUpQuestion(BrowserView):
     def render(self):
         api.content.transition(
