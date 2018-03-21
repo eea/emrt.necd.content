@@ -208,6 +208,10 @@ class AssignFormMixin(BrowserView):
 
     _msg_no_usernames = None
 
+    def is_secretariat(self):
+        user = api.user.get_current()
+        return 'Manager' in user.getRoles()
+
     def _get_wf_action(self):
         raise NotImplementedError
 
@@ -246,6 +250,9 @@ class AssignFormMixin(BrowserView):
 
     def get_counterpart_users(self, exclude_test=True):
         users = []
+
+        if self.is_secretariat():
+            exclude_test = False
 
         current_user_id = api.user.get_current().getId()
 
