@@ -33,10 +33,12 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
 
+TEST_USERS = ('_necd', 'necd_', 'sectorrevnecd')
+
 PARENT_REVIEWFOLDER = partial(find_parent_with_interface, IReviewFolder)
 
-
 RE_EXTRACT_SECTOR_COUNTRY = re.compile(r'(sector\d)?-([a-z]{2})$')
+
 def group_matches_sector_and_country(name, pass_sector, pass_country):
     """ If neither sector nor country is found in the group name,
         validate it as True in order to cover lead groups.
@@ -99,12 +101,11 @@ def exclude_test_users(userdata):
     if Globals.DevelopmentMode:
         return userdata
 
-    exclude = ('_necd', 'necd_', 'sectorrevnecd')
     userid = itemgetter(0)
 
     def drop(data):
         return not tuple(
-            ex for ex in exclude
+            ex for ex in TEST_USERS
             if ex in userid(data)
         )
 
@@ -208,9 +209,11 @@ class AssignFormMixin(BrowserView):
 
     _msg_no_usernames = None
 
-    def is_secretariat(self):
+    def show_test_users(self):
         user = api.user.get_current()
-        return 'Manager' in user.getRoles()
+
+        return any(usr in user.getUserName() for usr in TEST_USERS) \
+               or 'Manager' in user.getRoles()
 
     def _get_wf_action(self):
         raise NotImplementedError
@@ -251,7 +254,7 @@ class AssignFormMixin(BrowserView):
     def get_counterpart_users(self, exclude_test=True):
         users = []
 
-        if self.is_secretariat():
+        if self.show_test_users():
             exclude_test = False
 
         current_user_id = api.user.get_current().getId()
