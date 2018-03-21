@@ -9,12 +9,13 @@ from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.utils import hidden
+from emrt.necd.content.utils import get_vocabulary_value
 from plone import api
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.directives import dexterity
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.Five import BrowserView
@@ -34,7 +35,6 @@ from zope.component import getUtility
 from zope.globalrequest import getRequest
 from zope.interface import Invalid
 from zope.interface import implementer
-from zope.schema.interfaces import IVocabularyFactory
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 
@@ -103,24 +103,12 @@ def check_ghg_estimations(value):
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
 @implementer(IConclusions)
-class Conclusions(dexterity.Container):
+class Conclusions(Container):
 
     def reason_value(self):
-        return self._vocabulary_value(
-            'emrt.necd.content.conclusion_reasons',
-            self.closing_reason
+        return get_vocabulary_value(
+            self, 'emrt.necd.content.conclusion_reasons', self.closing_reason
         )
-
-    def _vocabulary_value(self, vocabulary, term):
-        vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
-        vocabulary = vocab_factory(self)
-        if not term:
-            return u''
-        try:
-            value = vocabulary.getTerm(term)
-            return value.title
-        except LookupError:
-            return term
 
     def can_edit(self):
         sm = getSecurityManager()

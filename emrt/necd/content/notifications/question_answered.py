@@ -1,7 +1,4 @@
 from Acquisition import aq_parent
-from emrt.necd.content.question import IQuestion
-from five import grok
-from Products.CMFCore.interfaces import IActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
 from utils import notify
 from emrt.necd.content.constants import ROLE_SE
@@ -9,7 +6,6 @@ from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_lr(context, event):
     """
     To:     LeadReviewer
@@ -29,7 +25,6 @@ def notification_lr(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_se(context, event):
     """
     To:     SectorExpert
@@ -49,14 +44,12 @@ def notification_se(context, event):
         )
 
 
-@grok.subscribe(IQuestion, IActionSucceededEvent)
 def notification_rev_msexperts(context, event):
     """
     To:     MSExperts
     When:   New answer from country
     """
     _temp = PageTemplateFile('question_answered_msexperts_msg.pt')
-
     if event.action in ['answer-to-lr']:
         observation = aq_parent(context)
         subject = u'New answer from country'

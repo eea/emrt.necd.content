@@ -1,26 +1,18 @@
+from datetime import datetime
 from Products.CMFCore.utils import getToolByName
-from emrt.necd.content.reviewfolder import IReviewFolder
-from five import grok
+from Products.Five import BrowserView
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
-import itertools
 import copy
+import itertools
 import operator
-
 import tablib
-from datetime import datetime
-
-grok.templatedir('templates')
 
 
-class StatisticsView(grok.View):
-    grok.context(IReviewFolder)
-    grok.name('statistics')
-    grok.require('cmf.ManagePortal')
+class StatisticsView(BrowserView):
 
-    def update(self):
-
+    def __call__(self):
         self.observations = self.get_all_observations()
         self.questions = self.get_all_questions()
 
@@ -207,11 +199,7 @@ class StatisticsView(grok.View):
             columns=self.get_countries(),
             filter_fun=lambda x: 'ptc' in x.get('highlight', []),
         )
-class DownloadStatisticsView(grok.View):
-    grok.context(IReviewFolder)
-    grok.name('download-statistics')
-    grok.require('cmf.ManagePortal')
-
+class DownloadStatisticsView(BrowserView):
     def get_all_observations(self):
         catalog = getToolByName(self.context, 'portal_catalog')
         brains = catalog.unrestrictedSearchResults(

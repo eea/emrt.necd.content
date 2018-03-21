@@ -1,13 +1,9 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from plone.app.discussion.interfaces import IComment
-from five import grok
+from Products.Five import BrowserView
 
 
-class CopyFileToAnswer(grok.View):
-    grok.require('emrt.necd.content.AddNECDFile')
-    grok.context(IComment)
-    grok.name('copy-attachment-to-answer')
+class CopyFileToAnswer(BrowserView):
 
     def render(self):
         context = aq_inner(self.context)
@@ -17,7 +13,6 @@ class CopyFileToAnswer(grok.View):
         candidate_id = file.filename
         while candidate_id in answer.keys():
             candidate_id += '-1'
-
         filename = answer.invokeFactory(
             id=candidate_id,
             type_name='NECDFile',

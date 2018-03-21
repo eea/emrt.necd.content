@@ -2,7 +2,6 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:grok="http://namespaces.zope.org/grok"
     i18n_domain="emrt.necd.content">
 
     <browser:page
@@ -187,6 +186,22 @@
         for="emrt.necd.content.reviewfolder.IReviewFolder"
         class=".get_sample_xls.GetSampleXLS"
         permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="statistics"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        class=".statisticsview.StatisticsView"
+        permission="cmf.ManagePortal"
+        template="templates/statisticsview.pt"
+        />
+
+    <browser:page
+        name="download-statistics"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        class=".statisticsview.DownloadStatisticsView"
+        permission="cmf.ManagePortal"
+        attribute="render"
         />
 
 </configure>

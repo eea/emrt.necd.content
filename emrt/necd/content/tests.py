@@ -6,7 +6,6 @@ from Testing import ZopeTestCase as ztc
 from Products.Five import zcml
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
-from Products.PloneTestCase.layer import onsetup
 
 import emrt.necd.content
 

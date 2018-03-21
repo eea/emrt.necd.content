@@ -2,6 +2,10 @@ import concurrent.futures
 from operator import itemgetter
 import plone.api as api
 
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
+
+
 
 def user_has_ldap_role(ldap_name, user=None, groups=None):
     _user = user if user else api.user.get_current()
@@ -62,3 +66,16 @@ def hidden(menuitem):
         if menuitem.get('action').endswith(action):
             return True
     return False
+
+
+def get_vocabulary_value(context, vocabulary, term):
+
+    vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
+    vocabulary = vocab_factory(context)
+    if not term:
+        return u''
+    try:
+        value = vocabulary.getTerm(term)
+        return value.title
+    except LookupError:
+        return term

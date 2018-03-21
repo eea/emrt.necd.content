@@ -5,8 +5,6 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
-from zope.schema.vocabulary import SimpleVocabulary
-from plone import api
 from emrt.necd.content.constants import LDAP_TERT
 
 

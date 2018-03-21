@@ -17,7 +17,7 @@ from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
 from plone.app.discussion.interfaces import IConversation
-from plone.directives import dexterity
+from plone.dexterity.content import Container
 from plone.directives import form
 from plone.directives.form import default_value
 from plone.memoize import instance
@@ -45,7 +45,6 @@ from zope.i18n import translate
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import Invalid
-from zope.schema.interfaces import IVocabularyFactory
 from emrt.necd.content import MessageFactory as _
 from eea.cache import cache
 from .comment import IComment
@@ -62,6 +61,7 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
+from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 
@@ -262,7 +262,7 @@ def set_title_to_observation(object, event):
 
 
 @implementer(IObservation)
-class Observation(dexterity.Container):
+class Observation(Container):
     def get_values(self):
         """
         Memoized version of values, to speed-up
@@ -294,9 +294,8 @@ class Observation(dexterity.Container):
         return self.highlight
 
     def country_value(self):
-        return self._vocabulary_value(
-            'emrt.necd.content.eea_member_states',
-            self.country
+        return get_vocabulary_value(
+            self, 'emrt.necd.content.eea_member_states', self.country
         )
 
     def nfr_code_value(self):
@@ -316,43 +315,39 @@ class Observation(dexterity.Container):
         return get_category_value_from_nfr_code(self.nfr_code)
 
     def parameter_value(self):
-        parameters = [self._vocabulary_value('emrt.necd.content.parameter',
-            p) for p in self.parameter]
+        parameters = [
+            get_vocabulary_value(self, 'emrt.necd.content.parameter', p)
+            for p in self.parameter
+            ]
         return u', '.join(filter(None, parameters))
 
     def pollutants_value(self):
-        pollutants = [self._vocabulary_value('emrt.necd.content.pollutants',
-            p) for p in self.pollutants]
-
+        pollutants = [
+            get_vocabulary_value(self, 'emrt.necd.content.pollutants', p)
+            for p in self.pollutants
+            ]
         return u', '.join(filter(None, pollutants))
 
     def highlight_value(self):
         if self.highlight:
-            highlight = [self._vocabulary_value('emrt.necd.content.highlight',
-                h) for h in self.highlight]
+            highlight = [
+                get_vocabulary_value(self,'emrt.necd.content.highlight',h)
+                for h in self.highlight
+                ]
             return u', '.join(highlight)
         return u''
 
     def finish_reason_value(self):
-        return self._vocabulary_value(
+        return get_vocabulary_value(self,
             'emrt.necd.content.finishobservationreasons',
             self.closing_reason
         )
 
     def finish_deny_reason_value(self):
-        return self._vocabulary_value(
-            'emrt.necd.content.finishobservationdenyreasons',
+        return get_vocabulary_value(
+            self, 'emrt.necd.content.finishobservationdenyreasons',
             self.closing_deny_reason
         )
-
-    def _vocabulary_value(self, vocabulary, term):
-        vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
-        vocabulary = vocab_factory(self)
-        try:
-            value = vocabulary.getTerm(term)
-            return value.title
-        except LookupError:
-            return u''
 
     def get_status(self):
         return api.content.get_state(self)
@@ -801,7 +796,6 @@ class Observation(dexterity.Container):
 # Template filenames should be all lower case.
 # The view will render when you request a content object with this
 # interface with "/@@view" appended unless specified otherwise
-# using grok.name below.
 # This will make this view the default view for your content-type
 
 
@@ -1224,7 +1218,7 @@ class ExportAsDocView(ObservationMixin):
         row_cells[1].paragraphs[0].style = "Table Cell"
         row_cells[2].text = self.context.pollutants_value() or ''
         row_cells[2].paragraphs[0].style = "Table Cell"
-        row_cells[3].text = self.context._vocabulary_value(
+        row_cells[3].text = get_vocabulary_value(self.context,
             IObservation['fuel'].vocabularyName,
             self.context.fuel
         )

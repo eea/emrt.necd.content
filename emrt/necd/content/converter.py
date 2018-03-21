@@ -2,7 +2,6 @@ from emrt.necd.content import MessageFactory as _
 from z3c.form.converter import NumberDataConverter
 from z3c.form.interfaces import IWidget
 
-
 import zope
 
 
@@ -26,10 +25,6 @@ class NECDNumberDataConverter(NumberDataConverter):
     def __init__(self, field, widget):
         super(NECDNumberDataConverter, self).__init__(field, widget)
         self.formatter.symbols.update(symbols)
-
-    # def format(self, obj, pattern=None):
-    #     import pdb; pdb.set_trace()
-    #     super(NECDIntegerDataConverter, self).format(obj, pattern)
 
 
 class NECDIntegerDataConverter(NECDNumberDataConverter):

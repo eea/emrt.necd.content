@@ -4,7 +4,6 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="emrt.necd.content">
 
@@ -24,9 +23,6 @@
   <include package=".subscriptions" />
   <include package=".notifications" />
   <include package=".forms" />
-
-  <!-- Grok the package to initialise schema interfaces and content classes -->
-  <grok:grok package="." />
 
   <i18n:registerTranslations directory="locales" />
 
@@ -144,6 +140,48 @@
     permission="cmf.ModifyPortalContent"
     />
 
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.subscribers.observation_transition"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalised.notification_ms"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalised.notification_se"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalisation_denied.notification_se"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.conclusion_to_comment.notification_cp"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.conclusion_to_comment.notification_lr"
+    />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalisation_request.notification_lr"
+    />
+
   <!-- Crons view -->
   <browser:page
       name="cron_update_vocabularies"
@@ -151,5 +189,167 @@
       class=".crons.UpdateLDAPUsersVocabulariesCron"
       permission="zope.Public"
   />
+
+  <!--Comment forms and events-->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.comment.AddView"
+    name="emrt.necd.content.comment"
+    />
+
+  <class class=".comment.AddView">
+      <require
+          permission="emrt.necd.content.AddComment"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="emrt.necd.content.comment.IComment"
+    class="emrt.necd.content.comment.EditForm"
+    permission="emrt.necd.content.EditComment"
+    />
+
+  <subscriber
+    for="emrt.necd.content.comment.IComment
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="emrt.necd.content.comment.add_question"
+    />
+
+  <!--Question forms and events-->
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.question.AddView"
+    name="emrt.necd.content.question"
+    />
+
+  <class class=".question.AddView">
+      <require
+          permission="emrt.necd.content.AddQuestion"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="emrt.necd.content.question.add_question"
+    />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.subscribers.question_transition"
+    />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_counterpart.notification_cp"
+    />
+
+   <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_counterpart.notification_lr"
+    />
+
+    <subscriber
+      for="emrt.necd.content.question.IQuestion
+           Products.CMFCore.interfaces.IActionSucceededEvent"
+      handler="emrt.necd.content.notifications.question_answered.notification_lr"
+      />
+
+    <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_answered.notification_se"
+    />
+
+   <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_answered.notification_rev_msexperts"
+    />
+
+   <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_ms.notification_ms"
+    />
+
+   <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_ms.notification_se"
+    />
+
+   <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.answer_to_msexperts.notification_mse"
+    />
+
+   <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_ready_for_approval.notification_lr"
+    />
+
+   <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.answer_acknowledged.notification_ms"
+    />
+
+  <!--NECDFile add form-->
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.necdfile.AddView"
+    name="emrt.necd.content.necdfile"
+    />
+
+  <class class=".necdfile.AddView">
+      <require
+          permission="emrt.necd.content.AddNECDFile"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <!--CommentAnswer forms-->
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory="emrt.necd.content.commentanswer.AddView"
+    name="emrt.necd.content.commentanswer"
+    />
+
+  <class class=".commentanswer.AddView">
+      <require
+          permission="emrt.necd.content.AddCommentAnswer"
+          interface="zope.publisher.interfaces.browser.IBrowserPage"
+          />
+  </class>
+
+  <browser:page
+    name="edit"
+    for="emrt.necd.content.commentanswer.ICommentAnswer"
+    class="emrt.necd.content.commentanswer.EditForm"
+    permission="emrt.necd.content.EditCommentAnswer"
+    />
 
 </configure>

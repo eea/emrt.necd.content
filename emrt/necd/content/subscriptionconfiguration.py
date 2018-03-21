@@ -10,9 +10,6 @@ from .observation import IObservation
 from .observation import ObservationView
 from .reviewfolder import IReviewFolder
 from emrt.necd.content.subscriptions.interfaces import INotificationUnsubscriptions
-from emrt.necd.content.subscriptions.dexterity import UNSUBSCRIPTION_KEY
-from BTrees.OOBTree import OOBTree
-from zope.annotation.interfaces import IAnnotations
 
 import copy
 
