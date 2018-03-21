@@ -1,19 +1,18 @@
-from StringIO import StringIO
+from itertools import cycle
 from functools import partial
-from operator import attrgetter
-
-from zope.component import getUtility
-from zope.schema.interfaces import IVocabularyFactory
-
-from Products.Five.browser import BrowserView
-
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
+from operator import attrgetter
+from Products.Five.browser import BrowserView
+from StringIO import StringIO
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 
 XLS_SAMPLE_HEADER = [
     'Observation description', 'Country', 'NFR Code',
-    'Inventory Year', 'Pollutants', 'Review Year', 'Parameter'
+    'Inventory Year', 'Pollutants', 'Review Year', 'Fuel', 'MS Key Category',
+    'Parameter'
 ]
 
 DESC = 'Description of the observation'
@@ -37,15 +36,23 @@ class GetSampleXLS(BrowserView):
         country_voc = get_vocabulary('emrt.necd.content.eea_member_states')
         pollutants_voc = get_vocabulary('emrt.necd.content.pollutants')
         parameter_voc = get_vocabulary('emrt.necd.content.parameter')
+        fuel_voc = get_vocabulary('emrt.necd.content.fuel')
 
         countries = map(get_title, country_voc)
+        # not a mandatory field, value can be none
+        fuels = cycle(map(get_title, fuel_voc) + [None])
+        ms_key_categ = cycle(['True', None])
         pollutants = '\n'.join(map(get_title, pollutants_voc))
         parameter = '\n'.join(map(get_title, parameter_voc))
 
         sheet.append(XLS_SAMPLE_HEADER)
-        for country in countries:
+        for idx, country in enumerate(countries):
+            fuel = next(fuels)
+
+            # get a value based on the country index position
+            ms_key_cat = next(ms_key_categ)
             row = [DESC, country, NFR_CODE, INVENTORY_YEAR, pollutants,
-                   REVIEW_YEAR, parameter]
+                   REVIEW_YEAR, fuel, ms_key_cat, parameter]
             sheet.append(row)
 
     def __call__(self):

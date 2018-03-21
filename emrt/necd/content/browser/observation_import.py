@@ -11,8 +11,7 @@ import Acquisition
 import openpyxl
 
 
-UNREQUIERED_FIELDS = ['fuel', 'ms_key_category', 'highlight',
-                      'closing_comments', 'closing_deny_comments']
+UNUSED_FIELDS = ['highlight', 'closing_comments', 'closing_deny_comments']
 
 UNCOMPLETED_ERR = u'The observation you uploaded seems to be a bit off. Please' \
                   u' fill all the fields as shown in the import file sample. '
@@ -20,8 +19,6 @@ UNCOMPLETED_ERR = u'The observation you uploaded seems to be a bit off. Please' 
 WRONG_DATA_ERR = u'The information you entered in the {} section is not correct.' \
                  u' Please consult the columns in the sample xls file to see the ' \
                  u'correct set of data.'
-
-NO_FILE_ERR = u'Please upload a xls file before importing!'
 
 DONE_MSG = u'Successfully imported {} observations!'
 
@@ -36,9 +33,10 @@ def _read_row(idx, row):
         val = safe_unicode(str(val))
     return val.strip()
 
-
+import re
 def _multi_rows(row):
-    return tuple(val.strip() for val in row.split('\n'))
+    splitted = re.split(r'[,\n]\s*', row)
+    return tuple(val.strip() for val in splitted)
 
 
 COL_DESC = partial(_read_row, 0)
@@ -47,7 +45,9 @@ COL_NFR = partial(_read_row, 2)
 COL_YEAR = partial(_read_row, 3)
 COL_POLLUTANTS = partial(_read_row, 4)
 COL_REVIEW_YEAR = partial(_read_row, 5)
-COL_PARAMS = partial(_read_row, 6)
+COL_FUEL = partial(_read_row, 6)
+COL_MS_KEY = partial(_read_row, 7)
+COL_PARAMS = partial(_read_row, 8)
 
 PORTAL_TYPE = 'Observation'
 
@@ -118,6 +118,31 @@ class Entry(object):
         return int(COL_REVIEW_YEAR(self.row))
 
     @property
+    def fuel(self):
+        fuel_voc = get_vocabulary('fuel')
+        cell_value = COL_FUEL(self.row)
+        if cell_value != '':
+            return find_dict_key(fuel_voc, cell_value)
+
+        #This field can be none because it's not manadatory
+        return None
+
+    @property
+    def ms_key_category(self):
+        cell_value = COL_MS_KEY(self.row).title()
+
+        if cell_value == 'True':
+            return cell_value
+        elif cell_value == '':
+            #openpyxl takes False cell values as empty strings so it is easier
+            #to assume that an empty cell of the MS Key Category column evaluates
+            #to false
+            return 'False'
+
+        # For the incorrect data check
+        return False
+
+    @property
     def parameter(self):
         parameter_voc = get_vocabulary('parameter')
         cell_value = _multi_rows(COL_PARAMS(self.row))
@@ -129,11 +154,11 @@ class Entry(object):
     def get_fields(self):
         return {name: getattr(self, name)
                 for name in IObservation
-                if name not in UNREQUIERED_FIELDS
+                if name not in UNUSED_FIELDS
                 }
 
 
-def _create_observation(entry, context, request, portal_type):
+def _create_observation(entry, context, request, portal_type, obj):
 
     fields = entry.get_fields()
 
@@ -145,16 +170,26 @@ def _create_observation(entry, context, request, portal_type):
         msg = WRONG_DATA_ERR.format(key)
         return error_status_message(context, request, msg)
 
+    #Values must be boolean
+    if fields['ms_key_category'] == 'True':
+        fields['ms_key_category'] = True
+    else:
+        fields['ms_key_category'] = False
+
     content = api.content.create(
         context,
         type=portal_type,
         title = getattr(entry, 'title'),
         **fields
     )
+
+    obj.num_entries +=1
     return content
 
 
 class ObservationXLSImport(BrowserView):
+
+    num_entries = 0
 
     def valid_rows_index(self, sheet):
         """There are some cases when deleted rows from an xls file are seen
@@ -169,10 +204,7 @@ class ObservationXLSImport(BrowserView):
     def do_import(self):
         xls_file = self.request.get('xls_file', None)
 
-        if xls_file.filename == '':
-            return error_status_message(self.context, self.request, NO_FILE_ERR)
-
-        wb = openpyxl.load_workbook(xls_file, read_only=True)
+        wb = openpyxl.load_workbook(xls_file, read_only=True, data_only=True)
         sheet = wb.worksheets[0]
 
         max = self.valid_rows_index(sheet)
@@ -182,12 +214,11 @@ class ObservationXLSImport(BrowserView):
 
         entries = map(Entry, valid_rows)
 
-        num_entries = 0
         for entry in entries:
-            _create_observation(entry, self.context, self.request, PORTAL_TYPE)
-            num_entries += 1
+            _create_observation(entry, self.context, self.request, PORTAL_TYPE, self)
 
-        status = IStatusMessage(self.request)
-        status.addStatusMessage(_(DONE_MSG.format(num_entries)))
+        if self.num_entries > 0:
+            status = IStatusMessage(self.request)
+            status.addStatusMessage(_(DONE_MSG.format(self.num_entries)))
 
         return self.request.response.redirect(self.context.absolute_url())
