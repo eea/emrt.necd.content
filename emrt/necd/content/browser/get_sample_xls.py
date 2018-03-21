@@ -1,3 +1,4 @@
+from itertools import cycle
 from functools import partial
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
@@ -24,14 +25,6 @@ def _get_vocabulary(context, name):
     factory = getUtility(IVocabularyFactory, name=name)
     return factory(context)
 
-def get_fuel_val(fuels, country_index):
-    """Generate all possible values for fuels"""
-    fuels_len = len(fuels)
-
-    if country_index < fuels_len:
-        return fuels[country_index]
-    return fuels[country_index%fuels_len]
-
 
 class GetSampleXLS(BrowserView):
 
@@ -46,19 +39,18 @@ class GetSampleXLS(BrowserView):
         fuel_voc = get_vocabulary('emrt.necd.content.fuel')
 
         countries = map(get_title, country_voc)
-        fuels = map(get_title, fuel_voc)
-        #not a mandatory field, value can be none
-        fuels.append(None)
-        ms_key_categ = ['True', None]
+        # not a mandatory field, value can be none
+        fuels = cycle(map(get_title, fuel_voc) + [None])
+        ms_key_categ = cycle(['True', None])
         pollutants = '\n'.join(map(get_title, pollutants_voc))
         parameter = '\n'.join(map(get_title, parameter_voc))
 
         sheet.append(XLS_SAMPLE_HEADER)
         for idx, country in enumerate(countries):
-            fuel = get_fuel_val(fuels, idx)
+            fuel = next(fuels)
 
-            #get a value based on the country index position
-            ms_key_cat = ms_key_categ[idx%2]
+            # get a value based on the country index position
+            ms_key_cat = next(ms_key_categ)
             row = [DESC, country, NFR_CODE, INVENTORY_YEAR, pollutants,
                    REVIEW_YEAR, fuel, ms_key_cat, parameter]
             sheet.append(row)
