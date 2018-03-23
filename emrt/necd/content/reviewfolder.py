@@ -7,6 +7,7 @@ from datetime import datetime
 from Acquisition import aq_inner
 from AccessControl import getSecurityManager, Unauthorized
 from plone import api
+from plone import directives
 from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.dexterity.content import Container
@@ -20,6 +21,7 @@ from Products.Five import BrowserView
 from emrt.necd.content.timeit import timeit
 from eea.cache import cache
 from zope.component import getUtility
+import zope.schema as schema
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.interfaces import IContextSourceBinder
 from zc.dict import OrderedDict
@@ -36,6 +38,7 @@ from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utilities.ms_user import IUserIsMS
+from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
 
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
@@ -46,8 +49,6 @@ from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
 from emrt.necd.content.constants import LDAP_MSEXPERT
 from emrt.necd.content.inbox_sections import SECTIONS
-
-from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
 
 
 QUESTION_WORKFLOW_MAP = {
@@ -60,6 +61,10 @@ QUESTION_WORKFLOW_MAP = {
     'close-requested': 'Close requested',
     'finalised': 'Finalised',
 }
+
+REVIEWFOLDER_TYPES = SimpleVocabulary.fromItems((
+    (u'Inventory', 'inventory'),
+    (u'Projection', 'projection')))
 
 
 # Cache helper methods
@@ -144,10 +149,16 @@ def filter_for_ms(brains, context):
     return result
 
 
-class IReviewFolder(IImageScaleTraversable):
+class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
     """
+
+    type = schema.Choice(
+        title=u"Type",
+        source=REVIEWFOLDER_TYPES,
+        required=True,
+    )
 
 
 @implementer(IReviewFolder)
