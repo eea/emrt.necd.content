@@ -13,6 +13,7 @@ from plone.dexterity.content import Container
 from plone.dexterity.browser import add
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
+from plone.namedfile.field import NamedBlobFile
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -148,6 +149,20 @@ class IReviewFolder(IImageScaleTraversable):
     """
     Folder to have all observations together
     """
+
+    xls_mappings = NamedBlobFile(
+        title=u'Mapping XLS',
+        description=(
+            u'XLS file providing helper mappings for the Tableau JSON.'
+            u'You can <a href="'
+            u'./++resource++emrt.necd.content/tableau_mappings.xlsx">'
+            u'download an example XLS</a> and modify it as appropriate.'
+            u'The header for each sheet needs to exist but is ignored.'
+            u'<strong>'
+            u'The order of the sheets and columns is important!</strong>'
+        ),
+        required=False,
+    )
 
 
 @implementer(IReviewFolder)
