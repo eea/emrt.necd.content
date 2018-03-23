@@ -23,6 +23,7 @@
         name="macros"
         for="..reviewfolder.IReviewFolder"
         template="templates/macros.pt"
+        class=".macros.MacrosView"
         permission="zope2.View"
         />
 

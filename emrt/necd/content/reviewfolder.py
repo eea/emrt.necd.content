@@ -36,6 +36,7 @@ from zope.interface import implementer
 from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import user_has_ldap_role
+from emrt.necd.content.utils import reduce_text
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 
 from emrt.necd.content.constants import ROLE_MSA
@@ -332,6 +333,7 @@ class ReviewFolderBrowserView(ReviewFolderMixin):
 
         table.render = ViewPageTemplateFile(
             "browser/templates/reviewfolder_get_table.pt")
+        table.reduce_text = partial(reduce_text, limit=500)
         table.is_secretariat = self.is_secretariat
         table.question_workflow_map = QUESTION_WORKFLOW_MAP
 
@@ -1207,6 +1209,20 @@ class FinalisedFolderView(BrowserView):
 
         reasons = get_finalisation_reasons(self.context)
         return tuple(filter(not_open, reasons))
+
+    def get_reasons_with_observations(self):
+        reasons = self.get_finalisation_reasons()
+
+        def obs_dict(key, title):
+            obs = self.get_resolved_observations(key)
+            return dict(obs=obs, num_obs=len(obs), title=title)
+
+        reason_obs = {key: obs_dict(key, title) for key, title in reasons}
+
+        return dict(
+            reasons=reason_obs,
+            total_obs=sum(obs['num_obs'] for obs in reason_obs.values())
+        )
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
         observationsBatch = Batch(

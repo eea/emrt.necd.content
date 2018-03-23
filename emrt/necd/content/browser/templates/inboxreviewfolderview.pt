@@ -6,71 +6,11 @@
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="emrt.necd.content">
   <tal:block metal:fill-slot="javascript_head_slot">
-    <script type="text/javascript">
-      $(document).ready(function(){
-        $(".observationText").text(function(index, currentText){
-          if (currentText.length > 500){
-            $(this).text(currentText.substr(0, 500) + "...");
-            $(this).attr("title", currentText);
-          }
-        });
-      });
-    </script>
     <script src="${portal_url}/++resource++emrt.necd.content/cookies.js"></script>
+    <script src="${portal_url}/++resource++emrt.necd.content/inbox_view.js"></script>
   </tal:block>
   <tal:block metal:fill-slot="style_slot">
-    <style>
-      #observations.myview .menu a { border-bottom: none }
-      #observations.myview .menu ul { list-style-type: none }
-      #observations.myview .menu { padding-right: 1em;}
-      #observations.myview .menu-section,
-      #observations.myview .menu-subsection {
-        margin-left: 0;
-      }
-      .page-content { display: flex }
-      .menu { min-width: 350px; }
-      .menu-body {
-        margin-left: 1em;
-        width: 100%;
-      }
-      .menu-body-message {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-      }
-      .section-title {
-        font-weight: bold;
-      }
-      .section-role {
-          font-size: larger;
-          border-bottom: 3px solid #38758a;
-          width: 100%;
-          display: inline-block;
-      }
-
-      .menu-section .current {
-        border-right: 2px solid #f6a800;
-      }
-
-      .menu-section {
-          margin-top: 1em;
-          margin-bottom: 1em;
-      }
-      .menu-subsection {
-          margin-bottom: 1em;
-      }
-
-      .muted { color: gray }
-
-      #toggleEmpty {
-          background: transparent;
-          border: none;
-          cursor: pointer;
-      }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="${portal_url}/++resource++emrt.necd.content/inbox_view.css" />
   </tal:block>
 <body>
 
@@ -82,33 +22,24 @@
                 sections_viewable sections/viewable;
                 sections_total_obs sections/total_sum;
                 sec_cur python:request.get('section', '');
-                req_params python:[(k, v) for k, v in request.form.items() if k != 'section' and 'b_start' not in k];
-                is_secretariat python:view.is_secretariat();
-                is_se python:view.is_sector_expert();
-                is_lr python:view.is_lead_reviewer();
-                is_mse python:view.is_member_state_expert();
-                is_msc python:view.is_member_state_coordinator()">
+                req_params python:[(k, v) for k, v in request.form.items() if k != 'section' and 'b_start' not in k]">
     <metal:content-core define-macro="content-core">
 
   <div id="inbox-view-content">
   <div class="actions" tal:condition="view/can_add_observation">
-    <a href="./++add++Observation"
-      tal:attributes="href string:${here/absolute_url}/++add++Observation"
-      class="standardButton defaultWFButton">
-        New observation
-    </a>
+    <a href="${here/absolute_url}/++add++Observation" class="standardButton defaultWFButton">New observation</a>
   </div>
 
   <div id="tabs">
     <div class="tabs">
       <div>
-        <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+        <a class="eea-icon overview" href="${here/absolute_url}/view">Overview list</a>
       </div>
       <div class="active">
-        <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
+        <a class="eea-icon inbox" href="${here/absolute_url}/inboxview">My view</a>
       </div>
       <div>
-        <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
+        <a class="eea-icon inbox" href="${here/absolute_url}/finalisedfolderview">Finalised observations</a>
       </div>
     </div>
   </div>
@@ -158,49 +89,7 @@
             </li>
           </tal:section>
         </ul>
-        <script>
-          (function(){
-            var targets =  $('.menu-section li').filter(function(i, o){ return $('a', o).length === 0});
-
-            function do_toggle(btn, elems, toggle) {
-              var COOKIE = 'necd.inbox.showempty';
-              var cookie = docCookies.getItem(COOKIE) || 'hide';
-
-              var action = toggle ? (cookie === 'show' ? 'hide' : 'show') : cookie;
-
-              var btn_text;
-
-              if (action === 'hide') {
-                elems.fadeOut();
-                btn_text = 'Expand view';
-              }
-              else if (action === 'show') {
-                elems.fadeIn();
-                btn_text = 'Collapse view';
-              }
-
-              btn.text(btn_text);
-
-              if (toggle) {
-                docCookies.setItem(COOKIE, action);
-              }
-            }
-
-            var toggler = $('#toggleEmpty');
-
-            if (targets.length > 0) {
-              toggler.on('click', function(){
-                do_toggle(toggler, targets, true);
-              });
-              do_toggle(toggler, targets, false);
-              toggler.show();
-            } else {
-              toggler.remove();
-            }
-
-
-          })();
-        </script>
+        <script>ecsm.inbox.init_toggler('.menu-section li', '#toggleEmpty');</script>
       </div>
       <div class="menu-body">
         <tal:section repeat="role sections_viewable">
