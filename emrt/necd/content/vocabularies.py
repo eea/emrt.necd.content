@@ -1,5 +1,7 @@
 from operator import itemgetter
+from zope import schema
 from zope.interface import implementer
+from zope.interface import Interface
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
@@ -8,11 +10,25 @@ from plone.registry.interfaces import IRegistry
 
 import plone.api as api
 
+from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_LR
 
 from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
+
+
+class INECDVocabularies(Interface):
+
+    projection_pollutants = schema.Dict(
+        title=_(u"Projection pollutants vocabulary"),
+        description=_(u"Registers the values for pollutants in the context of "
+                      u"a Projection ReviewFolder"),
+        key_type=schema.TextLine(title=_(u"Pollutant key")),
+        value_type=schema.TextLine(
+            title=_(u"Pollutant value"),
+        ),
+    )
 
 
 def mk_term(key, value):
@@ -82,11 +98,11 @@ class Pollutants(object):
                     terms.append(SimpleVocabulary.createTerm(key, key, value))
 
         else:
-            pollutants_record = api.portal.get_registry_record(
-                'emrt.necd.content.projection_pollutants_vocabulary')
-
-            for pol in pollutants_record:
-                terms.append(SimpleVocabulary.createTerm(pol, pol, pol))
+            registry = getUtility(IRegistry)
+            pollutants = registry.forInterface(
+                INECDVocabularies).projection_pollutants
+            for key, value in pollutants.items():
+                terms.append(SimpleVocabulary.createTerm(key, key, value))
 
         return SimpleVocabulary(terms)
 

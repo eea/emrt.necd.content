@@ -186,17 +186,50 @@
       <element key="sector6">National total</element>
     </value>
   </record>
-  <record name="emrt.necd.content.projection_pollutants_vocabulary">
-    <field type="plone.registry.field.List">
-      <title>Pollutants values in case of a Projection ReviewFolder</title>
-      <value_type type="plone.registry.field.TextLine"></value_type>
-    </field>
-    <value>
+  <records interface="emrt.necd.content.vocabularies.INECDVocabularies" />
+  <record name="emrt.necd.content.vocabularies.INECDVocabularies.projection_pollutants">
+    <value purge="True">
       <element key="SO2">SO2</element>
       <element key="NOx">NOx</element>
       <element key="NH3">NH3</element>
       <element key="NMVOC">NMVOC</element>
       <element key="PM2.5">PM2.5</element>
+    </value>
+  </record>
+  <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection">
+    <value purge="True">
+      <element key="1A1">sector1|1A1|1A1, 1A2, 1A4 Energy|1A1 Energy production</element>
+      <element key="1A2">sector2|1A2|1A1, 1A2, 1A4 Energy|1A2 Stationary combustion in manufacturing industries and construction</element>
+      <element key="1A3b">sector3|1A3b|1A3 Transport|1A3b Road transport</element>
+      <element key="1A3bi">sector3|1A3bi|1A3 Transport|1A3bi Road transport: Passenger cars</element>
+      <element key="1A3bii">sector3|1A3bii|1A3 Transport|1A3bii Road transport: Light duty vehicles</element>
+      <element key="1A3biii">sector3|1A3biii|1A3 Transport|1A3biii Road transport: Heavy duty vehicles and buses</element>
+      <element key="1A3biv">sector3|1A3biv|1A3 Transport|1A3biv Road transport: Mopeds &amp; motorcycles</element>
+      <element key="1A3bv">sector3|1A3bv|1A3 Transport|1A3bv Road transport: Gasoline evaporation</element>
+      <element key="1A3bvi">sector3|1A3bvi|1A3 Transport|1A3bvi Road transport: Automobile tyre and brake wear</element>
+      <element key="1A3bvii">sector3|1A3bvii|1A3 Transport|1A3bvii Road transport: Automobile road abrasion</element>
+      <element key="1A3a,c,d,e">sector3|1A3a,c,d,e|1A3 Transport|1A3bvii Road transport: Automobile road abrasion</element>
+      <element key="1A4">sector4|1A4aii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4aii Commercial/institutional: Mobile</element>
+      <element key="1A5">sector5|1A4aii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4aii Commercial/institutional: Mobile</element>
+      <element key="1B">sector6|1A4aii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4aii Commercial/institutional: Mobile</element>
+      <element key="2A,B,C,H,I,J,K,L">sector6|2A|1B, 2A IPPU|2A Mineral Industry</element>
+      <element key="2D, 2G">sector6|2D|2D, 2G-2L IPPU|2D Non energy products from fuels and solvent uses</element>
+      <element key="3B">sector7|3B|3B - 3I Agriculture|3B Manure management</element>
+      <element key="3B1a">sector7|3B1a|3B - 3I Agriculture|3B1a Manure management - Dairy cattle</element>
+      <element key="3B1b">sector7|3B1b|3B - 3I Agriculture|3B1b Manure management - Non-dairy cattle</element>
+      <element key="3B2">sector7|3B2|3B - 3I Agriculture|3B2 Manure management - Sheep</element>
+      <element key="3B3">sector7|3B3|3B - 3I Agriculture|3B3 Manure management - Swine</element>
+      <element key="3B4a">sector7|3B4a|3B - 3I Agriculture|3B4a Manure management - Buffalo</element>
+      <element key="3B4d">sector7|3B4d|3B - 3I Agriculture|3B4d Manure management - Goats</element>
+      <element key="3B4e">sector7|3B4e|3B - 3I Agriculture|3B4e Manure management - Horses</element>
+      <element key="3B4f">sector7|3B4f|3B - 3I Agriculture|3B4f Manure management - Mules and asses</element>
+      <element key="3B4g">sector7|3B4gi|3B - 3I Agriculture|3B4gi Manure mangement - Laying hens</element>
+      <element key="3B4h">sector7|3B4gi|3B - 3I Agriculture|3B4gi Manure mangement - Laying hens</element>
+      <element key="3D">sector7|3D|3B - 3I Agriculture|3D Crop production and agricultural soils</element>
+      <element key="3F,I">sector7|3D|3B - 3I Agriculture|3D Crop production and agricultural soils</element>
+      <element key="5">sector8|5C|5A - 5E Waste|5C Waste incineration</element>
+      <element key="6">sector5|6A|6A National Total|6A Other Sources</element>
+      <element key="NATIONAL TOTAL">sector5|6A|6A National Total|6A Other Sources</element>
     </value>
   </record>
 </registry>
