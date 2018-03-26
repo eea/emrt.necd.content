@@ -63,6 +63,8 @@
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
 
+  <adapter factory=".observation.InventoryYearContextValidator" />
+
   <!-- ReviewFolder custom add form -->
   <adapter
     for="Products.CMFCore.interfaces.IFolderish

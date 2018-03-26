@@ -64,12 +64,21 @@ from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
+from z3c.form import validator
+
+YEAR_DESCRIPTION_PROJECTION = u"Inventory year is the year or a list of " \
+                              u"years (e.g. '2050', '2020, 2025, 2030') when" \
+                              u" the emissions had occured for which an issue" \
+                              u" was observed in the review. The allowed " \
+                              u"values are: 2020, 2025, 2030, 2040 or 2050."
 
 
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
+def _is_projection(context):
+    return context.type == 'projection'
 
 # Interface class; used to define content-type schema.
 class IObservation(form.Schema, IImageScaleTraversable):
@@ -104,10 +113,11 @@ class IObservation(form.Schema, IImageScaleTraversable):
     year = schema.TextLine(
         title=u'Inventory year',
         description=u"Inventory year is the year, a range or a list " \
-                    u"of years or a (e.g. '2012', '2009-2012', " \
+                    u"of years (e.g. '2012', '2009-2012', " \
                     u"'2009, 2012, 2013') when the emissions had " \
                     u"occured for which an issue was observed in the review.",
-        required=True
+        required=True,
+
     )
 
     form.widget(pollutants=CheckBoxFieldWidget)
@@ -173,6 +183,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
     )
 
 
+
 @form.validator(field=IObservation['parameter'])
 def check_parameter(value):
     if len(value) == 0:
@@ -224,9 +235,10 @@ def check_country(value):
 def inventory_year(value):
     """
     Inventory year can be a given year (2014), a range of years (2012-2014)
-    or a list of the years (2012, 2014, 2016)
+    or a list of the years (2012, 2014, 2016).
+    In the case of a 'Projection' ReviewFolder the values must be:
+    2020, 2025, 2030, 2040 or 2050.
     """
-
     def split_on_sep(val, sep):
         for s in sep:
             if s in val:
@@ -252,6 +264,23 @@ def default_year(data):
     return datetime.datetime.now().year
 
 
+class InventoryYearContextValidator(validator.SimpleFieldValidator):
+    def validate(self, value, force=False):
+
+        if _is_projection(self.context):
+            allowed_years = ['2020', '2025', '2030', '2040', '2050']
+            value = [val.strip() for val in value.split(',')]
+
+            if not set(value).issubset(allowed_years):
+                raise zope.interface.Invalid(_(u'The entered value is not correct.'))
+
+
+validator.WidgetValidatorDiscriminators(
+    InventoryYearContextValidator,
+    field=IObservation['year']
+)
+
+
 def set_title_to_observation(object, event):
     sector = safe_unicode(object.ghg_source_category_value())
     pollutants = safe_unicode(object.pollutants_value())
@@ -263,6 +292,7 @@ def set_title_to_observation(object, event):
 
 @implementer(IObservation)
 class Observation(Container):
+
     def get_values(self):
         """
         Memoized version of values, to speed-up
@@ -808,15 +838,36 @@ class EditForm(edit.DefaultEditForm):
         self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
-
+from z3c.form.interfaces import WidgetActionExecutionError
 
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
+    #
+    # def validate(self, value):
+    #     normalized_value = (val.strip() for val in self.split_on_sep(value, '-,;'))
+    #     return False not in (int(val) > 0 and val in ('2020, 2025, 2030, 2040, 2050') for val in normalized_value)
+
+    # def create(self, data):
+    #     if _is_projection(self.context):
+    #
+    #         year = data['year']
+    #
+    #         if not self.validate(year):
+    #             raise WidgetActionExecutionError('year', "WRONG")
+    #
+    #
+    #
+    #     return super(AddForm, self).create(data)
+
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
         self.fields['IDublinCore.title'].field.required = False
+
+        if _is_projection(self.context):
+            self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
+
         self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
         self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
         self.widgets['text'].rows = 15
