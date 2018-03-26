@@ -19,7 +19,6 @@ from plone.dexterity.browser.view import DefaultView
 from plone.app.discussion.interfaces import IConversation
 from plone.dexterity.content import Container
 from plone.directives import form
-from plone.directives.form import default_value
 from plone.memoize import instance
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.interfaces import IWrappedForm
@@ -64,6 +63,7 @@ from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
+from plone.supermodel import model
 
 
 # Cache helper methods
@@ -71,8 +71,84 @@ def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
 
+def check_parameter(value):
+    if len(value) == 0:
+        raise Invalid(u'You need to select at least one parameter')
+
+    return True
+
+
+def check_nfr_code(value):
+    """ Check if the user is in one of the group of users
+        allowed to add this category NFR Code observations
+    """
+    category = get_category_ldap_from_nfr_code(value)
+    user = api.user.get_current()
+    groups = user.getGroups()
+    valid = False
+    for group in groups:
+        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
+            valid = True
+
+    if not valid:
+        raise Invalid(
+            u'You are not allowed to add observations for this sector category'
+        )
+
+    return True
+
+
+def check_country(value):
+    user = api.user.get_current()
+    groups = user.getGroups()
+    valid = False
+    for group in groups:
+        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
+                group.endswith('-%s' % value):
+            valid = True
+
+    if not valid:
+        raise Invalid(
+            u'You are not allowed to add observations for this country'
+        )
+
+    return True
+
+
+def inventory_year(value):
+    """
+    Inventory year can be a given year (2014), a range of years (2012-2014)
+    or a list of the years (2012, 2014, 2016)
+    """
+
+    def split_on_sep(val, sep):
+        for s in sep:
+            if s in val:
+                return tuple(val.split(s))
+        return (val, )
+
+    def validate(value):
+        normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
+        return False not in (int(val) > 0 for val in normalized_value)
+
+    def check_valid(value):
+        try:
+            return validate(value)
+        except ValueError:
+            return False
+
+    if not check_valid(value):
+        raise Invalid(u'Inventory year format is not correct. ')
+
+    return True
+
+
+def default_year():
+    return datetime.datetime.now().year
+
+
 # Interface class; used to define content-type schema.
-class IObservation(form.Schema, IImageScaleTraversable):
+class IObservation(model.Schema, IImageScaleTraversable):
     """
     New review observation
     """
@@ -92,12 +168,14 @@ class IObservation(form.Schema, IImageScaleTraversable):
     country = schema.Choice(
         title=u"Country",
         vocabulary='emrt.necd.content.eea_member_states',
+        constraint=check_country,
         required=True,
     )
 
     nfr_code = schema.Choice(
         title=u"NFR category codes",
         vocabulary='emrt.necd.content.nfr_code',
+        constraint=check_nfr_code,
         required=True,
     )
 
@@ -107,7 +185,8 @@ class IObservation(form.Schema, IImageScaleTraversable):
                     u"of years or a (e.g. '2012', '2009-2012', " \
                     u"'2009, 2012, 2013') when the emissions had " \
                     u"occured for which an issue was observed in the review.",
-        required=True
+        constraint=inventory_year,
+        required=True,
     )
 
     form.widget(pollutants=CheckBoxFieldWidget)
@@ -123,6 +202,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
         title=u'Review year',
         description=u'Review year is the year in which the inventory was ' \
                     u'submitted and the review was carried out',
+        defaultFactory=default_year,
         required=True,
     )
 
@@ -141,8 +221,8 @@ class IObservation(form.Schema, IImageScaleTraversable):
         title=u"Parameter",
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.parameter',
-            required=True,
         ),
+        constraint=check_parameter,
         required=True,
     )
 
@@ -173,83 +253,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
     )
 
 
-@form.validator(field=IObservation['parameter'])
-def check_parameter(value):
-    if len(value) == 0:
-        raise Invalid(u'You need to select at least one parameter')
 
-
-@form.validator(field=IObservation['pollutants'])
-def check_pollutants(value):
-    if len(value) == 0:
-        raise Invalid(u'You need to select at least one pollutant')
-
-
-@form.validator(field=IObservation['nfr_code'])
-def check_nfr_code(value):
-    """ Check if the user is in one of the group of users
-        allowed to add this category NFR Code observations
-    """
-    category = get_category_ldap_from_nfr_code(value)
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this sector category'
-        )
-
-
-@form.validator(field=IObservation['country'])
-def check_country(value):
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
-                group.endswith('-%s' % value):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this country'
-        )
-
-
-@form.validator(field=IObservation['year'])
-def inventory_year(value):
-    """
-    Inventory year can be a given year (2014), a range of years (2012-2014)
-    or a list of the years (2012, 2014, 2016)
-    """
-
-    def split_on_sep(val, sep):
-        for s in sep:
-            if s in val:
-                return tuple(val.split(s))
-        return (val, )
-
-    def validate(value):
-        normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
-        return False not in (int(val) > 0 for val in normalized_value)
-
-    def check_valid(value):
-        try:
-            return validate(value)
-        except ValueError:
-            return False
-
-    if not check_valid(value):
-        raise Invalid(u'Inventory year format is not correct. ')
-
-
-@default_value(field=IObservation['review_year'])
-def default_year(data):
-    return datetime.datetime.now().year
 
 
 def set_title_to_observation(object, event):
