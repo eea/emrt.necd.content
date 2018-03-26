@@ -186,4 +186,17 @@
       <element key="sector6">National total</element>
     </value>
   </record>
+  <record name="emrt.necd.content.projection_pollutants_vocabulary">
+    <field type="plone.registry.field.List">
+      <title>Pollutants values in case of a Projection ReviewFolder</title>
+      <value_type type="plone.registry.field.TextLine"></value_type>
+    </field>
+    <value>
+      <element key="SO2">SO2</element>
+      <element key="NOx">NOx</element>
+      <element key="NH3">NH3</element>
+      <element key="NMVOC">NMVOC</element>
+      <element key="PM2.5">PM2.5</element>
+    </value>
+  </record>
 </registry>

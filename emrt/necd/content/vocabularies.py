@@ -68,14 +68,26 @@ class GHGSourceSectors(object):
 class Pollutants(object):
 
     def __call__(self, context):
-        pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('pollutants')
+
         terms = []
-        if voc is not None:
-            for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
-                terms.append(SimpleVocabulary.createTerm(key, key, value))
+
+        if context.type == 'inventory':
+            pvoc = api.portal.get_tool('portal_vocabularies')
+            voc = pvoc.getVocabularyByName('pollutants')
+
+            if voc is not None:
+                for key, value in voc.getVocabularyLines():
+                    # create a term - the arguments are the value, the token, and
+                    # the title (optional)
+                    terms.append(SimpleVocabulary.createTerm(key, key, value))
+
+        else:
+            pollutants_record = api.portal.get_registry_record(
+                'emrt.necd.content.projection_pollutants_vocabulary')
+
+            for pol in pollutants_record:
+                terms.append(SimpleVocabulary.createTerm(pol, pol, pol))
+
         return SimpleVocabulary(terms)
 
 
