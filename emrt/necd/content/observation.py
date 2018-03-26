@@ -272,7 +272,7 @@ class InventoryYearContextValidator(validator.SimpleFieldValidator):
             value = [val.strip() for val in value.split(',')]
 
             if not set(value).issubset(allowed_years):
-                raise zope.interface.Invalid(_(u'The entered value is not correct.'))
+                raise Invalid(_(u'The entered value is not correct.'))
 
 
 validator.WidgetValidatorDiscriminators(
@@ -838,28 +838,10 @@ class EditForm(edit.DefaultEditForm):
         self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
-from z3c.form.interfaces import WidgetActionExecutionError
 
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
-    #
-    # def validate(self, value):
-    #     normalized_value = (val.strip() for val in self.split_on_sep(value, '-,;'))
-    #     return False not in (int(val) > 0 and val in ('2020, 2025, 2030, 2040, 2050') for val in normalized_value)
-
-    # def create(self, data):
-    #     if _is_projection(self.context):
-    #
-    #         year = data['year']
-    #
-    #         if not self.validate(year):
-    #             raise WidgetActionExecutionError('year', "WRONG")
-    #
-    #
-    #
-    #     return super(AddForm, self).create(data)
-
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
