@@ -211,13 +211,13 @@ class NFRCode(object):
             if not user_is_lr_or_manager and user_has_sectors:
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
-                    nfr_codes().items() if validate_term(
+                    nfr_codes(context).items() if validate_term(
                         build_prefix(LDAP_SECTOREXP, term['ldap']),
                         user_groups
                     )
                 ))
 
-        return vocab_from_terms(*nfr_codes().items())
+        return vocab_from_terms(*nfr_codes(context).items())
 
 
 @implementer(IVocabularyFactory)

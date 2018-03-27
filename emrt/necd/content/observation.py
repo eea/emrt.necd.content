@@ -196,25 +196,6 @@ def check_pollutants(value):
         raise Invalid(u'You need to select at least one pollutant')
 
 
-@form.validator(field=IObservation['nfr_code'])
-def check_nfr_code(value):
-    """ Check if the user is in one of the group of users
-        allowed to add this category NFR Code observations
-    """
-    category = get_category_ldap_from_nfr_code(value)
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this sector category'
-        )
-
-
 @form.validator(field=IObservation['country'])
 def check_country(value):
     user = api.user.get_current()
@@ -264,11 +245,41 @@ def default_year(data):
     return datetime.datetime.now().year
 
 
+class NfrCodeContextValidator(validator.SimpleFieldValidator):
+    def validate(self, value, force=False):
+        """ Check if the user is in one of the group of users
+            allowed to add this category NFR Code observations
+        """
+        category = get_category_ldap_from_nfr_code(value, self.context)
+        user = api.user.get_current()
+        groups = user.getGroups()
+        valid = False
+        for group in groups:
+            if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
+                valid = True
+
+        if not valid:
+            raise Invalid(
+                u'You are not allowed to add observations for this sector category'
+            )
+
+
+validator.WidgetValidatorDiscriminators(
+    NfrCodeContextValidator,
+    field=IObservation['nfr_code']
+)
+
+
 class InventoryYearContextValidator(validator.SimpleFieldValidator):
     def validate(self, value, force=False):
 
         if _is_projection(self.context):
             allowed_years = ['2020', '2025', '2030', '2040', '2050']
+
+            if value is None :
+                # Assume empty string = no input
+                return
+
             value = [val.strip() for val in value.split(',')]
 
             if not set(value).issubset(allowed_years):
@@ -337,12 +348,12 @@ class Observation(Container):
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
-        return get_category_ldap_from_nfr_code(self.nfr_code)
+        return get_category_ldap_from_nfr_code(self.nfr_code, self.context)
 
     def ghg_source_sectors_value(self):
         # Get the value of the sector to be used
         # on the Observation Metadata screen
-        return get_category_value_from_nfr_code(self.nfr_code)
+        return get_category_value_from_nfr_code(self.nfr_code, self.context)
 
     def parameter_value(self):
         parameters = [

@@ -43,7 +43,7 @@ class INECDSettings(Interface):
     )
 
 
-def nfr_codes():
+def nfr_codes(context):
     """ get the NFR code mapping from portal_registry
         @retrun a dictionary
         {
@@ -57,7 +57,12 @@ def nfr_codes():
         }
     """
     registry = getUtility(IRegistry)
-    nfrcodeMapping = registry.forInterface(INECDSettings).nfrcodeMapping
+    nfrcodeInterface = registry.forInterface(INECDSettings)
+
+    if context.type == 'projection' :
+        nfrcodeMapping = nfrcodeInterface.nfrcodeMapping_projection
+    else:
+        nfrcodeMapping = nfrcodeInterface.nfrcodeMapping
 
     nfr_codes = {}
 
@@ -76,16 +81,16 @@ def nfr_codes():
     return OrderedDict(sorted(nfr_codes.items()))
 
 
-def get_category_ldap_from_nfr_code(value):
+def get_category_ldap_from_nfr_code(value, context):
     """ get the NFR category this NFR Code matches
         According to the rules previously set
         for LDAP Matching
     """
-    nfrcodes = nfr_codes()
+    nfrcodes = nfr_codes(context)
     return nfrcodes.get(value, {}).get('ldap', '')
 
 
-def get_category_value_from_nfr_code(value):
+def get_category_value_from_nfr_code(value, context):
     """ get the NFR category value to show it in the observation metadata """
-    nfrcodes = nfr_codes()
+    nfrcodes = nfr_codes(context)
     return nfrcodes.get(value, {}).get('title', '')
