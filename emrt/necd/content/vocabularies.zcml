@@ -57,4 +57,14 @@
     factory=".vocabularies.SectorNames"
     />
 
+  <utility
+    name="emrt.necd.content.activity_data"
+    factory=".vocabularies.ActivityData"
+    />
+
+  <utility
+    name="emrt.necd.content.activity_data_type"
+    factory=".vocabularies.ActivityDataType"
+    />
+
 </configure>

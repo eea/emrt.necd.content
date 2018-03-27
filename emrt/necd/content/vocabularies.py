@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from operator import itemgetter
 from zope import schema
 from zope.interface import implementer
@@ -25,9 +27,16 @@ class INECDVocabularies(Interface):
         description=_(u"Registers the values for pollutants in the context of "
                       u"a Projection ReviewFolder"),
         key_type=schema.TextLine(title=_(u"Pollutant key")),
-        value_type=schema.TextLine(
-            title=_(u"Pollutant value"),
-        ),
+        value_type=schema.TextLine(title=_(u"Pollutant value"),),
+    )
+
+    activity_data = schema.Dict(
+        title=_(u"Activity data"),
+        description=_(u"Registers the activity data"),
+        key_type=schema.TextLine(title=_(u"Activity data type")),
+        value_type=schema.List(value_type=schema.TextLine(
+            title=_(u"Activity data"),
+        ),)
     )
 
 
@@ -247,3 +256,36 @@ class SectorNames(object):
             for sector, name
             in sorted(sectorNames.items(), key=itemgetter(0))
         ])
+
+
+@implementer(IVocabularyFactory)
+class ActivityData(object):
+
+    def __call__(self, context):
+        pvoc = api.portal.get_tool('portal_vocabularies')
+        voc = pvoc.getVocabularyByName('activity_data')
+
+        terms = []
+        if voc is not None:
+            for key, value in voc.getVocabularyLines():
+                # create a term - the arguments are the value, the token, and
+                # the title (optional)
+                terms.append(SimpleVocabulary.createTerm(key, key, value))
+        return SimpleVocabulary(terms)
+
+
+@implementer(IVocabularyFactory)
+class ActivityDataType(object):
+
+    def __call__(self, context):
+        pvoc = api.portal.get_tool('portal_vocabularies')
+        voc = pvoc.getVocabularyByName('activity_data_type')
+
+        terms = []
+        if voc is not None:
+            for key, value in voc.getVocabularyLines():
+                # create a term - the arguments are the value, the token, and
+                # the title (optional)
+                terms.append(SimpleVocabulary.createTerm(key, key, value.decode('windows-1252')))
+        return SimpleVocabulary(terms)
+

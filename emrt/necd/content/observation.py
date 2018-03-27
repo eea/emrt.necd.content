@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -182,6 +184,18 @@ class IObservation(form.Schema, IImageScaleTraversable):
         required=False,
     )
 
+    activity_data_type = schema.Choice(
+        title=u"Activity Data Type",
+        source='emrt.necd.content.activity_data_type',
+        required=False,
+    )
+
+    form.widget(activity_data=CheckBoxFieldWidget)
+    activity_data = schema.Choice(
+        title=u"Activity Data",
+        source='emrt.necd.content.activity_data',
+        required=False,
+    )
 
 
 @form.validator(field=IObservation['parameter'])
