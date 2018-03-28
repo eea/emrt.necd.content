@@ -38,7 +38,7 @@ from z3c.form import interfaces
 from z3c.form import validator
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.form import Form
-from z3c.form.interfaces import ActionExecutionError
+from z3c.form.interfaces import WidgetActionExecutionError
 import zope.schema as schema
 from zope.browsermenu.menu import getMenu
 from zope.browserpage.viewpagetemplatefile import (
@@ -49,7 +49,6 @@ from zope.i18n import translate
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import Invalid
-from zope.interface import invariant
 from emrt.necd.content import MessageFactory as _
 from eea.cache import cache
 from .comment import IComment
