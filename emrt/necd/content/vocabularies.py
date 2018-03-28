@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import itertools
 
 from operator import itemgetter
 from zope import schema
@@ -262,30 +263,34 @@ class SectorNames(object):
 class ActivityData(object):
 
     def __call__(self, context):
-        pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('activity_data')
+        import unicodedata
+        registry = getUtility(IRegistry)
+        activity_data = registry.forInterface(INECDVocabularies).activity_data
+
+        # import pdb; pdb.set_trace()
+        activities = list(itertools.chain(*activity_data.values()))
 
         terms = []
-        if voc is not None:
-            for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
-                terms.append(SimpleVocabulary.createTerm(key, key, value))
-        return SimpleVocabulary(terms)
 
+        for activity in activities:
+            terms.append(SimpleVocabulary.createTerm(unicodedata.normalize('NFKD', activity).encode('ascii','ignore')))
+
+
+        return SimpleVocabulary(terms)
 
 @implementer(IVocabularyFactory)
 class ActivityDataType(object):
 
     def __call__(self, context):
-        pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('activity_data_type')
+        registry = getUtility(IRegistry)
+        activity_data = registry.forInterface(INECDVocabularies).activity_data
 
         terms = []
-        if voc is not None:
-            for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
-                terms.append(SimpleVocabulary.createTerm(key, key, value.decode('windows-1252')))
+
+        for activity_type in activity_data.keys():
+            terms.append(SimpleVocabulary.createTerm(activity_type))
+
         return SimpleVocabulary(terms)
+
+
 

@@ -232,4 +232,80 @@
       <element key="NATIONAL TOTAL">sector5|6A|6A National Total|6A Other Sources</element>
     </value>
   </record>
+  <record name="emrt.necd.content.vocabularies.INECDVocabularies.activity_data">
+    <value purge="True">
+      <element key="General economic parameters">
+        <element>Gross Domestic Product (GDP) [10^9 &#8364;]</element>
+        <element>Population [Thousand People]</element>
+        <element>International coal prices [&#8364; per tonne or GJ (Gigajoule), Other please specify]</element>
+        <element>International oil prices [&#8364; per barrel or GJ]</element>
+        <element>International gas prices [&#8364; per m3 or GJ]</element>
+      </element>
+      <element key="Total gross inland consumption">
+        <element>Oil (fossil) [Petajoule (PJ)]</element>
+        <element>Gas (fossil) [Petajoule (PJ)]</element>
+        <element>Coal [Petajoule (PJ)]</element>
+        <element>Biomass without liquid biofuels (e.g. wood) [Petajoule (PJ)]</element>
+        <element>Liquid biofuels (e.g. bio-oils) [Petajoule (PJ)]</element>
+        <element>Solar [Petajoule (PJ)]</element>
+        <element>Other renewable (wind, geothermal etc.) [Petajoule (PJ)]</element>
+      </element>
+      <element key="Total electricity production by fuel type">
+        <element>Oil (fossil) [GWh]</element>
+        <element>Gas (fossil) [GWh]</element>
+        <element>Coal [GWh]</element>
+        <element>Renewable [GWh]</element>
+      </element>
+      <element key="Industry - share of industrial sector in GDP and growth rate">
+        <element>Iron &amp; steel [% share]</element>
+        <element>Other metals [% share]</element>
+        <element>Cement [% share]</element>
+        <element>Coke production [% share]</element>
+        <element>Pulp and paper [% share]</element>
+        <element>Petroleum refining [% share]</element>
+        <element>Other [% share]</element>
+      </element>
+      <element key="Industry - Physical production index">
+        <element>Iron &amp; steel [GVA or index units]</element>
+        <element>Other metals [GVA or index units]</element>
+        <element>Cement [GVA or index units]</element>
+        <element>Coke production [GVA or index units]</element>
+        <element>Pulp and paper [GVA or index units]</element>
+        <element>Petroleum refining [GVA or index units]</element>
+        <element>Other [GVA or index units]</element>
+      </element>
+      <element key="Transport Sector">
+        <element>The growth of transport relative to GDP [% change in value added]</element>
+        <element>Passenger person kilometres [Million passenger km]</element>
+        <element>The growth of freight tonne kilometres [Million tonne km]</element>
+        <element>Passenger cars [% of new vehicles per year]</element>
+        <element>Light duty vehicles [% of new vehicles per year]</element>
+        <element>Heavy trucks [% of new vehicles per year]</element>
+      </element>
+      <element key="Building (residential and commercial or tertiary sector)">
+        <element>The growth of freight tonne kilometres [million tonne km]</element>
+        <element>The share of the tertiary sector in GDP and the growth rate [% share]</element>
+        <element>The rate of change of floor space for tertiary buildings [%]</element>
+        <element>The rate of change of floor space for dwellings [%]</element>
+        <element>The number of dwellings in the tertiary sector [Number]</element>
+        <element>The number of employees in the tertiary sector [Number]</element>
+      </element>
+      <element key="Agriculture">
+        <element>The share of the agriculture sector in GDP and relative growth [% share]</element>
+        <element>Beef Cattle [Livestock Number (Thousand)b]</element>
+        <element>Dairy cows [Livestock Number (Thousand)b]</element>
+        <element>Sheep [Livestock Number (Thousand)b]</element>
+        <element>Pigs [Livestock Number (Thousand)b]</element>
+        <element>Poultry [Livestock Number (Thousand)b]</element>
+        <element>Area of crop [Hectare [tonnes]]</element>
+      </element>
+      <element key="Waste">
+        <element>Waste generation [Tonnes total or tonnes / capita]</element>
+        <element>The organic fractions of municipal solid waste [%]</element>
+        <element>Municipal solid waste disposed to landfills [in tonnes or %]</element>
+        <element>Municipal solid waste disposed incinerated [in tonnes or %]</element>
+        <element>Municipal solid waste disposed composted [in tonnes or %]</element>
+      </element>
+    </value>
+  </record>
 </registry>

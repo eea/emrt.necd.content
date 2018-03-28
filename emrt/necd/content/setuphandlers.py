@@ -48,14 +48,6 @@ VOCABULARIES = [
      'title': 'Conclusion Reasons',
      'filename': 'conclusion_reasons.csv',
     },
-    {'id': 'activity_data_type',
-     'title': 'Activity Data Type',
-     'filename': 'activity_data_type.csv',
-     },
-    {'id': 'activity_data',
-     'title': 'Activity Data',
-     'filename': 'activity_data.csv',
-    },
 ]
 
 

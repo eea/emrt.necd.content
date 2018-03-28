@@ -24,6 +24,7 @@ from plone.directives import form
 from plone.directives.form import default_value
 from plone.memoize import instance
 from plone.namedfile.interfaces import IImageScaleTraversable
+from plone.registry.interfaces import IRegistry
 from plone.z3cform.interfaces import IWrappedForm
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
@@ -34,6 +35,7 @@ from time import time
 from z3c.form import button
 from z3c.form import field
 from z3c.form import interfaces
+from z3c.form import validator
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
@@ -47,6 +49,7 @@ from zope.i18n import translate
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import Invalid
+from zope.interface import invariant
 from emrt.necd.content import MessageFactory as _
 from eea.cache import cache
 from .comment import IComment
@@ -66,7 +69,7 @@ from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
-from z3c.form import validator
+from emrt.necd.content.vocabularies import INECDVocabularies
 
 YEAR_DESCRIPTION_PROJECTION = u"Inventory year is the year or a list of " \
                               u"years (e.g. '2050', '2020, 2025, 2030') when" \
@@ -362,12 +365,12 @@ class Observation(Container):
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
-        return get_category_ldap_from_nfr_code(self.nfr_code, self.context)
+        return get_category_ldap_from_nfr_code(self.nfr_code, self.aq_parent)
 
     def ghg_source_sectors_value(self):
         # Get the value of the sector to be used
         # on the Observation Metadata screen
-        return get_category_value_from_nfr_code(self.nfr_code, self.context)
+        return get_category_value_from_nfr_code(self.nfr_code, self.aq_parent)
 
     def parameter_value(self):
         parameters = [
@@ -845,6 +848,9 @@ class Observation(Container):
         status = self.get_status()
         return status in ['conclusions', 'conclusions-lr-denied']
 
+    def is_projection(self):
+        return _is_projection(self.context)
+
 # View class
 # The view will automatically use a similarly named template in
 # templates called observationview.pt .
@@ -863,6 +869,7 @@ class EditForm(edit.DefaultEditForm):
         self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
+
 
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
@@ -901,6 +908,38 @@ class AddForm(add.DefaultAddForm):
 
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
+
+    def create(self, data={}):
+
+        activity_data = data['activity_data']
+        activity_data_type = data['activity_data_type']
+
+        if activity_data and not activity_data_type:
+            raise WidgetActionExecutionError('activity_data_type',
+                Invalid(u"Please select a type of "
+                        u"activity before selecting an activity")
+            )
+
+        elif not activity_data and activity_data_type:
+            raise WidgetActionExecutionError('activity_data',
+                Invalid(u"Please select an activity after you've selected "
+                        u"an activity type")
+            )
+
+        elif activity_data and activity_data_type:
+            registry = getUtility(IRegistry)
+            activity_data_registry = registry.forInterface(
+                INECDVocabularies).activity_data
+
+            if not all(activity in activity_data_registry[activity_data_type]
+                       for activity in activity_data):
+                raise WidgetActionExecutionError('activity_data',
+                    Invalid(u"The activities you selected do not correspond "
+                            u"to the activity type. Please selected the "
+                            u"appropiate values")
+                )
+
+        return super(AddForm, self).create()
 
 
 class AddView(add.DefaultAddView):
