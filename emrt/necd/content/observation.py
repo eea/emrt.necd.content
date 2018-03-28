@@ -144,6 +144,19 @@ class IObservation(form.Schema, IImageScaleTraversable):
         required=False,
     )
 
+    activity_data_type = schema.Choice(
+        title=u"Activity Data Type",
+        source='emrt.necd.content.activity_data_type',
+        required=False,
+    )
+
+    form.widget(activity_data=CheckBoxFieldWidget)
+    activity_data = schema.Choice(
+        title=u"Activity Data",
+        source='emrt.necd.content.activity_data',
+        required=False,
+    )
+
     ms_key_category = schema.Bool(
         title=u"MS key category",
     )
@@ -181,19 +194,6 @@ class IObservation(form.Schema, IImageScaleTraversable):
     form.write_permission(closing_deny_comments='cmf.ManagePortal')
     closing_deny_comments = schema.Text(
         title=u'Finish deny comments',
-        required=False,
-    )
-
-    activity_data_type = schema.Choice(
-        title=u"Activity Data Type",
-        source='emrt.necd.content.activity_data_type',
-        required=False,
-    )
-
-    form.widget(activity_data=CheckBoxFieldWidget)
-    activity_data = schema.Choice(
-        title=u"Activity Data",
-        source='emrt.necd.content.activity_data',
         required=False,
     )
 
@@ -874,6 +874,10 @@ class AddForm(add.DefaultAddForm):
 
         if _is_projection(self.context):
             self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
+            self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
+        else:
+            self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
+            self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
 
         self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
         self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
