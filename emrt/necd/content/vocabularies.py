@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import itertools
 
 from operator import itemgetter
@@ -9,6 +8,7 @@ from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
+from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.registry.interfaces import IRegistry
 
 import plone.api as api
@@ -263,20 +263,22 @@ class SectorNames(object):
 class ActivityData(object):
 
     def __call__(self, context):
-        import unicodedata
         registry = getUtility(IRegistry)
+        normalizer = getUtility(IURLNormalizer).normalize
+
         activity_data = registry.forInterface(INECDVocabularies).activity_data
 
-        # import pdb; pdb.set_trace()
-        activities = list(itertools.chain(*activity_data.values()))
-
-        terms = []
-
-        for activity in activities:
-            terms.append(SimpleVocabulary.createTerm(unicodedata.normalize('NFKD', activity).encode('ascii','ignore')))
-
+        activities = sorted(set(itertools.chain(*activity_data.values())))
+        terms = [
+            # SimpleTerm needs to have ascii encoded strings as keys.
+            # The activity terms also include unicode symbols.
+            # We URL-normalize the value in order to obtain a valid key.
+            mk_term(normalizer(activity), activity)
+            for activity in activities
+        ]
 
         return SimpleVocabulary(terms)
+
 
 @implementer(IVocabularyFactory)
 class ActivityDataType(object):

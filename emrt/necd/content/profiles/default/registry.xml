@@ -235,11 +235,11 @@
   <record name="emrt.necd.content.vocabularies.INECDVocabularies.activity_data">
     <value purge="True">
       <element key="General economic parameters">
-        <element>Gross Domestic Product (GDP) [10^9 &#8364;]</element>
+        <element>Gross Domestic Product (GDP) [10^9 €]</element>
         <element>Population [Thousand People]</element>
-        <element>International coal prices [&#8364; per tonne or GJ (Gigajoule), Other please specify]</element>
-        <element>International oil prices [&#8364; per barrel or GJ]</element>
-        <element>International gas prices [&#8364; per m3 or GJ]</element>
+        <element>International coal prices [€ per tonne or GJ (Gigajoule), Other please specify]</element>
+        <element>International oil prices [€ per barrel or GJ]</element>
+        <element>International gas prices [€ per m3 or GJ]</element>
       </element>
       <element key="Total gross inland consumption">
         <element>Oil (fossil) [Petajoule (PJ)]</element>
@@ -283,7 +283,7 @@
         <element>Heavy trucks [% of new vehicles per year]</element>
       </element>
       <element key="Building (residential and commercial or tertiary sector)">
-        <element>The growth of freight tonne kilometres [million tonne km]</element>
+        <element>The growth of freight tonne kilometres [Million tonne km]</element>
         <element>The share of the tertiary sector in GDP and the growth rate [% share]</element>
         <element>The rate of change of floor space for tertiary buildings [%]</element>
         <element>The rate of change of floor space for dwellings [%]</element>

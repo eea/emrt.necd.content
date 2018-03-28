@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -148,14 +146,16 @@ class IObservation(form.Schema, IImageScaleTraversable):
 
     activity_data_type = schema.Choice(
         title=u"Activity Data Type",
-        source='emrt.necd.content.activity_data_type',
+        vocabulary='emrt.necd.content.activity_data_type',
         required=False,
     )
 
     form.widget(activity_data=CheckBoxFieldWidget)
-    activity_data = schema.Choice(
+    activity_data = schema.List(
         title=u"Activity Data",
-        source='emrt.necd.content.activity_data',
+        value_type=schema.Choice(
+            vocabulary='emrt.necd.content.activity_data',
+        ),
         required=False,
     )
 
@@ -894,6 +894,9 @@ class AddForm(add.DefaultAddForm):
         self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
+        self.widgets['activity_data'].template = Z3ViewPageTemplateFile(
+            'templates/widget_activity.pt'
+        )
         self.groups = [
             g for g in self.groups if
             g.label == 'label_schema_default'
@@ -912,6 +915,7 @@ class AddForm(add.DefaultAddForm):
 
         activity_data = data['activity_data']
         activity_data_type = data['activity_data_type']
+        import pdb; pdb.set_trace()
 
         if activity_data and not activity_data_type:
             raise WidgetActionExecutionError('activity_data_type',
@@ -930,6 +934,8 @@ class AddForm(add.DefaultAddForm):
             activity_data_registry = registry.forInterface(
                 INECDVocabularies).activity_data
 
+            import pdb; pdb.set_trace()
+
             if not all(activity in activity_data_registry[activity_data_type]
                        for activity in activity_data):
                 raise WidgetActionExecutionError('activity_data',
@@ -938,7 +944,7 @@ class AddForm(add.DefaultAddForm):
                             u"appropiate values")
                 )
 
-        return super(AddForm, self).create()
+        return super(AddForm, self).create(data)
 
 
 class AddView(add.DefaultAddView):
