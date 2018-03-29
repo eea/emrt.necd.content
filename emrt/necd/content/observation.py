@@ -36,6 +36,7 @@ from z3c.form import interfaces
 from z3c.form import validator
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.form import Form
+from z3c.form.interfaces import ActionExecutionError
 from z3c.form.interfaces import WidgetActionExecutionError
 import zope.schema as schema
 from zope.browsermenu.menu import getMenu
@@ -915,7 +916,6 @@ class AddForm(add.DefaultAddForm):
 
         activity_data = data['activity_data']
         activity_data_type = data['activity_data_type']
-        import pdb; pdb.set_trace()
 
         if activity_data and not activity_data_type:
             raise WidgetActionExecutionError('activity_data_type',
@@ -934,10 +934,14 @@ class AddForm(add.DefaultAddForm):
             activity_data_registry = registry.forInterface(
                 INECDVocabularies).activity_data
 
-            import pdb; pdb.set_trace()
+            activity_data_values = [get_vocabulary_value
+                                    (self.context,
+                                     'emrt.necd.content.activity_data', val)
+                                    for val in activity_data
+                                    ]
 
             if not all(activity in activity_data_registry[activity_data_type]
-                       for activity in activity_data):
+                       for activity in activity_data_values):
                 raise WidgetActionExecutionError('activity_data',
                     Invalid(u"The activities you selected do not correspond "
                             u"to the activity type. Please selected the "
