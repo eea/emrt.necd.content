@@ -151,7 +151,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
         required=False,
     )
 
-    form.widget(activity_data=CheckBoxFieldWidget)
+    # form.widget(activity_data=CheckBoxFieldWidget)
     activity_data = schema.List(
         title=u"Activity Data",
         value_type=schema.Choice(
@@ -848,8 +848,6 @@ class Observation(Container):
         status = self.get_status()
         return status in ['conclusions', 'conclusions-lr-denied']
 
-    def is_projection(self):
-        return _is_projection(self.context)
 
 # View class
 # The view will automatically use a similarly named template in
@@ -863,6 +861,7 @@ class Observation(Container):
 class EditForm(edit.DefaultEditForm):
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
+
         self.widgets['highlight'].template = Z3ViewPageTemplateFile(
             'templates/widget_highlight.pt'
         )
@@ -885,6 +884,9 @@ class AddForm(add.DefaultAddForm):
         else:
             self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
+            # self.widgets['activity_data'].template = Z3ViewPageTemplateFile(
+            #     'templates/widget_activity.pt'
+            # )
 
         self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
         self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
@@ -894,9 +896,6 @@ class AddForm(add.DefaultAddForm):
         )
         self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
-        )
-        self.widgets['activity_data'].template = Z3ViewPageTemplateFile(
-            'templates/widget_activity.pt'
         )
         self.groups = [
             g for g in self.groups if
@@ -1284,6 +1283,9 @@ class ObservationView(ObservationMixin):
             'emrt.necd.content: Export an Observation', self.context
         )
 
+    def is_projection(self):
+        return _is_projection(self.context.aq_parent)
+
 
 class ExportAsDocView(ObservationMixin):
 
@@ -1485,6 +1487,50 @@ class AddQuestionForm(Form):
 
 
 class ModificationForm(edit.DefaultEditForm):
+
+    def handleApply(self, action):
+        data, errors = self.extractData()
+
+        activity_data = data['activity_data']
+        activity_data_type = data['activity_data_type']
+
+        if activity_data and not activity_data_type:
+            raise WidgetActionExecutionError('activity_data_type',
+                                             Invalid(u"Please select a type of "
+                                                     u"activity before selecting an activity")
+                                             )
+
+        elif not activity_data and activity_data_type:
+            raise WidgetActionExecutionError('activity_data',
+                                             Invalid(
+                                                 u"Please select an activity after you've selected "
+                                                 u"an activity type")
+                                             )
+
+        elif activity_data and activity_data_type:
+            registry = getUtility(IRegistry)
+            activity_data_registry = registry.forInterface(
+                INECDVocabularies).activity_data
+
+            activity_data_values = [get_vocabulary_value
+                                    (self.context,
+                                     'emrt.necd.content.activity_data', val)
+                                    for val in activity_data
+                                    ]
+
+            if not all(activity in activity_data_registry[activity_data_type]
+                       for activity in activity_data_values):
+                raise WidgetActionExecutionError('activity_data',
+                                                 Invalid(
+                                                     u"The activities you selected do not correspond "
+                                                     u"to the activity type. Please selected the "
+                                                     u"appropiate values")
+                                                 )
+            
+        return super(ModificationForm, self).handleApply(action)
+
+
+
     def updateFields(self):
         super(ModificationForm, self).updateFields()
 
@@ -1513,9 +1559,21 @@ class ModificationForm(edit.DefaultEditForm):
             self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
         if 'pollutants' in fields:
             self.fields['pollutants'].widgetFactory = CheckBoxFieldWidget
+        # if 'activity_data' in fields:
+        #     self.fields['activity_data'].widgetFactory = CheckBoxFieldWidget
 
     def updateWidgets(self):
         super(ModificationForm, self).updateWidgets()
+
+        if _is_projection(self.context):
+            self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
+            self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
+            # self.widgets['activity_data'].template = Z3ViewPageTemplateFile(
+            #     'templates/widget_activity.pt'
+            # )
+        else:
+            self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
+            self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
 
         self.widgets['highlight'].template = Z3ViewPageTemplateFile(
             'templates/widget_highlight.pt'
