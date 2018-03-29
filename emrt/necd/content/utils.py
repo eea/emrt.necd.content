@@ -84,6 +84,13 @@ def get_vocabulary_value(context, vocabulary, term):
         return term
 
 
+def get_registry_interface_field_data(interface, field):
+    registry = getUtility(IRegistry)
+    registry_data = registry.forInterface(interface)
+
+    return registry_data.__getattr__(field)
+
+
 def activity_data_validator(context, type, activity):
     if activity and not type:
         raise WidgetActionExecutionError('activity_data_type',
@@ -98,9 +105,8 @@ def activity_data_validator(context, type, activity):
                                                  u"activity type")
                                          )
     elif activity and type:
-        registry = getUtility(IRegistry)
-        activity_data_registry = registry.forInterface(
-            INECDVocabularies).activity_data
+        activity_data_registry = get_registry_interface_field_data(
+            INECDVocabularies,'activity_data')
 
         activity_data_values = [get_vocabulary_value
                                 (context,
