@@ -64,16 +64,23 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
+from emrt.necd.content.utils import activity_data_validator
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
-from emrt.necd.content.vocabularies import INECDVocabularies
+
 
 YEAR_DESCRIPTION_PROJECTION = u"Inventory year is the year or a list of " \
                               u"years (e.g. '2050', '2020, 2025, 2030') when" \
                               u" the emissions had occured for which an issue" \
                               u" was observed in the review. The allowed " \
                               u"values are: 2020, 2025, 2030, 2040 or 2050."
+
+YEAR_DESCRIPTION_INVENTORY = u"Inventory year is the year, a range or a list " \
+                             u"of years (e.g. '2012', '2009-2012', " \
+                             u"'2009, 2012, 2013') when the emissions had " \
+                             u"occured for which an issue was observed in the" \
+                             u" review."
 
 
 # Cache helper methods
@@ -115,12 +122,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
 
     year = schema.TextLine(
         title=u'Inventory year',
-        description=u"Inventory year is the year, a range or a list " \
-                    u"of years (e.g. '2012', '2009-2012', " \
-                    u"'2009, 2012, 2013') when the emissions had " \
-                    u"occured for which an issue was observed in the review.",
         required=True,
-
     )
 
     form.widget(pollutants=CheckBoxFieldWidget)
@@ -876,7 +878,7 @@ class EditForm(edit.DefaultEditForm):
             'templates/widget_pollutants.pt'
         )
 
-from emrt.necd.content.utils import activity_data_validator
+
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
@@ -892,6 +894,7 @@ class AddForm(add.DefaultAddForm):
                 'templates/widget_activity.pt'
             )
         else:
+            self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
             self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
             self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
@@ -1526,6 +1529,7 @@ class ModificationForm(edit.DefaultEditForm):
                 'templates/widget_activity.pt'
             )
         else:
+            self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
             self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
             self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
