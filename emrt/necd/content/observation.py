@@ -393,7 +393,7 @@ class Observation(Container):
             get_vocabulary_value(self, 'emrt.necd.content.activity_data', ad)
             for ad in self.activity_data
             ]
-        return u'\n '.join(filter(None, activities))
+        return activities
 
     def highlight_value(self):
         if self.highlight:

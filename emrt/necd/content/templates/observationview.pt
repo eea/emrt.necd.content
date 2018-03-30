@@ -239,13 +239,11 @@
         <div class="cell position-8 width-2 esdLabel">Pollutants</div>
         <tal:is_inventory condition="python:not view.is_projection()">
           <div class="cell position-10 width-2 esdLabel">Fuel</div>
-          <div class="cell position-12 width-2 esdLabel">Inventory year</div>
         </tal:is_inventory>
         <tal:is_projection condition="python:view.is_projection()">
           <div class="cell position-10 width-2 esdLabel">Activity Data Type</div>
-          <div class="cell position-12 width-2 esdLabel">Activity Data</div>
-          <div class="cell position-14 width-2 esdLabel">Inventory year</div>
         </tal:is_projection>
+        <div class="cell position-12 width-2 esdLabel">Inventory year</div>
       </div>
       <div class="row">
         <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
@@ -255,15 +253,11 @@
           <div class="cell position-10 width-2">
             <span tal:replace="structure python:view.widgets['fuel'].render()"></span>
           </div>
-          <div class="cell position-12 width-2" tal:content="context/year">Year of emission</div>
         </tal:is_inventory>
         <tal:is_projection condition="python:view.is_projection()">
           <div class="cell position-10 width-2" tal:content="context/activity_data_type"></div>
-          <div class="cell position-12 width-2">
-            <span tal:replace="structure python:view.widgets['activity_data'].render()"></span>
-          </div>
-          <div class="cell position-14 width-2" tal:content="context/year">Year of emission</div>
         </tal:is_projection>
+        <div class="cell position-12 width-2" tal:content="context/year">Year of emission</div>
       </div>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
         <div class="cell position-0 width-16">
@@ -304,6 +298,16 @@
           </span>
         </div>
       </div>
+      <tal:is_projection condition="python:view.is_projection()">
+          <div class="row observation-details" style="display:none;padding-top:15px">
+            <div class="cell position-0 width-16 esdLabel">Activity Data</div>
+          </div>
+          <div class="row observation-details" style="display:none">
+            <ul tal:repeat="activity context/activity_data_value">
+              <li tal:content="activity">Activity Data</li>
+            </ul>
+          </div>
+        </tal:is_projection>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
         <div class="cell position-0 width-16">
           Observation history
