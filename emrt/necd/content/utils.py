@@ -1,9 +1,9 @@
 import concurrent.futures
 import plone.api as api
 
+from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
 from operator import itemgetter
-from plone.registry.interfaces import IRegistry
 from z3c.form.interfaces import WidgetActionExecutionError
 from zope.component import getUtility
 from zope.interface import Invalid
@@ -82,13 +82,6 @@ def get_vocabulary_value(context, vocabulary, term):
         return value.title
     except LookupError:
         return term
-
-
-def get_registry_interface_field_data(interface, field):
-    registry = getUtility(IRegistry)
-    registry_data = registry.forInterface(interface)
-
-    return registry_data.__getattr__(field)
 
 
 def activity_data_validator(context, type, activity):

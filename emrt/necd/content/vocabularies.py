@@ -1,6 +1,7 @@
 import itertools
 
 from operator import itemgetter
+from plone.registry.interfaces import IRegistry
 from zope import schema
 from zope.interface import implementer
 from zope.interface import Interface
@@ -9,7 +10,6 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 from plone.i18n.normalizer.interfaces import IURLNormalizer
-from plone.registry.interfaces import IRegistry
 
 import plone.api as api
 
@@ -43,6 +43,13 @@ class INECDVocabularies(Interface):
 
 def mk_term(key, value):
     return SimpleVocabulary.createTerm(key, key, value)
+
+
+def get_registry_interface_field_data(interface, field):
+    registry = getUtility(IRegistry)
+    registry_data = registry.forInterface(interface)
+
+    return registry_data.__getattr__(field)
 
 
 @implementer(IVocabularyFactory)
@@ -108,9 +115,10 @@ class Pollutants(object):
                     terms.append(SimpleVocabulary.createTerm(key, key, value))
 
         else:
-            registry = getUtility(IRegistry)
-            pollutants = registry.forInterface(
-                INECDVocabularies).projection_pollutants
+            pollutants = get_registry_interface_field_data(
+                INECDVocabularies,'projection_pollutants'
+            )
+
             for key, value in pollutants.items():
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
 
@@ -249,8 +257,8 @@ class Conclusions(object):
 class SectorNames(object):
 
     def __call__(self, context):
-        registry = getUtility(IRegistry)
-        sectorNames = registry.forInterface(INECDSettings).sectorNames
+        sectorNames = get_registry_interface_field_data(INECDSettings,
+                                                        'sectorNames')
 
         return SimpleVocabulary([
             mk_term(sector, name)
@@ -263,10 +271,10 @@ class SectorNames(object):
 class ActivityData(object):
 
     def __call__(self, context):
-        registry = getUtility(IRegistry)
         normalizer = getUtility(IURLNormalizer).normalize
 
-        activity_data = registry.forInterface(INECDVocabularies).activity_data
+        activity_data = get_registry_interface_field_data(INECDVocabularies,
+                                                          'activity_data')
 
         activities = sorted(set(itertools.chain(*activity_data.values())))
         terms = [
@@ -284,8 +292,8 @@ class ActivityData(object):
 class ActivityDataType(object):
 
     def __call__(self, context):
-        registry = getUtility(IRegistry)
-        activity_data = registry.forInterface(INECDVocabularies).activity_data
+        activity_data = get_registry_interface_field_data(INECDVocabularies,
+                                                          'activity_data')
 
         terms = []
 
