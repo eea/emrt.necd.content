@@ -3,6 +3,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 import datetime
+import json
 import re
 from docx import Document
 from docx.shared import Pt
@@ -22,7 +23,6 @@ from plone.directives import form
 from plone.directives.form import default_value
 from plone.memoize import instance
 from plone.namedfile.interfaces import IImageScaleTraversable
-from plone.registry.interfaces import IRegistry
 from plone.z3cform.interfaces import IWrappedForm
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
@@ -37,7 +37,6 @@ from z3c.form import validator
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
-from z3c.form.interfaces import WidgetActionExecutionError
 import zope.schema as schema
 from zope.browsermenu.menu import getMenu
 from zope.browserpage.viewpagetemplatefile import (
@@ -69,6 +68,9 @@ from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 
+from emrt.necd.content.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies import INECDVocabularies
+
 
 YEAR_DESCRIPTION_PROJECTION = u"Inventory year is the year or a list of " \
                               u"years (e.g. '2050', '2020, 2025, 2030') when" \
@@ -89,6 +91,7 @@ def _user_name(fun, self, userid):
 
 def _is_projection(context):
     return context.type == 'projection'
+
 
 # Interface class; used to define content-type schema.
 class IObservation(form.Schema, IImageScaleTraversable):
@@ -878,7 +881,6 @@ class EditForm(edit.DefaultEditForm):
             'templates/widget_pollutants.pt'
         )
 
-
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
@@ -887,15 +889,26 @@ class AddForm(add.DefaultAddForm):
         super(AddForm, self).updateWidgets()
         self.fields['IDublinCore.title'].field.required = False
 
+        w_activity_data = self.widgets['activity_data']
+
         if _is_projection(self.context):
             self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
             self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
-            self.widgets['activity_data'].template = Z3ViewPageTemplateFile(
+            self.widgets['activity_data_type'].template = \
+                Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
+
+            w_activity_data.template = Z3ViewPageTemplateFile(
                 'templates/widget_activity.pt'
+            )
+            w_activity_data.activity_data_registry = json.dumps(
+                get_registry_interface_field_data(
+                    INECDVocabularies,
+                    'activity_data'
+                )
             )
         else:
             self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
-            self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
+            w_activity_data.mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
             self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
                 'templates/widget_pollutants.pt'
@@ -927,7 +940,8 @@ class AddForm(add.DefaultAddForm):
             activity_data = data['activity_data']
             activity_data_type = data['activity_data_type']
 
-            activity_data_validator(self.context, activity_data_type, activity_data)
+            activity_data_validator(self.context, activity_data_type,
+                                    activity_data)
 
 
         return super(AddForm, self).create(data)
