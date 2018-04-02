@@ -54,7 +54,6 @@
                     });
             document.body.dispatchEvent(event);
         };
-
     })()
 </script>
 </div>

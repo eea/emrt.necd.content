@@ -37,23 +37,40 @@
         <br />
       </label>
     </span>
-
   </tal:item>
-
   <script>
-    //console.log(${view/activity_data_registry});
-
-
-
     window.onload = function(){
-      $('.activity-data-options').hide();
-      $('label[for=form-widgets-activity_data]').hide();
 
+      function show_checkboxes(selector, possible_values){
+        $(selector).each(function(){
+            var value = $(this).text().trim();
+            if(possible_values.includes(value)){
+            $(this).show();
+            }
+          })
+      }
 
       var activity_data_registry = ${view/activity_data_registry};
+      var selected = $('#form-widgets-activity_data_type option:selected').text();
+
+      //for the 'modifications' page
+      if(selected == 'No value'){
+        $('.activity-data-options').hide();
+        $('label[for=form-widgets-activity_data]').hide();
+      }
+      else{
+        $('.activity-data-options').hide();
+        $('label[for=form-widgets-activity_data]').show();
+
+        var select_activities = activity_data_registry[selected];
+        show_checkboxes('.activity-data-options', select_activities);
+      }
 
       document.body.addEventListener('ActivityChanged', function(e) {
-        console.log(e.detail.new_value);
+
+        $('input[name*="${view/name}:list"]:checked').each(function(){
+          $(this).prop('checked', false);
+        })
 
         if(e.detail.new_value == '--NOVALUE--'){
           $('.activity-data-options').hide();
@@ -63,13 +80,7 @@
           $('label[for=form-widgets-activity_data]').show();
           $('.activity-data-options').hide();
           var possible_values = activity_data_registry[e.detail.new_value];
-
-          $('.activity-data-options').each(function(){
-            var value = $(this).text().trim();
-            if(possible_values.includes(value)){
-              $(this).show();
-            }
-          })
+          show_checkboxes('.activity-data-options', possible_values);
         }
       })
   }
