@@ -1536,11 +1536,21 @@ class ModificationForm(edit.DefaultEditForm):
     def updateWidgets(self):
         super(ModificationForm, self).updateWidgets()
 
+        w_activity_data = self.widgets['activity_data']
+
         if _is_projection(self.context):
             self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
             self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
-            self.widgets['activity_data'].template = Z3ViewPageTemplateFile(
+            self.widgets['activity_data_type'].template = \
+                Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
+            w_activity_data.template = Z3ViewPageTemplateFile(
                 'templates/widget_activity.pt'
+            )
+            w_activity_data.activity_data_registry = json.dumps(
+                get_registry_interface_field_data(
+                    INECDVocabularies,
+                    'activity_data'
+                )
             )
         else:
             self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
