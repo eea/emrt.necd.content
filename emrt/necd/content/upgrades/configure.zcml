@@ -419,6 +419,25 @@
         description="[refs #86364] Add follow up question transition guard-expression change"
         import_steps="workflow"
     />
+  </genericsetup:upgradeSteps>
+
+
+  <genericsetup:upgradeSteps
+    source="2.0.43"
+    destination="2.0.44"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+        title="Add new field to old reviewfolders"
+        description="[refs #93528] Add the default value of the type field"
+        handler="emrt.necd.content.upgrades.evolve2044.run"
+    />
+
+    <genericsetup:upgradeDepends
+        title="New registry records"
+        description="[refs #93528] Registry for pollutants, nfrCodeMapping for projection, activity_data"
+        import_steps="plone.app.registry"
+    />
 
   </genericsetup:upgradeSteps>
 

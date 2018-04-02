@@ -275,7 +275,6 @@ class ActivityData(object):
 
         activity_data = get_registry_interface_field_data(INECDVocabularies,
                                                           'activity_data')
-
         activities = sorted(set(itertools.chain(*activity_data.values())))
         terms = [
             # SimpleTerm needs to have ascii encoded strings as keys.
@@ -294,7 +293,6 @@ class ActivityDataType(object):
     def __call__(self, context):
         activity_data = get_registry_interface_field_data(INECDVocabularies,
                                                           'activity_data')
-
         terms = []
 
         for activity_type in activity_data.keys():
