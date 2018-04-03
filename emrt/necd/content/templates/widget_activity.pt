@@ -66,7 +66,7 @@
         show_checkboxes('.activity-data-options', select_activities);
       }
 
-      document.body.addEventListener('ActivityChanged', function(e) {
+      window.addEventListener('ActivityChanged', function(e) {
 
         $('input[name*="${view/name}:list"]:checked').each(function(){
           $(this).prop('checked', false);
@@ -83,6 +83,6 @@
           show_checkboxes('.activity-data-options', possible_values);
         }
       })
-  }
+    }
   </script>
 </html>
