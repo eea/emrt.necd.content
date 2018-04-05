@@ -1,6 +1,8 @@
 import concurrent.futures
 import plone.api as api
 
+from emrt.necd.content.constants import LDAP_BASE
+from emrt.necd.content.constants import LDAP_BASE_PROJECTION
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
 from operator import itemgetter
@@ -9,13 +11,39 @@ from zope.component import getUtility
 from zope.interface import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 
+from zope.interface import Interface
+from zope.interface import implementer
 
-def user_has_ldap_role(ldap_name, user=None, groups=None):
+
+def ldap_projection(ldap_const):
+    return ldap_const.format(base_dn=LDAP_BASE_PROJECTION)
+
+def ldap_inventory(ldap_const):
+    return ldap_const.format(base_dn=LDAP_BASE)
+
+
+class IGetLDAPWrapper(Interface):
+    """Returns the context_based LDAP wrapper"""
+
+
+@implementer(IGetLDAPWrapper)
+class GetLDAPWrapper(object):
+
+    def __call__(self, context):
+        if context.type == 'projection':
+            return ldap_projection
+        else:
+            return ldap_inventory
+
+
+def user_has_ldap_role(ldap_name, user=None, groups=None,
+                       ldap_wrapper=ldap_inventory):
+
     _user = user if user else api.user.get_current()
     _groups = groups if groups else _user.getGroups()
     return any(tuple(
         group for group in _groups
-        if group.startswith(ldap_name)
+        if group.startswith(ldap_wrapper(ldap_name))
     ))
 
 

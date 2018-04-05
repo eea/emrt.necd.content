@@ -3,6 +3,7 @@
   i18n_domain="emrt.necd.content">
 
   <utility factory=".ms_user.UserIsMS" />
+  <utility factory="emrt.necd.content.utils.GetLDAPWrapper" />
 
   <utility
     factory=".ldap_utils.LDAPQuery"
@@ -18,5 +19,6 @@
     factory=".question.FollowUpPermission"
     provides=".interfaces.IFollowUpPermission"
     />
+
 
 </configure>

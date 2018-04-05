@@ -36,6 +36,7 @@ from zope.interface import provider
 from zope.interface import implementer
 from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utils import get_vocabulary_value
+from emrt.necd.content.utils import IGetLDAPWrapper
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
@@ -286,8 +287,17 @@ class ReviewFolderMixin(BrowserView):
     def get_finalisation_reasons(self):
         return get_finalisation_reasons(self.context)
 
-    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
-    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
+    def is_member_state_coordinator(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSA, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_member_state_expert(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSEXPERT, ldap_wrapper=ldap_wrapper
+        )
 
 
 class ReviewFolderView(ReviewFolderMixin):
@@ -737,7 +747,6 @@ class InboxReviewFolderView(BrowserView):
 
     def get_sections(self):
         is_sec = self.is_secretariat()
-
         viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)]
 
         total_sum = 0
@@ -1187,10 +1196,29 @@ class InboxReviewFolderView(BrowserView):
 
         return sectors
 
-    is_sector_expert = partial(user_has_ldap_role, LDAP_SECTOREXP)
-    is_lead_reviewer = partial(user_has_ldap_role, LDAP_LEADREVIEW)
-    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
-    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
+    def is_sector_expert(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_SECTOREXP, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_lead_reviewer(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_LEADREVIEW, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_member_state_coordinator(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSA, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_member_state_expert(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSEXPERT, ldap_wrapper=ldap_wrapper
+        )
 
 
 class FinalisedFolderView(BrowserView):
@@ -1289,11 +1317,6 @@ class FinalisedFolderView(BrowserView):
             sectors.append((term[0], term[1]))
 
         return sectors
-
-    is_sector_expert = partial(user_has_ldap_role, LDAP_SECTOREXP)
-    is_lead_reviewer = partial(user_has_ldap_role, LDAP_LEADREVIEW)
-    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
-    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
 
 
 class AddForm(add.DefaultAddForm):

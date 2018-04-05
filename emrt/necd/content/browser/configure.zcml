@@ -5,13 +5,6 @@
     i18n_domain="emrt.necd.content">
 
     <browser:page
-        name="warmup_ldap"
-        for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-        class=".ldap_warmup.Warmup"
-        permission="emrt.necd.content.Warmup"
-        />
-
-    <browser:page
         name="macros"
         for="..reviewfolder.IReviewFolder"
         template="templates/macros.pt"
