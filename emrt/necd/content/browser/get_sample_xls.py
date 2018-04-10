@@ -63,15 +63,16 @@ class GetSampleXLS(BrowserView):
 
         self.populate_cells(sheet)
 
-        # wrap text for multi line cells
-        for row in sheet.iter_rows():
-            for cell in row:
-                cell.alignment = Alignment(wrap_text=True)
+        # wrap text for multi line cells and set max width
+        for column in sheet.columns:
+            length = []
 
-        # set cell max width
-        for column_cells in sheet.columns:
-            length = max(len(str(cell.value)) for cell in column_cells)
-            sheet.column_dimensions[column_cells[0].column].width = length
+            for cell in column:
+                if cell.value:
+                    length.append(max(len(str(c.rstrip())) for c in cell.value.splitlines()))
+                    cell.alignment = Alignment(wrap_text=True)
+
+            sheet.column_dimensions[column[0].column].width = max(length)
 
         xls = StringIO()
 
