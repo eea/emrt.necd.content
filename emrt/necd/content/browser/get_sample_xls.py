@@ -12,7 +12,7 @@ from zope.schema.interfaces import IVocabularyFactory
 XLS_SAMPLE_HEADER = [
     'Observation description', 'Country', 'NFR Code',
     'Inventory Year', 'Pollutants', 'Review Year', 'Fuel', 'MS Key Category',
-    'Parameter'
+    'Parameter', 'Description Flags'
 ]
 
 DESC = 'Description of the observation'
@@ -37,6 +37,7 @@ class GetSampleXLS(BrowserView):
         pollutants_voc = get_vocabulary('emrt.necd.content.pollutants')
         parameter_voc = get_vocabulary('emrt.necd.content.parameter')
         fuel_voc = get_vocabulary('emrt.necd.content.fuel')
+        description_flags_voc = get_vocabulary('emrt.necd.content.highlight')
 
         countries = map(get_title, country_voc)
         # not a mandatory field, value can be none
@@ -44,15 +45,16 @@ class GetSampleXLS(BrowserView):
         ms_key_categ = cycle(['True', None])
         pollutants = '\n'.join(map(get_title, pollutants_voc))
         parameter = '\n'.join(map(get_title, parameter_voc))
+        description_flags = cycle(['\n'.join(map(get_title, description_flags_voc)), None])
 
         sheet.append(XLS_SAMPLE_HEADER)
         for idx, country in enumerate(countries):
-            fuel = next(fuels)
-
             # get a value based on the country index position
+            fuel = next(fuels)
             ms_key_cat = next(ms_key_categ)
+            desc_fl = next(description_flags)
             row = [DESC, country, NFR_CODE, INVENTORY_YEAR, pollutants,
-                   REVIEW_YEAR, fuel, ms_key_cat, parameter]
+                   REVIEW_YEAR, fuel, ms_key_cat, parameter, desc_fl]
             sheet.append(row)
 
     def __call__(self):
