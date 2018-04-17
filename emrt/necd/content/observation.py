@@ -680,7 +680,6 @@ class Observation(Container):
         sm = getSecurityManager()
         return sm.checkPermission('Modify portal content', self)
 
-    @instance.memoize
     def get_question(self):
         questions = self.get_values_cat('Question')
 
@@ -946,7 +945,6 @@ class ObservationMixin(DefaultView):
         return sm.checkPermission(P_OBS_REDRAFT_REASON_VIEW, self.context)
 
     def add_question_form(self):
-        from plone.z3cform.interfaces import IWrappedForm
         form_instance = AddQuestionForm(self.context, self.request)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
@@ -1500,6 +1498,20 @@ class AddAnswerAndRequestComments(BrowserView):
         return self.request.response.redirect(url)
 
 
+def create_comment(text, question):
+    id = str(int(time()))
+    item_id = question.invokeFactory(type_name='Comment', id=id)
+    comment = question.get(item_id)
+    comment.text = text
+    return comment
+
+
+def value_or_error(value, err_text):
+    if not value:
+        raise ActionExecutionError(Invalid(err_text))
+    return value
+
+
 class AddCommentForm(Form):
 
     ignoreContext = True
@@ -1507,23 +1519,26 @@ class AddCommentForm(Form):
 
     @button.buttonAndHandler(u'Add question')
     def create_question(self, action):
-        observation = aq_inner(self.context)
-        questions = [q for q in observation.values() if q.portal_type == 'Question']
-        if questions:
-            context = questions[0]
-        else:
-            raise
-
-        id = str(int(time()))
-        item_id = context.invokeFactory(
-            type_name='Comment',
-            id=id,
+        request = self.request
+        observation = self.context
+        # raising errors before transition as that will
+        # cause a transaction.commit
+        question = value_or_error(
+            observation.get_question(),
+            u'Invalid context'
         )
-        text = self.request.form.get('form.widgets.text', '')
-        comment = context.get(item_id)
-        comment.text = text
+        wid_text = self.widgets['text']
 
-        return self.request.response.redirect(observation.absolute_url())
+        text = value_or_error(
+            wid_text.extract(u'').strip(),
+            u'Question text is empty'
+        )
+
+        # transition before adding the comment so the transition guard passes
+        api.content.transition(obj=question, transition='add-followup-question')
+        create_comment(text, question)
+
+        return request.response.redirect(observation.absolute_url())
 
     def updateWidgets(self):
         super(AddCommentForm, self).updateWidgets()

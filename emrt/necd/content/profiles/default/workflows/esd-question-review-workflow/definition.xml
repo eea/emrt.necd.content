@@ -73,10 +73,14 @@
   </permission-map>
  </state>
  <state state_id="closed" title="closed">
-  <exit-transition transition_id="add-folowup-question "/>
+  <exit-transition transition_id="add-followup-question"/>
   <exit-transition transition_id="draft-conclusions"/>
   <exit-transition transition_id="go-to-conclusions"/>
   <exit-transition transition_id="reopen"/>
+  <permission-map name="emrt.necd.content: Add Comment" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>SectorExpert</permission-role>
+  </permission-map>
  </state>
  <state state_id="counterpart-comments" title="counterpart-comments">
   <exit-transition transition_id="reselect-counterparts"/>
@@ -560,7 +564,7 @@
    <guard-role>MSAuthority</guard-role>
   </guard>
  </transition>
- <transition transition_id="add-folowup-question " title="Add follow up question" new_state="draft" trigger="USER" before_script="" after_script="">
+ <transition transition_id="add-followup-question" title="Add follow up question" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/add-follow-up-question?workflow_action=add-followup-question" category="workflow" icon="">Add follow up question</action>
   <guard>
    <guard-role>SectorExpert</guard-role>

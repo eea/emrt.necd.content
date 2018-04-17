@@ -14,7 +14,6 @@ from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
-from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five import BrowserView
 from time import time
 from z3c.form import button
@@ -122,7 +121,7 @@ class Question(Container):
             previous_action = question_history[-1]
             if current_status == 'draft':
                 return previous_action['action'] in [
-                    'add-folowup-question',
+                    'add-followup-question',
                     'reopen',
                     None
                 ]
