@@ -422,4 +422,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.43"
+    destination="2.0.44"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+        title="Fix followup question permission in workflow"
+        description="[refs #86364] SectorExpert can add followup questions"
+        import_steps="workflow emrt.necd.content.setup.workflow_rolemap"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
