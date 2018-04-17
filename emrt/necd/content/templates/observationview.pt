@@ -149,6 +149,17 @@
         if(followup.length > 1){
           $("#add-comment-link").hide();
         }
+
+        //show comment/answer form in case of an raised error
+        var comment_form = $('#comment-add-form');
+        if(comment_form.children('.portalMessage.error').length > 0){
+          comment_form.show();
+        }
+
+        var answer_form = $('#answer-add-form');
+        if(answer_form.children('.portalMessage.error').length > 0){
+          answer_form.show();
+        }
     });
     </script>
   </tal:block>
