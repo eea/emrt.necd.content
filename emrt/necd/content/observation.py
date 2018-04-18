@@ -925,8 +925,11 @@ class ObservationMixin(DefaultView):
 
     def can_add_conclusion(self):
         sm = getSecurityManager()
-        conclusion = self.get_conclusion()
-        return sm.checkPermission('emrt.necd.content: Add Conclusions', self.context) and not conclusion
+        question_state = api.content.get_state(self.question())
+
+        return sm.checkPermission(
+            'emrt.necd.content: Add Conclusions', self.context
+        ) and question_state == 'draft'
 
     def show_description(self):
         questions = self.get_questions()

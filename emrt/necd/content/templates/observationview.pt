@@ -134,7 +134,7 @@
           var inner_html = $(this).html().toLowerCase()
           if(inner_html.indexOf('conclusions') >= 0){
             e.preventDefault();
-            $('#add-conclusion-wrapper').show();
+            $('#add-conclusion-wrapper').toggle();
           }
           else if(inner_html.indexOf('follow up') >= 0){
             var comment_add_form = $('#comment-add-form');
