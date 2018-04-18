@@ -16,6 +16,13 @@
     <script type="text/javascript">
 
     $(document).ready(function(){
+
+        //for conclusion form pop-up
+        var conclusion_action = $('.standardButton:contains("Go to Conclusions")');
+        if (!conclusion_action.hasClass("edit")){
+          conclusion_action.addClass('edit');
+        }
+
         update_display = function() {
             var style = $(this).attr('value');
             if (! this.checked) {
@@ -132,16 +139,11 @@
 
         $('.standardButton').click(function(e) {
           var inner_html = $(this).html().toLowerCase()
-          if(inner_html.indexOf('conclusions') >= 0){
-            e.preventDefault();
-            $('#add-conclusion-wrapper').toggle();
-          }
-          else if(inner_html.indexOf('follow up') >= 0){
+          if(inner_html.indexOf('follow up') >= 0){
             var comment_add_form = $('#comment-add-form');
             e.preventDefault();
             comment_add_form.toggle();
           }
-
         });
 
         //avoid duplicate 'Add follow up question' buttons
@@ -1039,10 +1041,6 @@
       <div id="answer-add-form" style="display: none" tal:condition="view/can_add_answer">
         <span tal:replace="structure view/add_answer_form" />
       </div>
-
-     <div id="add-conclusion-wrapper" style="display: none" tal:condition="view/can_add_conclusion">
-        <span tal:replace="structure view/add_conclusion_form" />
-     </div>
 
     </div>
   </div>
