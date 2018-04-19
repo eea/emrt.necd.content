@@ -124,11 +124,10 @@ class FinishObservationReasonForm(Form):
     def finish_observation(self, action):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
-            if api.content.get_state(self.context) == 'conclusions':
-                self.context.closing_comments = comments
-                return self.context.content_status_modify(
-                    workflow_action='finish-observation',
-                )
+            self.context.closing_comments = comments
+            return self.context.content_status_modify(
+                workflow_action='finish-observation',
+            )
 
         self.request.response.redirect(self.context.absolute_url())
 
