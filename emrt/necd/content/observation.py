@@ -913,9 +913,7 @@ class ObservationMixin(DefaultView):
         return None
 
     def existing_conclusion(self):
-        status = self.context.get_status()
         conclusion = self.get_conclusion()
-
         return conclusion and True or False
 
     def can_add_conclusion(self):
@@ -924,7 +922,7 @@ class ObservationMixin(DefaultView):
 
         return sm.checkPermission(
             'emrt.necd.content: Add Conclusions', self.context
-        ) and question_state == 'draft'
+        ) and question_state in ['draft', 'drafted', 'pending', 'closed']
 
     def show_description(self):
         questions = self.get_questions()
