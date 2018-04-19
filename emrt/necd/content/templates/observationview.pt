@@ -18,7 +18,7 @@
     $(document).ready(function(){
 
         //for conclusion form pop-up
-        var conclusion_action = $('.standardButton:contains("Go to Conclusions")');
+        var conclusion_action = $('.standardButton:contains("Conclusions")');
         if (!conclusion_action.hasClass("edit")){
           conclusion_action.addClass('edit');
         }
