@@ -652,8 +652,8 @@ class Observation(Container):
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
                 elif item['action'] == 'validate-answer-msa' and item['action'] == 'validate-answer-msa':
-                    item['state'] = 'Sector Expert'
-                    item['role'] = "Answer acknowledged"
+                    item['state'] = 'Answer acknowledged'
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'draft' and item['action'] == "reopen":
                     item['state'] = 'Reopened'
