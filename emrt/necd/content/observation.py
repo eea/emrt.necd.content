@@ -1387,7 +1387,8 @@ class ModificationForm(edit.DefaultEditForm):
             ]]
         elif ROLE_LR in roles:
             fields = ['text', 'highlight']
-
+        elif 'Manager' in roles:
+            fields = field.Fields(IObservation)
         self.fields = field.Fields(IObservation).select(*fields)
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
         if 'parameter' in fields:
