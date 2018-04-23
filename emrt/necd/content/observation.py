@@ -1375,7 +1375,9 @@ class ModificationForm(edit.DefaultEditForm):
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
         fields = []
         # XXX Needed? Edit rights are controlled by the WF
-        if ROLE_SE in roles:
+        if 'Manager' in roles:
+            fields = field.Fields(IObservation)
+        elif ROLE_SE in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',
@@ -1387,8 +1389,7 @@ class ModificationForm(edit.DefaultEditForm):
             ]]
         elif ROLE_LR in roles:
             fields = ['text', 'highlight']
-        elif 'Manager' in roles:
-            fields = field.Fields(IObservation)
+
         self.fields = field.Fields(IObservation).select(*fields)
         self.groups = [g for g in self.groups if g.label == 'label_schema_default']
         if 'parameter' in fields:
