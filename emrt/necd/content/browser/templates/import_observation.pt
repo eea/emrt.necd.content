@@ -7,7 +7,7 @@
     <p class="import-info"><b>Important: </b>
       <br />When writing to your excel file, in case of fields such as 'Pollutants' or 'Parameter',
       if your observation has multiple values, please write them one per line, as in the sample import file.
-      <br/> The 'Fuel' abd 'Description Flags' fields can be left empty as they are not mandatory fields.
+      <br/> The 'Fuel' and 'Description Flags' fields can be left empty as they are not mandatory fields.
       <br /> The MS Key Category field can be set to 'True' if the observation belongs to this category
       or it can be left empty if it doesn't.
     </p>
