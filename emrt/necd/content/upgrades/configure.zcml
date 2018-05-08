@@ -415,7 +415,7 @@
     profile="emrt.necd.content:default">
 
     <genericsetup:upgradeDepends
-        title="Fix follow up queastion permision"
+        title="Fix follow up question permision"
         description="[refs #86364] Add follow up question transition guard-expression change"
         import_steps="workflow"
     />
@@ -431,6 +431,19 @@
         title="Fix followup question permission in workflow"
         description="[refs #86364] SectorExpert can add followup questions"
         import_steps="workflow emrt.necd.content.setup.workflow_rolemap"
+    />
+
+  </genericsetup:upgradeSteps>
+
+  <genericsetup:upgradeSteps
+    source="2.0.44"
+    destination="2.0.45"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+        title="Fix local roles in accordance to new NFR codes."
+        description="NFR sector mappings have changed from last year. Local roles need to be updated as well."
+        handler="emrt.necd.content.upgrades.evolve2045.run"
     />
 
   </genericsetup:upgradeSteps>
