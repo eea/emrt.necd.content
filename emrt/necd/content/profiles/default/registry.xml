@@ -102,8 +102,8 @@
       <element key="2C7b">sector3|2C7b|2B, 2C IPPU|2C7b Nickel production</element>
       <element key="2C7c">sector3|2C7c|2B, 2C IPPU|2C7c Other metal production (please specify in the IIR)</element>
       <element key="2C7d">sector3|2C7d|2B, 2C IPPU|2C7d Storage, handling and transport of metal products (please specify in the IIR)</element>
+      <element key="2">sector3|2|2D, 2G-2L IPPU|2 Industry</element>
       <element key="2D">sector3|2D|2D, 2G-2L IPPU|2D Non energy products from fuels and solvent uses</element>
-      <element key="2D3">sector3|2D3|2D, 2G-2L IPPU|2D3 Non energy products from fuels and solvent uses</element>
       <element key="2D3a">sector3|2D3a|2D, 2G-2L IPPU|2D3a Domestic solvent use including fungicides</element>
       <element key="2D3b">sector3|2D3b|2D, 2G-2L IPPU|2D3b Road paving with asphalt</element>
       <element key="2D3c">sector3|2D3c|2D, 2G-2L IPPU|2D3c Asphalt roofing</element>
