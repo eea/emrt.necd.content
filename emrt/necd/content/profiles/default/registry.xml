@@ -102,7 +102,7 @@
       <element key="2C7b">sector3|2C7b|2B, 2C IPPU|2C7b Nickel production</element>
       <element key="2C7c">sector3|2C7c|2B, 2C IPPU|2C7c Other metal production (please specify in the IIR)</element>
       <element key="2C7d">sector3|2C7d|2B, 2C IPPU|2C7d Storage, handling and transport of metal products (please specify in the IIR)</element>
-      <element key="2D">sector3|2D|2D, 2G-2L IPPU|2D Non energy products from fuels and solvent uses</element>
+      <element key="2D3">sector3|2D3|2D, 2G-2L IPPU|2D3 Non energy products from fuels and solvent uses</element>
       <element key="2D3a">sector3|2D3a|2D, 2G-2L IPPU|2D3a Domestic solvent use including fungicides</element>
       <element key="2D3b">sector3|2D3b|2D, 2G-2L IPPU|2D3b Road paving with asphalt</element>
       <element key="2D3c">sector3|2D3c|2D, 2G-2L IPPU|2D3c Asphalt roofing</element>
@@ -121,6 +121,7 @@
       <element key="2J">sector3|2J|2D, 2G-2L IPPU|2J Production of POPs</element>
       <element key="2K">sector3|2K|2D, 2G-2L IPPU|2K Consumption of POPs and heavy metals (e.g. electrical and scientific equipment)</element>
       <element key="2L">sector3|2L|2D, 2G-2L IPPU|2L Other production, consumption, storage, transportation or handling of bulk products (please specify in the IIR)</element>
+      <element key="3">sector4|3|3B - 3I Agriculture|3 Agriculture</element>
       <element key="3B">sector4|3B|3B - 3I Agriculture|3B Manure management</element>
       <element key="3B1a">sector4|3B1a|3B - 3I Agriculture|3B1a Manure management - Dairy cattle</element>
       <element key="3B1b">sector4|3B1b|3B - 3I Agriculture|3B1b Manure management - Non-dairy cattle</element>
@@ -149,6 +150,7 @@
       <element key="3Df">sector4|3Df|3B - 3I Agriculture|3Df Use of pesticides</element>
       <element key="3F">sector4|3F|3B - 3I Agriculture|3F Field burning of agricultural residues</element>
       <element key="3I">sector4|3I|3B - 3I Agriculture|3I Agriculture other (please specify in the IIR)</element>
+      <element key="5">sector5|5|5A - 5E Waste|5 Waste</element>
       <element key="5A">sector5|5A|5A - 5E Waste|5A Biological treatment of waste - Solid waste disposal on land</element>
       <element key="5B">sector5|5B|5A - 5E Waste|5B Biological treatment of waste</element>
       <element key="5B1">sector5|5B1|5A - 5E Waste|5B1 Biological treatment of waste - Composting</element>
