@@ -448,4 +448,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.0.45"
+    destination="2.2.1"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+        title="Update brain titles"
+        description="Update brain 'Title'. The titles were changed by 2.0.45 but metadata indexing was not performed because of the long running time. This migration step uses a much faster method."
+        handler="emrt.necd.content.upgrades.evolve2201.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
