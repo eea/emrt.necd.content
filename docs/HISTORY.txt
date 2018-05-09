@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+2.2.0 (2018-05-09)
+------------------
+
+- Bug #95338 - Information on the "Overview List" Tab
+- Bug #95321 - Update of NFR sector list
+  [batradav]
+
 2.1.0 (2018-05-02)
 ------------------
 
