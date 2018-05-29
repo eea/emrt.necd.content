@@ -8,6 +8,9 @@ from itertools import islice
 from functools import partial
 from functools import reduce
 
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
+
 from Products.Five import BrowserView
 
 from Products.CMFCore.utils import getToolByName
@@ -50,6 +53,28 @@ def current_status(brain):
     return QUESTION_WORKFLOW_MAP.get(status, status)
 
 
+def count_answers(len_q, len_a, obs_status):
+    wf_is_msc = obs_status == QUESTION_WORKFLOW_MAP['MSC']
+    answer_not_submitted = wf_is_msc and len_a and len_q == len_a
+
+    return len_a - 1 if answer_not_submitted else len_a
+
+
+def count_questions(len_q, len_a, obs_status):
+    wf_is_se_or_lr = obs_status in [
+        QUESTION_WORKFLOW_MAP['SE'],
+        QUESTION_WORKFLOW_MAP['LR']
+    ]
+    question_not_submitted = wf_is_se_or_lr and len_q and len_q > len_a
+
+    return len_q - 1 if question_not_submitted else len_q
+
+
+def description_flags(vocab, brain):
+    value = brain['get_highlight']
+    return [vocab.getTerm(v).title for v in value] if value else []
+
+
 def ipcc_sector(brain):
     return brain['get_ghg_source_sectors'][0]
 
@@ -70,7 +95,7 @@ def lead_reviewer(ms_roles, country):
     return COL_LR__ROLES_MS(ms_roles[country])
 
 
-def extract_entry(catalog, timestamp, mappings, brain):
+def extract_entry(catalog, timestamp, mappings, vocab_highlights, brain):
     qa = get_qa(catalog, brain)
     qa_count = reduce(reduce_count_brains, qa, defaultdict(int))
 
@@ -80,16 +105,25 @@ def extract_entry(catalog, timestamp, mappings, brain):
     country_code = brain['country']
     se = sector_expert(ms_roles, country_code)
 
+    obs_status = brain['observation_status']
+
+    len_a = qa_count['CommentAnswer']
+    len_q = qa_count['Comment']
+
     return {
         'Current status': current_status(brain),
         'IPCC Sector': ipcc_sector(brain),
         'Review sector': review_sector(review_sectors, se),
         'Author': author_name(brain),
-        'Questions answered': qa_count['CommentAnswer'],
-        'Questions asked': qa_count['Comment'],
+        'Questions answered': count_answers(len_q, len_a, obs_status),
+        'Questions asked': count_questions(len_q, len_a, obs_status),
         'Sector expert': se,
         'Lead reviewer': lead_reviewer(ms_roles, country_code),
         'Timestamp': timestamp,
+        'Country': brain['country_value'],
+        'ID': brain['id'],
+        'Description flags': description_flags(vocab_highlights, brain)
+
     }
 
 
@@ -131,11 +165,19 @@ class TableauView(BrowserView):
             catalog = getToolByName(self.context, 'portal_catalog')
             timestamp = datetime.now().isoformat()
             folder = self.context
+
+            vocab_highlights = getUtility(
+                IVocabularyFactory,
+                name='emrt.necd.content.highlight')(folder)
+
             xls_file = load_workbook(
                 folder.xls_mappings.open(), read_only=True)
+
             mappings = values_from_xls(xls_file)
 
-            entry = partial(extract_entry, catalog, timestamp, mappings)
+            entry = partial(
+                extract_entry,
+                catalog, timestamp, mappings, vocab_highlights)
 
             brains = catalog.unrestrictedSearchResults(
                 portal_type=['Observation'],
