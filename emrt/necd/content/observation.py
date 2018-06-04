@@ -1044,15 +1044,7 @@ class ObservationMixin(DefaultView):
             'conclusion-discussion',
             'close-requested',
         ]
-        MS_OBSERVATION = [
-            'pending',
-        ]
 
-        MS_QUESTION = [
-            'pending',
-            'pending-answer-drafting',
-            'expert-comments',
-        ]
         state = self.context.get_status()
         if state in CONCLUSIONS_PHASE_2:
             return self.context.get_conclusion()

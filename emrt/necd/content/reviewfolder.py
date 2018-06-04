@@ -40,6 +40,7 @@ from emrt.necd.content.utils import reduce_text
 from emrt.necd.content.utilities.ms_user import IUserIsMS
 
 from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_CP
@@ -705,6 +706,7 @@ class RoleMapItem(object):
     def __init__(self, roles):
         self.isCP = ROLE_CP in roles
         self.isMSA = ROLE_MSA in roles
+        self.isMSE = ROLE_MSE in roles
         self.isSE = ROLE_SE in roles
         self.isLR = ROLE_LR in roles
 
@@ -713,6 +715,8 @@ class RoleMapItem(object):
             return self.isCP
         elif rolename == ROLE_MSA:
             return self.isMSA
+        elif rolename == ROLE_MSE:
+            return self.isMSE
         elif rolename == ROLE_SE:
             return self.isSE
         elif rolename == 'NotCounterPart':
@@ -726,11 +730,11 @@ def _do_section_queries(view, action):
     action['num_obs'] = 0
 
     for section in action['sec']:
-        brains = section['getter'](view)
-        len_brains = len(brains)
-        section['brains'] = brains
-        section['num_obs'] = len_brains
-        action['num_obs'] += len_brains
+        objs = section['getter'](view)
+        len_objs = len(objs)
+        section['objs'] = objs
+        section['num_obs'] = len_objs
+        action['num_obs'] += len_objs
 
     return action['num_obs']
 
@@ -808,10 +812,7 @@ class InboxReviewFolderView(BrowserView):
 
         filterfunc = makefilter(rolecheck)
 
-        return filter(
-            filterfunc,
-            observations
-        )
+        return filter(filterfunc, observations)
 
     @timeit
     def get_draft_observations(self):
@@ -1099,6 +1100,7 @@ class InboxReviewFolderView(BrowserView):
          Answers requiring comments/discussion from MS experts
         """
         return self.get_observations(
+            rolecheck=ROLE_MSA,
             observation_question_status=['expert-comments'],
         )
 
@@ -1109,6 +1111,7 @@ class InboxReviewFolderView(BrowserView):
          Answers sent to SE
         """
         answered = self.get_observations(
+            rolecheck=ROLE_MSA,
             observation_question_status=['answered'])
         cat = api.portal.get_tool('portal_catalog')
         statuses = list(cat.uniqueValuesFor('review_state'))
@@ -1117,6 +1120,7 @@ class InboxReviewFolderView(BrowserView):
         except ValueError:
             pass
         not_closed = self.get_observations(
+            rolecheck=ROLE_MSA,
             review_state=statuses,
             observation_already_replied=True)
 
@@ -1132,6 +1136,7 @@ class InboxReviewFolderView(BrowserView):
          Comments for answer needed by MS Coordinator
         """
         return self.get_observations(
+            rolecheck=ROLE_MSE,
             observation_question_status=['expert-comments'])
 
     @timeit
@@ -1141,6 +1146,7 @@ class InboxReviewFolderView(BrowserView):
          Observation I have commented on
         """
         return self.get_observations(
+            rolecheck=ROLE_MSE,
             observation_question_status=[
                 'expert-comments',
                 'pending-answer-drafting'],
@@ -1154,6 +1160,7 @@ class InboxReviewFolderView(BrowserView):
          Answers that I commented on sent to Sector Expert
         """
         return self.get_observations(
+            rolecheck=ROLE_MSE,
             observation_question_status=[
                 'answered',
                 'recalled-msa'],

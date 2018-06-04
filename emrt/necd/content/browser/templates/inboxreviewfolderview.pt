@@ -97,7 +97,7 @@
             <tal:subsec repeat="subsec action/sec">
               <tal:content condition="python:subsec['slug'] == sec_cur">
                 <h2>${action/title} - ${subsec/title}</h2>
-                <div tal:define="observations subsec/brains; idx subsec/slug">
+                <div tal:define="observations subsec/objs; idx subsec/slug">
                   <metal:obslist use-macro="macro_observationlist" />
                 </div>
               </tal:content>
