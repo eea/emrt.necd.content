@@ -2,6 +2,17 @@ Changelog
 =========
 
 
+2.2.1 (2018-06-04)
+------------------
+
+- Feature #88845 - Create a new view with a tableau viewer
+  - new fields in JSON output
+  - fixing Q&A formula
+- Bug #95941 - Misleading information on My View
+- Bug #95338 - Information on the "Overview List" Tab
+  - adding missing migration script for titles
+  [batradav]
+
 2.2.0 (2018-05-09)
 ------------------
 
