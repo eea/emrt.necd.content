@@ -980,10 +980,13 @@ class ObservationMixin(DefaultView):
                 question,
                 self.request
             )
-            #remove add-followup-question action if the permission check is False
+            # remove add-followup-question action 
+            # if the permission check is False
             if not self.can_add_comment():
-                question_menu_items = [item for item in question_menu_items
-                                       if not item['action'].endswith('add-followup-question')]
+                question_menu_items = [
+                    item for item in question_menu_items
+                    if not item['action'].endswith('add-followup-question')
+                ]
 
             menu_items = question_menu_items + observation_menu_items
         return [mitem for mitem in menu_items if not hidden(mitem)]
@@ -1519,8 +1522,13 @@ class AddCommentForm(Form):
             u'Question text is empty'
         )
 
-        # transition before adding the comment so the transition guard passes
-        api.content.transition(obj=question, transition='add-followup-question')
+        if question.get_status() == 'closed':  # fix for question in "draft"
+            # transition before adding the comment,
+            # so the transition guard passes
+            api.content.transition(
+                obj=question, 
+                transition='add-followup-question'
+            )
         create_comment(text, question)
 
         return request.response.redirect(observation.absolute_url())
