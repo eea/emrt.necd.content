@@ -12,7 +12,7 @@ from zope.schema.interfaces import IVocabularyFactory
 XLS_SAMPLE_HEADER = [
     'Observation description', 'Country', 'NFR Code',
     'Inventory Year', 'Pollutants', 'Review Year', 'Fuel', 'MS Key Category',
-    'Parameter'
+    'Parameter', 'Description Flags'
 ]
 
 DESC = 'Description of the observation'
@@ -37,6 +37,7 @@ class GetSampleXLS(BrowserView):
         pollutants_voc = get_vocabulary('emrt.necd.content.pollutants')
         parameter_voc = get_vocabulary('emrt.necd.content.parameter')
         fuel_voc = get_vocabulary('emrt.necd.content.fuel')
+        description_flags_voc = get_vocabulary('emrt.necd.content.highlight')
 
         countries = map(get_title, country_voc)
         # not a mandatory field, value can be none
@@ -44,15 +45,16 @@ class GetSampleXLS(BrowserView):
         ms_key_categ = cycle(['True', None])
         pollutants = '\n'.join(map(get_title, pollutants_voc))
         parameter = '\n'.join(map(get_title, parameter_voc))
+        description_flags = cycle(['\n'.join(map(get_title, description_flags_voc)), None])
 
         sheet.append(XLS_SAMPLE_HEADER)
         for idx, country in enumerate(countries):
-            fuel = next(fuels)
-
             # get a value based on the country index position
+            fuel = next(fuels)
             ms_key_cat = next(ms_key_categ)
+            desc_fl = next(description_flags)
             row = [DESC, country, NFR_CODE, INVENTORY_YEAR, pollutants,
-                   REVIEW_YEAR, fuel, ms_key_cat, parameter]
+                   REVIEW_YEAR, fuel, ms_key_cat, parameter, desc_fl]
             sheet.append(row)
 
     def __call__(self):
@@ -61,15 +63,16 @@ class GetSampleXLS(BrowserView):
 
         self.populate_cells(sheet)
 
-        # wrap text for multi line cells
-        for row in sheet.iter_rows():
-            for cell in row:
-                cell.alignment = Alignment(wrap_text=True)
+        # wrap text for multi line cells and set max width
+        for column in sheet.columns:
+            length = []
 
-        # set cell max width
-        for column_cells in sheet.columns:
-            length = max(len(str(cell.value)) for cell in column_cells)
-            sheet.column_dimensions[column_cells[0].column].width = length
+            for cell in column:
+                if cell.value:
+                    length.append(max(len(str(c.rstrip())) for c in cell.value.splitlines()))
+                    cell.alignment = Alignment(wrap_text=True)
+
+            sheet.column_dimensions[column[0].column].width = max(length)
 
         xls = StringIO()
 

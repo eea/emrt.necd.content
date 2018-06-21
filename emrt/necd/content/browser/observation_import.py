@@ -11,14 +11,15 @@ import Acquisition
 import openpyxl
 
 
-UNUSED_FIELDS = ['highlight', 'closing_comments', 'closing_deny_comments']
+UNUSED_FIELDS = ['closing_comments', 'closing_deny_comments']
 
-UNCOMPLETED_ERR = u'The observation you uploaded seems to be a bit off. Please' \
-                  u' fill all the fields as shown in the import file sample. '
+UNCOMPLETED_ERR = u'The observation you uploaded seems to be a bit off. ' \
+                  u'Please fill all the fields as shown in the import file' \
+                  u' sample. '
 
-WRONG_DATA_ERR = u'The information you entered in the {} section is not correct.' \
-                 u' Please consult the columns in the sample xls file to see the ' \
-                 u'correct set of data.'
+WRONG_DATA_ERR = u'The information you entered in the {} section is not ' \
+                 u'correct. Please consult the columns in the sample xls file' \
+                 u' to see thecorrect set of data.'
 
 DONE_MSG = u'Successfully imported {} observations!'
 
@@ -48,6 +49,7 @@ COL_REVIEW_YEAR = partial(_read_row, 5)
 COL_FUEL = partial(_read_row, 6)
 COL_MS_KEY = partial(_read_row, 7)
 COL_PARAMS = partial(_read_row, 8)
+COL_DESCRIPTION_FLAGS = partial(_read_row, 9)
 
 PORTAL_TYPE = 'Observation'
 
@@ -135,8 +137,8 @@ class Entry(object):
             return cell_value
         elif cell_value == '':
             #openpyxl takes False cell values as empty strings so it is easier
-            #to assume that an empty cell of the MS Key Category column evaluates
-            #to false
+            #to assume that an empty cell of the MS Key Category column
+            # evaluates to false
             return 'False'
 
         # For the incorrect data check
@@ -151,11 +153,28 @@ class Entry(object):
             return False
         return keys
 
+    @property
+    def highlight(self):
+        highlight_voc = get_vocabulary('highlight')
+        col_desc_flags = COL_DESCRIPTION_FLAGS(self.row)
+        if col_desc_flags != '':
+            cell_value = _multi_rows(col_desc_flags)
+            keys = [find_dict_key(highlight_voc, key) for key in cell_value]
+            if False in keys:
+                return False
+            else:
+                return keys
+        else:
+            # This field can be none because it's not manadatory
+            return None
+
+
     def get_fields(self):
-        return {name: getattr(self, name)
-                for name in IObservation
-                if name not in UNUSED_FIELDS
-                }
+        return {
+            name: getattr(self, name)
+            for name in IObservation
+            if name not in UNUSED_FIELDS
+        }
 
 
 def _create_observation(entry, context, request, portal_type, obj):
@@ -215,7 +234,9 @@ class ObservationXLSImport(BrowserView):
         entries = map(Entry, valid_rows)
 
         for entry in entries:
-            _create_observation(entry, self.context, self.request, PORTAL_TYPE, self)
+            _create_observation(
+                entry, self.context, self.request, PORTAL_TYPE, self
+            )
 
         if self.num_entries > 0:
             status = IStatusMessage(self.request)

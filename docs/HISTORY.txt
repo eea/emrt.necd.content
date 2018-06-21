@@ -2,6 +2,48 @@ Changelog
 =========
 
 
+2.2.1 (2018-06-04)
+------------------
+
+- Feature #88845 - Create a new view with a tableau viewer
+  - new fields in JSON output
+  - fixing Q&A formula
+- Bug #95941 - Misleading information on My View
+- Bug #95338 - Information on the "Overview List" Tab
+  - adding missing migration script for titles
+  [batradav]
+
+2.2.0 (2018-05-09)
+------------------
+
+- Bug #95338 - Information on the "Overview List" Tab
+- Bug #95321 - Update of NFR sector list
+  [batradav]
+
+2.1.0 (2018-05-02)
+------------------
+
+- Feature #91903 - Develompment of bulk file import option
+- Feature #86364 - Add a follow up question
+- Task #93955 - Cleanup Grok implementation
+- Bug #93620 - Broken pagination on test instance
+- Bug #94869 - Reopening Q&A Chat
+- Bug #94870 - Request finalisation of the observation
+- Bug #94456 - Error when editing an observation as an admin
+  [boteziri]
+
+- Feature #88825 - My View Style
+- Feature #93173 - Update of Sector List and Relation with LDAP sector
+- Feature #88845 - Create a new view with a tableau viewer.
+- Feature #93995 - Finalised Observation tab
+- Bug #93175 - List of bugs from 2018 Tab in Test Site
+    * Test users "Sector Expert" don't have "Create New Observation" Button
+    * From "Overview List" the option search "Sector Name" is missing in 2018 tab (it was there in 2017 one, useful for Lead Reviewer)
+    * 2018 Tab: "Overview List" the "inventory year" drop down menu should be empty but it has information from the 2017 dataset
+- Bug #94894 - Error message for EMRT extract
+- Bug #95125 - Internal comments visible to MS
+  [batradav]
+
 2.0.41 (2018-02-19)
 -------------------
 

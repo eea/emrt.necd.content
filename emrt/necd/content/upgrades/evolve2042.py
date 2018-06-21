@@ -8,7 +8,9 @@ from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
 
 def run(_):
     portal = getSite()
-    getUtility(ISetupReviewFolderRoles)(portal['2018'])
+    target = portal.get('2018')
+    if target:
+        getUtility(ISetupReviewFolderRoles)(target)
 
 
 def catalog(_):
