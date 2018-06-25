@@ -37,3 +37,13 @@ class IFollowUpPermission(Interface):
     """
     Permission check for adding a follow up question
     """
+
+
+class IUserIsMS(Interface):
+    """ Returns True if the user has
+        the MSAuthority or MSExpert roles.
+    """
+
+
+class IGetLDAPWrapper(Interface):
+    """Returns the context_based LDAP wrapper"""

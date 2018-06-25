@@ -17,6 +17,8 @@ from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_LR
 
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
+
 from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
 
@@ -223,6 +225,7 @@ class NFRCode(object):
             user_is_lr_or_manager = set(user_roles).intersection(
                 (ROLE_LR, 'Manager'))
 
+            ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
             # if user has no 'sector' assignments, return all codes
             # this results in sector experts having a filtered list while
             # other users (e.g. MS, LR) will see all codes.
@@ -230,7 +233,7 @@ class NFRCode(object):
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
                     nfr_codes(context).items() if validate_term(
-                        build_prefix(LDAP_SECTOREXP, term['ldap']),
+                        build_prefix(ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
                         user_groups
                     )
                 ))

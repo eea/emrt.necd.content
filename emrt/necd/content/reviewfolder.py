@@ -37,11 +37,11 @@ from zope.interface import provider
 from zope.interface import implementer
 from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utils import get_vocabulary_value
-from emrt.necd.content.utils import IGetLDAPWrapper
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utils import reduce_text
-from emrt.necd.content.utilities.ms_user import IUserIsMS
+from emrt.necd.content.utilities.interfaces import IUserIsMS
 from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE

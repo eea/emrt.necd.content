@@ -14,7 +14,9 @@ from emrt.necd.content.subscriptions.interfaces import INotificationUnsubscripti
 
 import copy
 
-from emrt.necd.content.utils import user_has_ldap_role, IGetLDAPWrapper
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
+
+from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE

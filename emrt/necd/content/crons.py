@@ -29,7 +29,6 @@ class UpdateLDAPUsersVocabulariesCron(BrowserView):
         newSecurityManager(None, tmp_user)
         return old_sm
 
-
     def returnToNormalUser(sm):
         setSecurityManager(sm)
 
