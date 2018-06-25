@@ -339,7 +339,7 @@ def inventory_year(value):
         raise Invalid(u'Inventory year format is not correct. ')
 
 
-@default_value(field=IObservation['review_year'])
+@form.default_value(field=IObservation['review_year'])
 def default_year(data):
     return datetime.datetime.now().year
 

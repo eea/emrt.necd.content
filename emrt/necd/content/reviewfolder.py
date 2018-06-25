@@ -162,6 +162,7 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
         title=u"Type",
         source=REVIEWFOLDER_TYPES,
         required=True,
+    )
 
     xls_mappings = NamedBlobFile(
         title=u'Mapping XLS',
@@ -176,7 +177,6 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
         ),
         required=False,
     )
-
 
 @implementer(IReviewFolder)
 class ReviewFolder(Container):
