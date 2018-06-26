@@ -16,6 +16,13 @@
     <script type="text/javascript">
 
     $(document).ready(function(){
+
+        //for conclusion form pop-up
+        var conclusion_action = $('.standardButton:contains("Conclusions")');
+        if (!conclusion_action.hasClass("edit")){
+          conclusion_action.addClass('edit');
+        }
+
         update_display = function() {
             var style = $(this).attr('value');
             if (! this.checked) {
@@ -132,22 +139,28 @@
 
         $('.standardButton').click(function(e) {
           var inner_html = $(this).html().toLowerCase()
-          if(inner_html.indexOf('conclusions') >= 0){
-            e.preventDefault();
-            $('#add-conclusion-wrapper').show();
-          }
-          else if(inner_html.indexOf('follow up') >= 0){
+          if(inner_html.indexOf('follow up') >= 0){
             var comment_add_form = $('#comment-add-form');
             e.preventDefault();
             comment_add_form.toggle();
           }
-
         });
 
         //avoid duplicate 'Add follow up question' buttons
         var followup = $(".standardButton:contains('follow up')");
         if(followup.length > 1){
           $("#add-comment-link").hide();
+        }
+
+        //show comment/answer form in case of an raised error
+        var comment_form = $('#comment-add-form');
+        if(comment_form.children('.portalMessage.error').length > 0){
+          comment_form.show();
+        }
+
+        var answer_form = $('#answer-add-form');
+        if(answer_form.children('.portalMessage.error').length > 0){
+          answer_form.show();
         }
     });
     </script>
@@ -368,20 +381,24 @@
         <dl>
           <dt>Observation Finish Requested</dt>
           <dd></dd>
+          <tal:block condition="show_internal_notes">
           <dt>SE comments on finish observation request:</dt>
           <dd><span tal:replace="context/closing_comments/output|context/closing_comments|nothing" /></dd>
+          </tal:block>
         </dl>
 
         <div class="finish-denied" tal:condition="python:context.closing_deny_comments and context.get_status() == 'close-requested'" >
           <dl>
             <dt>Observation Finalisation previously denied</dt>
             <dd></dd>
+            <tal:block condition="show_internal_notes">
             <dt>LR comments on finish observation request:</dt>
             <dd>
               <div tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing">
               Content
               </div>
             </dd>
+            </tal:block>
           </dl>
         </div>
     </div>
@@ -1048,10 +1065,6 @@
       <div id="answer-add-form" style="display: none" tal:condition="view/can_add_answer">
         <span tal:replace="structure view/add_answer_form" />
       </div>
-
-     <div id="add-conclusion-wrapper" style="display: none" tal:condition="view/can_add_conclusion">
-        <span tal:replace="structure view/add_conclusion_form" />
-     </div>
 
     </div>
   </div>

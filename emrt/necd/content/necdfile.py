@@ -8,6 +8,7 @@ from plone.namedfile.field import NamedBlobFile
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
+from z3c.form import button
 from z3c.form import field
 from zope import schema
 from zope.interface import implementer
@@ -51,6 +52,16 @@ class NECDFile(Item):
 class AddForm(add.DefaultAddForm):
     label = 'file'
     description = ''
+
+    @button.buttonAndHandler(_('Save'), name='save')
+    def handleAdd(self, action):
+        super(AddForm, self).handleAdd(self, action)
+        question = self.context.aq_parent
+        self.request.response.redirect(question.absolute_url())
+
+    @button.buttonAndHandler(_('Cancel'), name='cancel')
+    def handleCancel(self, action):
+        super(AddForm, self).handleCancel(action)
 
     def update(self):
         super(AddForm, self).update()

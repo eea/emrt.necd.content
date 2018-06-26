@@ -5,9 +5,25 @@
     i18n_domain="emrt.necd.content">
 
     <browser:page
+        name="warmup_ldap"
+        for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+        class=".ldap_warmup.Warmup"
+        permission="emrt.necd.content.Warmup"
+        />
+
+
+    <browser:page
+        name="tableau.json"
+        for="..reviewfolder.IReviewFolder"
+        class=".tableau.TableauView"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="macros"
         for="..reviewfolder.IReviewFolder"
         template="templates/macros.pt"
+        class=".macros.MacrosView"
         permission="zope2.View"
         />
 

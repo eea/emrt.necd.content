@@ -3,58 +3,46 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       lang="en"
-      metal:use-macro="context/main_template/macros/master"
-      i18n:domain="emrt.necd.content">
-  <tal:block metal:fill-slot="javascript_head_slot">
-    <script type="text/javascript">
-      $(document).ready(function(){
-        $(".observationText").text(function(index, currentText){
-          if (currentText.length > 500){
-            $(this).text(currentText.substr(0, 500) + "...");
-            $(this).attr("title", currentText);
-          }
-        });
-        $("#btnFilter").click(function(){
-            var filter = "";
-            if ($('#freeTextFilter').val() != ""){
-              if (filter == ""){
-                filter += "?";
-              }else{
-                filter += "&";
-              }
-              filter += "freeText=" + $('#freeTextFilter').val();
-            }
-            window.location.href = window.location.pathname + filter;
-          })
-        });
-    </script>
-  </tal:block>
+   metal:use-macro="context/main_template/macros/master"
+   i18n:domain="emrt.necd.content">
+<tal:block metal:fill-slot="javascript_head_slot">
+  <script src="${portal_url}/++resource++emrt.necd.content/cookies.js"></script>
+  <script src="${portal_url}/++resource++emrt.necd.content/inbox_view.js"></script>
+</tal:block>
+<tal:block metal:fill-slot="style_slot">
+  <link rel="stylesheet" type="text/css" href="${portal_url}/++resource++emrt.necd.content/inbox_view.css"/>
+</tal:block>
 <body>
 
-  <metal:main fill-slot="content-core"
-              tal:define="
-                macro_template python:here.restrictedTraverse('@@macros');
-                macro_observationlist python:macro_template['macros']['observationlist']">
-    <metal:content-core define-macro="content-core">
+<metal:main fill-slot="content-core" tal:define="
+  macro_template python:here.restrictedTraverse('@@macros');
+  macro_observationlist python:macro_template['macros']['observationlist'];
+  data python:view.get_reasons_with_observations();
+  reasons python:data['reasons'];
+  total_obs python:data['total_obs'];
+  sec_cur python:request.get('section', '');
+  req_params python:[(k, v) for k, v in request.form.items() if k != 'section' and 'b_start' not in k];
+  ">
+  <metal:content-core define-macro="content-core">
 
-  <div id="inbox-view-content">
+    <div id="inbox-view-content">
       <div class="actions" tal:condition="view/can_add_observation">
         <a href="./++add++Observation"
-          tal:attributes="href string:${here/absolute_url}/++add++Observation"
-          class="standardButton defaultWFButton">
-            New observation
+           tal:attributes="href string:${here/absolute_url}/++add++Observation"
+           class="standardButton defaultWFButton">
+          New observation
         </a>
       </div>
       <div id="tabs">
         <div class="tabs">
           <div>
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+            <a class="eea-icon overview" href="${here/absolute_url}/view">Overview list</a>
           </div>
           <div>
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>
+            <a class="eea-icon inbox" href="${here/absolute_url}/inboxview">My view</a>
           </div>
           <div class="active">
-            <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/finalisedfolderview">Finalised observations</a>
+            <a class="eea-icon inbox" href="${here/absolute_url}/finalisedfolderview">Finalised observations</a>
           </div>
         </div>
       </div>
@@ -64,50 +52,87 @@
           <div class="cell position-1 width-3 esdLabel">Free text</div>
         </div>
         <div class="row">
-          <div class="cell position-1 width-12 esdLabel">
-            <input type="text" id="freeTextFilter" style="width:100%;border-radius:5px;height:21px"
-                tal:define="freeText python:'';
-                            freeText request/freeText | freeText"
-                tal:attributes="value python:freeText"/>
-          </div>
-          <div class="cell position-14 width-1">
-            <a class="standardButton" id="btnFilter">Search</a>
-          </div>
+          <form action="./finalisedfolderview" method="GET" tal:define="freeText request/freeText|nothing">
+            <div class="cell position-1 width-12 esdLabel">
+              <tal:params repeat="req_param python:[x for x in req_params if x[0] != 'freeText']">
+                <input type="hidden" name="${python:req_param[0]}" value="${python:req_param[1]}"/>
+              </tal:params>
+              <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" value="${freeText}"/>
+            </div>
+            <div class="cell position-14 width-1">
+              <input type="submit" class="standardButton" id="btnFilter" value="Search"/>
+            </div>
+          </form>
         </div>
       </div>
 
-      <div id="observations" class="myview"
-        tal:condition="not:here/@@plone_portal_state/anonymous"
-        tal:define="reasons python:view.get_finalisation_reasons()">
-        <div>
-          <div class="collapsiblePanelTitle" data-panel="finalised-observations">
-            <div>
-              Finalised observations
-              <span class="eea-icon eea-icon-left"></span>
-            </div>
+      <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
+        <div class="page-content">
+          <div class="menu">
+            <ul class="menu-role">
+              <li>
+                <span class="section-role">Finalised observations</span>
+                <ul class="menu-section">
+                  <li>
+                    <span class="section-title"></span>
+                    <ul class="menu-subsection">
+                      <tal:subsec repeat="reason_key reasons">
+                        <tal:subsec-def define="
+                          reason_title python:reasons[reason_key]['title'];
+                          observations python:reasons[reason_key]['obs'];
+                          num_obs python:reasons[reason_key]['num_obs'];
+                          current python:reason_key == sec_cur;
+                          ">
+                          <li class="section-subsection ${python:'current' if current else ''}">
+                            <span tal:condition="not:num_obs" class="muted">Finalised with ${reason_title}</span>
+                            <a tal:condition="num_obs"
+                              href="./finalisedfolderview?${python:'&'.join(['='.join(x) for x in req_params + [('section', reason_key)]])}">Finalised
+                              with ${reason_title}</a>
+                            <span tal:condition="num_obs" class="obs-count">(${num_obs})</span>
+                          </li>
+                        </tal:subsec-def>
+                      </tal:subsec>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </div>
-        </div>
-        <tal:reason repeat="reason reasons">
-          <div class="finalised-observations inboxSection"
-            tal:define="reason_key python:reason[0]; reason_title python:reason[1]">
-            <div class="collapsibleListTitle" tal:attributes="data-list reason_key">
-              <div>
-                Finalised with <span tal:replace="reason_title">REASON</span>
-                <span class="eea-icon eea-icon-left"></span>
+          <div class="menu-body">
+            <tal:subsec repeat="reason_key reasons">
+              <tal:subsec-def define="
+                  reason_title python:reasons[reason_key]['title'];
+                  observations python:reasons[reason_key]['obs'];
+                  current python:reason_key == sec_cur;
+                  ">
+                <tal:content condition="python:reason_key == sec_cur">
+                  <h2>Observations finalised with ${reason_title}</h2>
+                  <div tal:define="idx reason_key" class="">
+                    <metal:obslist use-macro="macro_observationlist"/>
+                  </div>
+                </tal:content>
+              </tal:subsec-def>
+            </tal:subsec>
+            <tal:content condition="python:sec_cur and not reasons[sec_cur]['num_obs']">
+              <div class="menu-body-message">
+                <p>There are no observations finalised with ${python:reasons[sec_cur]['title']}.</p>
               </div>
-            </div>
-            <div tal:attributes="class string:finalised-observations ${reason_key}"
-              tal:define="
-                observations python:view.get_resolved_observations(reason_key);
-                idx python:repeat['reason'].index">
-              <metal:obslist use-macro="macro_observationlist" />
-            </div>
+            </tal:content>
+            <tal:content condition="python:not sec_cur and total_obs">
+              <div class="menu-body-message">
+                <p>Please select a section on the left.</p>
+              </div>
+            </tal:content>
+            <tal:content condition="python:not sec_cur and not total_obs">
+              <div class="menu-body-message">
+                <p>There are no finalised observations.</p>
+              </div>
+            </tal:content>
           </div>
-        </tal:reason>
+        </div>
       </div>
-
-</div>
-</metal:content-core>
+    </div>
+  </metal:content-core>
 </metal:main>
 </body>
 </html>

@@ -13,14 +13,12 @@ from Acquisition import aq_inner
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
 from plone.app.discussion.interfaces import IConversation
 from plone.dexterity.content import Container
 from plone.directives import form
-from plone.directives.form import default_value
 from plone.memoize import instance
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.z3cform.interfaces import IWrappedForm
@@ -57,7 +55,6 @@ from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions
 )
 from emrt.necd.content.utilities import ms_user
-from emrt.necd.content.conclusions import IConclusions
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
@@ -67,6 +64,7 @@ from emrt.necd.content.utils import activity_data_validator
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
+from plone.supermodel import model
 
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
@@ -93,8 +91,84 @@ def _is_projection(context):
     return context.type == 'projection'
 
 
+def check_parameter(value):
+    if len(value) == 0:
+        raise Invalid(u'You need to select at least one parameter')
+
+    return True
+
+
+def check_nfr_code(value):
+    """ Check if the user is in one of the group of users
+        allowed to add this category NFR Code observations
+    """
+    category = get_category_ldap_from_nfr_code(value)
+    user = api.user.get_current()
+    groups = user.getGroups()
+    valid = False
+    for group in groups:
+        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
+            valid = True
+
+    if not valid:
+        raise Invalid(
+            u'You are not allowed to add observations for this sector category'
+        )
+
+    return True
+
+
+def check_country(value):
+    user = api.user.get_current()
+    groups = user.getGroups()
+    valid = False
+    for group in groups:
+        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
+                group.endswith('-%s' % value):
+            valid = True
+
+    if not valid:
+        raise Invalid(
+            u'You are not allowed to add observations for this country'
+        )
+
+    return True
+
+
+def inventory_year(value):
+    """
+    Inventory year can be a given year (2014), a range of years (2012-2014)
+    or a list of the years (2012, 2014, 2016)
+    """
+
+    def split_on_sep(val, sep):
+        for s in sep:
+            if s in val:
+                return tuple(val.split(s))
+        return (val, )
+
+    def validate(value):
+        normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
+        return False not in (int(val) > 0 for val in normalized_value)
+
+    def check_valid(value):
+        try:
+            return validate(value)
+        except ValueError:
+            return False
+
+    if not check_valid(value):
+        raise Invalid(u'Inventory year format is not correct. ')
+
+    return True
+
+
+def default_year():
+    return datetime.datetime.now().year
+
+
 # Interface class; used to define content-type schema.
-class IObservation(form.Schema, IImageScaleTraversable):
+class IObservation(model.Schema, IImageScaleTraversable):
     """
     New review observation
     """
@@ -114,12 +188,14 @@ class IObservation(form.Schema, IImageScaleTraversable):
     country = schema.Choice(
         title=u"Country",
         vocabulary='emrt.necd.content.eea_member_states',
+        constraint=check_country,
         required=True,
     )
 
     nfr_code = schema.Choice(
         title=u"NFR category codes",
         vocabulary='emrt.necd.content.nfr_code',
+        constraint=check_nfr_code,
         required=True,
     )
 
@@ -141,6 +217,7 @@ class IObservation(form.Schema, IImageScaleTraversable):
         title=u'Review year',
         description=u'Review year is the year in which the inventory was ' \
                     u'submitted and the review was carried out',
+        defaultFactory=default_year,
         required=True,
     )
 
@@ -174,8 +251,8 @@ class IObservation(form.Schema, IImageScaleTraversable):
         title=u"Parameter",
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.parameter',
-            required=True,
         ),
+        constraint=check_parameter,
         required=True,
     )
 
@@ -723,8 +800,8 @@ class Observation(Container):
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
                 elif item['action'] == 'validate-answer-msa' and item['action'] == 'validate-answer-msa':
-                    item['state'] = 'Sector Expert'
-                    item['role'] = "Answer acknowledged"
+                    item['state'] = 'Answer acknowledged'
+                    item['role'] = "Sector Expert"
                     question_wf.append(item)
                 elif item['review_state'] == 'draft' and item['action'] == "reopen":
                     item['state'] = 'Reopened'
@@ -746,7 +823,6 @@ class Observation(Container):
         sm = getSecurityManager()
         return sm.checkPermission('Modify portal content', self)
 
-    @instance.memoize
     def get_question(self):
         questions = self.get_values_cat('Question')
 
@@ -1021,15 +1097,16 @@ class ObservationMixin(DefaultView):
         return None
 
     def existing_conclusion(self):
-        status = self.context.get_status()
         conclusion = self.get_conclusion()
-
         return conclusion and True or False
 
     def can_add_conclusion(self):
         sm = getSecurityManager()
-        conclusion = self.get_conclusion()
-        return sm.checkPermission('emrt.necd.content: Add Conclusions', self.context) and not conclusion
+        question_state = api.content.get_state(self.question())
+
+        return sm.checkPermission(
+            'emrt.necd.content: Add Conclusions', self.context
+        ) and question_state in ['draft', 'drafted', 'pending', 'closed']
 
     def show_description(self):
         questions = self.get_questions()
@@ -1048,7 +1125,6 @@ class ObservationMixin(DefaultView):
         return sm.checkPermission(P_OBS_REDRAFT_REASON_VIEW, self.context)
 
     def add_question_form(self):
-        from plone.z3cform.interfaces import IWrappedForm
         form_instance = AddQuestionForm(self.context, self.request)
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
@@ -1135,11 +1211,6 @@ class ObservationMixin(DefaultView):
         alsoProvides(form_instance, IWrappedForm)
         return form_instance()
 
-    def add_conclusion_form(self):
-        form_instance = AddConclusionForm(self.context, self.request)
-        alsoProvides(form_instance, IWrappedForm)
-        return form_instance()
-
     def in_conclusions(self):
         state = self.context.get_status()
         return state in [
@@ -1157,15 +1228,7 @@ class ObservationMixin(DefaultView):
             'conclusion-discussion',
             'close-requested',
         ]
-        MS_OBSERVATION = [
-            'pending',
-        ]
 
-        MS_QUESTION = [
-            'pending',
-            'pending-answer-drafting',
-            'expert-comments',
-        ]
         state = self.context.get_status()
         if state in CONCLUSIONS_PHASE_2:
             return self.context.get_conclusion()
@@ -1509,7 +1572,9 @@ class ModificationForm(edit.DefaultEditForm):
         roles = api.user.get_roles(username=user.getId(), obj=self.context)
         fields = []
         # XXX Needed? Edit rights are controlled by the WF
-        if ROLE_SE in roles:
+        if 'Manager' in roles:
+            fields = field.Fields(IObservation)
+        elif ROLE_SE in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',
@@ -1649,6 +1714,20 @@ class AddAnswerAndRequestComments(BrowserView):
         return self.request.response.redirect(url)
 
 
+def create_comment(text, question):
+    id = str(int(time()))
+    item_id = question.invokeFactory(type_name='Comment', id=id)
+    comment = question.get(item_id)
+    comment.text = text
+    return comment
+
+
+def value_or_error(value, err_text):
+    if not value:
+        raise ActionExecutionError(Invalid(err_text))
+    return value
+
+
 class AddCommentForm(Form):
 
     ignoreContext = True
@@ -1656,23 +1735,26 @@ class AddCommentForm(Form):
 
     @button.buttonAndHandler(u'Add question')
     def create_question(self, action):
-        observation = aq_inner(self.context)
-        questions = [q for q in observation.values() if q.portal_type == 'Question']
-        if questions:
-            context = questions[0]
-        else:
-            raise
-
-        id = str(int(time()))
-        item_id = context.invokeFactory(
-            type_name='Comment',
-            id=id,
+        request = self.request
+        observation = self.context
+        # raising errors before transition as that will
+        # cause a transaction.commit
+        question = value_or_error(
+            observation.get_question(),
+            u'Invalid context'
         )
-        text = self.request.form.get('form.widgets.text', '')
-        comment = context.get(item_id)
-        comment.text = text
+        wid_text = self.widgets['text']
 
-        return self.request.response.redirect(observation.absolute_url())
+        text = value_or_error(
+            wid_text.extract(u'').strip(),
+            u'Question text is empty'
+        )
+
+        # transition before adding the comment so the transition guard passes
+        api.content.transition(obj=question, transition='add-followup-question')
+        create_comment(text, question)
+
+        return request.response.redirect(observation.absolute_url())
 
     def updateWidgets(self):
         super(AddCommentForm, self).updateWidgets()
@@ -1680,54 +1762,6 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
-        for k in self.actions.keys():
-            self.actions[k].addClass('standardButton')
-
-
-class AddConclusionForm(Form):
-    ignoreContext = True
-    fields = field.Fields(IConclusions).select('closing_reason', 'text')
-
-    @button.buttonAndHandler(u'Add conclusion')
-    def create_conclusion(self, action):
-        observation = aq_inner(self.context)
-        id = str(int(time()))
-        item_id = self.context.invokeFactory(
-            type_name='Conclusions',
-            id=id,
-        )
-        text = self.request.form.get('form.widgets.text', '')
-        reason = self.request.form.get('form.widgets.closing_reason', '')
-        conclusion = self.context.get(item_id)
-        conclusion.title = id
-        conclusion.id = id
-        conclusion.text = text
-        conclusion.closing_reason = reason[0]
-        adapted = IAllowDiscussion(conclusion)
-        adapted.allow_discussion = True
-
-        api.content.transition(
-            obj=observation,
-            transition='draft-conclusions'
-        )
-
-        return self.request.response.redirect(observation.absolute_url())
-
-    def updateFields(self):
-        super(AddConclusionForm, self).updateFields()
-
-        self.fields = field.Fields(IConclusions).select(
-            'closing_reason', 'text')
-        self.groups = [g for g in self.groups if
-                       g.label == 'label_schema_default']
-
-    def updateWidgets(self):
-        super(AddConclusionForm, self).updateWidgets()
-        self.widgets['text'].rows = 15
-
-
-    def updateActions(self):
-        super(AddConclusionForm, self).updateActions()
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
 
