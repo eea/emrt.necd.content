@@ -230,17 +230,17 @@ class NFRCode(object):
             # other users (e.g. MS, LR) will see all codes.
             if not user_is_lr_or_manager and user_has_sectors:
 
-                ldap_base = LDAP_BASE if context.type=="Inventory" \
-                    else LDAP_BASE_PROJECTION
+                ldap_base = LDAP_BASE_PROJECTION \
+                    if context.type == 'Projecton' else LDAP_BASE
+
+                ldap_role = LDAP_SECTOREXP.format(base_dn=ldap_base)
 
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
                     nfr_codes(context).items() if validate_term(
-                    build_prefix(
-                        LDAP_SECTOREXP.format(base_dn=ldap_base),
-                        term['ldap']),
-                        user_groups
-                    )
+                    build_prefix(ldap_role, term['ldap']),
+                    user_groups
+                )
                 ))
 
         return vocab_from_terms(*nfr_codes(context).items())
