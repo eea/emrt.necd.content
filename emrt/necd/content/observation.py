@@ -339,11 +339,6 @@ def inventory_year(value):
         raise Invalid(u'Inventory year format is not correct. ')
 
 
-@default_value(field=IObservation['review_year'])
-def default_year(data):
-    return datetime.datetime.now().year
-
-
 class NfrCodeContextValidator(validator.SimpleFieldValidator):
     def validate(self, value, force=False):
         """ Check if the user is in one of the group of users
