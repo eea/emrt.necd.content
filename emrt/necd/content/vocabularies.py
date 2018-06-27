@@ -16,12 +16,11 @@ import plone.api as api
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_LR
-from emrt.necd.content.constants import LDAP_BASE_PROJECTION
-from emrt.necd.content.constants import LDAP_BASE
 
 from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
 
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 class INECDVocabularies(Interface):
 
@@ -199,10 +198,11 @@ class NFRCode(object):
             return user if user and not api.user.is_anonymous() else None
 
         def validate_term(prefix, groups):
-            return tuple([
+            x = tuple([
                 group for group in groups
                 if group.startswith(prefix)
             ])
+            return x
 
         def build_prefix(ldap_role, sector):
             return '{}-{}-'.format(ldap_role, sector)
@@ -230,15 +230,12 @@ class NFRCode(object):
             # other users (e.g. MS, LR) will see all codes.
             if not user_is_lr_or_manager and user_has_sectors:
 
-                ldap_base = LDAP_BASE_PROJECTION \
-                    if context.type == 'Projecton' else LDAP_BASE
-
-                ldap_role = LDAP_SECTOREXP.format(base_dn=ldap_base)
+                ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
 
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
                     nfr_codes(context).items() if validate_term(
-                    build_prefix(ldap_role, term['ldap']),
+                    build_prefix(ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
                     user_groups
                 )
                 ))

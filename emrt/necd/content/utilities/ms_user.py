@@ -1,4 +1,3 @@
-from zope.interface import Interface
 from zope.interface import implementer
 from zope.component import getUtility
 
@@ -6,12 +5,7 @@ import plone.api as api
 
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
-
-
-class IUserIsMS(Interface):
-    """ Returns True if the user has
-        the MSAuthority or MSExpert roles.
-    """
+from emrt.necd.content.utilities.interfaces import IUserIsMS
 
 
 @implementer(IUserIsMS)
