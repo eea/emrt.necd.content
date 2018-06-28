@@ -982,7 +982,7 @@ class ObservationMixin(DefaultView):
             )
             # remove add-followup-question action 
             # if the permission check is False
-            if not self.can_add_comment():
+            if not self.can_add_follow_up_question():
                 question_menu_items = [
                     item for item in question_menu_items
                     if not item['action'].endswith('add-followup-question')
@@ -1006,7 +1006,7 @@ class ObservationMixin(DefaultView):
             return user.getProperty('fullname', userid)
         return ''
 
-    def can_add_comment(self):
+    def can_add_follow_up_question(self):
         return getUtility(IFollowUpPermission)(self.question())
 
     def can_add_answer(self):

@@ -1012,7 +1012,7 @@
         </div>
       </tal:qactions>
       </div>
-      <div class="actions" tal:condition="view/can_add_comment">
+      <div class="actions" tal:condition="view/can_add_follow_up_question">
         <a href="./++add++Comment"
           id="add-comment-link"
           tal:attributes="href string:${here/absolute_url}/++add++Comment"
@@ -1038,7 +1038,7 @@
 
       </div>
 
-      <div id="comment-add-form" style="display: none" tal:condition="view/can_add_comment">
+      <div id="comment-add-form" style="display: none" tal:condition="view/can_add_follow_up_question">
         <span tal:replace="structure view/add_comment_form" />
       </div>
 
