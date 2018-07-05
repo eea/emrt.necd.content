@@ -5,6 +5,7 @@ except ImportError:
 import datetime
 import json
 import re
+from functools import partial
 from docx import Document
 from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
@@ -36,6 +37,7 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
 import zope.schema as schema
+from zope.schema.interfaces import RequiredMissing
 from zope.browsermenu.menu import getMenu
 from zope.browserpage.viewpagetemplatefile import (
     ViewPageTemplateFile as Z3ViewPageTemplateFile
@@ -64,6 +66,7 @@ from emrt.necd.content.utils import activity_data_validator
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from plone.supermodel import model
 
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
@@ -98,44 +101,7 @@ def check_parameter(value):
     return True
 
 
-def check_nfr_code(value):
-    """ Check if the user is in one of the group of users
-        allowed to add this category NFR Code observations
-    """
-    category = get_category_ldap_from_nfr_code(value)
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this sector category'
-        )
-
-    return True
-
-
-def check_country(value):
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
-                group.endswith('-%s' % value):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this country'
-        )
-
-    return True
-
-
-def inventory_year(value):
+def check_inventory_year(value):
     """
     Inventory year can be a given year (2014), a range of years (2012-2014)
     or a list of the years (2012, 2014, 2016)
@@ -145,7 +111,7 @@ def inventory_year(value):
         for s in sep:
             if s in val:
                 return tuple(val.split(s))
-        return (val, )
+        return val,
 
     def validate(value):
         normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
@@ -188,14 +154,12 @@ class IObservation(model.Schema, IImageScaleTraversable):
     country = schema.Choice(
         title=u"Country",
         vocabulary='emrt.necd.content.eea_member_states',
-        constraint=check_country,
         required=True,
     )
 
     nfr_code = schema.Choice(
         title=u"NFR category codes",
         vocabulary='emrt.necd.content.nfr_code',
-        constraint=check_nfr_code,
         required=True,
     )
 
@@ -295,52 +259,8 @@ def check_pollutants(value):
         raise Invalid(u'You need to select at least one pollutant')
 
 
-@form.validator(field=IObservation['country'])
-def check_country(value):
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
-                group.endswith('-%s' % value):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this country'
-        )
-
-
-@form.validator(field=IObservation['year'])
-def inventory_year(value):
-    """
-    Inventory year can be a given year (2014), a range of years (2012-2014)
-    or a list of the years (2012, 2014, 2016).
-    In the case of a 'Projection' ReviewFolder the values must be:
-    2020, 2025, 2030, 2040 or 2050.
-    """
-    def split_on_sep(val, sep):
-        for s in sep:
-            if s in val:
-                return tuple(val.split(s))
-        return (val, )
-
-    def validate(value):
-        normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
-        return False not in (int(val) > 0 for val in normalized_value)
-
-    def check_valid(value):
-        try:
-            return validate(value)
-        except ValueError:
-            return False
-
-    if not check_valid(value):
-        raise Invalid(u'Inventory year format is not correct. ')
-
-
 class NfrCodeContextValidator(validator.SimpleFieldValidator):
-    def validate(self, value, force=False):
+    def validate(self, value):
         """ Check if the user is in one of the group of users
             allowed to add this category NFR Code observations
         """
@@ -348,13 +268,19 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         user = api.user.get_current()
         groups = user.getGroups()
         valid = False
+
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+
         for group in groups:
-            if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
+            if group.startswith('{}-{}-'.format(ldap_se, category)):
                 valid = True
+                break
 
         if not valid:
             raise Invalid(
-                u'You are not allowed to add observations for this sector category'
+                u'You are not allowed to add observations '
+                u'for this sector category.'
             )
 
 
@@ -364,20 +290,48 @@ validator.WidgetValidatorDiscriminators(
 )
 
 
+class CountryContextValidator(validator.SimpleFieldValidator):
+    def validate(self, value):
+        user = api.user.get_current()
+        groups = user.getGroups()
+        valid = False
+
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+
+        for group in groups:
+            is_se = group.startswith('{}-'.format(ldap_se))
+            if is_se and group.endswith('-%s' % value):
+                valid = True
+                break
+
+        if not valid:
+            raise Invalid(
+                u'You are not allowed to add observations for this country.'
+            )
+
+
+validator.WidgetValidatorDiscriminators(
+    CountryContextValidator,
+    field=IObservation['country']
+)
+
+
 class InventoryYearContextValidator(validator.SimpleFieldValidator):
-    def validate(self, value, force=False):
+    def validate(self, value):
+        if value is None :
+            # Assume empty string = no input
+            raise RequiredMissing
 
         if _is_projection(self.context):
             allowed_years = ['2020', '2025', '2030', '2040', '2050']
+            extracted = [val.strip() for val in value.split(',')]
 
-            if value is None :
-                # Assume empty string = no input
-                return
-
-            value = [val.strip() for val in value.split(',')]
-
-            if not set(value).issubset(allowed_years):
+            if not set(extracted).issubset(allowed_years):
                 raise Invalid(_(u'The entered value is not correct.'))
+
+        else:
+            check_inventory_year(value)
 
 
 validator.WidgetValidatorDiscriminators(
@@ -464,11 +418,12 @@ class Observation(Container):
         return u', '.join(filter(None, pollutants))
 
     def activity_data_value(self):
-        activities = [
-            get_vocabulary_value(self, 'emrt.necd.content.activity_data', ad)
-            for ad in self.activity_data
-            ]
-        return activities
+        get_value = partial(
+            get_vocabulary_value, 'emrt.necd.content.activity_data'
+        )
+        if self.activity_data:
+            return [get_value(ad) for ad in self.activity_data]
+        return []
 
     def highlight_value(self):
         if self.highlight:

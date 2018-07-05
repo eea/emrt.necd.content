@@ -198,11 +198,10 @@ class NFRCode(object):
             return user if user and not api.user.is_anonymous() else None
 
         def validate_term(prefix, groups):
-            x = tuple([
+            return tuple([
                 group for group in groups
                 if group.startswith(prefix)
             ])
-            return x
 
         def build_prefix(ldap_role, sector):
             return '{}-{}-'.format(ldap_role, sector)
@@ -235,9 +234,10 @@ class NFRCode(object):
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
                     nfr_codes(context).items() if validate_term(
-                    build_prefix(ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
-                    user_groups
-                )
+                        build_prefix(
+                            ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
+                        user_groups
+                    )
                 ))
 
         return vocab_from_terms(*nfr_codes(context).items())
