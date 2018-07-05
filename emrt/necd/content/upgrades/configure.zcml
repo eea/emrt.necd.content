@@ -480,4 +480,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.2.1"
+    destination="2.2.3"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update workflow for new add-followup-question guard."
+      description="[refs #96688] Hide 'Add follow up question' button when the transition guard would fail."
+      import_steps="workflow"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

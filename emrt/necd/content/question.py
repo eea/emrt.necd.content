@@ -50,7 +50,7 @@ CLOSED_STATUS_NAME = 'closed'
 class Question(Container):
     # Add your class methods and properties here
 
-    def can_add_comment(self):
+    def can_add_follow_up_question(self):
         return getUtility(IFollowUpPermission)(self)
 
     def get_state_api(self):

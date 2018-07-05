@@ -1,6 +1,17 @@
 Changelog
 =========
 
+2.2.3 (2018-06-28)
+------------------
+
+- Bug #96688 - Bug on adding follow up question
+  [batradav]
+
+2.2.2 (2018-06-21)
+------------------
+
+- Bug #96488 - Bug when adding a follow-up question
+  [batradav]
 
 2.2.1 (2018-06-04)
 ------------------
