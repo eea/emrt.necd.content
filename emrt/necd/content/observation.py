@@ -419,7 +419,7 @@ class Observation(Container):
 
     def activity_data_value(self):
         get_value = partial(
-            get_vocabulary_value, 'emrt.necd.content.activity_data'
+            get_vocabulary_value, self, 'emrt.necd.content.activity_data'
         )
         if self.activity_data:
             return [get_value(ad) for ad in self.activity_data]

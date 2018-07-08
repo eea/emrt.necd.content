@@ -1,8 +1,14 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from borg.localrole.interfaces import ILocalRoleProvider
+
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
+
 from zope.component import adapts
+from zope.component import getUtility
+
 from zope.interface import implements
+
 
 import plone.api as api
 
@@ -22,17 +28,19 @@ from emrt.necd.content.constants import ROLE_LR
 def get_user_roles_in_context(context, principal_id):
     mtool = api.portal.get_tool('portal_membership')
     member = mtool.getMemberById(principal_id)
+    ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
     roles = []
     if member is not None:
         context = aq_inner(context)
         country = context.country.lower()
         sector = context.ghg_source_category_value()
         groups = member.getGroups()
-        if '{}-{}-{}'.format(LDAP_SECTOREXP, sector, country) in groups:
+        if '{}-{}-{}'.format(
+                ldap_wrapper(LDAP_SECTOREXP), sector, country) in groups:
             roles.append(ROLE_SE)
-        if '{}-{}'.format(LDAP_LEADREVIEW, country) in groups:
+        if '{}-{}'.format(ldap_wrapper(LDAP_LEADREVIEW), country) in groups:
             roles.append(ROLE_LR)
-        if '{}-{}'.format(LDAP_MSA, country) in groups:
+        if '{}-{}'.format(ldap_wrapper(LDAP_MSA), country) in groups:
             roles.append(ROLE_MSA)
     return roles
 
