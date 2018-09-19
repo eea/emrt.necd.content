@@ -23,6 +23,47 @@ from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
 
 
+def get_valid_user():
+    try:
+        user = api.user.get_current()
+    except Exception:
+        return None
+
+    return user if user and not api.user.is_anonymous() else None
+
+
+def validate_term(prefix, groups):
+    return tuple([
+                     group for group in groups
+                     if group.startswith(prefix)
+                     ])
+
+
+def build_prefix(ldap_role, sector):
+    return '{}-{}-'.format(ldap_role, sector)
+
+
+def vocab_from_terms(*terms):
+    return SimpleVocabulary([
+        SimpleVocabulary.createTerm(key, key, value['title'])
+        for (key, value) in terms])
+
+
+def check_user_for_vocab(context, user):
+    user_roles = api.user.get_roles(obj=context)
+    user_groups = tuple(user.getGroups())
+    user_has_sectors = tuple([
+        group for group in user_groups
+        if '-sector' in group
+    ])
+    user_is_lr_or_manager = set(user_roles).intersection((ROLE_LR, 'Manager'))
+
+    # if user has no 'sector' assignments, return all codes
+    # this results in sector experts having a filtered list while
+    # other users (e.g. MS, LR) will see all codes.
+    return not user_is_lr_or_manager and user_has_sectors
+
+
 class INECDVocabularies(Interface):
 
     projection_pollutants = schema.Dict(
@@ -189,56 +230,46 @@ class StatusFlag(object):
 class NFRCode(object):
 
     def __call__(self, context):
-
-        def get_valid_user():
-            try:
-                user = api.user.get_current()
-            except Exception:
-                return None
-
-            return user if user and not api.user.is_anonymous() else None
-
-        def validate_term(prefix, groups):
-            return tuple([
-                group for group in groups
-                if group.startswith(prefix)
-            ])
-
-        def build_prefix(ldap_role, sector):
-            return '{}-{}-'.format(ldap_role, sector)
-
-        def vocab_from_terms(*terms):
-            return SimpleVocabulary([
-                SimpleVocabulary.createTerm(key, key, value['title']) for
-                (key, value) in terms
-            ])
-
         user = get_valid_user()
 
         if user:
-            user_roles = api.user.get_roles(obj=context)
-            user_groups = tuple(user.getGroups())
-            user_has_sectors = tuple([
-                group for group in user_groups
-                if '-sector' in group
-            ])
-            user_is_lr_or_manager = set(user_roles).intersection(
-                (ROLE_LR, 'Manager'))
-
             ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
-            # if user has no 'sector' assignments, return all codes
-            # this results in sector experts having a filtered list while
-            # other users (e.g. MS, LR) will see all codes.
-            if not user_is_lr_or_manager and user_has_sectors:
+            user_groups = tuple(user.getGroups())
+            vocab_with_validate = check_user_for_vocab(context, user)
+            if vocab_with_validate:
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
                     nfr_codes(context).items() if validate_term(
+                    build_prefix(ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
+                    user_groups
+                    )
+                ))
+
+        return vocab_from_terms(*nfr_codes(context).items())
+
+
+@implementer(IVocabularyFactory)
+class NFRCodeInventories(object):
+    def __call__(self, context):
+        user = get_valid_user()
+
+        if user:
+            ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
+            user_groups = tuple(user.getGroups())
+            vocab_with_validate = check_user_for_vocab(context, user)
+            if vocab_with_validate:
+                return vocab_from_terms(*(
+                    (term_key, term) for (term_key, term) in
+                    nfr_codes(context, projection_inventory_codes=True).items()
+                    if validate_term(
                         build_prefix(ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
                         user_groups
                     )
                 ))
 
-        return vocab_from_terms(*nfr_codes(context).items())
+        return vocab_from_terms(
+            *nfr_codes(context, projection_inventory_codes=True).items()
+        )
 
 
 @implementer(IVocabularyFactory)

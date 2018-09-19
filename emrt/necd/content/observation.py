@@ -54,7 +54,6 @@ from .nfr_code_matching import get_category_value_from_nfr_code
 from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions
 )
-from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
@@ -63,11 +62,12 @@ from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.utils import activity_data_validator
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
+from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
-from plone.supermodel import model
-
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
+from plone.supermodel import model
+
 
 
 # Cache helper methods
@@ -155,7 +155,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
     country = schema.Choice(
         title=u"Country",
         vocabulary='emrt.necd.content.eea_member_states',
-        constraint=check_country,
+        # constraint=check_country,
         required=True,
     )
 
@@ -165,10 +165,27 @@ class IObservation(model.Schema, IImageScaleTraversable):
         required=True,
     )
 
+    nfr_code_inventory = schema.Choice(
+        title=u"NFR inventories category code",
+        vocabulary='emrt.necd.content.nfr_code_inventories',
+        required=False,
+    )
+
     year = schema.TextLine(
         title=u'Inventory year',
         required=True,
     )
+
+    # year = schema.List(
+    #     title=u'Projection year',
+    #     description=u"Projection year is the year or a list of years "
+    #                 u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
+    #                 u" occured for which an issue was observed in the review.",
+    #     value_type=schema.Choice(
+    #         values=[_(u'2020'), _(u'2025'), _(u'2030'), _(u'2040'), _(u'2050')]
+    #     ),
+    #     required=True,
+    # )
 
     form.widget(pollutants=CheckBoxFieldWidget)
     pollutants = schema.List(
@@ -306,9 +323,6 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         for group in groups:
             if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
                 valid = True
-        # In case of an inventory reviewfolder observation without a nfr_code #93528
-        if value is None:
-            valid = True
         if not valid:
             raise Invalid(
                 u'You are not allowed to add observations for this sector category'
@@ -895,18 +909,52 @@ class Observation(Container):
 # The view will render when you request a content object with this
 # interface with "/@@view" appended unless specified otherwise
 # This will make this view the default view for your content-type
+def set_form_widgets(obj):
+    obj.fields['IDublinCore.title'].field.required = False
+    w_activity_data = obj.widgets['activity_data']
+
+    if _is_projection(obj.context):
+        obj.widgets['fuel'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['activity_data_type'].template = \
+            Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
+
+        w_activity_data.template = Z3ViewPageTemplateFile(
+            'templates/widget_activity.pt'
+        )
+        w_activity_data.activity_data_registry = json.dumps(
+            get_registry_interface_field_data(
+                INECDVocabularies,
+                'activity_data'
+            )
+        )
+    else:
+        w_activity_data.mode = interfaces.HIDDEN_MODE
+        obj.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['pollutants'].template = Z3ViewPageTemplateFile(
+            'templates/widget_pollutants.pt'
+        )
+        nfr_w = obj.widgets['nfr_code']
+        nfr_w.field.title = nfr_w.field.title.replace(
+            u'projection ', u''
+        )
+        obj.widgets['nfr_code_inventory'].mode = interfaces.HIDDEN_MODE
+
+    obj.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
+    obj.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
+    obj.widgets['text'].rows = 15
+    obj.widgets['highlight'].template = Z3ViewPageTemplateFile(
+        'templates/widget_highlight.pt'
+    )
+    obj.groups = [
+        g for g in obj.groups if
+        g.label == 'label_schema_default'
+        ]
 
 
 class EditForm(edit.DefaultEditForm):
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
-
-        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
-            'templates/widget_highlight.pt'
-        )
-        self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
-            'templates/widget_pollutants.pt'
-        )
+        set_form_widgets(self)
 
 
 class AddForm(add.DefaultAddForm):
@@ -915,49 +963,7 @@ class AddForm(add.DefaultAddForm):
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
-        self.fields['IDublinCore.title'].field.required = False
-
-        w_activity_data = self.widgets['activity_data']
-
-        if _is_projection(self.context):
-            # self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
-            self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
-            self.widgets['activity_data_type'].template = \
-                Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
-
-            w_activity_data.template = Z3ViewPageTemplateFile(
-                'templates/widget_activity.pt'
-            )
-            w_activity_data.activity_data_registry = json.dumps(
-                get_registry_interface_field_data(
-                    INECDVocabularies,
-                    'activity_data'
-                )
-            )
-        else:
-            # self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
-            w_activity_data.mode = interfaces.HIDDEN_MODE
-            self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
-            self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
-                'templates/widget_pollutants.pt'
-            )
-            nfr_w = self.widgets['nfr_code']
-            nfr_w.field.title = nfr_w.field.title.replace(
-                u'projection', u'inventory'
-            )
-            self.fields['nfr_code'].field.required = False
-            nfr_w.required = False
-
-        self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
-        self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
-        self.widgets['text'].rows = 15
-        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
-            'templates/widget_highlight.pt'
-        )
-        self.groups = [
-            g for g in self.groups if
-            g.label == 'label_schema_default'
-        ]
+        set_form_widgets(self)
 
     def updateActions(self):
         super(AddForm, self).updateActions()
@@ -976,8 +982,6 @@ class AddForm(add.DefaultAddForm):
 
             activity_data_validator(self.context, activity_data_type,
                                     activity_data)
-
-
         return super(AddForm, self).create(data)
 
 

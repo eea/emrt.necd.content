@@ -43,7 +43,7 @@ class INECDSettings(Interface):
     )
 
 
-def nfr_codes(context):
+def nfr_codes(context, projection_inventory_codes=None):
     """ get the NFR code mapping from portal_registry
         @retrun a dictionary
         {
@@ -59,7 +59,7 @@ def nfr_codes(context):
     registry = getUtility(IRegistry)
     nfrcodeInterface = registry.forInterface(INECDSettings)
 
-    if context.type == 'projection' :
+    if context.type == 'projection' and projection_inventory_codes==None:
         nfrcodeMapping = nfrcodeInterface.nfrcodeMapping_projection
     else:
         nfrcodeMapping = nfrcodeInterface.nfrcodeMapping
