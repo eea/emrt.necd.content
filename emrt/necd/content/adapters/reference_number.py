@@ -25,7 +25,8 @@ class ReferenceNumberCreator(NormalizingNameChooser):
         parent = self.context
         items = []
         items.append(object.country.upper())
-        items.append(object.nfr_code)
+        if object.nfr_code:
+            items.append(object.nfr_code)
         items.append(str(object.review_year))
         prename = '-'.join(items)
         number = 1

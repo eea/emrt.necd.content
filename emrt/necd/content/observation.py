@@ -70,19 +70,6 @@ from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
 
 
-YEAR_DESCRIPTION_PROJECTION = u"Inventory year is the year or a list of " \
-                              u"years (e.g. '2050', '2020, 2025, 2030') when" \
-                              u" the emissions had occured for which an issue" \
-                              u" was observed in the review. The allowed " \
-                              u"values are: 2020, 2025, 2030, 2040 or 2050."
-
-YEAR_DESCRIPTION_INVENTORY = u"Inventory year is the year, a range or a list " \
-                             u"of years (e.g. '2012', '2009-2012', " \
-                             u"'2009, 2012, 2013') when the emissions had " \
-                             u"occured for which an issue was observed in the" \
-                             u" review."
-
-
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time() // 86400)
@@ -98,27 +85,9 @@ def check_parameter(value):
     return True
 
 
-def check_nfr_code(value):
-    """ Check if the user is in one of the group of users
-        allowed to add this category NFR Code observations
-    """
-    category = get_category_ldap_from_nfr_code(value)
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this sector category'
-        )
-
+def check_country(value):
     return True
 
-
-def check_country(value):
     user = api.user.get_current()
     groups = user.getGroups()
     valid = False
@@ -193,9 +162,8 @@ class IObservation(model.Schema, IImageScaleTraversable):
     )
 
     nfr_code = schema.Choice(
-        title=u"NFR category codes",
+        title=u"NFR projection category codes",
         vocabulary='emrt.necd.content.nfr_code',
-        constraint=check_nfr_code,
         required=True,
     )
 
@@ -356,12 +324,13 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         for group in groups:
             if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
                 valid = True
-
+        # In case of an inventory reviewfolder observation without a nfr_code #93528
+        if value is None:
+            valid = True
         if not valid:
             raise Invalid(
                 u'You are not allowed to add observations for this sector category'
             )
-
 
 validator.WidgetValidatorDiscriminators(
     NfrCodeContextValidator,
@@ -957,6 +926,7 @@ class EditForm(edit.DefaultEditForm):
             'templates/widget_pollutants.pt'
         )
 
+
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
@@ -968,7 +938,7 @@ class AddForm(add.DefaultAddForm):
         w_activity_data = self.widgets['activity_data']
 
         if _is_projection(self.context):
-            self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
+            # self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
             self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].template = \
                 Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
@@ -983,12 +953,18 @@ class AddForm(add.DefaultAddForm):
                 )
             )
         else:
-            self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
+            # self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
             w_activity_data.mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
             self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
                 'templates/widget_pollutants.pt'
             )
+            nfr_w = self.widgets['nfr_code']
+            nfr_w.field.title = nfr_w.field.title.replace(
+                u'projection', u'inventory'
+            )
+            self.fields['nfr_code'].field.required = False
+            nfr_w.required = False
 
         self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
         self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
@@ -1604,7 +1580,7 @@ class ModificationForm(edit.DefaultEditForm):
         w_activity_data = self.widgets['activity_data']
 
         if _is_projection(self.context):
-            self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
+            # self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
             self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].template = \
                 Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
@@ -1618,7 +1594,7 @@ class ModificationForm(edit.DefaultEditForm):
                 )
             )
         else:
-            self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
+            # self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
             self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
             self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
