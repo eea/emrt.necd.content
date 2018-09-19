@@ -86,8 +86,6 @@ def check_parameter(value):
 
 
 def check_country(value):
-    return True
-
     user = api.user.get_current()
     groups = user.getGroups()
     valid = False
@@ -261,22 +259,6 @@ def check_parameter(value):
 def check_pollutants(value):
     if len(value) == 0:
         raise Invalid(u'You need to select at least one pollutant')
-
-
-@form.validator(field=IObservation['country'])
-def check_country(value):
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
-                group.endswith('-%s' % value):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this country'
-        )
 
 
 @form.validator(field=IObservation['year'])
