@@ -323,10 +323,10 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         for group in groups:
             if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
                 valid = True
-        if not valid:
-            raise Invalid(
-                u'You are not allowed to add observations for this sector category'
-            )
+        # if not valid:
+        #     raise Invalid(
+        #         u'You are not allowed to add observations for this sector category'
+        #     )
 
 validator.WidgetValidatorDiscriminators(
     NfrCodeContextValidator,

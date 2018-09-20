@@ -312,7 +312,15 @@
         </div>
       </div>
       <tal:is_projection condition="python:view.is_projection()">
+        <tal:nfr2 condition="context/nfr_code_inventory">
           <div class="row observation-details" style="display:none;padding-top:15px">
+            <div class="cell position-0 width-16 esdLabel">NFR inventories category code</div>
+          </div>
+          <div class="row observation-details" style="display:none">
+            <div class="cell position-0 width-16" tal:content="context/nfr_code_inventory">NFR inventories code</div>
+          </div>
+        </tal:nfr2>
+        <div class="row observation-details" style="display:none;padding-top:15px">
             <div class="cell position-0 width-16 esdLabel">Activity Data</div>
           </div>
           <div class="row observation-details" style="display:none">
