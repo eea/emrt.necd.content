@@ -197,6 +197,7 @@
       <element key="NH3">NH3</element>
       <element key="NMVOC">NMVOC</element>
       <element key="PM2.5">PM2.5</element>
+      <element key="BC">BC</element>
     </value>
   </record>
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection">
