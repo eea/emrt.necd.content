@@ -64,7 +64,6 @@
   <adapter name="observation_status" factory=".indexers.observation_status" />
 
   <!--Context form validators-->
-  <adapter factory=".observation.InventoryYearContextValidator" />
   <adapter factory=".observation.NfrCodeContextValidator" />
 
   <!-- ReviewFolder custom add form -->

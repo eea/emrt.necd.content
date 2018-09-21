@@ -184,6 +184,7 @@
                   filter += encodeArrForRequest("sectorId", $('#sectorFilter').val());
                 }
                 window.location.href = window.location.pathname + filter;
+                debugger;
 
             });
 
@@ -241,11 +242,13 @@
           </div>
         </div>
       </div>
-      <div id="filters" tal:define="is_lr view/is_lr">
+      <div id="filters" tal:define="is_lr view/is_lr;
+                                    is_projection python:context.type=='projection';
+                                    year_range python: '(e.g. 2050, 2020, 2025, 2030)' if is_projection else '(e.g. 2012, 2009-2012)'">
         <div class="row" style="padding-top:25px">
           <div class="cell position-1 width-3 esdLabel">Country</div>
           <div class="cell position-4 width-3 esdLabel tooltipIconBlue" title="Review year is the year in which the emissions inventory was submitted and the review was carried out.">Review year</div>
-          <div class="cell position-7 width-3 esdLabel tooltipIconBlue" title="Inventory year is the year or a range of years (e.g. '2012', '2009-2012') in which the emissions occured and an issue was observed in the review.">Inventory year</div>
+          <div class="cell position-7 width-3 esdLabel tooltipIconBlue" title="${python: context.type.title()} year is the year or a range of years ${year_range} in which the emissions occured and an issue was observed in the review.">${python: context.type.title()} year</div>
           <div class="cell position-11 width-3 esdLabel tooltipIconBlue" title="Key flags highlight important information that is closely related to the item.">Description flags</div>
         </div>
         <div class="row">
@@ -276,7 +279,7 @@
             </select>
           </div>
           <div class="cell position-7 width-3">
-            <select id="inventoryYearFilter" class="chosen-select" data-placeholder="Select inventory year">
+            <select id="inventoryYearFilter" class="chosen-select" data-placeholder="Select ${context/type} year">
               <option></option>
               <tal:block tal:repeat="item view/get_inventory_years">
                 <option

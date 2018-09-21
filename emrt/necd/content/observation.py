@@ -10,17 +10,20 @@ from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
+from Acquisition import aq_base
+from Acquisition.interfaces import IAcquirer
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.app.discussion.interfaces import IConversation
 from plone.dexterity.content import Container
 from plone.directives import form
-from plone.memoize import instance
 from plone.namedfile.interfaces import IImageScaleTraversable
+from plone.supermodel import model
 from plone.z3cform.interfaces import IWrappedForm
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
@@ -40,11 +43,14 @@ from zope.browsermenu.menu import getMenu
 from zope.browserpage.viewpagetemplatefile import (
     ViewPageTemplateFile as Z3ViewPageTemplateFile
 )
+from zope.component import createObject
 from zope.component import getUtility
+from zope.event import notify
 from zope.i18n import translate
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import Invalid
+from zope.lifecycleevent import ObjectModifiedEvent
 from emrt.necd.content import MessageFactory as _
 from eea.cache import cache
 from .comment import IComment
@@ -66,8 +72,6 @@ from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
-from plone.supermodel import model
-
 
 
 # Cache helper methods
@@ -107,7 +111,6 @@ def inventory_year(value):
     Inventory year can be a given year (2014), a range of years (2012-2014)
     or a list of the years (2012, 2014, 2016)
     """
-
     def split_on_sep(val, sep):
         for s in sep:
             if s in val:
@@ -139,7 +142,6 @@ class IObservation(model.Schema, IImageScaleTraversable):
     """
     New review observation
     """
-
     text = schema.Text(
         title=u'Short description by sector expert',
         required=True,
@@ -175,17 +177,6 @@ class IObservation(model.Schema, IImageScaleTraversable):
         title=u'Inventory year',
         required=True,
     )
-
-    # year = schema.List(
-    #     title=u'Projection year',
-    #     description=u"Projection year is the year or a list of years "
-    #                 u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
-    #                 u" occured for which an issue was observed in the review.",
-    #     value_type=schema.Choice(
-    #         values=[_(u'2020'), _(u'2025'), _(u'2030'), _(u'2040'), _(u'2050')]
-    #     ),
-    #     required=True,
-    # )
 
     form.widget(pollutants=CheckBoxFieldWidget)
     pollutants = schema.List(
@@ -334,28 +325,6 @@ validator.WidgetValidatorDiscriminators(
 )
 
 
-class InventoryYearContextValidator(validator.SimpleFieldValidator):
-    def validate(self, value, force=False):
-
-        if _is_projection(self.context):
-            allowed_years = ['2020', '2025', '2030', '2040', '2050']
-
-            if value is None :
-                # Assume empty string = no input
-                return
-
-            value = [val.strip() for val in value.split(',')]
-
-            if not set(value).issubset(allowed_years):
-                raise Invalid(_(u'The entered value is not correct.'))
-
-
-validator.WidgetValidatorDiscriminators(
-    InventoryYearContextValidator,
-    field=IObservation['year']
-)
-
-
 def set_title_to_observation(object, event):
     sector = safe_unicode(object.ghg_source_category_value())
     pollutants = safe_unicode(object.pollutants_value())
@@ -381,7 +350,6 @@ class Observation(Container):
             )
         else:
             return self.listFolderContents()
-
 
     def get_nfr_code(self):
         """ stupid method to avoid name-clashes with the existing
@@ -434,11 +402,13 @@ class Observation(Container):
         return u', '.join(filter(None, pollutants))
 
     def activity_data_value(self):
-        activities = [
-            get_vocabulary_value(self, 'emrt.necd.content.activity_data', ad)
-            for ad in self.activity_data
+        if self.activity_data:
+            activities = [
+                get_vocabulary_value(self, 'emrt.necd.content.activity_data', ad)
+                for ad in self.activity_data
             ]
-        return activities
+            return activities
+        return []
 
     def highlight_value(self):
         if self.highlight:
@@ -610,7 +580,6 @@ class Observation(Container):
         obs_status = self.observation_status()
 
         return tuple(['Answered'] * (len_comments - 1) + [obs_status])
-
 
     def overview_status(self):
         status = self.get_status()
@@ -912,12 +881,11 @@ class Observation(Container):
 def set_form_widgets(obj):
     obj.fields['IDublinCore.title'].field.required = False
     w_activity_data = obj.widgets['activity_data']
-
     if _is_projection(obj.context):
         obj.widgets['fuel'].mode = interfaces.HIDDEN_MODE
-        obj.widgets['activity_data_type'].template = \
-            Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
-
+        obj.widgets['activity_data_type'].template = Z3ViewPageTemplateFile(
+            'templates/widget_activity_type.pt'
+        )
         w_activity_data.template = Z3ViewPageTemplateFile(
             'templates/widget_activity.pt'
         )
@@ -951,15 +919,72 @@ def set_form_widgets(obj):
         ]
 
 
+def set_form_fields(obj):
+    if _is_projection(obj.context):
+        obj.fields['year'].field = schema.List(
+            title=u'Projection year',
+            description=u"Projection year is the year or a list of years "
+                        u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
+                        u" occured for which an issue was observed in the review.",
+            value_type=schema.Choice(
+                values=[_(u'2020'), _(u'2025'), _(u'2030'), _(u'2040'),
+                        _(u'2050')]
+            ),
+            required=True,
+        )
+        obj.fields['year'].widgetFactory = CheckBoxFieldWidget
+
+
 class EditForm(edit.DefaultEditForm):
+    def updateFields(self):
+        super(EditForm, self).updateFields()
+        set_form_fields(self)
+
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
         set_form_widgets(self)
+        if _is_projection(self.context):
+            for item in self.widgets['year'].items:
+                if item['value'] in self.context.year:
+                    item['checked'] = True
+
+    def updateActions(self):
+        super(EditForm, self).updateActions()
+        for k in self.actions.keys():
+            self.actions[k].addClass('standardButton')
+
+    @button.buttonAndHandler(_(u'Save'), name='save')
+    def handleApply(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        data['year'] = u','.join(data['year'])
+        content = self.getContent()
+        container = self.context.aq_parent
+        for key, value in data.items():
+            if data[key] is interfaces.NOT_CHANGED:
+                continue
+            content._setPropValue(key, value)
+        IStatusMessage(self.request).addStatusMessage(
+            self.success_message, u"info"
+        )
+        self.request.response.redirect(self.nextURL())
+
+        notify(ObjectModifiedEvent(content))
+
+    @button.buttonAndHandler(_(u'Cancel'), name='cancel')
+    def handleCancel(self, action):
+        super(EditForm, self).handleCancel(self, action)
 
 
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
+
+    def updateFields(self):
+        super(AddForm, self).updateFields()
+        set_form_fields(self)
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
@@ -970,19 +995,35 @@ class AddForm(add.DefaultAddForm):
         self.actions['save'].title = u'Save Observation'
         self.actions['save'].addClass('defaultWFButton')
         self.actions['cancel'].title = u'Delete Observation'
-
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
 
-    def create(self, data={}):
+    def create(self, data):
         if _is_projection(self.context):
-
             activity_data = data['activity_data']
             activity_data_type = data['activity_data_type']
-
+            data['year'] = ','.join(data['year'])
             activity_data_validator(self.context, activity_data_type,
                                     activity_data)
-        return super(AddForm, self).create(data)
+
+        fti = getUtility(IDexterityFTI, name=self.portal_type)
+        container = aq_inner(self.context)
+        content = createObject(fti.factory)
+        if hasattr(content, '_setPortalTypeName'):
+            content._setPortalTypeName(fti.getId())
+
+        # Acquisition wrap temporarily to satisfy things like vocabularies
+        # depending on tools
+        if IAcquirer.providedBy(content):
+            content = content.__of__(container)
+        id = str(int(time()))
+        content.title = id
+        content.id = id
+        for key, value in data.items():
+            content._setPropValue(key, value)
+        notify(ObjectModifiedEvent(container))
+
+        return aq_base(content)
 
 
 class AddView(add.DefaultAddView):

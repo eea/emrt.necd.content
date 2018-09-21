@@ -256,7 +256,8 @@
         <tal:is_projection condition="python:view.is_projection()">
           <div class="cell position-10 width-2 esdLabel">Activity Data Type</div>
         </tal:is_projection>
-        <div class="cell position-12 width-2 esdLabel">Inventory year</div>
+        <div class="cell position-12 width-2 esdLabel" tal:condition="python: not view.is_projection()">Inventory year</div>
+        <div class="cell position-12 width-2 esdLabel" tal:condition="python: view.is_projection()">Projection year</div>
       </div>
       <div class="row">
         <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
