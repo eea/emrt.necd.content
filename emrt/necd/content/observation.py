@@ -81,13 +81,11 @@ def _user_name(fun, self, userid):
 def _is_projection(context):
     return context.type == 'projection'
 
-
 def check_parameter(value):
     if len(value) == 0:
         raise Invalid(u'You need to select at least one parameter')
 
     return True
-
 
 def check_country(value):
     user = api.user.get_current()
@@ -119,7 +117,9 @@ def inventory_year(value):
 
     def validate(value):
         normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
-        return False not in (int(val) > 0 for val in normalized_value)
+        return False not in (
+            int(val) in range(1000,10000) for val in normalized_value
+        )
 
     def check_valid(value):
         try:
@@ -131,7 +131,6 @@ def inventory_year(value):
         raise Invalid(u'Inventory year format is not correct. ')
 
     return True
-
 
 def default_year():
     return datetime.datetime.now().year
@@ -175,6 +174,10 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     year = schema.TextLine(
         title=u'Inventory year',
+        description=u'Inventory year can be a given year (2014), a range of '
+                    u'years (2012-2014) or a list of the years '
+                    u'(2012, 2014, 2016)',
+        constraint=inventory_year,
         required=True,
     )
 
@@ -255,51 +258,6 @@ class IObservation(model.Schema, IImageScaleTraversable):
         title=u'Finish deny comments',
         required=False,
     )
-
-
-@form.validator(field=IObservation['parameter'])
-def check_parameter(value):
-    if len(value) == 0:
-        raise Invalid(u'You need to select at least one parameter')
-
-
-@form.validator(field=IObservation['pollutants'])
-def check_pollutants(value):
-    if len(value) == 0:
-        raise Invalid(u'You need to select at least one pollutant')
-
-
-@form.validator(field=IObservation['year'])
-def inventory_year(value):
-    """
-    Inventory year can be a given year (2014), a range of years (2012-2014)
-    or a list of the years (2012, 2014, 2016).
-    In the case of a 'Projection' ReviewFolder the values must be:
-    2020, 2025, 2030, 2040 or 2050.
-    """
-    def split_on_sep(val, sep):
-        for s in sep:
-            if s in val:
-                return tuple(val.split(s))
-        return (val, )
-
-    def validate(value):
-        normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
-        return False not in (int(val) > 0 for val in normalized_value)
-
-    def check_valid(value):
-        try:
-            return validate(value)
-        except ValueError:
-            return False
-
-    if not check_valid(value):
-        raise Invalid(u'Inventory year format is not correct. ')
-
-
-@form.default_value(field=IObservation['review_year'])
-def default_year(data):
-    return datetime.datetime.now().year
 
 
 class NfrCodeContextValidator(validator.SimpleFieldValidator):
