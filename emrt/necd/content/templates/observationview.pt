@@ -252,12 +252,13 @@
         <div class="cell position-8 width-2 esdLabel">Pollutants</div>
         <tal:is_inventory condition="python:not view.is_projection()">
           <div class="cell position-10 width-2 esdLabel">Fuel</div>
+          <div class="cell position-12 width-2 esdLabel">Inventory year</div>
         </tal:is_inventory>
         <tal:is_projection condition="python:view.is_projection()">
           <div class="cell position-10 width-2 esdLabel">Activity Data Type</div>
+          <div class="cell position-12 width-2 esdLabel">Projection year</div>
+          <div class="cell position-14 width-2 esdLabel">Reference year</div>
         </tal:is_projection>
-        <div class="cell position-12 width-2 esdLabel" tal:condition="python: not view.is_projection()">Inventory year</div>
-        <div class="cell position-12 width-2 esdLabel" tal:condition="python: view.is_projection()">Projection year</div>
       </div>
       <div class="row">
         <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
@@ -270,6 +271,7 @@
         </tal:is_inventory>
         <tal:is_projection condition="python:view.is_projection()">
           <div class="cell position-10 width-2" tal:content="context/activity_data_type"></div>
+          <div class="cell position-14 width-2" tal:content="context/reference_year">Reference year placeholder</div>
         </tal:is_projection>
         <div class="cell position-12 width-2" tal:content="context/year">Year of emission</div>
       </div>
@@ -282,13 +284,13 @@
       <div class="row observation-details" style="display:none;padding-top:15px">
         <div class="cell position-0 width-2 esdLabel">Review Year</div>
         <div class="cell position-2 width-5 esdLabel">Parameter</div>
-        <div class="cell position-7 width-4 esdLabel">Key category</div>
+        <div class="cell position-7 width-2 esdLabel">Key category</div>
         <div class="cell position-11 width-4 esdLabel">Last update</div>
       </div>
       <div class="row observation-details" style="display:none">
         <div class="cell position-0 width-2" tal:content="context/review_year">Year</div>
         <div class="cell position-2 width-5" tal:content="context/parameter_value">Parameter</div>
-        <div class="cell position-7 width-4">
+        <div class="cell position-7 width-2">
           <span tal:condition="here/ms_key_category|nothing">
               MS Key category
           </span><br tal:condition="here/ms_key_category|nothing"/>

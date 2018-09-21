@@ -181,6 +181,13 @@ class IObservation(model.Schema, IImageScaleTraversable):
         required=True,
     )
 
+    reference_year = schema.Int(
+        title=u'Reference year',
+        required=True,
+        min=1000,
+        max=9999
+    )
+
     form.widget(pollutants=CheckBoxFieldWidget)
     pollutants = schema.List(
         title=u"Pollutants",
@@ -856,6 +863,7 @@ def set_form_widgets(obj):
     else:
         w_activity_data.mode = interfaces.HIDDEN_MODE
         obj.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['reference_year'].mode = interfaces.HIDDEN_MODE
         obj.widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
@@ -919,7 +927,6 @@ class EditForm(edit.DefaultEditForm):
             return
         data['year'] = u','.join(data['year'])
         content = self.getContent()
-        container = self.context.aq_parent
         for key, value in data.items():
             if data[key] is interfaces.NOT_CHANGED:
                 continue
