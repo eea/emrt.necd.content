@@ -493,8 +493,8 @@
 
    <genericsetup:upgradeDepends
       title="Reimport missing vocabularies."
-      description="[refs #93528] Updated parameter vocabulary"
-      import_steps="emrt.necd.content.setup.vocabularies"
+      description="[refs #93528] Updated parameter vocabulary, adding new vocabularies, importing registry"
+      import_steps="emrt.necd.content.setup.vocabularies plone.app.registry"
     />
   </genericsetup:upgradeSteps>
 
