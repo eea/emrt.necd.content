@@ -197,6 +197,15 @@ class IObservation(model.Schema, IImageScaleTraversable):
         required=True,
     )
 
+    form.widget(scenario=CheckBoxFieldWidget)
+    scenario = schema.List(
+        title=u"Scenario Type",
+        value_type=schema.Choice(
+            vocabulary='emrt.necd.content.scenario_type'
+        ),
+        required=False,
+    )
+
     review_year = schema.Int(
         title=u'Review year',
         description=u'Review year is the year in which the inventory was ' \
@@ -382,6 +391,15 @@ class Observation(Container):
                 for h in self.highlight
                 ]
             return u', '.join(highlight)
+        return u''
+
+    def scenario_type_value(self):
+        if self.scenario:
+            scenario = [
+                get_vocabulary_value(self,'emrt.necd.content.scenario_type',s)
+                for s in self.scenario
+                ]
+            return u', '.join(scenario)
         return u''
 
     def finish_reason_value(self):
@@ -862,6 +880,7 @@ def set_form_widgets(obj):
         )
     else:
         w_activity_data.mode = interfaces.HIDDEN_MODE
+        obj.widgets['scenario'].mode = interfaces.HIDDEN_MODE
         obj.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
         obj.widgets['reference_year'].mode = interfaces.HIDDEN_MODE
         obj.widgets['pollutants'].template = Z3ViewPageTemplateFile(
@@ -899,6 +918,8 @@ def set_form_fields(obj):
             required=True,
         )
         obj.fields['year'].widgetFactory = CheckBoxFieldWidget
+    else:
+        obj.fields['reference_year'].field.required = False
 
 
 class EditForm(edit.DefaultEditForm):
