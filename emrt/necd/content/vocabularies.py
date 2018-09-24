@@ -337,4 +337,20 @@ class ActivityDataType(object):
         return SimpleVocabulary(terms)
 
 
+@implementer(IVocabularyFactory)
+class ScenarioType(object):
+
+    def __call__(self, context):
+        pvoc = api.portal.get_tool('portal_vocabularies')
+        voc = pvoc.getVocabularyByName('scenario_type')
+        terms = []
+
+        if voc is not None:
+            for key, value in voc.getVocabularyLines():
+                # create a term - the arguments are the value, the token, and
+                # the title (optional)
+                terms.append(SimpleVocabulary.createTerm(key, key, value))
+        return SimpleVocabulary(terms)
+
+
 

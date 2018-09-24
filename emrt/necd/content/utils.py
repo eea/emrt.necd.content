@@ -1,4 +1,6 @@
 import concurrent.futures
+import json
+import string
 from operator import itemgetter
 
 from zope.component import getUtility
@@ -98,7 +100,7 @@ def activity_data_validator(context, type, activity):
                                                  u"activity before selecting "
                                                  u"an activity")
                                          )
-    elif not activity and type:
+    elif not activity and type and type != u'Other':
         raise WidgetActionExecutionError('activity_data',
                                          Invalid(u"Please select an activity"
                                                  u" after you've selected an "

@@ -72,4 +72,8 @@
     factory=".vocabularies.ActivityDataType"
     />
 
+  <utility
+    name="emrt.necd.content.scenario_type"
+    factory=".vocabularies.ScenarioType"
+    />
 </configure>

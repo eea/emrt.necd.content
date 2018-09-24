@@ -297,6 +297,14 @@
         </div>
         <div class="cell position-11 width-4" tal:content="python:context.modified().strftime('%d %b %Y, %H:%M CET')">Last update</div>
       </div>
+      <tal:scenario condition="view/is_projection">
+        <div class="row observation-details" style="display:none;padding-top:15px">
+          <div class="cell position-0 width-16 esdLabel">Scenario Type</div>
+        </div>
+        <div class="row observation-details" style="display:none;">
+          <div class="cell position-0 width-16" tal:content="context/scenario_type_value">Scenario Type</div>
+        </div>
+      </tal:scenario>
       <div class="row observation-details" style="display:none;padding-top:15px">
         <div class="cell position-0 width-16 esdLabel">Description flags</div>
       </div>
