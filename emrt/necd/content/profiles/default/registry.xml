@@ -310,6 +310,7 @@
         <element>Municipal solid waste disposed incinerated [in tonnes or %]</element>
         <element>Municipal solid waste disposed composted [in tonnes or %]</element>
       </element>
+      <element key="Other"></element>
     </value>
   </record>
 </registry>

@@ -71,8 +71,7 @@
         $('input[name*="${view/name}:list"]:checked').each(function(){
           $(this).prop('checked', false);
         })
-
-        if(e.detail.new_value == '--NOVALUE--'){
+        if(e.detail.new_value == '--NOVALUE--' || e.detail.new_value == 'Other'){
           $('.activity-data-options').hide();
           $('label[for=form-widgets-activity_data]').hide();
         }
