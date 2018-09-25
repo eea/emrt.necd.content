@@ -25,6 +25,14 @@
   <indexed_attr value="Status_Flag"/>
  </index>
 
+ <index name="nfr_code" meta_type="FieldIndex">
+  <indexed_attr value="NFR_Code"/>
+ </index>
+
+ <index name="ghg_source_sectors" meta_type="FieldIndex">
+  <indexed_attr value="GHG_Source_Sectors"/>
+ </index>
+
  <index name="highlight" meta_type="KeywordIndex">
   <indexed_attr value="get_highlight"/>
  </index>
