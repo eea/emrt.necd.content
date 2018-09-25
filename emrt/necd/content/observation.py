@@ -1593,7 +1593,6 @@ class ModificationForm(edit.DefaultEditForm):
         w_activity_data = self.widgets['activity_data']
 
         if _is_projection(self.context):
-            # self.fields['year'].field.description = YEAR_DESCRIPTION_PROJECTION
             self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].template = \
                 Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
@@ -1607,7 +1606,6 @@ class ModificationForm(edit.DefaultEditForm):
                 )
             )
         else:
-            # self.fields['year'].field.description = YEAR_DESCRIPTION_INVENTORY
             self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
             self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
             self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
