@@ -241,7 +241,7 @@
       <element key="General economic parameters">
         <element>Gross Domestic Product (GDP) [10^9 €]</element>
         <element>Population [Thousand People]</element>
-        <element>International coal prices [€ per tonne or GJ (Gigajoule), Other please specify]</element>
+        <element>International coal prices [€ per tonne or GJ (Gigajoule) - Other please specify]</element>
         <element>International oil prices [€ per barrel or GJ]</element>
         <element>International gas prices [€ per m3 or GJ]</element>
       </element>
@@ -252,7 +252,7 @@
         <element>Biomass without liquid biofuels (e.g. wood) [Petajoule (PJ)]</element>
         <element>Liquid biofuels (e.g. bio-oils) [Petajoule (PJ)]</element>
         <element>Solar [Petajoule (PJ)]</element>
-        <element>Other renewable (wind, geothermal etc.) [Petajoule (PJ)]</element>
+        <element>Other renewable (wind; geothermal etc.) [Petajoule (PJ)]</element>
       </element>
       <element key="Total electricity production by fuel type">
         <element>Oil (fossil) [GWh]</element>
@@ -304,7 +304,7 @@
         <element>Area of crop [Hectare [tonnes]]</element>
       </element>
       <element key="Waste">
-        <element>Waste generation [Tonnes total or tonnes / capita]</element>
+        <element>Waste generation [Tonnes total or tonnes / capital]</element>
         <element>The organic fractions of municipal solid waste [%]</element>
         <element>Municipal solid waste disposed to landfills [in tonnes or %]</element>
         <element>Municipal solid waste disposed incinerated [in tonnes or %]</element>
