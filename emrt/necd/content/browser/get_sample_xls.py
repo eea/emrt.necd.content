@@ -88,7 +88,6 @@ class GetSampleXLS(BrowserView):
             if is_projection:
                 nfr_i = next(nfr_inventories)
                 activity_type = next(act_type)
-                activity = None
                 if activity_type != None:
                     activity = u'\n'.join(activity_data[activity_type]).encode('utf-8')
                 scenario_type = next(scenario)
