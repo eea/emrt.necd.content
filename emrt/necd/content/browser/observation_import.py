@@ -48,9 +48,10 @@ def get_constants(context):
     XLS_COLS['country'] = partial(_read_row, 1)
     XLS_COLS['nfr_code'] = partial(_read_row, 2)
     idx = 3
-    projection_cols = ['nfr_inventories', 'year', 'ref_year', 'pollutants',
-                       'scenario', 'review_year', 'activity_type',
-                       'activity', 'ms_key_category', 'parameter', 'highlight']
+    projection_cols = ['nfr_code_inventory', 'year', 'reference_year',
+                       'pollutants', 'scenario', 'review_year',
+                       'activity_data_type', 'activity_data', 'ms_key_category',
+                       'parameter', 'highlight']
     inventory_cols = ['year', 'pollutants', 'review_year', 'fuel',
                       'ms_key_category', 'parameter', 'highlight']
 
@@ -123,8 +124,8 @@ class Entry(object):
         return self.constants['nfr_code'](self.row)
 
     @property
-    def nfr_inventories(self):
-        nfr = self.constants['nfr_inventories'](self.row)
+    def nfr_code_inventory(self):
+        nfr = self.constants['nfr_code_inventory'](self.row)
         return nfr if nfr != '' else None
 
     @property
@@ -132,16 +133,16 @@ class Entry(object):
         # Projection year
         if len(self.constants) > 10:
             years = _multi_rows(self.constants['year'](self.row))
-            proj_years = set([u'2020', u'2025', u'2030', u'2040', u'2050'])
-            is_correct = bool(set(years) & proj_years)
+            proj_years = [u'2020', u'2025', u'2030', u'2040', u'2050']
+            is_correct = bool(set(years) & set(proj_years))
             return u','.join(years) if is_correct else False
 
         # Inventory year
         return self.constants['year'](self.row)
 
     @property
-    def ref_year(self):
-        return self.constants['ref_year'](self.row)
+    def reference_year(self):
+        return int(self.constants['reference_year'](self.row))
 
     @property
     def pollutants(self):
@@ -171,9 +172,9 @@ class Entry(object):
         return int(self.constants['review_year'](self.row))
 
     @property
-    def activity_type(self):
+    def activity_data_type(self):
         activity_voc = get_registry_voc('activity_data').keys()
-        cell_value = self.constants['activity_type'](self.row)
+        cell_value = self.constants['activity_data_type'](self.row)
         if cell_value == '':
             return None
         if cell_value not in activity_voc:
@@ -181,9 +182,9 @@ class Entry(object):
         return cell_value
 
     @property
-    def activity(self):
+    def activity_data(self):
         activity_voc = get_registry_voc('activity_data').values()
-        cell_value = _multi_rows(self.constants['activity'](self.row))
+        cell_value = _multi_rows(self.constants['activity_data'](self.row))
         if cell_value == ('',):
             return None
         keys = [key if key in chain(*activity_voc)
@@ -307,7 +308,6 @@ class ObservationXLSImport(BrowserView):
         # skip the document header
         valid_rows = islice(sheet, 1, max-1)
 
-        # entries = map(Entry, valid_rows)
         entries = []
         for row in valid_rows:
             entries.append(Entry(row, get_constants(self.context.type)))
