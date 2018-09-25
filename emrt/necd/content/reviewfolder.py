@@ -268,7 +268,10 @@ class ReviewFolderMixin(BrowserView):
 
     def get_highlights(self):
         vtool = getToolByName(self, 'portal_vocabularies')
-        voc = vtool.getVocabularyByName('highlight')
+        if self.context.type == 'inventory':
+            voc = vtool.getVocabularyByName('highlight')
+        else:
+            voc = vtool.getVocabularyByName('highlight_projection')
         highlights = []
         voc_terms = voc.getDisplayList(self).items()
         for term in voc_terms:
