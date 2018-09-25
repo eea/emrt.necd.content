@@ -9,6 +9,10 @@
   <indexed_attr value="NFR_Code"/>
  </index>
 
+ <index name="NFR_Code_Inventory" meta_type="FieldIndex">
+  <indexed_attr value="NFR_Code_Inventory"/>
+ </index>
+
  <index name="GHG_Source_Category" meta_type="FieldIndex">
   <indexed_attr value="GHG_Source_Category"/>
  </index>
@@ -19,14 +23,6 @@
 
  <index name="Status_Flag" meta_type="FieldIndex">
   <indexed_attr value="Status_Flag"/>
- </index>
-
- <index name="nfr_code" meta_type="FieldIndex">
-  <indexed_attr value="NFR_Code"/>
- </index>
-
- <index name="ghg_source_sectors" meta_type="FieldIndex">
-  <indexed_attr value="GHG_Source_Sectors"/>
  </index>
 
  <index name="highlight" meta_type="KeywordIndex">
@@ -43,6 +39,10 @@
 
  <index name="review_year" meta_type="FieldIndex">
     <indexed_attr value="review_year"/>
+ </index>
+
+ <index name="reference_year" meta_type="FieldIndex">
+    <indexed_attr value="reference_year"/>
  </index>
 
  <index name="last_question_reply_number" meta_type="FieldIndex">

@@ -27,6 +27,11 @@ def observation_nfr_code(context):
 
 
 @indexer(IObservation)
+def observation_nfr_code_inventory(context):
+    return context.nfr_code_inventory
+
+
+@indexer(IObservation)
 def observation_ghg_source_category(context):
     return context.ghg_source_category_value()
 
@@ -44,6 +49,11 @@ def observation_status_flag(context):
 @indexer(IObservation)
 def observation_year(context):
     return context.year
+
+
+@indexer(IObservation)
+def observation_reference_year(context):
+    return str(context.reference_year)
 
 
 @indexer(IObservation)
