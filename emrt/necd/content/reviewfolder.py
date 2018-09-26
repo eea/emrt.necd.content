@@ -393,9 +393,15 @@ EXPORT_FIELDS = OrderedDict([
     ('get_is_time_series_inconsistency', 'Is time series inconsistency'),
     ('get_is_not_estimated', 'Is not estimated'),
     ('nfr_code_value', 'NFR Code'),
+    ('nfr_inventories_code', 'NFR Inventories Category Code'),
     ('review_year', 'Review Year'),
-    ('year', 'Inventory year'),
+    ('year', 'Inventory Year'),
+    ('reference_year', 'Reference Year'),
     ('pollutants_value', 'Pollutants'),
+    ('scenario_type', 'Scenario Type'),
+    ('activity_data_type', 'Activity Data Type'),
+    ('activity_data', 'Activity Data'),
+    ('fuel', 'Fuel'),
     ('get_is_ms_key_category', 'MS Key Category'),
     ('get_description_flags', 'Description Flags'),
     ('overview_status', 'Status'),
@@ -410,6 +416,18 @@ EXPORT_FIELDS = OrderedDict([
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
     'observation_finalisation_text',
+)
+
+EXCLUDE_PROJECTION_FIELDS = (
+    'nfr_inventories_code',
+    'reference_year',
+    'scenario_type',
+    'activity_data_type',
+    'activity_data'
+)
+
+EXCLUDE_INVENTORY_FIELDS = (
+    'fuel'
 )
 
 
@@ -436,10 +454,18 @@ def fields_vocabulary_factory(context):
     user_is_manager = 'Manager' in api.user.get_roles()
     skip_for_user = user_is_ms and not user_is_manager
 
+    if context.type == 'projection':
+        EXPORT_FIELDS['year'] = 'Projection Year'
+        exclude_fields = EXCLUDE_INVENTORY_FIELDS
+    else:
+        exclude_fields = EXCLUDE_PROJECTION_FIELDS
+
     for key, value in EXPORT_FIELDS.items():
-        if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
-            continue
-        terms.append(SimpleVocabulary.createTerm(key, key, value))
+            if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
+                continue
+            elif key in exclude_fields:
+                continue
+            terms.append(SimpleVocabulary.createTerm(key, key, value))
 
     return SimpleVocabulary(terms)
 
@@ -515,7 +541,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     def translate_highlights(self, highlights):
         return [
             get_vocabulary_value(
-                self, 'emrt.necd.content.highlight', highlight
+                self, 'emrt.necd.content.highlight', highlight, exportForm=True
             ) for highlight in highlights
         ]
 
@@ -603,8 +629,15 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         observation['observation_status'],
                         observation['observation_status'],
                     ))
+                elif key == 'fuel':
+                    fuel =  get_vocabulary_value(
+                        self, 'emrt.necd.content.fuel',
+                        observation.getObject().fuel, exportForm=True
+                    )
+                    row.append(fuel)
                 else:
                     row.append(safe_unicode(observation[key]))
+            print row
 
             if base_len == 0:
                 base_len = len(row)
