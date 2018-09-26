@@ -393,12 +393,12 @@ EXPORT_FIELDS = OrderedDict([
     ('get_is_time_series_inconsistency', 'Is time series inconsistency'),
     ('get_is_not_estimated', 'Is not estimated'),
     ('nfr_code_value', 'NFR Code'),
-    ('nfr_inventories_code', 'NFR Inventories Category Code'),
+    ('nfr_code_inventory', 'NFR Inventories Category Code'),
     ('review_year', 'Review Year'),
     ('year', 'Inventory Year'),
     ('reference_year', 'Reference Year'),
     ('pollutants_value', 'Pollutants'),
-    ('scenario_type', 'Scenario Type'),
+    ('scenario_type_value', 'Scenario Type'),
     ('activity_data_type', 'Activity Data Type'),
     ('activity_data', 'Activity Data'),
     ('fuel', 'Fuel'),
@@ -419,9 +419,9 @@ EXCLUDE_FIELDS_FOR_MS = (
 )
 
 EXCLUDE_PROJECTION_FIELDS = (
-    'nfr_inventories_code',
+    'nfr_code_inventory',
     'reference_year',
-    'scenario_type',
+    'scenario_type_value',
     'activity_data_type',
     'activity_data'
 )
@@ -548,12 +548,14 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     def extract_data(self, form_data):
         """ Create xls file
         """
+        is_projection = self.context.type=='projection'
+        vtool = getToolByName(self, 'portal_vocabularies')
+
         observations = self.get_questions()
 
         user_is_ms = getUtility(IUserIsMS)(self.context)
         user_is_manager = 'Manager' in api.user.get_roles()
         skip_for_user = user_is_ms and not user_is_manager
-
         fields_to_export = [
             name for name in form_data.get('exportFields', []) if
             not skip_for_user or name not in EXCLUDE_FIELDS_FOR_MS
@@ -568,19 +570,19 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         rows = []
 
-        vocab_highlight = getUtility(
-            IVocabularyFactory,
-            'emrt.necd.content.highlight'
-        )(self.context)
+        voc_name = 'highlight_projection' if is_projection else 'highlight'
+        vocab_highlight = vtool.getVocabularyByName(voc_name)
 
         vocab_highlight_values = tuple([
             term.title for term in vocab_highlight
         ])
 
+        highlight_split_item = 'rh' if is_projection else 'nsms'
+
         # Split highlight to differentiate between
         # description and conclusion flags.
         highlight_split = [
-            term.value for term in vocab_highlight].index('nsms')
+            term for term in vocab_highlight].index(highlight_split_item)
         vocab_description_flags = vocab_highlight_values[:highlight_split]
         vocab_conclusion_flags = vocab_highlight_values[highlight_split:]
 
@@ -635,8 +637,22 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         observation.getObject().fuel, exportForm=True
                     )
                     row.append(fuel)
+                elif key == 'nfr_code_inventory':
+                    row.append(observation.getObject().nfr_code_inventory)
+                elif key == 'reference_year':
+                    row.append(observation.getObject().reference_year)
+                elif key == 'scenario_type_value':
+                    row.append(observation.getObject().scenario_type_value())
+                elif key == 'activity_data_type':
+                    row.append(observation.getObject().activity_data_type)
+                elif key == 'activity_data':
+                    row.append(
+                        '\n'.join(observation.getObject().activity_data_value())
+                    )
+
                 else:
                     row.append(safe_unicode(observation[key]))
+            # import pdb; pdb.set_trace()
             print row
 
             if base_len == 0:

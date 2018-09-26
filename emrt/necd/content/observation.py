@@ -378,8 +378,8 @@ class Observation(Container):
     def activity_data_value(self):
         if self.activity_data:
             activities = [
-                get_vocabulary_value(self, 'emrt.necd.content.activity_data', ad)
-                for ad in self.activity_data
+                get_vocabulary_value(self, 'emrt.necd.content.activity_data', a)
+                for a in self.activity_data
             ]
             return activities
         return []

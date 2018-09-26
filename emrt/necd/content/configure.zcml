@@ -42,7 +42,7 @@
   <!-- -*- extra stuff goes here -*- -->
   <adapter name="Country" factory=".indexers.observation_country" />
   <adapter name="NFR_Code" factory=".indexers.observation_nfr_code" />
-  <adapter name="NFR_Code_Inventory" factory=".indexers.observation_nfr_code_inventory" />
+  <adapter name="observation_nfr_code_inventory" factory=".indexers.observation_nfr_code_inventory" />
   <adapter name="GHG_Source_Category" factory=".indexers.observation_ghg_source_category" />
   <adapter name="GHG_Source_Sectors" factory=".indexers.observation_ghg_source_sectors" />
   <adapter name="Status_Flag" factory=".indexers.observation_status_flag" />

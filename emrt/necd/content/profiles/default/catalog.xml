@@ -10,7 +10,7 @@
  </index>
 
  <index name="NFR_Code_Inventory" meta_type="FieldIndex">
-  <indexed_attr value="NFR_Code_Inventory"/>
+  <indexed_attr value="observation_nfr_code_inventory"/>
  </index>
 
  <index name="GHG_Source_Category" meta_type="FieldIndex">
