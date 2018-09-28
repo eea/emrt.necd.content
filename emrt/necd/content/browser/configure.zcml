@@ -20,6 +20,20 @@
         />
 
     <browser:page
+        name="tableau-historical.json"
+        for="..reviewfolder.IReviewFolder"
+        class=".tableau.TableauHistoricalView"
+        permission="zope2.View"
+        />
+
+    <browser:page
+        name="tableau-snapshot.json"
+        for="..reviewfolder.IReviewFolder"
+        class=".tableau.TableauCreateSnapshotView"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="macros"
         for="..reviewfolder.IReviewFolder"
         template="templates/macros.pt"
