@@ -1,4 +1,7 @@
 import os
+import json
+
+from gzip import GzipFile
 from datetime import datetime
 
 from collections import defaultdict
@@ -11,6 +14,8 @@ from functools import reduce
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
+from ZODB.blob import Blob
+
 from Products.Five import BrowserView
 
 from Products.CMFCore.utils import getToolByName
@@ -21,7 +26,10 @@ from emrt.necd.content.utils import jsonify
 from emrt.necd.content.reviewfolder import QUESTION_WORKFLOW_MAP
 
 
-TOKEN = os.environ.get("TABLEAU_TOKEN")
+TOKEN_VIEW = os.environ.get("TABLEAU_TOKEN")
+TOKEN_SNAP = os.environ.get("TABLEAU_TOKEN_SNAPSHOT")
+
+HISTORICAL_ATTR_NAME = '__tableau_historical_store__'
 
 
 SHEET_MS_ROLES = itemgetter(0)
@@ -80,7 +88,7 @@ def ipcc_sector(brain):
 
 
 def review_sector(mapping, se):
-    return COL_CAT__RS(mapping[se])
+    return list({COL_CAT__RS(mapping[s]) for s in se})
 
 
 def author_name(brain):
@@ -88,11 +96,11 @@ def author_name(brain):
 
 
 def sector_expert(ms_roles, country):
-    return COL_SE__ROLES_MS(ms_roles[country])
+    return list(set(map(COL_SE__ROLES_MS, ms_roles[country])))
 
 
 def lead_reviewer(ms_roles, country):
-    return COL_LR__ROLES_MS(ms_roles[country])
+    return list(set(map(COL_LR__ROLES_MS, ms_roles[country])))
 
 
 def extract_entry(catalog, timestamp, mappings, vocab_highlights, brain):
@@ -122,21 +130,26 @@ def extract_entry(catalog, timestamp, mappings, vocab_highlights, brain):
         'Timestamp': timestamp,
         'Country': brain['country_value'],
         'ID': brain['id'],
+        'URL': brain.getURL(),
         'Description flags': description_flags(vocab_highlights, brain)
 
     }
 
 
-def validate_token(request):
-    return request.get('tableau_token') == TOKEN if TOKEN else False
+def validate_token(request, token=TOKEN_VIEW):
+    return request.get('tableau_token') == token if token else False
 
 
 def sheet_ms_roles(sheet):
     rows = islice(sheet.rows, 1, None)  # skip header
-    return {
-        COL_MS__ROLES_MS(values).lower(): values
-        for values in (tuple(cell.value for cell in row) for row in rows)
-    }
+
+    result = defaultdict(tuple)
+
+    for row in rows:
+        values = tuple(c.value for c in row)
+        result[COL_MS__ROLES_MS(values).lower()] += (values, )
+
+    return dict(result)
 
 
 def sheet_review_sectors(sheet):
@@ -156,35 +169,118 @@ def values_from_xls(xls):
     )
 
 
+
+def get_snapshot(context):
+    catalog = getToolByName(context, 'portal_catalog')
+    timestamp = datetime.now().isoformat()
+
+    vocab_highlights = getUtility(
+        IVocabularyFactory,
+        name='emrt.necd.content.highlight')(context)
+
+    xls_file = load_workbook(
+        context.xls_mappings.open(), read_only=True)
+
+    mappings = values_from_xls(xls_file)
+
+    entry = partial(
+        extract_entry,
+        catalog, timestamp, mappings, vocab_highlights)
+
+    brains = catalog.unrestrictedSearchResults(
+        portal_type=['Observation'],
+        path='/'.join(context.getPhysicalPath())
+    )
+
+    return map(entry, brains)
+
+
+def write_historical_data(context, content):
+    target = context.aq_inner.aq_self
+
+    # get and clear existing data
+    blob = getattr(target, HISTORICAL_ATTR_NAME).open('r+')
+    blob.seek(0)
+    blob.truncate()
+
+    # gzip
+    gzip = GzipFile(fileobj=blob, mode='w')
+    gzip.write(content)
+
+    gzip.close()
+
+    # get gzipped data
+    blob.seek(0)
+    compressed = blob.read()
+
+    blob.close()
+
+    # return the compressed and uncompressed sizes
+    return len(compressed), len(content)
+
+
+def get_historical_data(context):
+    target = context.aq_inner.aq_self
+
+    # create empty Blob, if missing
+    if not hasattr(target, HISTORICAL_ATTR_NAME):
+        setattr(target, HISTORICAL_ATTR_NAME, Blob())
+        write_historical_data(context, '[]')
+
+    # gunzip data
+    blob = getattr(target, HISTORICAL_ATTR_NAME).open('r')
+    gzip = GzipFile(fileobj=blob, mode='r')
+
+    data = gzip.read()
+
+    gzip.close()
+    blob.close()
+
+    return json.loads(data)
+
+
 class TableauView(BrowserView):
     def __call__(self):
         data = dict(status=401)
         request = self.request
 
         if validate_token(request):
-            catalog = getToolByName(self.context, 'portal_catalog')
-            timestamp = datetime.now().isoformat()
-            folder = self.context
+            data = get_snapshot(self.context)
+        else:
+            request.RESPONSE.setStatus(401)
 
-            vocab_highlights = getUtility(
-                IVocabularyFactory,
-                name='emrt.necd.content.highlight')(folder)
+        return jsonify(request, data)
 
-            xls_file = load_workbook(
-                folder.xls_mappings.open(), read_only=True)
 
-            mappings = values_from_xls(xls_file)
+class TableauHistoricalView(BrowserView):
+    def __call__(self):
+        data = dict(status=401)
+        request = self.request
 
-            entry = partial(
-                extract_entry,
-                catalog, timestamp, mappings, vocab_highlights)
+        if validate_token(request):
+            context = self.context
+            data = get_historical_data(context)
+            data.insert(0, get_snapshot(context))
+        else:
+            request.RESPONSE.setStatus(401)
 
-            brains = catalog.unrestrictedSearchResults(
-                portal_type=['Observation'],
-                path='/'.join(folder.getPhysicalPath())
-            )
+        return jsonify(request, data, sort_keys=False)
 
-            data = map(entry, brains)
+
+class TableauCreateSnapshotView(BrowserView):
+    def __call__(self):
+        data = dict(status=401)
+        request = self.request
+
+        if validate_token(request, TOKEN_SNAP):
+            context = self.context
+            historical = get_historical_data(context)
+            historical.insert(0, get_snapshot(context))
+            compressed, content = write_historical_data(
+                context, json.dumps(historical))
+            data['size'] = compressed
+            data['deflated'] = content
+            data['status'] = 200
         else:
             request.RESPONSE.setStatus(401)
 

@@ -126,12 +126,14 @@ def activity_data_validator(context, type, activity):
                                                  u"selected the appropiate "
                                                  u"values")
                                              )
-def jsonify(request, data, cache=False):
+
+
+def jsonify(request, data, cache=False, sort_keys=True):
     header = request.RESPONSE.setHeader
     header("Content-Type", "application/json")
     if cache:
         header("Expires", "Sun, 17-Jan-2038 19:14:07 GMT")
-    return json.dumps(data, indent=2, sort_keys=True)
+    return json.dumps(data, indent=2, sort_keys=sort_keys)
 
 
 def reduce_text(text, limit):
