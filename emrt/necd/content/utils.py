@@ -7,15 +7,23 @@ import concurrent.futures
 import plone.api as api
 
 from zope.component import getUtility
+from zope.interface import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 
+from z3c.form.interfaces import WidgetActionExecutionError
 
-def user_has_ldap_role(ldap_name, user=None, groups=None):
+from emrt.necd.content.utilities.ldap_wrapper import ldap_inventory
+from emrt.necd.content.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies import INECDVocabularies
+
+
+def user_has_ldap_role(ldap_name, user=None, groups=None,
+                       ldap_wrapper=ldap_inventory):
     _user = user if user else api.user.get_current()
     _groups = groups if groups else _user.getGroups()
     return any(tuple(
         group for group in _groups
-        if group.startswith(ldap_name)
+        if group.startswith(ldap_wrapper(ldap_name))
     ))
 
 
@@ -71,7 +79,9 @@ def hidden(menuitem):
     return False
 
 
-def get_vocabulary_value(context, vocabulary, term):
+def get_vocabulary_value(context, vocabulary, term, exportForm=None):
+    if exportForm:
+        context = context.aq_parent
 
     vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
     vocabulary = vocab_factory(context)
@@ -82,6 +92,41 @@ def get_vocabulary_value(context, vocabulary, term):
         return value.title
     except LookupError:
         return term
+
+
+def activity_data_validator(context, type, activity):
+    if activity and not type:
+        raise WidgetActionExecutionError('activity_data_type',
+                                         Invalid(u"Please select a type of "
+                                                 u"activity before selecting "
+                                                 u"an activity")
+                                         )
+    elif not activity and type and type != u'Other':
+        raise WidgetActionExecutionError('activity_data',
+                                         Invalid(u"Please select an activity"
+                                                 u" after you've selected an "
+                                                 u"activity type")
+                                         )
+    elif activity and type:
+        activity_data_registry = get_registry_interface_field_data(
+            INECDVocabularies,'activity_data')
+
+        activity_data_values = [get_vocabulary_value
+                                (context,
+                                 'emrt.necd.content.activity_data', val)
+                                for val in activity
+                                ]
+
+        if not all(activity in activity_data_registry[type]
+                   for activity in activity_data_values):
+            raise WidgetActionExecutionError('activity_data',
+                                             Invalid(
+                                                 u"The activities you selected"
+                                                 u" do not correspond to the "
+                                                 u"activity type. Please "
+                                                 u"selected the appropiate "
+                                                 u"values")
+                                             )
 
 
 def jsonify(request, data, cache=False, sort_keys=True):

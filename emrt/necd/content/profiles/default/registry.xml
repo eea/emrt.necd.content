@@ -189,4 +189,128 @@
       <element key="sector6">National total</element>
     </value>
   </record>
+  <records interface="emrt.necd.content.vocabularies.INECDVocabularies" />
+  <record name="emrt.necd.content.vocabularies.INECDVocabularies.projection_pollutants">
+    <value purge="True">
+      <element key="SO2">SO2</element>
+      <element key="NOx">NOx</element>
+      <element key="NH3">NH3</element>
+      <element key="NMVOC">NMVOC</element>
+      <element key="PM2.5">PM2.5</element>
+      <element key="BC">BC</element>
+    </value>
+  </record>
+  <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection">
+    <value purge="True">
+      <element key="1A1">sector1|1A1|1A1, 1A2, 1A4 Energy|1A1 Energy production</element>
+      <element key="1A2">sector2|1A2|1A1, 1A2, 1A4 Energy|1A2 Stationary combustion in manufacturing industries and construction</element>
+      <element key="1A3b">sector3|1A3b|1A3 Transport|1A3b Road transport</element>
+      <element key="1A3bi">sector3|1A3bi|1A3 Transport|1A3bi Road transport: Passenger cars</element>
+      <element key="1A3bii">sector3|1A3bii|1A3 Transport|1A3bii Road transport: Light duty vehicles</element>
+      <element key="1A3biii">sector3|1A3biii|1A3 Transport|1A3biii Road transport: Heavy duty vehicles and buses</element>
+      <element key="1A3biv">sector3|1A3biv|1A3 Transport|1A3biv Road transport: Mopeds &amp; motorcycles</element>
+      <element key="1A3bv">sector3|1A3bv|1A3 Transport|1A3bv Road transport: Gasoline evaporation</element>
+      <element key="1A3bvi">sector3|1A3bvi|1A3 Transport|1A3bvi Road transport: Automobile tyre and brake wear</element>
+      <element key="1A3bvii">sector3|1A3bvii|1A3 Transport|1A3bvii Road transport: Automobile road abrasion</element>
+      <element key="1A3a,c,d,e">sector3|1A3a,c,d,e|1A3 Transport|1A3bvii Road transport: Automobile road abrasion</element>
+      <element key="1A4">sector4|1A4aii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4aii Commercial/institutional: Mobile</element>
+      <element key="1A5">sector5|1A4aii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4aii Commercial/institutional: Mobile</element>
+      <element key="1B">sector6|1A4aii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4aii Commercial/institutional: Mobile</element>
+      <element key="2A,B,C,H,I,J,K,L">sector6|2A|1B, 2A IPPU|2A Mineral Industry</element>
+      <element key="2D, 2G">sector6|2D|2D, 2G-2L IPPU|2D Non energy products from fuels and solvent uses</element>
+      <element key="3B">sector7|3B|3B - 3I Agriculture|3B Manure management</element>
+      <element key="3B1a">sector7|3B1a|3B - 3I Agriculture|3B1a Manure management - Dairy cattle</element>
+      <element key="3B1b">sector7|3B1b|3B - 3I Agriculture|3B1b Manure management - Non-dairy cattle</element>
+      <element key="3B2">sector7|3B2|3B - 3I Agriculture|3B2 Manure management - Sheep</element>
+      <element key="3B3">sector7|3B3|3B - 3I Agriculture|3B3 Manure management - Swine</element>
+      <element key="3B4a">sector7|3B4a|3B - 3I Agriculture|3B4a Manure management - Buffalo</element>
+      <element key="3B4d">sector7|3B4d|3B - 3I Agriculture|3B4d Manure management - Goats</element>
+      <element key="3B4e">sector7|3B4e|3B - 3I Agriculture|3B4e Manure management - Horses</element>
+      <element key="3B4f">sector7|3B4f|3B - 3I Agriculture|3B4f Manure management - Mules and asses</element>
+      <element key="3B4g">sector7|3B4gi|3B - 3I Agriculture|3B4gi Manure mangement - Laying hens</element>
+      <element key="3B4h">sector7|3B4gi|3B - 3I Agriculture|3B4gi Manure mangement - Laying hens</element>
+      <element key="3D">sector7|3D|3B - 3I Agriculture|3D Crop production and agricultural soils</element>
+      <element key="3F,I">sector7|3D|3B - 3I Agriculture|3D Crop production and agricultural soils</element>
+      <element key="5">sector8|5C|5A - 5E Waste|5C Waste incineration</element>
+      <element key="6">sector5|6A|6A National Total|6A Other Sources</element>
+      <element key="NATIONAL TOTAL">sector5|6A|6A National Total|6A Other Sources</element>
+    </value>
+  </record>
+  <record name="emrt.necd.content.vocabularies.INECDVocabularies.activity_data">
+    <value purge="True">
+      <element key="General economic parameters">
+        <element>Gross Domestic Product (GDP) [10^9 €]</element>
+        <element>Population [Thousand People]</element>
+        <element>International coal prices [€ per tonne or GJ (Gigajoule) - Other please specify]</element>
+        <element>International oil prices [€ per barrel or GJ]</element>
+        <element>International gas prices [€ per m3 or GJ]</element>
+      </element>
+      <element key="Total gross inland consumption">
+        <element>Oil (fossil) [Petajoule (PJ)]</element>
+        <element>Gas (fossil) [Petajoule (PJ)]</element>
+        <element>Coal [Petajoule (PJ)]</element>
+        <element>Biomass without liquid biofuels (e.g. wood) [Petajoule (PJ)]</element>
+        <element>Liquid biofuels (e.g. bio-oils) [Petajoule (PJ)]</element>
+        <element>Solar [Petajoule (PJ)]</element>
+        <element>Other renewable (wind; geothermal etc.) [Petajoule (PJ)]</element>
+      </element>
+      <element key="Total electricity production by fuel type">
+        <element>Oil (fossil) [GWh]</element>
+        <element>Gas (fossil) [GWh]</element>
+        <element>Coal [GWh]</element>
+        <element>Renewable [GWh]</element>
+      </element>
+      <element key="Industry - share of industrial sector in GDP and growth rate">
+        <element>Iron &amp; steel [% share]</element>
+        <element>Other metals [% share]</element>
+        <element>Cement [% share]</element>
+        <element>Coke production [% share]</element>
+        <element>Pulp and paper [% share]</element>
+        <element>Petroleum refining [% share]</element>
+        <element>Other [% share]</element>
+      </element>
+      <element key="Industry - Physical production index">
+        <element>Iron &amp; steel [GVA or index units]</element>
+        <element>Other metals [GVA or index units]</element>
+        <element>Cement [GVA or index units]</element>
+        <element>Coke production [GVA or index units]</element>
+        <element>Pulp and paper [GVA or index units]</element>
+        <element>Petroleum refining [GVA or index units]</element>
+        <element>Other [GVA or index units]</element>
+      </element>
+      <element key="Transport Sector">
+        <element>The growth of transport relative to GDP [% change in value added]</element>
+        <element>Passenger person kilometres [Million passenger km]</element>
+        <element>The growth of freight tonne kilometres [Million tonne km]</element>
+        <element>Passenger cars [% of new vehicles per year]</element>
+        <element>Light duty vehicles [% of new vehicles per year]</element>
+        <element>Heavy trucks [% of new vehicles per year]</element>
+      </element>
+      <element key="Building (residential and commercial or tertiary sector)">
+        <element>The growth of freight tonne kilometres [Million tonne km]</element>
+        <element>The share of the tertiary sector in GDP and the growth rate [% share]</element>
+        <element>The rate of change of floor space for tertiary buildings [%]</element>
+        <element>The rate of change of floor space for dwellings [%]</element>
+        <element>The number of dwellings in the tertiary sector [Number]</element>
+        <element>The number of employees in the tertiary sector [Number]</element>
+      </element>
+      <element key="Agriculture">
+        <element>The share of the agriculture sector in GDP and relative growth [% share]</element>
+        <element>Beef Cattle [Livestock Number (Thousand)b]</element>
+        <element>Dairy cows [Livestock Number (Thousand)b]</element>
+        <element>Sheep [Livestock Number (Thousand)b]</element>
+        <element>Pigs [Livestock Number (Thousand)b]</element>
+        <element>Poultry [Livestock Number (Thousand)b]</element>
+        <element>Area of crop [Hectare [tonnes]]</element>
+      </element>
+      <element key="Waste">
+        <element>Waste generation [Tonnes total or tonnes / capital]</element>
+        <element>The organic fractions of municipal solid waste [%]</element>
+        <element>Municipal solid waste disposed to landfills [in tonnes or %]</element>
+        <element>Municipal solid waste disposed incinerated [in tonnes or %]</element>
+        <element>Municipal solid waste disposed composted [in tonnes or %]</element>
+      </element>
+      <element key="Other"></element>
+    </value>
+  </record>
 </registry>

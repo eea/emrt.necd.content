@@ -9,6 +9,10 @@
   <indexed_attr value="NFR_Code"/>
  </index>
 
+ <index name="NFR_Code_Inventory" meta_type="FieldIndex">
+  <indexed_attr value="observation_nfr_code_inventory"/>
+ </index>
+
  <index name="GHG_Source_Category" meta_type="FieldIndex">
   <indexed_attr value="GHG_Source_Category"/>
  </index>
@@ -43,6 +47,10 @@
 
  <index name="review_year" meta_type="FieldIndex">
     <indexed_attr value="review_year"/>
+ </index>
+
+ <index name="reference_year" meta_type="FieldIndex">
+    <indexed_attr value="reference_year"/>
  </index>
 
  <index name="last_question_reply_number" meta_type="FieldIndex">

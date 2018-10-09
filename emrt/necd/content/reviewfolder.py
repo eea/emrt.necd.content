@@ -7,6 +7,7 @@ from datetime import datetime
 from Acquisition import aq_inner
 from AccessControl import getSecurityManager, Unauthorized
 from plone import api
+from plone import directives
 from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.dexterity.content import Container
@@ -21,6 +22,7 @@ from Products.Five import BrowserView
 from emrt.necd.content.timeit import timeit
 from eea.cache import cache
 from zope.component import getUtility
+import zope.schema as schema
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.interfaces import IContextSourceBinder
 from zc.dict import OrderedDict
@@ -37,7 +39,9 @@ from z3c.form.interfaces import HIDDEN_MODE
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utils import reduce_text
-from emrt.necd.content.utilities.ms_user import IUserIsMS
+from emrt.necd.content.utilities.interfaces import IUserIsMS
+from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
@@ -50,8 +54,6 @@ from emrt.necd.content.constants import LDAP_MSA
 from emrt.necd.content.constants import LDAP_MSEXPERT
 from emrt.necd.content.inbox_sections import SECTIONS
 
-from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
-
 
 QUESTION_WORKFLOW_MAP = {
     'SE': 'Sector Expert',
@@ -63,6 +65,10 @@ QUESTION_WORKFLOW_MAP = {
     'close-requested': 'Close requested',
     'finalised': 'Finalised',
 }
+
+REVIEWFOLDER_TYPES = SimpleVocabulary.fromItems((
+    (u'Inventory', 'inventory'),
+    (u'Projection', 'projection')))
 
 
 # Cache helper methods
@@ -147,10 +153,16 @@ def filter_for_ms(brains, context):
     return result
 
 
-class IReviewFolder(IImageScaleTraversable):
+class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
     """
     Folder to have all observations together
     """
+
+    type = schema.Choice(
+        title=u"Type",
+        source=REVIEWFOLDER_TYPES,
+        required=True,
+    )
 
     xls_mappings = NamedBlobFile(
         title=u'Mapping XLS',
@@ -165,7 +177,6 @@ class IReviewFolder(IImageScaleTraversable):
         ),
         required=False,
     )
-
 
 @implementer(IReviewFolder)
 class ReviewFolder(Container):
@@ -257,7 +268,10 @@ class ReviewFolderMixin(BrowserView):
 
     def get_highlights(self):
         vtool = getToolByName(self, 'portal_vocabularies')
-        voc = vtool.getVocabularyByName('highlight')
+        if self.context.type == 'inventory':
+            voc = vtool.getVocabularyByName('highlight')
+        else:
+            voc = vtool.getVocabularyByName('highlight_projection')
         highlights = []
         voc_terms = voc.getDisplayList(self).items()
         for term in voc_terms:
@@ -292,8 +306,17 @@ class ReviewFolderMixin(BrowserView):
     def get_finalisation_reasons(self):
         return get_finalisation_reasons(self.context)
 
-    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
-    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
+    def is_member_state_coordinator(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSA, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_member_state_expert(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSEXPERT, ldap_wrapper=ldap_wrapper
+        )
 
 
 class ReviewFolderView(ReviewFolderMixin):
@@ -370,9 +393,15 @@ EXPORT_FIELDS = OrderedDict([
     ('get_is_time_series_inconsistency', 'Is time series inconsistency'),
     ('get_is_not_estimated', 'Is not estimated'),
     ('nfr_code_value', 'NFR Code'),
+    ('nfr_code_inventory', 'NFR Inventories Category Code'),
     ('review_year', 'Review Year'),
-    ('year', 'Inventory year'),
+    ('year', 'Inventory Year'),
+    ('reference_year', 'Reference Year'),
     ('pollutants_value', 'Pollutants'),
+    ('scenario_type_value', 'Scenario Type'),
+    ('activity_data_type', 'Activity Data Type'),
+    ('activity_data', 'Activity Data'),
+    ('fuel', 'Fuel'),
     ('get_is_ms_key_category', 'MS Key Category'),
     ('get_description_flags', 'Description Flags'),
     ('overview_status', 'Status'),
@@ -387,6 +416,18 @@ EXPORT_FIELDS = OrderedDict([
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
     'observation_finalisation_text',
+)
+
+EXCLUDE_PROJECTION_FIELDS = (
+    'nfr_code_inventory',
+    'reference_year',
+    'scenario_type_value',
+    'activity_data_type',
+    'activity_data'
+)
+
+EXCLUDE_INVENTORY_FIELDS = (
+    'fuel'
 )
 
 
@@ -413,10 +454,18 @@ def fields_vocabulary_factory(context):
     user_is_manager = 'Manager' in api.user.get_roles()
     skip_for_user = user_is_ms and not user_is_manager
 
+    if context.type == 'projection':
+        EXPORT_FIELDS['year'] = 'Projection Year'
+        exclude_fields = EXCLUDE_INVENTORY_FIELDS
+    else:
+        exclude_fields = EXCLUDE_PROJECTION_FIELDS
+
     for key, value in EXPORT_FIELDS.items():
-        if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
-            continue
-        terms.append(SimpleVocabulary.createTerm(key, key, value))
+            if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
+                continue
+            elif key in exclude_fields:
+                continue
+            terms.append(SimpleVocabulary.createTerm(key, key, value))
 
     return SimpleVocabulary(terms)
 
@@ -492,19 +541,21 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     def translate_highlights(self, highlights):
         return [
             get_vocabulary_value(
-                self, 'emrt.necd.content.highlight', highlight
+                self, 'emrt.necd.content.highlight', highlight, exportForm=True
             ) for highlight in highlights
         ]
 
     def extract_data(self, form_data):
         """ Create xls file
         """
+        is_projection = self.context.type=='projection'
+        vtool = getToolByName(self, 'portal_vocabularies')
+
         observations = self.get_questions()
 
         user_is_ms = getUtility(IUserIsMS)(self.context)
         user_is_manager = 'Manager' in api.user.get_roles()
         skip_for_user = user_is_ms and not user_is_manager
-
         fields_to_export = [
             name for name in form_data.get('exportFields', []) if
             not skip_for_user or name not in EXCLUDE_FIELDS_FOR_MS
@@ -519,19 +570,19 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         rows = []
 
-        vocab_highlight = getUtility(
-            IVocabularyFactory,
-            'emrt.necd.content.highlight'
-        )(self.context)
+        voc_name = 'highlight_projection' if is_projection else 'highlight'
+        vocab_highlight = vtool.getVocabularyByName(voc_name)
 
         vocab_highlight_values = tuple([
             term.title for term in vocab_highlight
         ])
 
+        highlight_split_item = 'rh' if is_projection else 'nsms'
+
         # Split highlight to differentiate between
         # description and conclusion flags.
         highlight_split = [
-            term.value for term in vocab_highlight].index('nsms')
+            term for term in vocab_highlight].index(highlight_split_item)
         vocab_description_flags = vocab_highlight_values[:highlight_split]
         vocab_conclusion_flags = vocab_highlight_values[highlight_split:]
 
@@ -580,6 +631,25 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         observation['observation_status'],
                         observation['observation_status'],
                     ))
+                elif key == 'fuel':
+                    fuel =  get_vocabulary_value(
+                        self, 'emrt.necd.content.fuel',
+                        observation.getObject().fuel, exportForm=True
+                    )
+                    row.append(fuel)
+                elif key == 'nfr_code_inventory':
+                    row.append(observation.getObject().nfr_code_inventory)
+                elif key == 'reference_year':
+                    row.append(observation.getObject().reference_year)
+                elif key == 'scenario_type_value':
+                    row.append(observation.getObject().scenario_type_value())
+                elif key == 'activity_data_type':
+                    row.append(observation.getObject().activity_data_type)
+                elif key == 'activity_data':
+                    row.append(
+                        '\n'.join(observation.getObject().activity_data_value())
+                    )
+
                 else:
                     row.append(safe_unicode(observation[key]))
 
@@ -747,7 +817,6 @@ class InboxReviewFolderView(BrowserView):
 
     def get_sections(self):
         is_sec = self.is_secretariat()
-
         viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)]
 
         total_sum = 0
@@ -1200,10 +1269,29 @@ class InboxReviewFolderView(BrowserView):
 
         return sectors
 
-    is_sector_expert = partial(user_has_ldap_role, LDAP_SECTOREXP)
-    is_lead_reviewer = partial(user_has_ldap_role, LDAP_LEADREVIEW)
-    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
-    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
+    def is_sector_expert(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_SECTOREXP, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_lead_reviewer(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_LEADREVIEW, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_member_state_coordinator(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSA, ldap_wrapper=ldap_wrapper
+        )
+
+    def is_member_state_expert(self):
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        return partial(
+            user_has_ldap_role, LDAP_MSEXPERT, ldap_wrapper=ldap_wrapper
+        )
 
 
 class FinalisedFolderView(BrowserView):
@@ -1316,11 +1404,6 @@ class FinalisedFolderView(BrowserView):
             sectors.append((term[0], term[1]))
 
         return sectors
-
-    is_sector_expert = partial(user_has_ldap_role, LDAP_SECTOREXP)
-    is_lead_reviewer = partial(user_has_ldap_role, LDAP_LEADREVIEW)
-    is_member_state_coordinator = partial(user_has_ldap_role, LDAP_MSA)
-    is_member_state_expert = partial(user_has_ldap_role, LDAP_MSEXPERT)
 
 
 class AddForm(add.DefaultAddForm):

@@ -42,6 +42,7 @@
   <!-- -*- extra stuff goes here -*- -->
   <adapter name="Country" factory=".indexers.observation_country" />
   <adapter name="NFR_Code" factory=".indexers.observation_nfr_code" />
+  <adapter name="observation_nfr_code_inventory" factory=".indexers.observation_nfr_code_inventory" />
   <adapter name="GHG_Source_Category" factory=".indexers.observation_ghg_source_category" />
   <adapter name="GHG_Source_Sectors" factory=".indexers.observation_ghg_source_sectors" />
   <adapter name="Status_Flag" factory=".indexers.observation_status_flag" />
@@ -50,6 +51,7 @@
   <adapter name="conclusion_reply_number" factory=".indexers.conclusion_reply_number" />
   <adapter name="year" factory=".indexers.observation_year" />
   <adapter name="review_year" factory=".indexers.observation_review_year" />
+  <adapter name="reference_year" factory=".indexers.observation_reference_year" />
   <adapter name="SearchableText" factory=".indexers.SearchableText" />
 
   <adapter name="observation_question_status" factory=".indexers.observation_question_status" />
@@ -62,6 +64,9 @@
   <adapter name="observation_sent_to_msc" factory=".indexers.observation_sent_to_msc" />
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
+
+  <!--Context form validators-->
+  <adapter factory=".observation.NfrCodeContextValidator" />
 
   <!-- ReviewFolder custom add form -->
   <adapter
