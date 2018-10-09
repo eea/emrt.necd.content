@@ -652,8 +652,6 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
                 else:
                     row.append(safe_unicode(observation[key]))
-            # import pdb; pdb.set_trace()
-            print row
 
             if base_len == 0:
                 base_len = len(row)
