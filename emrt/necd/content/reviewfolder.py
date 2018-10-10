@@ -135,8 +135,10 @@ def filter_for_ms(brains, context):
     for brain in brains:
         country = brain.country
 
-        group_msa = '{}-{}'.format(LDAP_MSA, country)
-        group_mse = '{}-{}'.format(LDAP_MSEXPERT, country)
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
+
+        group_msa = '{}-{}'.format(ldap_wrapper(LDAP_MSA), country)
+        group_mse = '{}-{}'.format(ldap_wrapper(LDAP_MSEXPERT), country)
 
         is_msa = group_msa in groups
         is_mse = group_mse in groups

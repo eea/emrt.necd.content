@@ -34,9 +34,9 @@ def get_valid_user():
 
 def validate_term(prefix, groups):
     return tuple([
-                     group for group in groups
-                     if group.startswith(prefix)
-                     ])
+        group for group in groups
+        if group.startswith(prefix)
+    ])
 
 
 def build_prefix(ldap_role, sector):
@@ -242,8 +242,9 @@ class NFRCode(object):
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
                     nfr_codes(context).items() if validate_term(
-                    build_prefix(ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
-                    user_groups
+                        build_prefix(
+                            ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
+                        user_groups
                     )
                 ))
 

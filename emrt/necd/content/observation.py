@@ -5,6 +5,7 @@ except ImportError:
 import datetime
 import json
 import re
+from functools import partial
 from docx import Document
 from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
@@ -70,6 +71,7 @@ from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
 
@@ -78,28 +80,14 @@ from emrt.necd.content.vocabularies import INECDVocabularies
 def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
+
 def _is_projection(context):
     return context.type == 'projection'
+
 
 def check_parameter(value):
     if len(value) == 0:
         raise Invalid(u'You need to select at least one parameter')
-
-    return True
-
-def check_country(value):
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
-                group.endswith('-%s' % value):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this country'
-        )
 
     return True
 
@@ -285,17 +273,51 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         user = api.user.get_current()
         groups = user.getGroups()
         valid = False
+
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+
         for group in groups:
-            if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
+            if group.startswith('{}-{}-'.format(ldap_se, category)):
                 valid = True
+                break
+
         if not valid:
             raise Invalid(
-                u'You are not allowed to add observations for this sector category'
+                u'You are not allowed to add observations '
+                u'for this sector category.'
             )
 
 validator.WidgetValidatorDiscriminators(
     NfrCodeContextValidator,
     field=IObservation['nfr_code']
+)
+
+
+class CountryContextValidator(validator.SimpleFieldValidator):
+    def validate(self, value):
+        user = api.user.get_current()
+        groups = user.getGroups()
+        valid = False
+
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+
+        for group in groups:
+            is_se = group.startswith('{}-'.format(ldap_se))
+            if is_se and group.endswith('-%s' % value):
+                valid = True
+                break
+
+        if not valid:
+            raise Invalid(
+                u'You are not allowed to add observations for this country.'
+            )
+
+
+validator.WidgetValidatorDiscriminators(
+    CountryContextValidator,
+    field=IObservation['country']
 )
 
 

@@ -67,6 +67,7 @@
 
   <!--Context form validators-->
   <adapter factory=".observation.NfrCodeContextValidator" />
+  <adapter factory=".observation.CountryContextValidator" />
 
   <!-- ReviewFolder custom add form -->
   <adapter
