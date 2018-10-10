@@ -15,13 +15,13 @@ import openpyxl
 
 UNUSED_FIELDS = ['closing_comments', 'closing_deny_comments']
 
-UNCOMPLETED_ERR = u'The observation you uploaded seems to be a bit off. ' \
+UNCOMPLETED_ERR = u'The observation on row no. {} seems to be a bit off. ' \
                   u'Please fill all the fields as shown in the import file' \
                   u' sample. '
 
-WRONG_DATA_ERR = u'The information you entered in the {} section is not ' \
-                 u'correct. Please consult the columns in the sample xls file' \
-                 u' to see thecorrect set of data.'
+WRONG_DATA_ERR = u'The information you entered in the {} section ' \
+                 u'of row no. {} is not correct. Please consult the columns' \
+                 u' in the sample xls file to see the correct set of data.' \
 
 DONE_MSG = u'Successfully imported {} observations!'
 
@@ -133,6 +133,8 @@ class Entry(object):
         # Projection year
         if len(self.constants) > 10:
             years = _multi_rows(self.constants['year'](self.row))
+            if years == ('',):
+                return ''
             proj_years = [u'2020', u'2025', u'2030', u'2040', u'2050']
             is_correct = bool(set(years) & set(proj_years))
             return u','.join(years) if is_correct else False
@@ -187,10 +189,19 @@ class Entry(object):
         cell_value = _multi_rows(self.constants['activity_data'](self.row))
         if cell_value == ('',):
             return None
+        elif not self.activity_data_type:
+            return False
+
         keys = [key if key in chain(*activity_voc)
                     else False for key in cell_value]
         if False in keys:
             return False
+        else:
+            activity_data_registry = get_registry_interface_field_data(
+                INECDVocabularies, 'activity_data')
+            if not all(activity in activity_data_registry[self.activity_data_type]
+                       for activity in keys):
+                return False
         return keys
 
     @property
@@ -199,7 +210,6 @@ class Entry(object):
         cell_value = self.constants['fuel'](self.row)
         if cell_value != '':
             return find_dict_key(fuel_voc, cell_value)
-
         #This field can be none because it's not manadatory
         return None
 
@@ -247,23 +257,32 @@ class Entry(object):
 
 
     def get_fields(self):
+        # Moving activity_data_type field first to validate activity_data values
+        fields = self.constants.keys()
+        fields.insert(0, fields.pop(fields.index('activity_data_type')))
+
         return {
             name: getattr(self, name)
-            for name in self.constants.keys()
+            for name in fields
             if name not in UNUSED_FIELDS
         }
 
 
 def _create_observation(entry, context, request, portal_type, obj):
+    obj.row_nr += 1
 
     fields = entry.get_fields()
 
     if '' in fields.values():
-        return error_status_message(context, request, UNCOMPLETED_ERR)
+        return error_status_message(
+            context, request, UNCOMPLETED_ERR.format(obj.row_nr - 1)
+        )
 
     elif False in fields.values():
         key = find_dict_key(fields, False)
-        msg = WRONG_DATA_ERR.format(key)
+        if key == 'highlight':
+            key = 'description flags'
+        msg = WRONG_DATA_ERR.format(key, obj.row_nr - 1)
         return error_status_message(context, request, msg)
 
     #Values must be boolean
@@ -286,6 +305,7 @@ def _create_observation(entry, context, request, portal_type, obj):
 class ObservationXLSImport(BrowserView):
 
     num_entries = 0
+    row_nr = 2
 
     def valid_rows_index(self, sheet):
         """There are some cases when deleted rows from an xls file are seen
