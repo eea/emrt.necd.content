@@ -5,7 +5,6 @@ except ImportError:
 import datetime
 import json
 import re
-from functools import partial
 from docx import Document
 from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
@@ -80,14 +79,28 @@ from emrt.necd.content.vocabularies import INECDVocabularies
 def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
-
 def _is_projection(context):
     return context.type == 'projection'
-
 
 def check_parameter(value):
     if len(value) == 0:
         raise Invalid(u'You need to select at least one parameter')
+
+    return True
+
+def check_country(value):
+    user = api.user.get_current()
+    groups = user.getGroups()
+    valid = False
+    for group in groups:
+        if group.startswith('{}-'.format(LDAP_SECTOREXP)) and \
+                group.endswith('-%s' % value):
+            valid = True
+
+    if not valid:
+        raise Invalid(
+            u'You are not allowed to add observations for this country'
+        )
 
     return True
 
@@ -272,15 +285,12 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         user = api.user.get_current()
         groups = user.getGroups()
         valid = False
-
         ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
         ldap_se = ldap_wrapper(LDAP_SECTOREXP)
-
         for group in groups:
             if group.startswith('{}-{}-'.format(ldap_se, category)):
                 valid = True
                 break
-
         if not valid:
             raise Invalid(
                 u'You are not allowed to add observations '
@@ -1368,6 +1378,7 @@ class ExportAsDocView(ObservationMixin):
         return re.sub('\s+', ' ', s)
 
     def build_file(self):
+        is_projection = _is_projection(self.context)
         document = Document()
 
         # Styles
@@ -1383,7 +1394,7 @@ class ExportAsDocView(ObservationMixin):
         document.add_heading(self.context.getId(), 0)
 
         p = document.add_paragraph('')
-        table = document.add_table(rows=1, cols=5)
+        table = document.add_table(rows=1, cols=6)
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Country'
         hdr_cells[0].paragraphs[0].style = "Table Cell Bold"
@@ -1391,10 +1402,14 @@ class ExportAsDocView(ObservationMixin):
         hdr_cells[1].paragraphs[0].style = "Table Cell Bold"
         hdr_cells[2].text = 'Pollutants'
         hdr_cells[2].paragraphs[0].style = "Table Cell Bold"
-        hdr_cells[3].text = 'Fuel'
+        hdr_cells[3].text = 'Reference year' if is_projection else 'Fuel'
         hdr_cells[3].paragraphs[0].style = "Table Cell Bold"
-        hdr_cells[4].text = 'Inventory year'
+        hdr_cells[4].text = 'Projection year' if is_projection \
+            else 'Inventory year'
         hdr_cells[4].paragraphs[0].style = "Table Cell Bold"
+        if is_projection:
+            hdr_cells[5].text = "Activity data type"
+            hdr_cells[5].paragraphs[0].style = "Table Cell Bold"
 
         row_cells = table.add_row().cells
         row_cells[0].text = self.context.country_value() or ''
@@ -1406,10 +1421,13 @@ class ExportAsDocView(ObservationMixin):
         row_cells[3].text = get_vocabulary_value(self.context,
             IObservation['fuel'].vocabularyName,
             self.context.fuel
-        )
+        ) if not is_projection else str(self.context.reference_year)
         row_cells[3].paragraphs[0].style = "Table Cell"
         row_cells[4].text = self.context.year or ''
         row_cells[4].paragraphs[0].style = "Table Cell"
+        if is_projection:
+            row_cells[5].text = self.context.activity_data_type or ''
+            row_cells[5].paragraphs[0].style = "Table Cell"
         p = document.add_paragraph('')
 
         document.add_heading('Observation details', level=2)
@@ -1446,6 +1464,17 @@ class ExportAsDocView(ObservationMixin):
         p = document.add_paragraph(self.context.highlight_value())
         p = document.add_paragraph('Short description by sector expert', style="Label Bold")
         p = document.add_paragraph(self.context.text)
+        if is_projection:
+            p = document.add_paragraph('Scenario Type', style="Label Bold")
+            p = document.add_paragraph(self.context.scenario_type_value())
+            p = document.add_paragraph(
+                'NFR Inventories Category Code', style="Label Bold"
+            )
+            p = document.add_paragraph(self.context.nfr_code_inventory)
+            p = document.add_paragraph('Activity Data', style="Label Bold")
+            p = document.add_paragraph('\n'.join(
+                self.context.activity_data_value()
+            ))
 
         if self.context.get_status() == 'close-requested':
             document.add_heading('Finish observation', level=2)
