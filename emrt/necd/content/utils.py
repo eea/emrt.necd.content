@@ -94,41 +94,6 @@ def get_vocabulary_value(context, vocabulary, term, exportForm=None):
         return term
 
 
-def activity_data_validator(context, type, activity):
-    if activity and not type:
-        raise WidgetActionExecutionError('activity_data_type',
-                                         Invalid(u"Please select a type of "
-                                                 u"activity before selecting "
-                                                 u"an activity")
-                                         )
-    elif not activity and type and type != u'Other':
-        raise WidgetActionExecutionError('activity_data',
-                                         Invalid(u"Please select an activity"
-                                                 u" after you've selected an "
-                                                 u"activity type")
-                                         )
-    elif activity and type:
-        activity_data_registry = get_registry_interface_field_data(
-            INECDVocabularies,'activity_data')
-
-        activity_data_values = [get_vocabulary_value
-                                (context,
-                                 'emrt.necd.content.activity_data', val)
-                                for val in activity
-                                ]
-
-        if not all(activity in activity_data_registry[type]
-                   for activity in activity_data_values):
-            raise WidgetActionExecutionError('activity_data',
-                                             Invalid(
-                                                 u"The activities you selected"
-                                                 u" do not correspond to the "
-                                                 u"activity type. Please "
-                                                 u"selected the appropiate "
-                                                 u"values")
-                                             )
-
-
 def jsonify(request, data, cache=False, sort_keys=True):
     header = request.RESPONSE.setHeader
     header("Content-Type", "application/json")

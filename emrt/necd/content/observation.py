@@ -65,7 +65,6 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
-from emrt.necd.content.utils import activity_data_validator
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utilities import ms_user
@@ -1016,13 +1015,6 @@ class AddForm(add.DefaultAddForm):
             self.actions[k].addClass('standardButton')
 
     def create(self, data):
-        if _is_projection(self.context):
-            activity_data = data['activity_data']
-            activity_data_type = data['activity_data_type']
-            data['year'] = ','.join(data['year'])
-            activity_data_validator(self.context, activity_data_type,
-                                    activity_data)
-
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -1036,6 +1028,7 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
+        data['year'] = u','.join(data['year'])
         for key, value in data.items():
             content._setPropValue(key, value)
         notify(ObjectModifiedEvent(container))
@@ -1344,7 +1337,6 @@ class ObservationMixin(DefaultView):
 
 
 class ObservationView(ObservationMixin):
-
     def get_current_counterparters(self):
         """ Return list of current counterparters,
             if the user can see counterpart action
@@ -1592,15 +1584,6 @@ class ModificationForm(edit.DefaultEditForm):
 
     @button.buttonAndHandler(_(u'Save'), name='save')
     def handleApply(self, action):
-        if _is_projection(self.context):
-            data, errors = self.extractData()
-
-            activity_data = data['activity_data']
-            activity_data_type = data['activity_data_type']
-
-            activity_data_validator(self.context, activity_data_type,
-                                    activity_data)
-
         return super(ModificationForm, self).handleApply(self, action)
 
     @button.buttonAndHandler(_(u'Cancel'), name='cancel')
