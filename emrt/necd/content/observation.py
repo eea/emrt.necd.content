@@ -144,7 +144,6 @@ class IObservation(model.Schema, IImageScaleTraversable):
     country = schema.Choice(
         title=u"Country",
         vocabulary='emrt.necd.content.eea_member_states',
-        constraint=check_country,
         required=True,
     )
 

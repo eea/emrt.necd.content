@@ -27,6 +27,7 @@ def context_aware_query(context):
             ldap_wrapper(LDAP_LEADREVIEW) + '-*',
             ldap_wrapper(LDAP_SECTOREXP) + '-sector*-*'
         )
+    )
 
 
 def f_start(pat, s):
