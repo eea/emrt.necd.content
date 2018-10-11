@@ -892,7 +892,11 @@ class Observation(Container):
 # interface with "/@@view" appended unless specified otherwise
 # This will make this view the default view for your content-type
 def set_form_widgets(obj):
-    obj.fields['IDublinCore.title'].field.required = False
+    if 'IDublinCore.title' in obj.fields.keys():
+        obj.fields['IDublinCore.title'].field.required = False
+        obj.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
+
     w_activity_data = obj.widgets['activity_data']
     if _is_projection(obj.context):
         obj.widgets['fuel'].mode = interfaces.HIDDEN_MODE
@@ -916,14 +920,14 @@ def set_form_widgets(obj):
         obj.widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
-        nfr_w = obj.widgets['nfr_code']
-        nfr_w.field.title = nfr_w.field.title.replace(
-            u'projection ', u''
-        )
+
+        if 'nfr_code' in obj.fields.keys():
+            nfr_w = obj.widgets['nfr_code']
+            nfr_w.field.title = nfr_w.field.title.replace(
+                u'projection ', u''
+            )
         obj.widgets['nfr_code_inventory'].mode = interfaces.HIDDEN_MODE
 
-    obj.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
-    obj.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
     obj.widgets['text'].rows = 15
     obj.widgets['highlight'].template = Z3ViewPageTemplateFile(
         'templates/widget_highlight.pt'
@@ -948,14 +952,44 @@ def set_form_fields(obj):
             required=True,
         )
         obj.fields['year'].widgetFactory = CheckBoxFieldWidget
-    else:
-        obj.fields['reference_year'].field.required = False
 
 
 class EditForm(edit.DefaultEditForm):
     def updateFields(self):
         super(EditForm, self).updateFields()
         set_form_fields(self)
+
+        user = api.user.get_current()
+        roles = api.user.get_roles(username=user.getId(), obj=self.context)
+        fields = []
+        if 'Manager' in roles:
+            fields = field.Fields(IObservation)
+        if ROLE_SE in roles:
+            fields = [f for f in field.Fields(IObservation) if f not in [
+                'country',
+                'nfr_code',
+                'review_year',
+                'technical_corrections',
+                'closing_comments',
+                'closing_deny_comments',
+
+            ]]
+        elif ROLE_LR in roles:
+            fields = ['text', 'highlight']
+
+        self.fields = self.fields.select(*fields)
+        self.groups = [g for g in self.groups if
+                       g.label == 'label_schema_default']
+
+        checkbox_fields = [
+            'parameter', 'highlight', 'pollutants',
+            'activity_data', 'scenario_type'
+        ]
+
+        for cb in checkbox_fields:
+            if cb in fields:
+                self.fields[cb].widgetFactory = CheckBoxFieldWidget
+
 
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
@@ -1028,7 +1062,8 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        data['year'] = u','.join(data['year'])
+        if _is_projection(self.context):
+            data['year'] = u','.join(data['year'])
         for key, value in data.items():
             content._setPropValue(key, value)
         notify(ObjectModifiedEvent(container))
@@ -1578,84 +1613,6 @@ class AddQuestionForm(Form):
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
             self.actions[k].addClass('defaultWFButton')
-
-
-class ModificationForm(edit.DefaultEditForm):
-
-    @button.buttonAndHandler(_(u'Save'), name='save')
-    def handleApply(self, action):
-        return super(ModificationForm, self).handleApply(self, action)
-
-    @button.buttonAndHandler(_(u'Cancel'), name='cancel')
-    def handleCancel(self, action):
-        return super(ModificationForm, self).handleCancel(self, action)
-
-    def updateFields(self):
-        super(ModificationForm, self).updateFields()
-
-        user = api.user.get_current()
-        roles = api.user.get_roles(username=user.getId(), obj=self.context)
-        fields = []
-        # XXX Needed? Edit rights are controlled by the WF
-        if 'Manager' in roles:
-            fields = field.Fields(IObservation)
-        elif ROLE_SE in roles:
-            fields = [f for f in field.Fields(IObservation) if f not in [
-                'country',
-                'nfr_code',
-                'review_year',
-                'technical_corrections',
-                'closing_comments',
-                'closing_deny_comments',
-
-            ]]
-        elif ROLE_LR in roles:
-            fields = ['text', 'highlight']
-
-        self.fields = field.Fields(IObservation).select(*fields)
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
-        if 'parameter' in fields:
-            self.fields['parameter'].widgetFactory = CheckBoxFieldWidget
-        if 'highlight' in fields:
-            self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
-        if 'pollutants' in fields:
-            self.fields['pollutants'].widgetFactory = CheckBoxFieldWidget
-        if 'activity_data' in fields:
-            self.fields['activity_data'].widgetFactory = CheckBoxFieldWidget
-
-    def updateWidgets(self):
-        super(ModificationForm, self).updateWidgets()
-
-        w_activity_data = self.widgets['activity_data']
-
-        if _is_projection(self.context):
-            self.widgets['fuel'].mode = interfaces.HIDDEN_MODE
-            self.widgets['activity_data_type'].template = \
-                Z3ViewPageTemplateFile('templates/widget_activity_type.pt')
-            w_activity_data.template = Z3ViewPageTemplateFile(
-                'templates/widget_activity.pt'
-            )
-            w_activity_data.activity_data_registry = json.dumps(
-                get_registry_interface_field_data(
-                    INECDVocabularies,
-                    'activity_data'
-                )
-            )
-        else:
-            self.widgets['activity_data'].mode = interfaces.HIDDEN_MODE
-            self.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
-            self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
-                'templates/widget_pollutants.pt'
-            )
-
-        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
-            'templates/widget_highlight.pt'
-        )
-
-    def updateActions(self):
-        super(ModificationForm, self).updateActions()
-        for k in self.actions.keys():
-            self.actions[k].addClass('standardButton')
 
 
 class AddAnswerForm(Form):

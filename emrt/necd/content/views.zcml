@@ -91,14 +91,6 @@
     />
 
   <!--Observation views-->
-
-  <browser:page
-    name="modifications"
-    for=".observation.IObservation"
-    class=".observation.ModificationForm"
-    permission="cmf.ModifyPortalContent"
-    />
-
   <browser:page
     name="add-answer-and-request-comments"
     for=".observation.IObservation"
