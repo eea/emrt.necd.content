@@ -952,6 +952,8 @@ def set_form_fields(obj):
             required=True,
         )
         obj.fields['year'].widgetFactory = CheckBoxFieldWidget
+    else:
+        obj.fields['reference_year'].field.required = False
 
 
 class EditForm(edit.DefaultEditForm):
