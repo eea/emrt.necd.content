@@ -461,24 +461,6 @@
 
   </genericsetup:upgradeSteps>
 
-  <genericsetup:upgradeSteps
-    source="2.2.1"
-    destination="2.2.2"
-    profile="emrt.necd.content:default">
-
-    <genericsetup:upgradeStep
-      title="Delete parameter vocabulary"
-      description="Remove the vocabulary to reimport the new version"
-      handler="emrt.necd.content.upgrades.evolve222.run"
-    />
-
-   <genericsetup:upgradeDepends
-      title="Reimport missing vocabularies."
-      description="[refs #93528] Updated parameter vocabulary, adding new vocabularies, importing registry and catalog. Reindexing observations with new indexes."
-      import_steps="emrt.necd.content.setup.vocabularies plone.app.registry catalog"
-    />
-  </genericsetup:upgradeSteps>
-
  <genericsetup:upgradeSteps
     source="2.2.2"
     destination="2.2.3"
@@ -490,6 +472,24 @@
       import_steps="workflow"
     />
 
+  </genericsetup:upgradeSteps>
+
+ <genericsetup:upgradeSteps
+    source="2.2.3"
+    destination="2.3.0"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Delete parameter vocabulary"
+      description="Remove the vocabulary to reimport the new version"
+      handler="emrt.necd.content.upgrades.evolve230.run"
+    />
+
+   <genericsetup:upgradeDepends
+      title="Reimport missing vocabularies."
+      description="[refs #93528] Updated parameter vocabulary, adding new vocabularies, importing registry and catalog. Reindexing observations with new indexes."
+      import_steps="emrt.necd.content.setup.vocabularies plone.app.registry catalog"
+    />
   </genericsetup:upgradeSteps>
 
 </configure>
