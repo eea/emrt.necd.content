@@ -173,14 +173,14 @@ class AddForm(add.DefaultAddForm):
 
         # grab highlight value from observation
         widget_highlight = self.widgets['highlight']
-        def set_checked(item):
-            updated_item = copy(item)
-            updated_item['checked'] = (
-                updated_item['value'] in (self.context.highlight or [])
-            )
-            return updated_item
+        context_highlight = self.context.highlight or []
 
-        widget_highlight.items = map(set_checked, widget_highlight.items)
+        def is_checked(term):
+            return term.value in context_highlight
+
+        # Monkey patch isChecked method since we can't
+        # override .items anymore. It's now a @property.
+        widget_highlight.isChecked = is_checked
 
     def create(self, data={}):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
