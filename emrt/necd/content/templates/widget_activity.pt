@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:tal="http://xml.zope.org/namespaces/tal"
+     tal:define="items view/items">
+
+  <tal:item repeat="item items">
+    <span class="activity-data-options" i18n:domain="plone.formwidget.namedfile">
+      <input type="checkbox"
+             tal:attributes="id item/id;
+                             name item/name;
+                             class view/klass;
+                             checked item/checked;
+                             value item/value;
+                             style view/style;
+                             title view/title;
+                             lang view/lang;
+                             onclick view/onclick;
+                             ondblclick view/ondblclick;
+                             onmousedown view/onmousedown;
+                             onmouseup view/onmouseup;
+                             onmouseover view/onmouseover;
+                             onmousemove view/onmousemove;
+                             onmouseout view/onmouseout;
+                             onkeypress view/onkeypress;
+                             onkeydown view/onkeydown;
+                             onkeyup view/onkeyup;
+                             disabled view/disabled;
+                             tabindex view/tabindex;
+                             onfocus view/onfocus;
+                             onblur view/onblur;
+                             onchange view/onchange;
+                             readonly view/readonly;
+                             alt view/alt;
+                             accesskey view/accesskey;
+                             onselect view/onselect"
+      /><label tal:attributes="for item/id">
+        <span class="label-activity-data-options" tal:content="item/label">Label</span>
+        <br />
+      </label>
+    </span>
+  </tal:item>
+  <script>
+    window.onload = function(){
+
+      function show_checkboxes(selector, possible_values){
+        $(selector).each(function(){
+            var value = $(this).text().trim();
+            if(possible_values.includes(value)){
+            $(this).show();
+            }
+          })
+      }
+
+      var activity_data_registry = ${view/activity_data_registry};
+      var selected = $('#form-widgets-activity_data_type option:selected').text();
+
+      //for the 'modifications' page
+      if(selected == 'No value'){
+        $('.activity-data-options').hide();
+        $('label[for=form-widgets-activity_data]').hide();
+      }
+      else{
+        $('.activity-data-options').hide();
+        $('label[for=form-widgets-activity_data]').show();
+
+        var select_activities = activity_data_registry[selected];
+        show_checkboxes('.activity-data-options', select_activities);
+      }
+
+      window.addEventListener('ActivityChanged', function(e) {
+
+        $('input[name*="${view/name}:list"]:checked').each(function(){
+          $(this).prop('checked', false);
+        })
+        if(e.detail.new_value == '--NOVALUE--' || e.detail.new_value == 'Other'){
+          $('.activity-data-options').hide();
+          $('label[for=form-widgets-activity_data]').hide();
+        }
+        else{
+          $('label[for=form-widgets-activity_data]').show();
+          $('.activity-data-options').hide();
+          var possible_values = activity_data_registry[e.detail.new_value];
+          show_checkboxes('.activity-data-options', possible_values);
+        }
+      })
+    }
+  </script>
+</html>

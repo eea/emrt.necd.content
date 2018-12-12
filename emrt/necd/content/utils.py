@@ -7,15 +7,23 @@ import concurrent.futures
 import plone.api as api
 
 from zope.component import getUtility
+from zope.interface import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 
+from z3c.form.interfaces import WidgetActionExecutionError
 
-def user_has_ldap_role(ldap_name, user=None, groups=None):
+from emrt.necd.content.utilities.ldap_wrapper import ldap_inventory
+from emrt.necd.content.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies import INECDVocabularies
+
+
+def user_has_ldap_role(ldap_name, user=None, groups=None,
+                       ldap_wrapper=ldap_inventory):
     _user = user if user else api.user.get_current()
     _groups = groups if groups else _user.getGroups()
     return any(tuple(
         group for group in _groups
-        if group.startswith(ldap_name)
+        if group.startswith(ldap_wrapper(ldap_name))
     ))
 
 
@@ -71,7 +79,9 @@ def hidden(menuitem):
     return False
 
 
-def get_vocabulary_value(context, vocabulary, term):
+def get_vocabulary_value(context, vocabulary, term, exportForm=None):
+    if exportForm:
+        context = context.aq_parent
 
     vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
     vocabulary = vocab_factory(context)

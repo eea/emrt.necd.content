@@ -13,12 +13,14 @@ from z3c.form import field
 from z3c.form.form import Form
 from zope import schema
 from zope.interface import Interface
+from zope.component import getUtility
 from DateTime import DateTime
 from emrt.necd.content.notifications import answer_to_msexperts
 from emrt.necd.content.notifications import question_to_counterpart
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.utils import find_parent_with_interface
 from emrt.necd.content.utils import principals_with_roles
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_MSEXPERT
@@ -345,7 +347,8 @@ class AssignAnswererForm(AssignFormMixin):
         context = aq_inner(self.context)
         observation = aq_parent(context)
         country = observation.country.lower()
-        return ['{}-{}'.format(LDAP_MSEXPERT, country)]
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
+        return ['{}-{}'.format(ldap_wrapper(LDAP_MSEXPERT), country)]
 
     def _get_wf_action(self):
         if api.content.get_state(self.context) in [
@@ -417,7 +420,8 @@ class AssignCounterPartForm(AssignFormMixin):
         from_reviewfolder = principals_with_roles(reviewfolder, rolenames)
         validated_groups = filter_groups_for_context(
             self.context, from_reviewfolder)
-        static = (LDAP_LEADREVIEW, LDAP_SECTOREXP)
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        static = (ldap_wrapper(LDAP_LEADREVIEW), ldap_wrapper(LDAP_SECTOREXP))
         return static + validated_groups
 
     def get_current_counterparters(self):
@@ -503,7 +507,8 @@ class AssignConclusionReviewerForm(AssignFormMixin):
         from_reviewfolder = principals_with_roles(reviewfolder, rolenames)
         validated_groups = filter_groups_for_context(
             self.context, from_reviewfolder)
-        static = (LDAP_LEADREVIEW, LDAP_SECTOREXP)
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        static = (ldap_wrapper(LDAP_LEADREVIEW), ldap_wrapper(LDAP_SECTOREXP))
         return static + validated_groups
 
     def _get_wf_action(self):

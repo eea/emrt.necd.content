@@ -6,12 +6,15 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from AccessControl import Unauthorized
 from plone.memoize.view import memoize
+from zope.component import getUtility
 from .observation import IObservation
 from .observation import ObservationView
 from .reviewfolder import IReviewFolder
 from emrt.necd.content.subscriptions.interfaces import INotificationUnsubscriptions
 
 import copy
+
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.constants import ROLE_MSA
@@ -191,12 +194,12 @@ class SubscriptionConfigurationMixin(BrowserView):
 
 
 class SubscriptionConfigurationReview(SubscriptionConfigurationMixin):
-
     def _user_roles(self, context, user):
         groups = user.getGroups()
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
         return tuple(
             role for role, checker in LDAP_TO_LOCAL.items()
-            if checker(groups=groups)
+            if checker(groups=groups, ldap_wrapper=ldap_wrapper)
         )
 
 

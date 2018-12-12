@@ -27,7 +27,7 @@
 			<item value="0"/>
 		</property>
 		<property id="groups_base" type="str">
-			<item value="cn=extranet-necd-review,cn=extranet-necd,cn=extranet,ou=Roles,o=EIONET,l=Europe"/>
+			<item value="cn=extranet-necd,cn=extranet,ou=Roles,o=EIONET,l=Europe"/>
 		</property>
 		<property id="groups_scope" type="int">
 			<item value="2"/>

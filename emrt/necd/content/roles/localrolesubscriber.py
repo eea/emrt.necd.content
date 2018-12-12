@@ -1,8 +1,11 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 
+from zope.component import getUtility
+
 import plone.api as api
 
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.reviewfolder import IReviewFolder
 
 from emrt.necd.content.constants import LDAP_SECTOREXP
@@ -25,21 +28,24 @@ def grant_local_roles(context):
 
     context.__ac_local_roles_block__ = True
 
+    ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
+
     for obj in applies_to:
         _roles_start = obj.get_local_roles()
 
         api.group.grant_roles(
-            groupname='{}-{}-{}'.format(LDAP_SECTOREXP, sector, country),
+            groupname='{}-{}-{}'.format(
+                ldap_wrapper(LDAP_SECTOREXP), sector, country),
             roles=[ROLE_SE],
             obj=obj,
         )
         api.group.grant_roles(
-            groupname='{}-{}'.format(LDAP_LEADREVIEW, country),
+            groupname='{}-{}'.format(ldap_wrapper(LDAP_LEADREVIEW), country),
             roles=[ROLE_LR],
             obj=obj,
         )
         api.group.grant_roles(
-            groupname='{}-{}'.format(LDAP_MSA, country),
+            groupname='{}-{}'.format(ldap_wrapper(LDAP_MSA), country),
             roles=[ROLE_MSA],
             obj=obj,
         )

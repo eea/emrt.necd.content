@@ -48,6 +48,11 @@
     />
 
   <utility
+    name="emrt.necd.content.nfr_code_inventories"
+    factory=".vocabularies.NFRCodeInventories"
+  />
+
+  <utility
     name="emrt.necd.content.conclusion_reasons"
     factory=".vocabularies.Conclusions"
     />
@@ -57,4 +62,18 @@
     factory=".vocabularies.SectorNames"
     />
 
+  <utility
+    name="emrt.necd.content.activity_data"
+    factory=".vocabularies.ActivityData"
+    />
+
+  <utility
+    name="emrt.necd.content.activity_data_type"
+    factory=".vocabularies.ActivityDataType"
+    />
+
+  <utility
+    name="emrt.necd.content.scenario_type"
+    factory=".vocabularies.ScenarioType"
+    />
 </configure>

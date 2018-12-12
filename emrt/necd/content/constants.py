@@ -2,17 +2,19 @@
 """
 
 LDAP_BASE = 'extranet-necd-review'
+LDAP_BASE_PROJECTION = 'extranet-necd-projection'
+LDAP_BASE_DN = '{base_dn}'
 
 
-LDAP_SECRETARIAT = LDAP_BASE + '-secretariat'
+LDAP_SECRETARIAT = LDAP_BASE_DN + '-secretariat'
 
 
-LDAP_TERT = LDAP_BASE + '-tert'
+LDAP_TERT = LDAP_BASE_DN + '-tert'
 LDAP_LEADREVIEW = LDAP_TERT + '-leadreview'
 LDAP_SECTOREXP = LDAP_TERT + '-sectorexp'
 
 
-LDAP_COUNTRIES = LDAP_BASE + '-countries'
+LDAP_COUNTRIES = LDAP_BASE_DN + '-countries'
 LDAP_MSA = LDAP_COUNTRIES + '-msa'
 LDAP_MSEXPERT = LDAP_COUNTRIES + '-msexpert'
 
@@ -28,9 +30,10 @@ P_OBS_REDRAFT_REASON_VIEW = (
     'emrt.necd.content: View Observation Redraft Reason'
 )
 
-
 __all__ = (
     'LDAP_BASE',
+    'LDAP_BASE_DN',
+    'LDAP_BASE_PROJECTION',
     'LDAP_SECRETARIAT',
     'LDAP_TERT',
     'LDAP_LEADREVIEW',

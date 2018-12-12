@@ -3,23 +3,27 @@ try:
 except ImportError:
     from StringIO import StringIO
 import datetime
+import json
 import re
 from docx import Document
 from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
+from Acquisition import aq_base
+from Acquisition.interfaces import IAcquirer
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.app.discussion.interfaces import IConversation
 from plone.dexterity.content import Container
 from plone.directives import form
-from plone.memoize import instance
 from plone.namedfile.interfaces import IImageScaleTraversable
+from plone.supermodel import model
 from plone.z3cform.interfaces import IWrappedForm
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
@@ -30,6 +34,7 @@ from time import time
 from z3c.form import button
 from z3c.form import field
 from z3c.form import interfaces
+from z3c.form import validator
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.form import Form
 from z3c.form.interfaces import ActionExecutionError
@@ -38,11 +43,14 @@ from zope.browsermenu.menu import getMenu
 from zope.browserpage.viewpagetemplatefile import (
     ViewPageTemplateFile as Z3ViewPageTemplateFile
 )
+from zope.component import createObject
 from zope.component import getUtility
+from zope.event import notify
 from zope.i18n import translate
 from zope.interface import alsoProvides
 from zope.interface import implementer
 from zope.interface import Invalid
+from zope.lifecycleevent import ObjectModifiedEvent
 from emrt.necd.content import MessageFactory as _
 from eea.cache import cache
 from .comment import IComment
@@ -52,7 +60,6 @@ from .nfr_code_matching import get_category_value_from_nfr_code
 from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions
 )
-from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
@@ -60,41 +67,25 @@ from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
+from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
-from plone.supermodel import model
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
+from emrt.necd.content.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies import INECDVocabularies
 
 
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
+def _is_projection(context):
+    return context.type == 'projection'
 
 def check_parameter(value):
     if len(value) == 0:
         raise Invalid(u'You need to select at least one parameter')
 
     return True
-
-
-def check_nfr_code(value):
-    """ Check if the user is in one of the group of users
-        allowed to add this category NFR Code observations
-    """
-    category = get_category_ldap_from_nfr_code(value)
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith('{}-{}-'.format(LDAP_SECTOREXP, category)):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            u'You are not allowed to add observations for this sector category'
-        )
-
-    return True
-
 
 def check_country(value):
     user = api.user.get_current()
@@ -118,7 +109,6 @@ def inventory_year(value):
     Inventory year can be a given year (2014), a range of years (2012-2014)
     or a list of the years (2012, 2014, 2016)
     """
-
     def split_on_sep(val, sep):
         for s in sep:
             if s in val:
@@ -127,7 +117,9 @@ def inventory_year(value):
 
     def validate(value):
         normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
-        return False not in (int(val) > 0 for val in normalized_value)
+        return False not in (
+            int(val) in range(1000,10000) for val in normalized_value
+        )
 
     def check_valid(value):
         try:
@@ -140,7 +132,6 @@ def inventory_year(value):
 
     return True
 
-
 def default_year():
     return datetime.datetime.now().year
 
@@ -150,7 +141,6 @@ class IObservation(model.Schema, IImageScaleTraversable):
     """
     New review observation
     """
-
     text = schema.Text(
         title=u'Short description by sector expert',
         required=True,
@@ -166,25 +156,35 @@ class IObservation(model.Schema, IImageScaleTraversable):
     country = schema.Choice(
         title=u"Country",
         vocabulary='emrt.necd.content.eea_member_states',
-        constraint=check_country,
         required=True,
     )
 
     nfr_code = schema.Choice(
-        title=u"NFR category codes",
+        title=u"NFR projection category codes",
         vocabulary='emrt.necd.content.nfr_code',
-        constraint=check_nfr_code,
         required=True,
+    )
+
+    nfr_code_inventory = schema.Choice(
+        title=u"NFR inventories category code",
+        vocabulary='emrt.necd.content.nfr_code_inventories',
+        required=False,
     )
 
     year = schema.TextLine(
         title=u'Inventory year',
-        description=u"Inventory year is the year, a range or a list " \
-                    u"of years or a (e.g. '2012', '2009-2012', " \
-                    u"'2009, 2012, 2013') when the emissions had " \
-                    u"occured for which an issue was observed in the review.",
+        description=u'Inventory year can be a given year (2014), a range of '
+                    u'years (2012-2014) or a list of the years '
+                    u'(2012, 2014, 2016)',
         constraint=inventory_year,
         required=True,
+    )
+
+    reference_year = schema.Int(
+        title=u'Reference year',
+        required=True,
+        min=1000,
+        max=9999
     )
 
     form.widget(pollutants=CheckBoxFieldWidget)
@@ -194,6 +194,15 @@ class IObservation(model.Schema, IImageScaleTraversable):
             vocabulary='emrt.necd.content.pollutants',
         ),
         required=True,
+    )
+
+    form.widget(scenario=CheckBoxFieldWidget)
+    scenario = schema.List(
+        title=u"Scenario Type",
+        value_type=schema.Choice(
+            vocabulary='emrt.necd.content.scenario_type'
+        ),
+        required=False,
     )
 
     review_year = schema.Int(
@@ -207,6 +216,21 @@ class IObservation(model.Schema, IImageScaleTraversable):
     fuel = schema.Choice(
         title=u"Fuel",
         vocabulary='emrt.necd.content.fuel',
+        required=False,
+    )
+
+    activity_data_type = schema.Choice(
+        title=u"Activity Data Type",
+        vocabulary='emrt.necd.content.activity_data_type',
+        required=False,
+    )
+
+    form.widget(activity_data=CheckBoxFieldWidget)
+    activity_data = schema.List(
+        title=u"Activity Data",
+        value_type=schema.Choice(
+            vocabulary='emrt.necd.content.activity_data',
+        ),
         required=False,
     )
 
@@ -251,17 +275,72 @@ class IObservation(model.Schema, IImageScaleTraversable):
     )
 
 
-def set_title_to_observation(obj, _):
-    sector = safe_unicode(obj.ghg_source_category_value())
-    pollutants = safe_unicode(obj.pollutants_value())
-    inventory_year = safe_unicode(str(obj.year))
-    parameter = safe_unicode(obj.parameter_value())
-    obj.title = u' '.join([sector, pollutants, inventory_year, parameter])
-    grant_local_roles(obj)
+class NfrCodeContextValidator(validator.SimpleFieldValidator):
+    def validate(self, value, force=False):
+        """ Check if the user is in one of the group of users
+            allowed to add this category NFR Code observations
+        """
+        category = get_category_ldap_from_nfr_code(value, self.context)
+        user = api.user.get_current()
+        groups = user.getGroups()
+        valid = False
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+        for group in groups:
+            if group.startswith('{}-{}-'.format(ldap_se, category)):
+                valid = True
+                break
+        if not valid:
+            raise Invalid(
+                u'You are not allowed to add observations '
+                u'for this sector category.'
+            )
+
+validator.WidgetValidatorDiscriminators(
+    NfrCodeContextValidator,
+    field=IObservation['nfr_code']
+)
+
+
+class CountryContextValidator(validator.SimpleFieldValidator):
+    def validate(self, value):
+        user = api.user.get_current()
+        groups = user.getGroups()
+        valid = False
+
+        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+
+        for group in groups:
+            is_se = group.startswith('{}-'.format(ldap_se))
+            if is_se and group.endswith('-%s' % value):
+                valid = True
+                break
+
+        if not valid:
+            raise Invalid(
+                u'You are not allowed to add observations for this country.'
+            )
+
+
+validator.WidgetValidatorDiscriminators(
+    CountryContextValidator,
+    field=IObservation['country']
+)
+
+
+def set_title_to_observation(object, event):
+    sector = safe_unicode(object.ghg_source_category_value())
+    pollutants = safe_unicode(object.pollutants_value())
+    inventory_year = safe_unicode(str(object.year))
+    parameter = safe_unicode(object.parameter_value())
+    object.title = u' '.join([sector, pollutants, inventory_year, parameter])
+    grant_local_roles(object)
 
 
 @implementer(IObservation)
 class Observation(Container):
+
     def get_values(self):
         """
         Memoized version of values, to speed-up
@@ -275,7 +354,6 @@ class Observation(Container):
             )
         else:
             return self.listFolderContents()
-
 
     def get_nfr_code(self):
         """ stupid method to avoid name-clashes with the existing
@@ -306,12 +384,12 @@ class Observation(Container):
 
     def ghg_source_category_value(self):
         # Get the value of the sector to be used on the LDAP mapping
-        return get_category_ldap_from_nfr_code(self.nfr_code)
+        return get_category_ldap_from_nfr_code(self.nfr_code, self.aq_parent)
 
     def ghg_source_sectors_value(self):
         # Get the value of the sector to be used
         # on the Observation Metadata screen
-        return get_category_value_from_nfr_code(self.nfr_code)
+        return get_category_value_from_nfr_code(self.nfr_code, self.aq_parent)
 
     def parameter_value(self):
         parameters = [
@@ -327,6 +405,15 @@ class Observation(Container):
             ]
         return u', '.join(filter(None, pollutants))
 
+    def activity_data_value(self):
+        if self.activity_data:
+            activities = [
+                get_vocabulary_value(self, 'emrt.necd.content.activity_data', a)
+                for a in self.activity_data
+            ]
+            return activities
+        return []
+
     def highlight_value(self):
         if self.highlight:
             highlight = [
@@ -334,6 +421,15 @@ class Observation(Container):
                 for h in self.highlight
                 ]
             return u', '.join(highlight)
+        return u''
+
+    def scenario_type_value(self):
+        if self.scenario:
+            scenario = [
+                get_vocabulary_value(self,'emrt.necd.content.scenario_type',s)
+                for s in self.scenario
+                ]
+            return u', '.join(scenario)
         return u''
 
     def finish_reason_value(self):
@@ -497,7 +593,6 @@ class Observation(Container):
         obs_status = self.observation_status()
 
         return tuple(['Answered'] * (len_comments - 1) + [obs_status])
-
 
     def overview_status(self):
         status = self.get_status()
@@ -788,6 +883,7 @@ class Observation(Container):
         status = self.get_status()
         return status in ['conclusions', 'conclusions-lr-denied']
 
+
 # View class
 # The view will automatically use a similarly named template in
 # templates called observationview.pt .
@@ -795,48 +891,186 @@ class Observation(Container):
 # The view will render when you request a content object with this
 # interface with "/@@view" appended unless specified otherwise
 # This will make this view the default view for your content-type
+def set_form_widgets(obj):
+    if 'IDublinCore.title' in obj.fields.keys():
+        obj.fields['IDublinCore.title'].field.required = False
+        obj.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
+
+    w_activity_data = obj.widgets['activity_data']
+    if _is_projection(obj.context):
+        obj.widgets['fuel'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['activity_data_type'].template = Z3ViewPageTemplateFile(
+            'templates/widget_activity_type.pt'
+        )
+        w_activity_data.template = Z3ViewPageTemplateFile(
+            'templates/widget_activity.pt'
+        )
+        w_activity_data.activity_data_registry = json.dumps(
+            get_registry_interface_field_data(
+                INECDVocabularies,
+                'activity_data'
+            )
+        )
+    else:
+        w_activity_data.mode = interfaces.HIDDEN_MODE
+        obj.widgets['scenario'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['reference_year'].mode = interfaces.HIDDEN_MODE
+        obj.widgets['pollutants'].template = Z3ViewPageTemplateFile(
+            'templates/widget_pollutants.pt'
+        )
+
+        if 'nfr_code' in obj.fields.keys():
+            nfr_w = obj.widgets['nfr_code']
+            nfr_w.field.title = nfr_w.field.title.replace(
+                u'projection ', u''
+            )
+        obj.widgets['nfr_code_inventory'].mode = interfaces.HIDDEN_MODE
+
+    obj.widgets['text'].rows = 15
+    obj.widgets['highlight'].template = Z3ViewPageTemplateFile(
+        'templates/widget_highlight.pt'
+    )
+    obj.groups = [
+        g for g in obj.groups if
+        g.label == 'label_schema_default'
+        ]
+
+
+def set_form_fields(obj):
+    if _is_projection(obj.context):
+        obj.fields['year'].field = schema.List(
+            title=u'Projection year',
+            description=u"Projection year is the year or a list of years "
+                        u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
+                        u" occured for which an issue was observed in the review.",
+            value_type=schema.Choice(
+                values=[_(u'2020'), _(u'2025'), _(u'2030'), _(u'2040'),
+                        _(u'2050')]
+            ),
+            required=True,
+        )
+        obj.fields['year'].widgetFactory = CheckBoxFieldWidget
+    else:
+        obj.fields['reference_year'].field.required = False
 
 
 class EditForm(edit.DefaultEditForm):
+    def updateFields(self):
+        super(EditForm, self).updateFields()
+        set_form_fields(self)
+
+        user = api.user.get_current()
+        roles = api.user.get_roles(username=user.getId(), obj=self.context)
+        fields = []
+        if 'Manager' in roles:
+            fields = field.Fields(IObservation)
+        if ROLE_SE in roles:
+            fields = [f for f in field.Fields(IObservation) if f not in [
+                'country',
+                'nfr_code',
+                'review_year',
+                'technical_corrections',
+                'closing_comments',
+                'closing_deny_comments',
+
+            ]]
+        elif ROLE_LR in roles:
+            fields = ['text', 'highlight']
+
+        self.fields = self.fields.select(*fields)
+        self.groups = [g for g in self.groups if
+                       g.label == 'label_schema_default']
+
+        checkbox_fields = [
+            'parameter', 'highlight', 'pollutants',
+            'activity_data', 'scenario_type'
+        ]
+
+        for cb in checkbox_fields:
+            if cb in fields:
+                self.fields[cb].widgetFactory = CheckBoxFieldWidget
+
+
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
-        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
-            'templates/widget_highlight.pt'
+        set_form_widgets(self)
+        if _is_projection(self.context):
+            for item in self.widgets['year'].items:
+                if item['value'] in self.context.year:
+                    item['checked'] = True
+
+    def updateActions(self):
+        super(EditForm, self).updateActions()
+        for k in self.actions.keys():
+            self.actions[k].addClass('standardButton')
+
+    @button.buttonAndHandler(_(u'Save'), name='save')
+    def handleApply(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        data['year'] = u','.join(data['year'])
+        content = self.getContent()
+        for key, value in data.items():
+            if data[key] is interfaces.NOT_CHANGED:
+                continue
+            content._setPropValue(key, value)
+        IStatusMessage(self.request).addStatusMessage(
+            self.success_message, u"info"
         )
-        self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
-            'templates/widget_pollutants.pt'
-        )
+        self.request.response.redirect(self.nextURL())
+
+        notify(ObjectModifiedEvent(content))
+
+    @button.buttonAndHandler(_(u'Cancel'), name='cancel')
+    def handleCancel(self, action):
+        super(EditForm, self).handleCancel(self, action)
 
 
 class AddForm(add.DefaultAddForm):
     label = 'Observation'
     description = ' '
 
+    def updateFields(self):
+        super(AddForm, self).updateFields()
+        set_form_fields(self)
+
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
-        self.fields['IDublinCore.title'].field.required = False
-        self.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
-        self.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
-        self.widgets['text'].rows = 15
-        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
-            'templates/widget_highlight.pt'
-        )
-        self.widgets['pollutants'].template = Z3ViewPageTemplateFile(
-            'templates/widget_pollutants.pt'
-        )
-        self.groups = [
-            g for g in self.groups if
-            g.label == 'label_schema_default'
-        ]
+        set_form_widgets(self)
 
     def updateActions(self):
         super(AddForm, self).updateActions()
         self.actions['save'].title = u'Save Observation'
         self.actions['save'].addClass('defaultWFButton')
         self.actions['cancel'].title = u'Delete Observation'
-
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
+
+    def create(self, data):
+        fti = getUtility(IDexterityFTI, name=self.portal_type)
+        container = aq_inner(self.context)
+        content = createObject(fti.factory)
+        if hasattr(content, '_setPortalTypeName'):
+            content._setPortalTypeName(fti.getId())
+
+        # Acquisition wrap temporarily to satisfy things like vocabularies
+        # depending on tools
+        if IAcquirer.providedBy(content):
+            content = content.__of__(container)
+        id = str(int(time()))
+        content.title = id
+        content.id = id
+        if _is_projection(self.context):
+            data['year'] = u','.join(data['year'])
+        for key, value in data.items():
+            content._setPropValue(key, value)
+        notify(ObjectModifiedEvent(container))
+
+        return aq_base(content)
 
 
 class AddView(add.DefaultAddView):
@@ -980,7 +1214,7 @@ class ObservationMixin(DefaultView):
                 question,
                 self.request
             )
-            # remove add-followup-question action 
+            # remove add-followup-question action
             # if the permission check is False
             if not self.can_add_follow_up_question():
                 question_menu_items = [
@@ -1140,7 +1374,6 @@ class ObservationMixin(DefaultView):
 
 
 class ObservationView(ObservationMixin):
-
     def get_current_counterparters(self):
         """ Return list of current counterparters,
             if the user can see counterpart action
@@ -1162,6 +1395,9 @@ class ObservationView(ObservationMixin):
             'emrt.necd.content: Export an Observation', self.context
         )
 
+    def is_projection(self):
+        return _is_projection(self.context.aq_parent)
+
 
 class ExportAsDocView(ObservationMixin):
 
@@ -1171,6 +1407,7 @@ class ExportAsDocView(ObservationMixin):
         return re.sub('\s+', ' ', s)
 
     def build_file(self):
+        is_projection = _is_projection(self.context)
         document = Document()
 
         # Styles
@@ -1186,7 +1423,7 @@ class ExportAsDocView(ObservationMixin):
         document.add_heading(self.context.getId(), 0)
 
         p = document.add_paragraph('')
-        table = document.add_table(rows=1, cols=5)
+        table = document.add_table(rows=1, cols=6)
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Country'
         hdr_cells[0].paragraphs[0].style = "Table Cell Bold"
@@ -1194,10 +1431,14 @@ class ExportAsDocView(ObservationMixin):
         hdr_cells[1].paragraphs[0].style = "Table Cell Bold"
         hdr_cells[2].text = 'Pollutants'
         hdr_cells[2].paragraphs[0].style = "Table Cell Bold"
-        hdr_cells[3].text = 'Fuel'
+        hdr_cells[3].text = 'Reference year' if is_projection else 'Fuel'
         hdr_cells[3].paragraphs[0].style = "Table Cell Bold"
-        hdr_cells[4].text = 'Inventory year'
+        hdr_cells[4].text = 'Projection year' if is_projection \
+            else 'Inventory year'
         hdr_cells[4].paragraphs[0].style = "Table Cell Bold"
+        if is_projection:
+            hdr_cells[5].text = "Activity data type"
+            hdr_cells[5].paragraphs[0].style = "Table Cell Bold"
 
         row_cells = table.add_row().cells
         row_cells[0].text = self.context.country_value() or ''
@@ -1209,10 +1450,13 @@ class ExportAsDocView(ObservationMixin):
         row_cells[3].text = get_vocabulary_value(self.context,
             IObservation['fuel'].vocabularyName,
             self.context.fuel
-        )
+        ) if not is_projection else str(self.context.reference_year)
         row_cells[3].paragraphs[0].style = "Table Cell"
         row_cells[4].text = self.context.year or ''
         row_cells[4].paragraphs[0].style = "Table Cell"
+        if is_projection:
+            row_cells[5].text = self.context.activity_data_type or ''
+            row_cells[5].paragraphs[0].style = "Table Cell"
         p = document.add_paragraph('')
 
         document.add_heading('Observation details', level=2)
@@ -1249,6 +1493,17 @@ class ExportAsDocView(ObservationMixin):
         p = document.add_paragraph(self.context.highlight_value())
         p = document.add_paragraph('Short description by sector expert', style="Label Bold")
         p = document.add_paragraph(self.context.text)
+        if is_projection:
+            p = document.add_paragraph('Scenario Type', style="Label Bold")
+            p = document.add_paragraph(self.context.scenario_type_value())
+            p = document.add_paragraph(
+                'NFR Inventories Category Code', style="Label Bold"
+            )
+            p = document.add_paragraph(self.context.nfr_code_inventory)
+            p = document.add_paragraph('Activity Data', style="Label Bold")
+            p = document.add_paragraph('\n'.join(
+                self.context.activity_data_value()
+            ))
 
         if self.context.get_status() == 'close-requested':
             document.add_heading('Finish observation', level=2)
@@ -1360,51 +1615,6 @@ class AddQuestionForm(Form):
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
             self.actions[k].addClass('defaultWFButton')
-
-
-class ModificationForm(edit.DefaultEditForm):
-    def updateFields(self):
-        super(ModificationForm, self).updateFields()
-
-        user = api.user.get_current()
-        roles = api.user.get_roles(username=user.getId(), obj=self.context)
-        fields = []
-        # XXX Needed? Edit rights are controlled by the WF
-        if 'Manager' in roles:
-            fields = field.Fields(IObservation)
-        elif ROLE_SE in roles:
-            fields = [f for f in field.Fields(IObservation) if f not in [
-                'country',
-                'nfr_code',
-                'review_year',
-                'technical_corrections',
-                'closing_comments',
-                'closing_deny_comments',
-
-            ]]
-        elif ROLE_LR in roles:
-            fields = ['text', 'highlight']
-
-        self.fields = field.Fields(IObservation).select(*fields)
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
-        if 'parameter' in fields:
-            self.fields['parameter'].widgetFactory = CheckBoxFieldWidget
-        if 'highlight' in fields:
-            self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
-        if 'pollutants' in fields:
-            self.fields['pollutants'].widgetFactory = CheckBoxFieldWidget
-
-    def updateWidgets(self):
-        super(ModificationForm, self).updateWidgets()
-
-        self.widgets['highlight'].template = Z3ViewPageTemplateFile(
-            'templates/widget_highlight.pt'
-        )
-
-    def updateActions(self):
-        super(ModificationForm, self).updateActions()
-        for k in self.actions.keys():
-            self.actions[k].addClass('standardButton')
 
 
 class AddAnswerForm(Form):
@@ -1526,7 +1736,7 @@ class AddCommentForm(Form):
             # transition before adding the comment,
             # so the transition guard passes
             api.content.transition(
-                obj=question, 
+                obj=question,
                 transition='add-followup-question'
             )
         create_comment(text, question)
