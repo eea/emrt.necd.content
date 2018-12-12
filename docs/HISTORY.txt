@@ -1,6 +1,15 @@
 Changelog
 =========
 
+2.3.0 (2018-12-12)
+
+- Feature #93528 - Additional 2018 Tab
+  [boteziri, batradav]
+  
+- Feature #88845 - Create a new view with a tableau viewer
+  - snapshot support
+  [batradav]
+
 2.2.3 (2018-06-28)
 ------------------
 
