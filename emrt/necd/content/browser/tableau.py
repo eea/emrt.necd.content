@@ -7,10 +7,12 @@ from datetime import datetime
 from collections import defaultdict
 from operator import itemgetter
 from itertools import islice
+from itertools import chain
 
 from functools import partial
 from functools import reduce
 
+from zope.component.hooks import getSite
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -19,6 +21,7 @@ from ZODB.blob import Blob
 from Products.Five import BrowserView
 
 from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from openpyxl import load_workbook
 
@@ -169,7 +172,6 @@ def values_from_xls(xls):
     )
 
 
-
 def get_snapshot(context):
     catalog = getToolByName(context, 'portal_catalog')
     timestamp = datetime.now().isoformat()
@@ -253,7 +255,7 @@ class TableauView(BrowserView):
 
 
 class TableauHistoricalView(BrowserView):
-    def __call__(self):
+    def __call__(self, flatten=False):
         data = dict(status=401)
         request = self.request
 
@@ -263,6 +265,9 @@ class TableauHistoricalView(BrowserView):
             data.insert(0, get_snapshot(context))
         else:
             request.RESPONSE.setStatus(401)
+
+        if flatten:
+            data = list(chain(*data))
 
         return jsonify(request, data, sort_keys=False)
 
@@ -285,3 +290,37 @@ class TableauCreateSnapshotView(BrowserView):
             request.RESPONSE.setStatus(401)
 
         return jsonify(request, data)
+
+
+class ConnectorView(BrowserView):
+
+    index = ViewPageTemplateFile('./templates/tableau_connector.pt')
+
+    def __call__(self, historical=False):
+        request = self.request
+
+        # Make sure the response doesn't get cached in proxies.
+        request.RESPONSE.setHeader('Surrogate-control', 'no-store')
+
+        if validate_token(request):
+
+            if historical:
+                data = self.historical_data()
+            else:
+                data = self.data()
+
+            return self.index(
+                portal_url=getSite().absolute_url(),
+                data=data
+            )
+
+        request.RESPONSE.setStatus(401)
+
+    def data(self):
+        return json.dumps(get_snapshot(self.context))
+
+    def historical_data(self):
+        context = self.context
+        data = get_historical_data(context)
+        data.insert(0, get_snapshot(context))
+        return json.dumps(list(chain(*data)))

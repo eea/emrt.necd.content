@@ -12,6 +12,13 @@
         />
 
     <browser:page
+        name="tableauConnector.html"
+        for="..reviewfolder.IReviewFolder"
+        class=".tableau.ConnectorView"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="tableau-historical.json"
         for="..reviewfolder.IReviewFolder"
         class=".tableau.TableauHistoricalView"

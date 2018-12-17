@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>EMRT-NECD Tableau Connector</title>
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <script src="${options/portal_url}/++resource++emrt.necd.content/tableauwdc-2.3.latest.min.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+
+    <textarea id="tableau-data">${options/data}</textarea>
+
+    <script>
+      (function(){
+
+        var myConnector = tableau.makeConnector();
+
+        myConnector.getSchema = function (schemaCallback) {
+          var cols = [
+            {
+              id: 'ID',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'Country',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'Current status',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'Author',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'IPCC Sector',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'Questions answered',
+              dataType: tableau.dataTypeEnum.int
+            },
+            {
+              id: 'Questions asked',
+              dataType: tableau.dataTypeEnum.int
+            },
+            {
+              id: 'Lead reviewer',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'Review sector',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'Sector expert',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'Timestamp',
+              dataType: tableau.dataTypeEnum.datetime
+            },
+            {
+              id: 'URL',
+              dataType: tableau.dataTypeEnum.string
+            }
+          ];
+
+          var tableSchema = {
+            id: 'emrt_necd_observations_feed',
+            alias: 'EMRT-NECD Observations',
+            columns: cols
+          };
+
+          schemaCallback([tableSchema]);
+        };
+
+        myConnector.getData = function (table, doneCallback) {
+
+          var data = JSON.parse(document.querySelector('#tableau-data').value);
+
+          var tableData = [];
+
+          for (var i = 0; i < data.length; i++) {
+            tableData[i] = data[i];
+          }
+
+          table.appendRows(tableData);
+          doneCallback();
+
+        };
+
+        tableau.registerConnector(myConnector);
+
+        myConnector.connectionName = 'EMRT-NECD Observations feed.';
+        myConnector.init = function(initCallback) {
+          initCallback();
+          tableau.submit();
+        };
+
+      })()
+    </script>
+  </body>
+
+</html>
