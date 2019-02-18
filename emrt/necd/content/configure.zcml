@@ -103,6 +103,11 @@
           />
   </class>
 
+  <class class=".conclusions.PseudoConclusion">
+    <implements interface=".conclusions.IConclusions" />
+    <implements interface=".observation.IObservation" />
+  </class>
+
   <browser:page
     name="edit"
     for="emrt.necd.content.conclusions.IConclusions"

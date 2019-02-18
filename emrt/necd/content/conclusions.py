@@ -234,6 +234,30 @@ class ConclusionsView(BrowserView):
         return self.request.response.redirect(url)
 
 
+# @implementer(IConclusions, IObservation)
+class PseudoConclusion(object):
+    text = DEFAULTCONCLUSIONTEXT
+    closing_reason = ''
+    highlight = ''
+
+    def __init__(self, context):
+        self.context = context
+
+        if context.text:
+            self.text = context.text
+
+        if type(context.closing_reason) in (ListType, TupleType):
+            self.closing_reason = context.closing_reason[0]
+        else:
+            self.closing_reason = context.closing_reason
+
+    def __call__(self, container):
+        self.highlight = container.highlight
+        # [refs #102793] needed by vocabularies
+        self.type = container.type  # inventory/projection
+        return self
+
+
 class EditForm(edit.DefaultEditForm):
     label = 'Conclusions'
     description = ''
@@ -242,16 +266,7 @@ class EditForm(edit.DefaultEditForm):
     def getContent(self):
         context = aq_inner(self.context)
         container = aq_parent(context)
-        data = {}
-        data['text'] = DEFAULTCONCLUSIONTEXT
-        if context.text:
-            data['text'] = context.text
-        if type(context.closing_reason) in (ListType, TupleType):
-            data['closing_reason'] = context.closing_reason[0]
-        else:
-            data['closing_reason'] = context.closing_reason
-        data['highlight'] = container.highlight
-        return data
+        return PseudoConclusion(context)(container)
 
     def updateFields(self):
         super(EditForm, self).updateFields()
@@ -277,7 +292,6 @@ class EditForm(edit.DefaultEditForm):
             self.actions[k].addClass('standardButton')
 
     def applyChanges(self, data):
-        super(EditForm, self).applyChanges(data)
         context = aq_inner(self.context)
         container = aq_parent(context)
         text = self.request.form.get('form.widgets.text')

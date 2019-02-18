@@ -329,13 +329,13 @@ validator.WidgetValidatorDiscriminators(
 )
 
 
-def set_title_to_observation(object, event):
-    sector = safe_unicode(object.ghg_source_category_value())
-    pollutants = safe_unicode(object.pollutants_value())
-    inventory_year = safe_unicode(str(object.year))
-    parameter = safe_unicode(object.parameter_value())
-    object.title = u' '.join([sector, pollutants, inventory_year, parameter])
-    grant_local_roles(object)
+def set_title_to_observation(obj, event):
+    sector = safe_unicode(obj.ghg_source_category_value())
+    pollutants = safe_unicode(obj.pollutants_value())
+    inventory_year = safe_unicode(str(obj.year))
+    parameter = safe_unicode(obj.parameter_value())
+    obj.title = u' '.join([sector, pollutants, inventory_year, parameter])
+    grant_local_roles(obj)
 
 
 @implementer(IObservation)
