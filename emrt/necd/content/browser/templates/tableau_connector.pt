@@ -15,54 +15,66 @@
 
         var myConnector = tableau.makeConnector();
 
-        myConnector.getSchema = function (schemaCallback) {
+        myConnector.getSchema = function(schemaCallback) {
           var cols = [
             {
-              id: 'ID',
+              id: 'id',
+              alias: 'ID',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'Country',
+              id: 'country',
+              alias: 'Country',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'Current status',
+              id: 'status',
+              alias: 'Current status',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'Author',
+              id: 'author',
+              alias: 'Author',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'IPCC Sector',
+              id: 'ipcc_sector',
+              alias: 'IPCC Sector',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'Questions answered',
+              id: 'questions_answered',
+              alias: 'Questions answered',
               dataType: tableau.dataTypeEnum.int
             },
             {
-              id: 'Questions asked',
+              id: 'questions_asked',
+              alias: 'Questions asked',
               dataType: tableau.dataTypeEnum.int
             },
             {
-              id: 'Lead reviewer',
+              id: 'lead_reviewer',
+              alias: 'Lead reviewer',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'Review sector',
+              id: 'review_sector',
+              alias: 'Review sector',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'Sector expert',
+              id: 'sector_expert',
+              alias: 'Sector expert',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'Timestamp',
+              id: 'timestamp',
+              alias: 'Timestamp',
               dataType: tableau.dataTypeEnum.datetime
             },
             {
-              id: 'URL',
+              id: 'url',
+              alias: 'URL',
               dataType: tableau.dataTypeEnum.string
             }
           ];
@@ -83,7 +95,22 @@
           var tableData = [];
 
           for (var i = 0; i < data.length; i++) {
-            tableData[i] = data[i];
+            var entry = data[i];
+
+            tableData[i] = {
+              id: entry['ID'],
+              country: entry['Country'],
+              status: entry['Current status'],
+              author: entry['Author'],
+              ipcc_sector: entry['IPCC Sector'],
+              questions_answered: entry['Questions answered'],
+              questions_asked: entry['Questions asked'],
+              lead_reviewer: entry['Lead reviewer'].join(', '),
+              review_sector: entry['Review sector'].join(', '),
+              sector_expert: entry['Sector expert'].join(', '),
+              timestamp: entry['Timestamp'],
+              url: entry['URL']
+            }
           }
 
           table.appendRows(tableData);
