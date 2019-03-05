@@ -1,5 +1,5 @@
 import string
-import json
+import simplejson as json
 
 from operator import itemgetter
 import concurrent.futures
@@ -94,12 +94,12 @@ def get_vocabulary_value(context, vocabulary, term, exportForm=None):
         return term
 
 
-def jsonify(request, data, cache=False, sort_keys=True):
+def jsonify(request, data, cache=False, sort_keys=True, indent=2):
     header = request.RESPONSE.setHeader
     header("Content-Type", "application/json")
     if cache:
         header("Expires", "Sun, 17-Jan-2038 19:14:07 GMT")
-    return json.dumps(data, indent=2, sort_keys=sort_keys)
+    return json.dumps(data, indent=indent, sort_keys=sort_keys)
 
 
 def reduce_text(text, limit):

@@ -38,11 +38,12 @@ setup(name='emrt.necd.content',
           'cs.htmlmailer',
           'collective.deletepermission',
           'tablib',
-          'python-docx == 0.8.5',
+          'python-docx==0.8.5',
           'zc.dict',
           'collective.monkeypatcher',
           'openpyxl',
           'five.pt',
+          'simplejson',
       ],
       entry_points="""
       # -*- Entry points: -*-

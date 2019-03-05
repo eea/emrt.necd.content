@@ -3,7 +3,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 import datetime
-import json
+import simplejson as json
 import re
 from docx import Document
 from docx.shared import Pt

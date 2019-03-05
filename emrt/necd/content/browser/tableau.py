@@ -1,10 +1,13 @@
 import os
-import json
+import simplejson as json
+from time import time
 
 from gzip import GzipFile
 from datetime import datetime
 
 from collections import defaultdict
+from collections import Counter
+
 from operator import itemgetter
 from itertools import islice
 from itertools import chain
@@ -44,6 +47,11 @@ COL_SE__ROLES_MS = itemgetter(2)
 
 COL_SE__RS = itemgetter(0)
 COL_CAT__RS = itemgetter(1)
+
+
+def insert_snapshot(data, snapshot):
+    # type: (str, list) -> str
+    return data[:1] + json.dumps(snapshot) + ',' + data[1:]
 
 
 def reduce_count_brains(acc, b):
@@ -106,10 +114,8 @@ def lead_reviewer(ms_roles, country):
     return list(set(map(COL_LR__ROLES_MS, ms_roles[country])))
 
 
-def extract_entry(catalog, timestamp, mappings, vocab_highlights, brain):
-    qa = get_qa(catalog, brain)
-    qa_count = reduce(reduce_count_brains, qa, defaultdict(int))
-
+def extract_entry(qa, timestamp, mappings, vocab_highlights, brain):
+    b_id = brain['id']
     ms_roles = mappings['ms_roles']
     review_sectors = mappings['review_sectors']
 
@@ -118,8 +124,8 @@ def extract_entry(catalog, timestamp, mappings, vocab_highlights, brain):
 
     obs_status = brain['observation_status']
 
-    len_a = qa_count['CommentAnswer']
-    len_q = qa_count['Comment']
+    len_a = qa['CommentAnswer'][b_id]
+    len_q = qa['Comment'][b_id]
 
     return {
         'Current status': current_status(brain),
@@ -132,7 +138,7 @@ def extract_entry(catalog, timestamp, mappings, vocab_highlights, brain):
         'Lead reviewer': lead_reviewer(ms_roles, country_code),
         'Timestamp': timestamp,
         'Country': brain['country_value'],
-        'ID': brain['id'],
+        'ID': b_id,
         'URL': brain.getURL(),
         'Description flags': description_flags(vocab_highlights, brain)
 
@@ -176,6 +182,22 @@ def get_snapshot(context):
     catalog = getToolByName(context, 'portal_catalog')
     timestamp = datetime.now().isoformat()
 
+    # Grab QA information. It's much faster to fetch the data
+    # directly from the indexes than it is to query for it.
+    idx_type = catalog._catalog.indexes['portal_type']._index
+    idx_path = catalog._catalog.indexes['path']._unindex
+
+    b_comment = idx_type['Comment']
+    b_comment_answer = idx_type['CommentAnswer']
+
+    p_comment = [idx_path[x] for x in b_comment]
+    p_comment_answer = [idx_path[x] for x in b_comment_answer]
+
+    qa = dict(
+        Comment=Counter(p.split('/')[3] for p in p_comment),
+        CommentAnswer=Counter(p.split('/')[3] for p in p_comment_answer),
+    )
+
     vocab_highlights = getUtility(
         IVocabularyFactory,
         name='emrt.necd.content.highlight')(context)
@@ -187,7 +209,7 @@ def get_snapshot(context):
 
     entry = partial(
         extract_entry,
-        catalog, timestamp, mappings, vocab_highlights)
+        qa, timestamp, mappings, vocab_highlights)
 
     brains = catalog.unrestrictedSearchResults(
         portal_type=['Observation'],
@@ -222,6 +244,7 @@ def write_historical_data(context, content):
 
 
 def get_historical_data(context):
+    """ Returns the raw string, since json.load is much too slow. """
     target = context.aq_inner.aq_self
 
     # create empty Blob, if missing
@@ -238,7 +261,7 @@ def get_historical_data(context):
     gzip.close()
     blob.close()
 
-    return json.loads(data)
+    return data
 
 
 class TableauView(BrowserView):
@@ -251,7 +274,7 @@ class TableauView(BrowserView):
         else:
             request.RESPONSE.setStatus(401)
 
-        return jsonify(request, data)
+        return jsonify(request, data, sort_keys=False, indent=None)
 
 
 class TableauHistoricalView(BrowserView):
@@ -261,15 +284,21 @@ class TableauHistoricalView(BrowserView):
 
         if validate_token(request):
             context = self.context
+
             data = get_historical_data(context)
-            data.insert(0, get_snapshot(context))
+            snapshot = get_snapshot(context)
+            data = insert_snapshot(data, snapshot)
+
         else:
             request.RESPONSE.setStatus(401)
 
         if flatten:
-            data = list(chain(*data))
+            data = json.dumps(list(chain(*json.loads(data))))
 
-        return jsonify(request, data, sort_keys=False)
+        header = request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+
+        return data
 
 
 class TableauCreateSnapshotView(BrowserView):
@@ -280,16 +309,16 @@ class TableauCreateSnapshotView(BrowserView):
         if validate_token(request, TOKEN_SNAP):
             context = self.context
             historical = get_historical_data(context)
-            historical.insert(0, get_snapshot(context))
+            historical = insert_snapshot(historical, get_snapshot(context))
             compressed, content = write_historical_data(
-                context, json.dumps(historical))
+                context, historical)
             data['size'] = compressed
             data['deflated'] = content
             data['status'] = 200
         else:
             request.RESPONSE.setStatus(401)
 
-        return jsonify(request, data)
+        return jsonify(request, data, sort_keys=False, indent=None)
 
 
 class ConnectorView(BrowserView):
@@ -322,5 +351,5 @@ class ConnectorView(BrowserView):
     def historical_data(self):
         context = self.context
         data = get_historical_data(context)
-        data.insert(0, get_snapshot(context))
-        return json.dumps(list(chain(*data)))
+        data = insert_snapshot(data, get_snapshot(context))
+        return json.dumps(list(chain(*json.loads(data))))
