@@ -1,6 +1,5 @@
 import os
 import simplejson as json
-from time import time
 from StringIO import StringIO
 
 from gzip import GzipFile
@@ -50,22 +49,11 @@ COL_SE__RS = itemgetter(0)
 COL_CAT__RS = itemgetter(1)
 
 
-def do_flatten(json_str):
-    out = StringIO()
-    sio = StringIO(json_str)
-    level = 0
-    for c in sio:
-        if c == '[':
-            level += 1
-
-        if level != 2 or (c != '[' and c != ']'):
-            out.write(c)
-
-        if c == ']':
-            level -= 1
-
-    out.seek(0)
-    return out.read()
+try:
+    from flatten_json import flatten as do_flatten
+except ImportError:
+    def do_flatten(json_str):
+        return json.dumps(list(chain(*json.loads(json_str))))
 
 
 def insert_snapshot(data, snapshot):

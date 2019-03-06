@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 import os
 
 VERSION = '2.3.2'
@@ -44,6 +44,15 @@ setup(name='emrt.necd.content',
           'openpyxl',
           'five.pt',
           'simplejson',
+      ],
+      ext_modules=[
+          Extension(
+              'emrt.necd.content.browser.flatten_json',
+              sources=[os.path.join(
+                  'emrt', 'necd', 'content', 'browser',
+                  'flatten_json.c'
+              )]
+          ),
       ],
       entry_points="""
       # -*- Entry points: -*-

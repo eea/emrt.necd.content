@@ -10,6 +10,7 @@
 *.kpf
 *.swp
 *.wpr
+*.so
 .*.cfg
 .installed.cfg
 .mr.developer.cfg
