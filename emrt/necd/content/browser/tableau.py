@@ -1,6 +1,7 @@
 import os
 import simplejson as json
 from time import time
+from StringIO import StringIO
 
 from gzip import GzipFile
 from datetime import datetime
@@ -47,6 +48,24 @@ COL_SE__ROLES_MS = itemgetter(2)
 
 COL_SE__RS = itemgetter(0)
 COL_CAT__RS = itemgetter(1)
+
+
+def do_flatten(json_str):
+    out = StringIO()
+    sio = StringIO(json_str)
+    level = 0
+    for c in sio:
+        if c == '[':
+            level += 1
+
+        if level != 2 or (c != '[' and c != ']'):
+            out.write(c)
+
+        if c == ']':
+            level -= 1
+
+    out.seek(0)
+    return out.read()
 
 
 def insert_snapshot(data, snapshot):
@@ -293,7 +312,7 @@ class TableauHistoricalView(BrowserView):
             request.RESPONSE.setStatus(401)
 
         if flatten:
-            data = json.dumps(list(chain(*json.loads(data))))
+            data = do_flatten(data)
 
         header = request.RESPONSE.setHeader
         header("Content-Type", "application/json")
@@ -352,4 +371,4 @@ class ConnectorView(BrowserView):
         context = self.context
         data = get_historical_data(context)
         data = insert_snapshot(data, get_snapshot(context))
-        return json.dumps(list(chain(*json.loads(data))))
+        return do_flatten(data)
