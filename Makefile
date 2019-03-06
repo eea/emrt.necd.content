@@ -8,8 +8,7 @@ VERSION=$(shell grep "VERSION = " setup.py | grep -o '[0-9.]*')
 all:
 
 build:
-	python2 setup.py bdist_wheel
-	python2 setup.py bdist_egg
+	./build_manylinux.sh
 
 release: build
 	twine upload ./dist/${PACKAGE}-${VERSION}-*.whl
