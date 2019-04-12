@@ -36,5 +36,5 @@ var/
 .DS_Store
 
 .idea/
-
+.vscode/
 ~$*.xls*

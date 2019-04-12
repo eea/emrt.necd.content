@@ -74,18 +74,29 @@ from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
 
 
+def get_nfr_title_projection(fname):
+    names = dict(
+        nfr_code=u'Review sectors for Projections, NAPCP and PaMs',
+        nfr_code_inventory=u'Review sub sectors'
+    )
+    return names[fname]
+
+
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time() // 86400)
 
+
 def _is_projection(context):
     return context.type == 'projection'
+
 
 def check_parameter(value):
     if len(value) == 0:
         raise Invalid(u'You need to select at least one parameter')
 
     return True
+
 
 def check_country(value):
     user = api.user.get_current()
@@ -118,7 +129,7 @@ def inventory_year(value):
     def validate(value):
         normalized_value = (val.strip() for val in split_on_sep(value, '-,;'))
         return False not in (
-            int(val) in range(1000,10000) for val in normalized_value
+            int(val) in range(1000, 10000) for val in normalized_value
         )
 
     def check_valid(value):
@@ -131,6 +142,7 @@ def inventory_year(value):
         raise Invalid(u'Inventory year format is not correct. ')
 
     return True
+
 
 def default_year():
     return datetime.datetime.now().year
@@ -160,7 +172,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
     )
 
     nfr_code = schema.Choice(
-        title=u"NFR projection category codes",
+        title=u"NFR category codes",
         vocabulary='emrt.necd.content.nfr_code',
         required=True,
     )
@@ -207,7 +219,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     review_year = schema.Int(
         title=u'Review year',
-        description=u'Review year is the year in which the inventory was ' \
+        description=u'Review year is the year in which the inventory was '
                     u'submitted and the review was carried out',
         defaultFactory=default_year,
         required=True,
@@ -295,6 +307,7 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
                 u'You are not allowed to add observations '
                 u'for this sector category.'
             )
+
 
 validator.WidgetValidatorDiscriminators(
     NfrCodeContextValidator,
@@ -408,7 +421,8 @@ class Observation(Container):
     def activity_data_value(self):
         if self.activity_data:
             activities = [
-                get_vocabulary_value(self, 'emrt.necd.content.activity_data', a)
+                get_vocabulary_value(
+                    self, 'emrt.necd.content.activity_data', a)
                 for a in self.activity_data
             ]
             return activities
@@ -417,7 +431,7 @@ class Observation(Container):
     def highlight_value(self):
         if self.highlight:
             highlight = [
-                get_vocabulary_value(self,'emrt.necd.content.highlight',h)
+                get_vocabulary_value(self, 'emrt.necd.content.highlight', h)
                 for h in self.highlight
                 ]
             return u', '.join(highlight)
@@ -426,14 +440,16 @@ class Observation(Container):
     def scenario_type_value(self):
         if self.scenario:
             scenario = [
-                get_vocabulary_value(self,'emrt.necd.content.scenario_type',s)
+                get_vocabulary_value(
+                    self, 'emrt.necd.content.scenario_type', s)
                 for s in self.scenario
                 ]
             return u', '.join(scenario)
         return u''
 
     def finish_reason_value(self):
-        return get_vocabulary_value(self,
+        return get_vocabulary_value(
+            self,
             'emrt.necd.content.finishobservationreasons',
             self.closing_reason
         )
@@ -479,7 +495,7 @@ class Observation(Container):
             return 'Lead reviewer'
         elif status == 'conclusion-discussion':
             return 'Counterpart'
-        elif status  == 'close-requested':
+        elif status == 'close-requested':
             return 'Lead reviewer'
         else:
             questions = self.get_values_cat('Question')
@@ -575,7 +591,6 @@ class Observation(Container):
         else:
             return status
 
-
     def observation_questions_workflow(self):
         questions = self.get_values_cat('Question')
         if not questions:
@@ -587,7 +602,7 @@ class Observation(Container):
         items = question.values()
 
         comments = [i for i in items if i.portal_type == 'Comment']
-        answers = [i for i in items if i.portal_type == 'CommentAnswer']
+        # answers = [i for i in items if i.portal_type == 'CommentAnswer']
 
         len_comments = len(comments)
         obs_status = self.observation_status()
@@ -632,57 +647,61 @@ class Observation(Container):
             item['role'] = item['actor']
             item['object'] = 'observationIcon'
             item['author'] = self.get_author_name(item['actor'])
-            if item['review_state'] == 'draft':
+            i_rstate = item['review_state']
+            i_action = item['action']
+            if i_rstate == 'draft':
                 item['state'] = 'Draft observation'
                 item['role'] = "Sector Expert"
                 observation_wf.append(item)
-            elif item['review_state'] == 'pending' and item['action'] == "approve":
+            elif (i_rstate == 'pending' and i_action == "approve"):
                 item['state'] = 'Pending'
                 # Do not add
-            elif item['review_state'] == 'pending' and item['action'] == "reopen":
+            elif i_rstate == 'pending' and i_action == "reopen":
                 item['state'] = 'Observation reopened'
                 item['role'] = "Sector Expert"
                 observation_wf.append(item)
-            elif item['review_state'] == 'pending':
+            elif i_rstate == 'pending':
                 item['state'] = 'Pending'
                 # Do not add
-            elif item['review_state'] == 'closed':
+            elif i_rstate == 'closed':
                 item['state'] = 'Closed observation'
                 item['role'] = "Lead Reviewer"
                 observation_wf.append(item)
-            elif item['review_state'] == 'close-requested':
+            elif i_rstate == 'close-requested':
                 item['state'] = 'Finalisation requested'
                 item['role'] = "Sector Expert"
                 observation_wf.append(item)
-            elif item['review_state'] in ('conclusions', 'conclusions-lr-denied') and item['action'] == "deny-finishing-observation":
+            elif (i_rstate in ('conclusions', 'conclusions-lr-denied')
+                    and i_action == "deny-finishing-observation"):
                 item['state'] = 'Finalisation denied'
                 item['role'] = "Lead reviewer"
                 observation_wf.append(item)
-            elif item['review_state'] == 'conclusions-lr-denied' and item['action'] == "recall-lr":
+            elif (i_rstate == 'conclusions-lr-denied'
+                    and i_action == "recall-lr"):
                 item['state'] = 'Recalled by LR'
                 item['role'] = "Lead reviewer"
                 observation_wf.append(item)
-            elif item['review_state'] == 'closed' and item['action'] == "recall-lr":
+            elif i_rstate == 'closed' and i_action == "recall-lr":
                 item['state'] = 'Recalled by LR'
                 item['role'] = "Lead reviewer"
                 observation_wf.append(item)
-            elif item['review_state'] == 'conclusion-discussion':
+            elif i_rstate == 'conclusion-discussion':
                 item['state'] = 'Conclusion comments requested'
                 item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
-            elif item['review_state'] == 'conclusions' and item['action'] == "finish-comments":
+            elif i_rstate == 'conclusions' and i_action == "finish-comments":
                 item['state'] = 'Conclusion comments closed'
                 item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
-            elif item['review_state'] == 'conclusions' and item['action'] == "draft-conclusions":
+            elif i_rstate == 'conclusions' and i_action == "draft-conclusions":
                 item['state'] = 'Conclusion drafting'
                 item['role'] = "Sector Expert"
                 item['object'] = 'conclusionIcon'
                 observation_wf.append(item)
             else:
-                item['state'] = '*' + item['review_state'] + '*'
+                item['state'] = '*' + i_rstate + '*'
                 observation_wf.append(item)
 
         history = list(observation_wf)
@@ -696,68 +715,73 @@ class Observation(Container):
                 item['role'] = item['actor']
                 item['object'] = 'questionIcon'
                 item['author'] = self.get_author_name(item['actor'])
-                if item['review_state'] == 'draft' and item['action'] == "reopen":
+                i_rstate = item['review_state']
+                i_action = item['action']
+                if i_rstate == 'draft' and i_action == "reopen":
                     item['state'] = 'Draft question'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'counterpart-comments':
+                elif i_rstate == 'counterpart-comments':
                     item['state'] = 'Requested counterparts comments'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'draft' and item['action'] =='send-comments':
+                elif i_rstate == 'draft' and i_action == 'send-comments':
                     item['state'] = 'Counterparts comments closed'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'drafted':
+                elif i_rstate == 'drafted':
                     item['state'] = 'Sent to LR'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'draft' and item['action'] == 'recall-sre':
+                elif i_rstate == 'draft' and i_action == 'recall-sre':
                     item['state'] = 'Question recalled'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'draft' and item['action'] == 'redraft':
+                elif i_rstate == 'draft' and i_action == 'redraft':
                     item['state'] = 'Question redrafted'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'draft':
+                elif i_rstate == 'draft':
                     # Do not add
                     pass
-                elif item['review_state'] == 'pending' and item['action'] == 'approve-question':
-                    item['state'] = 'Question approved and sent to MS coordinator'
+                elif i_rstate == 'pending' and i_action == 'approve-question':
+                    item['state'] = (
+                        'Question approved and '
+                        'sent to MS coordinator')
                     item['role'] = "Lead reviewer"
                     question_wf.append(item)
-                elif item['review_state'] == 'recalled-lr':
+                elif i_rstate == 'recalled-lr':
                     item['state'] = 'Question recalled'
                     item['role'] = "Lead reviewer"
-                elif item['review_state'] == 'answered':
+                elif i_rstate == 'answered':
                     item['state'] = 'Answer sent'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['review_state'] == 'expert-comments':
+                elif i_rstate == 'expert-comments':
                     item['state'] = 'MS expert comments requested'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['review_state'] == 'pending-answer-drafting':
+                elif i_rstate == 'pending-answer-drafting':
                     item['state'] = 'Member state expert comments closed'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['review_state'] == 'recalled-msa':
+                elif i_rstate == 'recalled-msa':
                     item['state'] = 'Answer recalled'
                     item['role'] = "Member state coordinator"
                     question_wf.append(item)
-                elif item['action'] == 'validate-answer-msa' and item['action'] == 'validate-answer-msa':
+                elif (i_action == 'validate-answer-msa'
+                        and i_action == 'validate-answer-msa'):
                     item['state'] = 'Answer acknowledged'
                     item['role'] = "Sector Expert"
                     question_wf.append(item)
-                elif item['review_state'] == 'draft' and item['action'] == "reopen":
+                elif i_rstate == 'draft' and i_action == "reopen":
                     item['state'] = 'Reopened'
                     # Do not add
-                elif item['review_state'] == 'closed':
+                elif i_rstate == 'closed':
                     item['state'] = 'Closed'
                     # Do not add
                 else:
-                    item['state'] = '*' + item['review_state'] + '*'
+                    item['state'] = '*' + i_rstate + '*'
                     item['role'] = item['actor']
                     question_wf.append(item)
 
@@ -834,7 +858,10 @@ class Observation(Container):
         questions = self.get_values_cat('Question')
         replynum = 0
         if questions:
-            comments = [c for c in questions[-1].values() if c.portal_type == "Comment"]
+            comments = [
+                c for c in questions[-1].values()
+                if c.portal_type == "Comment"
+            ]
             if comments:
                 last = comments[-1]
                 disc = IConversation(last)
@@ -846,7 +873,10 @@ class Observation(Container):
         questions = self.get_values_cat('Question')
         replynum = 0
         if questions:
-            comments = [c for c in questions[-1].values() if c.portal_type == "CommentAnswer"]
+            comments = [
+                c for c in questions[-1].values()
+                if c.portal_type == "CommentAnswer"
+            ]
             if comments:
                 last = comments[-1]
                 disc = IConversation(last)
@@ -858,10 +888,13 @@ class Observation(Container):
         questions = self.get_values_cat('Question')
         user = api.user.get_current().id
         if questions:
-            comments = [c for c in questions[-1].values() if c.portal_type == "CommentAnswer"]
+            comments = [
+                c for c in questions[-1].values()
+                if c.portal_type == "CommentAnswer"
+            ]
             if comments:
                 last = comments[-1]
-                disc = IConversation(last)
+                # disc = IConversation(last)
                 return user in IConversation(last).commentators
 
         return False
@@ -872,7 +905,7 @@ class Observation(Container):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
-            state = self.get_status()
+            # state = self.get_status()
             for witem in winfo.get('esd-question-review-workflow', []):
                 if witem.get('review_state', '') == 'answered':
                     return True
@@ -884,23 +917,22 @@ class Observation(Container):
         return status in ['conclusions', 'conclusions-lr-denied']
 
 
-# View class
-# The view will automatically use a similarly named template in
-# templates called observationview.pt .
-# Template filenames should be all lower case.
-# The view will render when you request a content object with this
-# interface with "/@@view" appended unless specified otherwise
-# This will make this view the default view for your content-type
-def set_form_widgets(obj):
-    if 'IDublinCore.title' in obj.fields.keys():
-        obj.fields['IDublinCore.title'].field.required = False
-        obj.widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
-        obj.widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
+def set_form_widgets(form_instance):
+    fields = form_instance.fields
+    widgets = form_instance.widgets
+    if 'IDublinCore.title' in fields.keys():
+        fields['IDublinCore.title'].field.required = False
+        widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
+        widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
 
-    w_activity_data = obj.widgets['activity_data']
-    if _is_projection(obj.context):
-        obj.widgets['fuel'].mode = interfaces.HIDDEN_MODE
-        obj.widgets['activity_data_type'].template = Z3ViewPageTemplateFile(
+    w_activity_data = widgets['activity_data']
+    if _is_projection(form_instance.context):
+        for fname in ['nfr_code', 'nfr_code_inventory']:
+            nfr_w = widgets[fname]
+            nfr_w.label = get_nfr_title_projection(fname)
+
+        widgets['fuel'].mode = interfaces.HIDDEN_MODE
+        widgets['activity_data_type'].template = Z3ViewPageTemplateFile(
             'templates/widget_activity_type.pt'
         )
         w_activity_data.template = Z3ViewPageTemplateFile(
@@ -914,46 +946,44 @@ def set_form_widgets(obj):
         )
     else:
         w_activity_data.mode = interfaces.HIDDEN_MODE
-        obj.widgets['scenario'].mode = interfaces.HIDDEN_MODE
-        obj.widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
-        obj.widgets['reference_year'].mode = interfaces.HIDDEN_MODE
-        obj.widgets['pollutants'].template = Z3ViewPageTemplateFile(
+        widgets['scenario'].mode = interfaces.HIDDEN_MODE
+        widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
+        widgets['reference_year'].mode = interfaces.HIDDEN_MODE
+        widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
+        widgets['nfr_code_inventory'].mode = interfaces.HIDDEN_MODE
 
-        if 'nfr_code' in obj.fields.keys():
-            nfr_w = obj.widgets['nfr_code']
-            nfr_w.field.title = nfr_w.field.title.replace(
-                u'projection ', u''
-            )
-        obj.widgets['nfr_code_inventory'].mode = interfaces.HIDDEN_MODE
-
-    obj.widgets['text'].rows = 15
-    obj.widgets['highlight'].template = Z3ViewPageTemplateFile(
+    widgets['text'].rows = 15
+    widgets['highlight'].template = Z3ViewPageTemplateFile(
         'templates/widget_highlight.pt'
     )
-    obj.groups = [
-        g for g in obj.groups if
+    form_instance.groups = [
+        g for g in form_instance.groups if
         g.label == 'label_schema_default'
-        ]
+    ]
 
 
-def set_form_fields(obj):
-    if _is_projection(obj.context):
-        obj.fields['year'].field = schema.List(
+def set_form_fields(form_instance):
+    fields = form_instance.fields
+    if _is_projection(form_instance.context):
+        fields['year'].field = schema.List(
             title=u'Projection year',
-            description=u"Projection year is the year or a list of years "
-                        u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
-                        u" occured for which an issue was observed in the review.",
+            description=(
+                u"Projection year is the year or a list of years "
+                u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
+                u" occured for which an issue was observed in the review."
+            ),
             value_type=schema.Choice(
                 values=[_(u'2020'), _(u'2025'), _(u'2030'), _(u'2040'),
                         _(u'2050')]
             ),
             required=True,
         )
-        obj.fields['year'].widgetFactory = CheckBoxFieldWidget
+        fields['year'].widgetFactory = CheckBoxFieldWidget
+        fields['reference_year'].field.required = False
     else:
-        obj.fields['reference_year'].field.required = False
+        fields['reference_year'].field.required = False
 
 
 class EditForm(edit.DefaultEditForm):
@@ -991,7 +1021,6 @@ class EditForm(edit.DefaultEditForm):
         for cb in checkbox_fields:
             if cb in fields:
                 self.fields[cb].widgetFactory = CheckBoxFieldWidget
-
 
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
@@ -1089,24 +1118,18 @@ class ObservationMixin(DefaultView):
     def wf_info(self):
         context = aq_inner(self.context)
         wf = getToolByName(context, 'portal_workflow')
-        comments = wf.getInfoFor(self.context,
-            'comments', wf_id='esd-review-workflow')
-        actor = wf.getInfoFor(self.context,
-            'actor', wf_id='esd-review-workflow')
-        tim = wf.getInfoFor(self.context,
-            'time', wf_id='esd-review-workflow')
+        comments = wf.getInfoFor(
+            self.context, 'comments', wf_id='esd-review-workflow')
+        actor = wf.getInfoFor(
+            self.context, 'actor', wf_id='esd-review-workflow')
+        tim = wf.getInfoFor(
+            self.context, 'time', wf_id='esd-review-workflow')
         return {'comments': comments, 'actor': actor, 'time': tim}
 
     def isManager(self):
         sm = getSecurityManager()
         context = aq_inner(self.context)
         return sm.checkPermission('Manage portal', context)
-
-    def get_user_name(self, userid):
-        # Check users roles
-        country = self.context.country_value()
-        sector = self.context.ghg_source_sectors_value()
-        return ' - '.join([country, sector])
 
     def get_menu_actions(self):
         context = aq_inner(self.context)
@@ -1123,20 +1146,22 @@ class ObservationMixin(DefaultView):
     def can_delete_observation(self):
         is_draft = self.context.get_status() in ['pending', 'draft']
         questions = len(self.context.get_values_cat('Question'))
-        #If observation has conclusion cannot be deleted (Ticket #26992)
+        # If observation has conclusion cannot be deleted (Ticket #26992)
         conclusions = len(self.context.get_values_cat('Conclusions'))
         return is_draft and not questions and not conclusions
 
     def can_add_question(self):
         sm = getSecurityManager()
         questions = len(self.context.get_values_cat('Question'))
-        return sm.checkPermission('emrt.necd.content: Add Question', self) and not questions
+        p_add = 'emrt.necd.content: Add Question'
+        return sm.checkPermission(p_add, self.context) and not questions
 
     def can_edit(self):
         sm = getSecurityManager()
-        #If observation has conclusion cannot be edited (Ticket #26992)
+        # If observation has conclusion cannot be edited (Ticket #26992)
         conclusions = len(self.context.get_values_cat('Conclusions'))
-        return sm.checkPermission('Modify portal content', self.context) and not conclusions
+        p_edit = 'Modify portal content'
+        return sm.checkPermission(p_edit, self.context) and not conclusions
 
     def get_conclusion(self):
         sm = getSecurityManager()
@@ -1196,7 +1221,10 @@ class ObservationMixin(DefaultView):
         sm = getSecurityManager()
         question = self.question()
         if question:
-            values = [v for v in question.values() if sm.checkPermission('View', v)]
+            values = [
+                v for v in question.values()
+                if sm.checkPermission('View', v)
+            ]
             return values
 
     def actions(self):
@@ -1247,9 +1275,16 @@ class ObservationMixin(DefaultView):
         sm = getSecurityManager()
         question = self.question()
         if question:
-            permission = sm.checkPermission('emrt.necd.content: Add CommentAnswer', question)
-            questions = [q for q in question.values() if q.portal_type == 'Comment']
-            answers = [q for q in question.values() if q.portal_type == 'CommentAnswer']
+            p_add = 'emrt.necd.content: Add CommentAnswer'
+            permission = sm.checkPermission(p_add, question)
+            questions = [
+                q for q in question.values()
+                if q.portal_type == 'Comment'
+            ]
+            answers = [
+                q for q in question.values()
+                if q.portal_type == 'CommentAnswer'
+            ]
             return permission and len(questions) > len(answers)
         else:
             return False
@@ -1298,16 +1333,19 @@ class ObservationMixin(DefaultView):
         if context is not None:
             if context.can_edit():
                 try:
-                    history_metadata = self.repo_tool.getHistoryMetadata(context)
-                except:
-                    history_metadata = None
-                if history_metadata:
-                    retrieve = history_metadata.retrieve
-                    getId = history_metadata.getVersionId
+                    hist_meta = self.repo_tool.getHistoryMetadata(context)
+                except Exception:
+                    hist_meta = None
+                if hist_meta:
+                    retrieve = hist_meta.retrieve
+                    getId = hist_meta.getVersionId
                     history = self.history = []
+                    hist_meta_len = hist_meta.getLength(countPurged=False)
                     # Count backwards from most recent to least recent
-                    for i in xrange(history_metadata.getLength(countPurged=False)-1, -1, -1):
-                        version = retrieve(i, countPurged=False)['metadata'].copy()
+                    for i in xrange(hist_meta_len - 1, -1, -1):
+                        version = (
+                            retrieve(i, countPurged=False)['metadata'].copy()
+                        )
                         version['version_id'] = getId(i, countPurged=False)
                         history.append(version)
                     dt = getToolByName(self.context, "portal_diff")
@@ -1316,10 +1354,18 @@ class ObservationMixin(DefaultView):
                     version2 = self.request.get("two", None)
 
                     if version1 is None and version2 is None:
-                        self.history.sort(lambda x,y: cmp(x.get('version_id', ''), y.get('version_id')), reverse=True)
-                        version1 = self.history[-1].get('version_id', 'current')
+                        self.history.sort(
+                            lambda x, y: cmp(
+                                x.get('version_id', ''),
+                                y.get('version_id')
+                            ),
+                            reverse=True
+                        )
+                        version1 = self.history[-1].get(
+                            'version_id', 'current')
                         if len(self.history) > 1:
-                            version2 = self.history[-2].get('version_id', 'current')
+                            version2 = self.history[-2].get(
+                                'version_id', 'current')
                         else:
                             version2 = 'current'
                     elif version1 is None:
@@ -1334,8 +1380,10 @@ class ObservationMixin(DefaultView):
                         self.getVersion(version1),
                         id1=self.versionTitle(version2),
                         id2=self.versionTitle(version1))
-                    self.changes = [change for change in changeset.getDiffs()
-                                   if not change.same]
+                    self.changes = [
+                        change for change in changeset.getDiffs()
+                        if not change.same
+                    ]
 
     @property
     def repo_tool(self):
@@ -1360,8 +1408,10 @@ class ObservationMixin(DefaultView):
         version_name = self.versionName(version)
 
         return translate(
-            _CMFE(u"version ${version}",
-              mapping=dict(version=version_name)),
+            _CMFE(
+                u"version ${version}",
+                mapping=dict(version=version_name)
+            ),
             context=self.request
         )
 
@@ -1379,7 +1429,7 @@ class ObservationView(ObservationMixin):
             if the user can see counterpart action
         """
         actions = [action['action'] for action in self.actions()]
-        if not any('counterpart_form' in action for action  in actions):
+        if not any('counterpart_form' in action for action in actions):
             return []
 
         target = self.context
@@ -1404,25 +1454,28 @@ class ExportAsDocView(ObservationMixin):
     def strip_special_chars(self, s):
         """ return s without special chars
         """
-        return re.sub('\s+', ' ', s)
+        return re.sub(r'\s+', ' ', s)
 
     def build_file(self):
         is_projection = _is_projection(self.context)
         document = Document()
 
         # Styles
-        style = document.styles.add_style('Label Bold', WD_STYLE_TYPE.PARAGRAPH)
+        style = document.styles.add_style(
+            'Label Bold', WD_STYLE_TYPE.PARAGRAPH)
         style.font.bold = True
-        style = document.styles.add_style('Table Cell', WD_STYLE_TYPE.PARAGRAPH)
+        style = document.styles.add_style(
+            'Table Cell', WD_STYLE_TYPE.PARAGRAPH)
         style.font.size = Pt(9)
-        style = document.styles.add_style('Table Cell Bold', WD_STYLE_TYPE.PARAGRAPH)
+        style = document.styles.add_style(
+            'Table Cell Bold', WD_STYLE_TYPE.PARAGRAPH)
         style.font.size = Pt(9)
         style.font.bold = True
 
-        p = document.add_paragraph('Ref. Number')
+        document.add_paragraph('Ref. Number')
         document.add_heading(self.context.getId(), 0)
 
-        p = document.add_paragraph('')
+        document.add_paragraph('')
         table = document.add_table(rows=1, cols=6)
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Country'
@@ -1447,7 +1500,8 @@ class ExportAsDocView(ObservationMixin):
         row_cells[1].paragraphs[0].style = "Table Cell"
         row_cells[2].text = self.context.pollutants_value() or ''
         row_cells[2].paragraphs[0].style = "Table Cell"
-        row_cells[3].text = get_vocabulary_value(self.context,
+        row_cells[3].text = get_vocabulary_value(
+            self.context,
             IObservation['fuel'].vocabularyName,
             self.context.fuel
         ) if not is_projection else str(self.context.reference_year)
@@ -1457,11 +1511,11 @@ class ExportAsDocView(ObservationMixin):
         if is_projection:
             row_cells[5].text = self.context.activity_data_type or ''
             row_cells[5].paragraphs[0].style = "Table Cell"
-        p = document.add_paragraph('')
+        document.add_paragraph('')
 
         document.add_heading('Observation details', level=2)
 
-        p = document.add_paragraph('')
+        document.add_paragraph('')
         table = document.add_table(rows=1, cols=4)
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Review Year'
@@ -1487,38 +1541,44 @@ class ExportAsDocView(ObservationMixin):
         row_cells[1].paragraphs[0].style = "Table Cell"
         row_cells[2].paragraphs[0].style = "Table Cell"
         row_cells[3].paragraphs[0].style = "Table Cell"
-        p = document.add_paragraph('')
+        document.add_paragraph('')
 
-        p = document.add_paragraph('Description flags', style="Label Bold")
-        p = document.add_paragraph(self.context.highlight_value())
-        p = document.add_paragraph('Short description by sector expert', style="Label Bold")
-        p = document.add_paragraph(self.context.text)
+        document.add_paragraph('Description flags', style="Label Bold")
+        document.add_paragraph(self.context.highlight_value())
+        document.add_paragraph(
+            'Short description by sector expert', style="Label Bold")
+        document.add_paragraph(self.context.text)
         if is_projection:
-            p = document.add_paragraph('Scenario Type', style="Label Bold")
-            p = document.add_paragraph(self.context.scenario_type_value())
-            p = document.add_paragraph(
+            document.add_paragraph('Scenario Type', style="Label Bold")
+            document.add_paragraph(self.context.scenario_type_value())
+            document.add_paragraph(
                 'NFR Inventories Category Code', style="Label Bold"
             )
-            p = document.add_paragraph(self.context.nfr_code_inventory)
-            p = document.add_paragraph('Activity Data', style="Label Bold")
-            p = document.add_paragraph('\n'.join(
+            document.add_paragraph(self.context.nfr_code_inventory)
+            document.add_paragraph('Activity Data', style="Label Bold")
+            document.add_paragraph('\n'.join(
                 self.context.activity_data_value()
             ))
 
         if self.context.get_status() == 'close-requested':
             document.add_heading('Finish observation', level=2)
             document.add_heading('Observation Finish Requested', level=3)
-            p = document.add_paragraph('SE comments on finish observation request:', style="Label Bold")
+            document.add_paragraph(
+                'SE comments on finish observation request:',
+                style="Label Bold"
+            )
 
         conclusion_2 = self.get_conclusion()
         if conclusion_2:
             document.add_page_break()
             document.add_heading('Conclusions', level=2)
 
-            p = document.add_paragraph('Final status of observation:', style="Label Bold")
-            p = document.add_paragraph(conclusion_2.reason_value())
-            p = document.add_paragraph('Recommendation/internal note:', style="Label Bold")
-            p = document.add_paragraph(conclusion_2.text)
+            document.add_paragraph(
+                'Final status of observation:', style="Label Bold")
+            document.add_paragraph(conclusion_2.reason_value())
+            document.add_paragraph(
+                'Recommendation/internal note:', style="Label Bold")
+            document.add_paragraph(conclusion_2.text)
 
         chats = self.get_chat()
         if chats:
@@ -1531,20 +1591,20 @@ class ExportAsDocView(ObservationMixin):
                     sent_info = "Updated on: %s"
 
                 if chat.portal_type.lower() == 'comment':
-                    p = document.add_paragraph(
+                    document.add_paragraph(
                         '> %s' % self.strip_special_chars(chat.text)
                     )
-                    p = document.add_paragraph(
+                    document.add_paragraph(
                         "From TERTs To Member State \t\t %s" % (
                             sent_info % date.strftime('%d %b %Y, %H:%M CET')
                         )
                     )
 
                 if chat.portal_type.lower() == 'commentanswer':
-                    p = document.add_paragraph(
+                    document.add_paragraph(
                         '< %s' % self.strip_special_chars(chat.text)
                     )
-                    p = document.add_paragraph(
+                    document.add_paragraph(
                         "From Member State To TERTs \t\t %s" % (
                             sent_info % date.strftime('%d %b %Y, %H:%M CET')
                         )
@@ -1560,10 +1620,12 @@ class ExportAsDocView(ObservationMixin):
         response = self.request.response
         response.setHeader(
             "content-type",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ("application/vnd.openxmlformats-officedocument"
+             ".wordprocessingml.document")
         )
         response.setHeader(
-            "Content-disposition", "attachment;filename=" + self.context.getId() + ".docx"
+            "Content-disposition",
+            "attachment;filename=" + self.context.getId() + ".docx"
         )
 
         f = StringIO()
@@ -1628,7 +1690,10 @@ class AddAnswerForm(Form):
         if not text.strip():
             raise ActionExecutionError(Invalid(u"Answer text is empty"))
         observation = aq_inner(self.context)
-        questions = [q for q in observation.values() if q.portal_type == 'Question']
+        questions = [
+            q for q in observation.values()
+            if q.portal_type == 'Question'
+        ]
         if questions:
             context = questions[0]
         else:
@@ -1656,16 +1721,22 @@ class AddAnswerForm(Form):
 
 
 class AddAnswerAndRequestComments(BrowserView):
-     def render(self):
+    def render(self):
         observation = aq_inner(self.context)
-        questions = [q for q in observation.values() if q.portal_type == 'Question']
+        questions = [
+            q for q in observation.values()
+            if q.portal_type == 'Question'
+        ]
         if questions:
             context = questions[0]
         else:
             raise ActionExecutionError(Invalid(u"Invalid context"))
 
         comments = [q for q in context.values() if q.portal_type == 'Comment']
-        answers = [q for q in context.values() if q.portal_type == 'CommentAnswer']
+        answers = [
+            q for q in context.values()
+            if q.portal_type == 'CommentAnswer'
+        ]
 
         if (len(comments) == len(answers)):
             status = IStatusMessage(self.request)
@@ -1758,9 +1829,9 @@ class EditConclusionP2AndCloseComments(BrowserView):
         # Some checks:
         waction = self.request.get('workflow_action')
         if waction != 'finish-comments':
-                status = IStatusMessage(self.request)
-                msg = u'There was an error, try again please'
-                status.addStatusMessage(msg, "error")
+            status = IStatusMessage(self.request)
+            msg = u'There was an error, try again please'
+            status.addStatusMessage(msg, "error")
 
     def render(self):
         # Execute the transition
@@ -1779,7 +1850,10 @@ class EditHighlightsForm(edit.DefaultEditForm):
         super(EditHighlightsForm, self).updateFields()
         self.fields = field.Fields(IObservation).select('highlight')
         self.fields['highlight'].widgetFactory = CheckBoxFieldWidget
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        self.groups = [
+            g for g in self.groups
+            if g.label == 'label_schema_default'
+        ]
 
     def updateWidgets(self):
         super(EditHighlightsForm, self).updateWidgets()
