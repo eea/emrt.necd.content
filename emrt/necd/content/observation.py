@@ -194,7 +194,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     reference_year = schema.Int(
         title=u'Reference year',
-        required=True,
+        required=False,
         min=1000,
         max=9999
     )
@@ -968,22 +968,26 @@ def set_form_fields(form_instance):
     fields = form_instance.fields
     if _is_projection(form_instance.context):
         fields['year'].field = schema.List(
-            title=u'Projection year',
+            title=u'Observation years of relevance',
             description=(
-                u"Projection year is the year or a list of years "
+                u"Observation years of relevance is the year or a "
+                "list of years "
                 u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
                 u" occured for which an issue was observed in the review."
             ),
             value_type=schema.Choice(
-                values=[_(u'2020'), _(u'2025'), _(u'2030'), _(u'2040'),
-                        _(u'2050')]
+                values=[
+                    _(u'2019'),
+                    _(u'2020'),
+                    _(u'2025'),
+                    _(u'2030'),
+                    _(u'2040'),
+                    _(u'2050'),
+                ]
             ),
             required=True,
         )
         fields['year'].widgetFactory = CheckBoxFieldWidget
-        fields['reference_year'].field.required = False
-    else:
-        fields['reference_year'].field.required = False
 
 
 class EditForm(edit.DefaultEditForm):
