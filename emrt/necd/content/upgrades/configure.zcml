@@ -492,4 +492,17 @@
     />
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.3.0"
+    destination="2.3.5"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update NFR code and projection pollutants"
+      description="[refs #104852] 2019 Projection Session of EMRT-NECD."
+      import_steps="plone.app.registry"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

@@ -18,7 +18,8 @@ class INECDSettings(Interface):
         key_type=schema.TextLine(title=_(u"Code")),
         value_type=schema.TextLine(
             title=_(u"Sector Item"),
-            description=_(u"Descripe a sector in the form: ldap|code|name|title")
+            description=_(
+                u"Descripe a sector in the form: ldap|code|name|title")
         ),
     )
 
@@ -59,7 +60,7 @@ def nfr_codes(context, projection_inventory_codes=None):
     registry = getUtility(IRegistry)
     nfrcodeInterface = registry.forInterface(INECDSettings)
 
-    if context.type == 'projection' and projection_inventory_codes==None:
+    if context.type == 'projection' and projection_inventory_codes is None:
         nfrcodeMapping = nfrcodeInterface.nfrcodeMapping_projection
     else:
         nfrcodeMapping = nfrcodeInterface.nfrcodeMapping
@@ -75,7 +76,7 @@ def nfr_codes(context, projection_inventory_codes=None):
                 "name": name,
                 "title": title
             }
-        except:
+        except Exception:
             logger.warning('%s is not well formatted' % key)
 
     return OrderedDict(sorted(nfr_codes.items()))

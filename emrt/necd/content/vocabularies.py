@@ -153,13 +153,13 @@ class Pollutants(object):
 
             if voc is not None:
                 for key, value in voc.getVocabularyLines():
-                    # create a term - the arguments are the value, the token, and
-                    # the title (optional)
+                    # create a term - the arguments are the value,
+                    # the token, and the title (optional)
                     terms.append(SimpleVocabulary.createTerm(key, key, value))
 
         else:
             pollutants = get_registry_interface_field_data(
-                INECDVocabularies,'projection_pollutants'
+                INECDVocabularies, 'projection_pollutants'
             )
 
             for key, value in pollutants.items():
@@ -188,8 +188,10 @@ class Highlight(object):
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
-        voc_name = 'highlight' if context.type=='inventory' \
-                               else 'highlight_projection'
+        voc_name = (
+            'highlight' if context.type == 'inventory'
+            else 'highlight_projection'
+        )
         voc = pvoc.getVocabularyByName(voc_name)
         if voc is None:
             return SimpleVocabulary([])
@@ -265,7 +267,8 @@ class NFRCodeInventories(object):
                     (term_key, term) for (term_key, term) in
                     nfr_codes(context, projection_inventory_codes=True).items()
                     if validate_term(
-                        build_prefix(ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
+                        build_prefix(
+                            ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
                         user_groups
                     )
                 ))
