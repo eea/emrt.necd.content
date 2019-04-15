@@ -1,3 +1,4 @@
+import re
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
@@ -36,7 +37,7 @@ def _read_row(idx, row):
         val = safe_unicode(str(val))
     return val.strip()
 
-import re
+
 def _multi_rows(row):
     splitted = re.split(r'[,\n]\s*', row)
     return tuple(val.strip() for val in splitted)
@@ -50,7 +51,8 @@ def get_constants(context):
     idx = 3
     projection_cols = ['nfr_code_inventory', 'year', 'reference_year',
                        'pollutants', 'scenario', 'review_year',
-                       'activity_data_type', 'activity_data', 'ms_key_category',
+                       'activity_data_type', 'activity_data',
+                       'ms_key_category',
                        'parameter', 'highlight']
     inventory_cols = ['year', 'pollutants', 'review_year', 'fuel',
                       'ms_key_category', 'parameter', 'highlight']
@@ -58,7 +60,7 @@ def get_constants(context):
     if context == 'projection':
         for col in projection_cols:
             XLS_COLS[col] = partial(_read_row, idx)
-            idx+=1
+            idx += 1
     else:
         for col in inventory_cols:
             XLS_COLS[col] = partial(_read_row, idx)
@@ -72,6 +74,7 @@ def get_registry_voc(field):
 
 
 PORTAL_TYPE = 'Observation'
+
 
 def get_vocabulary(name):
     portal_voc = api.portal.get_tool('portal_vocabularies')
@@ -148,7 +151,7 @@ class Entry(object):
 
     @property
     def pollutants(self):
-        if len(self.constants) >10:
+        if len(self.constants) > 10:
             pollutants_voc = get_registry_voc('projection_pollutants')
         else:
             pollutants_voc = get_vocabulary('pollutants')
@@ -192,15 +195,19 @@ class Entry(object):
         elif not self.activity_data_type:
             return False
 
-        keys = [key if key in chain(*activity_voc)
-                    else False for key in cell_value]
+        keys = [
+            key if key in chain(*activity_voc)
+            else False for key in cell_value
+        ]
         if False in keys:
             return False
         else:
             activity_data_registry = get_registry_interface_field_data(
                 INECDVocabularies, 'activity_data')
-            if not all(activity in activity_data_registry[self.activity_data_type]
-                       for activity in keys):
+            if not all(
+                activity in activity_data_registry[self.activity_data_type]
+                for activity in keys
+            ):
                 return False
         return keys
 
@@ -210,7 +217,7 @@ class Entry(object):
         cell_value = self.constants['fuel'](self.row)
         if cell_value != '':
             return find_dict_key(fuel_voc, cell_value)
-        #This field can be none because it's not manadatory
+        # This field can be none because it's not manadatory
         return None
 
     @property
@@ -220,8 +227,8 @@ class Entry(object):
         if cell_value == 'True':
             return cell_value
         elif cell_value == '':
-            #openpyxl takes False cell values as empty strings so it is easier
-            #to assume that an empty cell of the MS Key Category column
+            # openpyxl takes False cell values as empty strings so it is easier
+            # to assume that an empty cell of the MS Key Category column
             # evaluates to false
             return 'False'
 
@@ -255,9 +262,9 @@ class Entry(object):
             # This field can be none because it's not manadatory
             return None
 
-
     def get_fields(self):
-        # Moving activity_data_type field first to validate activity_data values
+        # Moving activity_data_type field first to
+        # validate activity_data values
         fields = self.constants.keys()
         fields.insert(0, fields.pop(fields.index('activity_data_type')))
 
@@ -285,7 +292,7 @@ def _create_observation(entry, context, request, portal_type, obj):
         msg = WRONG_DATA_ERR.format(key, obj.row_nr - 1)
         return error_status_message(context, request, msg)
 
-    #Values must be boolean
+    # Values must be boolean
     if fields['ms_key_category'] == 'True':
         fields['ms_key_category'] = True
     else:
@@ -294,11 +301,11 @@ def _create_observation(entry, context, request, portal_type, obj):
     content = api.content.create(
         context,
         type=portal_type,
-        title = getattr(entry, 'title'),
+        title=getattr(entry, 'title'),
         **fields
     )
 
-    obj.num_entries +=1
+    obj.num_entries += 1
     return content
 
 
