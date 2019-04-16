@@ -10,6 +10,6 @@ compl,Completeness
 cons,Consistency
 comp,Comparability
 acc,Accuracy
-rh,Recommendation - High
-rm,Recommendation - Medium
-rl,Recommendation - Low
+ec,Ensuring compliance
+rm,Recommendation
+enc,Encouragement

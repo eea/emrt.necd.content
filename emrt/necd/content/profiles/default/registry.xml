@@ -203,15 +203,28 @@
       <element key="GHGs">GHGs</element>
     </value>
   </record>
+  <record name="emrt.necd.content.vocabularies.INECDVocabularies.projection_parameter">
+    <value purge="True">
+      <element key="act">Activity data</element>
+      <element key="efep">Emission factor</element>
+      <element key="emi">Emission</element>
+      <element key="fus">Fuel used/sold</element>
+      <element key="gc">Geographical coverage</element>
+      <element key="pams">PaMs</element>
+      <element key="napcpcs">NAPCP - Compliance screening</element>
+      <element key="napcpidc">NAPCP - In-depth check</element>
+      <element key="other">Other</element>
+    </value>
+  </record>
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection">
     <value purge="True">
-      <element key="1A1">sector1|1A1|Energy Stationary|1A1 Energy industries (Combustion in power plants & Energy Production)</element>
+      <element key="1A1">sector1|1A1|Energy Stationary|1A1 Energy industries (Combustion in power plants &amp; Energy Production)</element>
       <element key="1A2">sector1|1A2|Energy Stationary|1A2 Manufacturing Industries and Construction (Combustion in industry including Mobile)</element>
       <element key="1A3b">sector2|1A3b|Energy Mobile|1A3b Road Transport</element>
       <element key="1A3bi">sector2|1A3bi|Energy Mobile|1A3bi R.T., Passenger cars</element>
       <element key="1A3bii">sector2|1A3bii|Energy Mobile|1A3bii R.T., Light duty vehicles</element>
       <element key="1A3biii">sector2|1A3biii|Energy Mobile|1A3biii R.T., Heavy duty vehicles</element>
-      <element key="1A3biv">sector2|1A3biv|Energy Mobile|1A3biv R.T., Mopeds & Motorcycles</element>
+      <element key="1A3biv">sector2|1A3biv|Energy Mobile|1A3biv R.T., Mopeds &amp; Motorcycles</element>
       <element key="1A3bv">sector2|1A3bv|Energy Mobile|1A3bv R.T., Gasoline evaporation</element>
       <element key="1A3bvi">sector2|1A3bvi|Energy Mobile|1A3bvi R.T., Automobile tyre and brake wear</element>
       <element key="1A3bvii">sector2|1A3bvii|Energy Mobile|1A3bvii R.T., Automobile road abrasion</element>
@@ -236,13 +249,13 @@
       <element key="3F,I">sector4|3F,I|Agriculture|3F,I Field burning and other agriculture</element>
       <element key="5">sector5|5|Waste|5 Waste</element>
       <element key="NATIONAL TOTAL">sector9|NATIONAL TOTAL|National total|NATIONAL TOTAL National Total for the entire territory</element>
-      <element key="NAPCP 1">sector6|NAPCP 1|NAPCP expert|NAPCP 1 Compliance screening</element>
-      <element key="NAPCP 2">sector6|NAPCP 2|NAPCP expert|NAPCP 2 Policy framework</element>
-      <element key="NAPCP 3">sector6|NAPCP 3|NAPCP expert|NAPCP 3 Current PaMs</element>
-      <element key="NAPCP 4">sector6|NAPCP 4|NAPCP expert|NAPCP 4 WM Projections</element>
-      <element key="NAPCP 5">sector7|NAPCP 5|PaM reviewer|NAPCP 5 PaMs considererd</element>
-      <element key="NAPCP 6">sector8|NAPCP 6|PaM reviewer|NAPCP 6 PaMs selected</element>
-      <element key="NAPCP 7">sector6|NAPCP 7|NAPCP expert|NAPCP 7 WaM Projections</element>
+      <element key="NAPCP1">sector6|NAPCP 1|NAPCP expert|NAPCP 1 Compliance screening</element>
+      <element key="NAPCP2">sector6|NAPCP 2|NAPCP expert|NAPCP 2 Policy framework</element>
+      <element key="NAPCP3">sector6|NAPCP 3|NAPCP expert|NAPCP 3 Current PaMs</element>
+      <element key="NAPCP4">sector6|NAPCP 4|NAPCP expert|NAPCP 4 WM Projections</element>
+      <element key="NAPCP5">sector7|NAPCP 5|PaM reviewer|NAPCP 5 PaMs considererd</element>
+      <element key="NAPCP6">sector8|NAPCP 6|PaM reviewer|NAPCP 6 PaMs selected</element>
+      <element key="NAPCP7">sector6|NAPCP 7|NAPCP expert|NAPCP 7 WaM Projections</element>
     </value>
   </record>
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection_inventory">
@@ -256,7 +269,7 @@
       <element key="1A3bi">sector2|1A3bi|sector 2|1A3bi Road transport: Passenger cars</element>
       <element key="1A3bii">sector2|1A3bii|sector 2|1A3bii Road transport: Light duty vehicles</element>
       <element key="1A3biii">sector2|1A3biii|sector 2|1A3biii Road transport: Heavy duty vehicles and buses</element>
-      <element key="1A3biv">sector2|1A3biv|sector 2|1A3biv Road transport: Mopeds & motorcycles</element>
+      <element key="1A3biv">sector2|1A3biv|sector 2|1A3biv Road transport: Mopeds &amp; motorcycles</element>
       <element key="1A3bv">sector2|1A3bv|sector 2|1A3bv Road transport: Gasoline evaporation</element>
       <element key="1A3bvi">sector2|1A3bvi|sector 2|1A3bvi Road transport: Automobile tyre and brake wear</element>
       <element key="1A3bvii">sector2|1A3bvii|sector 2|1A3bvii Road transport: Automobile road abrasion</element>
@@ -359,22 +372,22 @@
       <element key="5E">sector5|5E|sector 5|5E Other waste (please specify in IIR)</element>
       <element key="7A">sector9|7A|sector 9|7A National total - National total for the entire territory - Based on fuel sold/fuel used</element>
       <element key="7B">sector9|7B|sector 9|7B National total for compliance assessment</element>
-      <element key="NAPCP 1">sector6|NAPCP 1|sector 6|NAPCP 1 Policy priorities</element>
-      <element key="NAPCP 2">sector6|NAPCP 2|sector 6|NAPCP 2 Authorities</element>
-      <element key="NAPCP 3">sector6|NAPCP 3|sector 6|NAPCP 3 Emissions</element>
-      <element key="NAPCP 4">sector6|NAPCP 4|sector 6|NAPCP 4 Air quality</element>
-      <element key="NAPCP 5">sector6|NAPCP 5|sector 6|NAPCP 5 Transboundary impacts</element>
-      <element key="NAPCP 6">sector6|NAPCP 6|sector 6|NAPCP 6 Trajectory</element>
-      <element key="NAPCP 7">sector6|NAPCP 7|sector 6|NAPCP 7 Flexibilities</element>
-      <element key="NAPCP 8">sector6|NAPCP 8|sector 6|NAPCP 8 Environmental impacts</element>
-      <element key="PaMs 1">sector7|PaMs 1|sector 7|PaMs 1 PaMs details </element>
-      <element key="PaMs 2">sector7|PaMs 2|sector 7|PaMs 2 PaMs AQ impacts </element>
-      <element key="PaMs 3">sector7|PaMs 3|sector 7|PaMs 3 PaMs costs and benefits </element>
-      <element key="PaMs 4">sector7|PaMs 4|sector 7|PaMs 4 PaMs agriculture </element>
-      <element key="PaMs 5">sector8|PaMs 5|sector 8|PaMs 5 PaMs implementation </element>
-      <element key="PaMs 6">sector8|PaMs 6|sector 8|PaMs 6 PaMs selection process</element>
-      <element key="PaMs 7">sector8|PaMs 7|sector 8|PaMs 7 PaMs coherence</element>
-      <element key="PaMs 8">sector8|PaMs 8|sector 8|PaMs 8 PaMs additional modelling</element>
+      <element key="NAPCP1">sector6|NAPCP 1|sector 6|NAPCP 1 Policy priorities</element>
+      <element key="NAPCP2">sector6|NAPCP 2|sector 6|NAPCP 2 Authorities</element>
+      <element key="NAPCP3">sector6|NAPCP 3|sector 6|NAPCP 3 Emissions</element>
+      <element key="NAPCP4">sector6|NAPCP 4|sector 6|NAPCP 4 Air quality</element>
+      <element key="NAPCP5">sector6|NAPCP 5|sector 6|NAPCP 5 Transboundary impacts</element>
+      <element key="NAPCP6">sector6|NAPCP 6|sector 6|NAPCP 6 Trajectory</element>
+      <element key="NAPCP7">sector6|NAPCP 7|sector 6|NAPCP 7 Flexibilities</element>
+      <element key="NAPCP8">sector6|NAPCP 8|sector 6|NAPCP 8 Environmental impacts</element>
+      <element key="PaMs1">sector7|PaMs 1|sector 7|PaMs 1 PaMs details </element>
+      <element key="PaMs2">sector7|PaMs 2|sector 7|PaMs 2 PaMs AQ impacts </element>
+      <element key="PaMs3">sector7|PaMs 3|sector 7|PaMs 3 PaMs costs and benefits </element>
+      <element key="PaMs4">sector7|PaMs 4|sector 7|PaMs 4 PaMs agriculture </element>
+      <element key="PaMs5">sector8|PaMs 5|sector 8|PaMs 5 PaMs implementation </element>
+      <element key="PaMs6">sector8|PaMs 6|sector 8|PaMs 6 PaMs selection process</element>
+      <element key="PaMs7">sector8|PaMs 7|sector 8|PaMs 7 PaMs coherence</element>
+      <element key="PaMs8">sector8|PaMs 8|sector 8|PaMs 8 PaMs additional modelling</element>
     </value>
   </record>
   <record name="emrt.necd.content.vocabularies.INECDVocabularies.activity_data">

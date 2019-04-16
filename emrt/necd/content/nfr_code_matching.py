@@ -24,13 +24,24 @@ class INECDSettings(Interface):
     )
 
     nfrcodeMapping_projection = schema.Dict(
-        title=_(u"NFR Codes Projection"),
+        title=_(u"NFR projection category codes"),
         description=_(u"Maps ldap sectors for Projection ReviewFolders"),
         key_type=schema.TextLine(title=_(u"Code")),
         value_type=schema.TextLine(
             title=_(u"Sector Item"),
             description=_(
-                u"Descripe a sector in the form: ldap|code|name|title")
+                u"Describe a sector in the form: ldap|code|name|title")
+        ),
+    )
+
+    nfrcodeMapping_projection_inventory = schema.Dict(
+        title=_(u"NFR inventories category codes"),
+        description=_(u"Maps ldap sectors for Projection ReviewFolders"),
+        key_type=schema.TextLine(title=_(u"Code")),
+        value_type=schema.TextLine(
+            title=_(u"Sector Item"),
+            description=_(
+                u"Describe a sector in the form: ldap|code|name|title")
         ),
     )
 

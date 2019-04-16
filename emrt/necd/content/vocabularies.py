@@ -74,6 +74,14 @@ class INECDVocabularies(Interface):
         value_type=schema.TextLine(title=_(u"Pollutant value"),),
     )
 
+    projection_parameter = schema.Dict(
+        title=_(u"Projection parameter vocabulary"),
+        description=_(u"Registers the values for parameter in the context of "
+                      u"a Projection ReviewFolder"),
+        key_type=schema.TextLine(title=_(u"Parameter key")),
+        value_type=schema.TextLine(title=_(u"Parameter value"),),
+    )
+
     activity_data = schema.Dict(
         title=_(u"Activity data"),
         description=_(u"Registers the activity data"),
@@ -204,14 +212,26 @@ class Highlight(object):
 class Parameter(object):
 
     def __call__(self, context):
-        pvoc = api.portal.get_tool('portal_vocabularies')
-        voc = pvoc.getVocabularyByName('parameter')
         terms = []
-        if voc is not None:
-            for key, value in voc.getVocabularyLines():
-                # create a term - the arguments are the value, the token, and
-                # the title (optional)
+
+        if context.type == 'inventory':
+            pvoc = api.portal.get_tool('portal_vocabularies')
+            voc = pvoc.getVocabularyByName('parameter')
+
+            if voc is not None:
+                for key, value in voc.getVocabularyLines():
+                    # create a term - the arguments are the value,
+                    # the token, and the title (optional)
+                    terms.append(SimpleVocabulary.createTerm(key, key, value))
+
+        else:
+            pollutants = get_registry_interface_field_data(
+                INECDVocabularies, 'projection_parameter'
+            )
+
+            for key, value in pollutants.items():
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
+
         return SimpleVocabulary(terms)
 
 
@@ -262,10 +282,11 @@ class NFRCodeInventories(object):
             ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
             user_groups = tuple(user.getGroups())
             vocab_with_validate = check_user_for_vocab(context, user)
+            registry_field = 'nfrcodeMapping_projection_inventory'
             if vocab_with_validate:
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
-                    nfr_codes(context, 'nfrcodeMapping_projection_inventory')
+                    nfr_codes(context, field=registry_field).items()
                     if validate_term(
                         build_prefix(
                             ldap_wrapper(LDAP_SECTOREXP), term['ldap']),

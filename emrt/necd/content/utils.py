@@ -1,5 +1,6 @@
 import string
 import simplejson as json
+from itertools import chain
 
 from operator import itemgetter
 import concurrent.futures
@@ -25,6 +26,17 @@ def user_has_ldap_role(ldap_name, user=None, groups=None,
         group for group in _groups
         if group.startswith(ldap_wrapper(ldap_name))
     ))
+
+
+def get_user_sectors(user):
+    return set(chain(*[
+        [
+            n for n in g.split('-')
+            if 'sector' in n
+            and n[-1].isdigit()
+        ]
+        for g in user.getGroups()
+    ]))
 
 
 def principals_with_roles(context, rolenames):

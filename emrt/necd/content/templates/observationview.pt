@@ -273,10 +273,8 @@
         <tal:is_projection condition="python:view.is_projection()">
           <div class="cell position-10 width-2" tal:content="context/activity_data_type"></div>
           <div class="cell position-14 width-2" tal:content="context/reference_year">Reference year placeholder</div>
-          <div class="cell position-12 width-2" tal:define="year_list python: context.year.split(',')">
-            ${python: u','.join(year_list[:3])}
-            <br />
-            ${python:u','.join(year_list[3:])}
+          <div class="cell position-12 width-2">
+            <span tal:replace="structure python:view.widgets['year'].render()"></span>
           </div>
         </tal:is_projection>
       </div>

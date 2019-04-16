@@ -497,10 +497,16 @@
     destination="2.3.5"
     profile="emrt.necd.content:default">
 
+    <genericsetup:upgradeStep
+      title="Delete highlight_projection vocabulary"
+      description="Remove the vocabulary to reimport the new version"
+      handler="emrt.necd.content.upgrades.evolve235.run"
+     />
+
     <genericsetup:upgradeDepends
-      title="Update NFR code and projection pollutants"
-      description="[refs #104852] 2019 Projection Session of EMRT-NECD."
-      import_steps="plone.app.registry"
+      title="Reimport missing vocabularies."
+      description="[refs #104852] Updating vocabularies"
+      import_steps="emrt.necd.content.setup.vocabularies plone.app.registry"
       />
 
   </genericsetup:upgradeSteps>

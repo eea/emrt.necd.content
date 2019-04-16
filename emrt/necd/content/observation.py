@@ -67,11 +67,27 @@ from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
+from emrt.necd.content.utils import get_user_sectors
 from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
+
+# [refs #104852] Hide Projection Year and Reference Year for
+# users with these sectors.
+PROJECTION_HIDE_YEARS = ('sector6', 'sector7', 'sector8')
+
+
+def projection_hide_for_user():
+    user = api.user.get_current()
+
+    # Managers (Secretariat) should never be excluded.
+    if 'Manager' in user.getRoles():
+        return False
+
+    user_sectors = get_user_sectors(user)
+    return set(PROJECTION_HIDE_YEARS).intersection(user_sectors)
 
 
 def get_nfr_title_projection(fname):
@@ -194,7 +210,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     reference_year = schema.Int(
         title=u'Reference year',
-        required=False,
+        required=True,
         min=1000,
         max=9999
     )
@@ -928,8 +944,9 @@ def set_form_widgets(form_instance):
     w_activity_data = widgets['activity_data']
     if _is_projection(form_instance.context):
         for fname in ['nfr_code', 'nfr_code_inventory']:
-            nfr_w = widgets[fname]
-            nfr_w.label = get_nfr_title_projection(fname)
+            nfr_w = widgets.get(fname)
+            if nfr_w:  # Some users don't get to edit the nfr_code.
+                nfr_w.label = get_nfr_title_projection(fname)
 
         widgets['fuel'].mode = interfaces.HIDDEN_MODE
         widgets['activity_data_type'].template = Z3ViewPageTemplateFile(
@@ -944,6 +961,10 @@ def set_form_widgets(form_instance):
                 'activity_data'
             )
         )
+        # # [refs #104852] hide fields for PROJECTION_HIDE_YEARS users
+        # if projection_hide_for_user():
+        #     widgets['year'].mode = interfaces.HIDDEN_MODE
+        #     widgets['reference_year'].mode = interfaces.HIDDEN_MODE
     else:
         w_activity_data.mode = interfaces.HIDDEN_MODE
         widgets['scenario'].mode = interfaces.HIDDEN_MODE
@@ -967,27 +988,43 @@ def set_form_widgets(form_instance):
 def set_form_fields(form_instance):
     fields = form_instance.fields
     if _is_projection(form_instance.context):
-        fields['year'].field = schema.List(
-            title=u'Observation years of relevance',
-            description=(
-                u"Observation years of relevance is the year or a "
-                "list of years "
-                u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
-                u" occured for which an issue was observed in the review."
-            ),
-            value_type=schema.Choice(
-                values=[
-                    _(u'2019'),
-                    _(u'2020'),
-                    _(u'2025'),
-                    _(u'2030'),
-                    _(u'2040'),
-                    _(u'2050'),
-                ]
-            ),
-            required=True,
-        )
-        fields['year'].widgetFactory = CheckBoxFieldWidget
+        hide_for_user = projection_hide_for_user()
+        if hide_for_user:
+            del fields['year']
+            del fields['reference_year']
+        else:
+            fields['year'].field = schema.List(
+                title=u'Projection year',
+                description=(
+                    u"Projection year is the year or a "
+                    "list of years "
+                    u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
+                    u" occured for which an issue was observed in the review."
+                ),
+                value_type=schema.Choice(
+                    values=[
+                        u'2020',
+                        u'2025',
+                        u'2030',
+                        u'2040',
+                        u'2050',
+                    ]
+                ),
+                required=True,
+            )
+
+            fields['year'].widgetFactory = CheckBoxFieldWidget
+
+            # if hide_for_user:
+            #     # [refs #104852]
+            #     # New field instance so we don't modify it globally.
+            #     # Set required to False.
+            #     fields['reference_year'].field = schema.Int(
+            #         title=u'Reference year',
+            #         required=False,
+            #         min=1000,
+            #         max=9999
+            #     )
 
 
 class EditForm(edit.DefaultEditForm):
@@ -1030,9 +1067,11 @@ class EditForm(edit.DefaultEditForm):
         super(EditForm, self).updateWidgets()
         set_form_widgets(self)
         if _is_projection(self.context):
-            for item in self.widgets['year'].items:
-                if item['value'] in self.context.year:
-                    item['checked'] = True
+            saved_year = self.context.year
+            if saved_year:
+                for item in self.widgets['year'].items:
+                    if item['value'] in saved_year:
+                        item['checked'] = True
 
     def updateActions(self):
         super(EditForm, self).updateActions()
@@ -1098,7 +1137,7 @@ class AddForm(add.DefaultAddForm):
         content.title = id
         content.id = id
         if _is_projection(self.context):
-            data['year'] = u','.join(data['year'])
+            data['year'] = u','.join(data.get('year', []))
         for key, value in data.items():
             content._setPropValue(key, value)
         notify(ObjectModifiedEvent(container))
