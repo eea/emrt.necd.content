@@ -265,7 +265,7 @@ class NFRCodeInventories(object):
             if vocab_with_validate:
                 return vocab_from_terms(*(
                     (term_key, term) for (term_key, term) in
-                    nfr_codes(context, projection_inventory_codes=True).items()
+                    nfr_codes(context, 'nfrcodeMapping_projection_inventory')
                     if validate_term(
                         build_prefix(
                             ldap_wrapper(LDAP_SECTOREXP), term['ldap']),
@@ -274,7 +274,7 @@ class NFRCodeInventories(object):
                 ))
 
         return vocab_from_terms(
-            *nfr_codes(context, projection_inventory_codes=True).items()
+            *nfr_codes(context, 'nfrcodeMapping_projection_inventory').items()
         )
 
 

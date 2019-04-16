@@ -44,9 +44,27 @@ class INECDSettings(Interface):
     )
 
 
-def nfr_codes(context, projection_inventory_codes=None):
+def map_nfr_codes(codes):
+    nfr_codes = {}
+
+    for key, codes in codes.items():
+        try:
+            ldap, code, name, title = codes.split('|')
+            nfr_codes[key] = {
+                "ldap": ldap,
+                "code": code,
+                "name": name,
+                "title": title
+            }
+        except Exception:
+            logger.warning('%s is not well formatted' % key)
+
+    return nfr_codes
+
+
+def nfr_codes(context, field=None):
     """ get the NFR code mapping from portal_registry
-        @retrun a dictionary
+        @return a dictionary
         {
             "key": {
                 "ldap": "sector",
@@ -60,25 +78,15 @@ def nfr_codes(context, projection_inventory_codes=None):
     registry = getUtility(IRegistry)
     nfrcodeInterface = registry.forInterface(INECDSettings)
 
-    if context.type == 'projection' and projection_inventory_codes is None:
-        nfrcodeMapping = nfrcodeInterface.nfrcodeMapping_projection
-    else:
-        nfrcodeMapping = nfrcodeInterface.nfrcodeMapping
+    # Use "field" if specified, else check for projection context.
+    field_name = field or (
+        'nfrcodeMapping_projection' if context.type == 'projection'
+        else 'nfrcodeMapping'
+    )
 
-    nfr_codes = {}
+    nfrcodeMapping = nfrcodeInterface.__getattr__(field_name)
 
-    for key, codes in nfrcodeMapping.items():
-        try:
-            ldap, code, name, title = codes.split('|')
-            nfr_codes[key] = {
-                "ldap": ldap,
-                "code": code,
-                "name": name,
-                "title": title
-            }
-        except Exception:
-            logger.warning('%s is not well formatted' % key)
-
+    nfr_codes = map_nfr_codes(nfrcodeMapping)
     return OrderedDict(sorted(nfr_codes.items()))
 
 
