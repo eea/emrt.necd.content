@@ -13,28 +13,35 @@ from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
 
 
-XLS_SAMPLE_HEADER_INVENTORY = [
+XLS_SAMPLE_HEADER_INVENTORY = (
     'Observation description', 'Country', 'NFR code',
     'Inventory year', 'Pollutants', 'Review year', 'Fuel', 'MS key category',
-    'Parameter', 'Description flags'
-]
+    'Parameter', 'Description flags', 'Initial question text',
+)
 
-XLS_SAMPLE_HEADER_PROJECTION = [
+XLS_SAMPLE_HEADER_PROJECTION = (
     'Observation description', 'Country', 'NFR code projection',
-    'NFR inventories category code ','Projection year', 'Reference year',
+    'NFR inventories category code', 'Projection year', 'Reference year',
     'Pollutants', 'Scenario type', 'Review year', 'Activity data type',
-    'Activity data', 'MS Key Category', 'Parameter', 'Description Flags'
-]
+    'Activity data', 'MS Key Category', 'Parameter', 'Description Flags',
+    'Initial question text',
+)
 
 DESC = 'Description of the observation'
 NFR_CODE = '1A1'
 INVENTORY_YEAR = '2018'
 REVIEW_YEAR = '2018'
 REFERENCE_YEAR = '2018'
+QUESTION_TEXT = (
+    'The text of an initial Q&A question. '
+    'Leave empty if you do not wish to add an initial question.'
+)
+
 
 # UnicodeEncodeError
 def decode(s):
     return s.decode('UTF-8', 'replace') if isinstance(s, str) else s
+
 
 def _get_vocabulary(context, name):
     factory = getUtility(IVocabularyFactory, name=name)
@@ -44,7 +51,7 @@ def _get_vocabulary(context, name):
 class GetSampleXLS(BrowserView):
 
     def populate_cells(self, sheet):
-        is_projection = self.context.type=='projection'
+        is_projection = self.context.type == 'projection'
         get_vocabulary = partial(_get_vocabulary, self.context)
         get_title = attrgetter('title')
 
@@ -57,8 +64,8 @@ class GetSampleXLS(BrowserView):
             p_year = '\n'.join(proj_years)
             nfr_inventories = cycle([NFR_CODE, None])
             act_type = cycle(map(attrgetter('value'), act_type_v) + [None])
-            activity_data = get_registry_interface_field_data(INECDVocabularies,
-                                                              'activity_data')
+            activity_data = get_registry_interface_field_data(
+                INECDVocabularies, 'activity_data')
             scenario = cycle(['\n'.join(map(get_title, scenario_voc)), None])
         else:
             header = XLS_SAMPLE_HEADER_INVENTORY
@@ -85,19 +92,24 @@ class GetSampleXLS(BrowserView):
             # get a value based on the country index position
             ms_key_cat = next(ms_key_categ)
             desc_fl = next(description_flags)
+
             if is_projection:
                 nfr_i = next(nfr_inventories)
                 activity_type = next(act_type)
-                if activity_type != None:
-                    activity = u'\n'.join(activity_data[activity_type]).encode('utf-8')
+                activity = (
+                    u'\n'.join(activity_data[activity_type]).encode('utf-8')
+                    if activity_type else None
+                )
                 scenario_type = next(scenario)
                 row = [DESC, country, NFR_CODE, nfr_i, p_year, REFERENCE_YEAR,
                        pollutants, scenario_type, REVIEW_YEAR, activity_type,
-                       decode(activity), ms_key_cat, parameter, desc_fl]
+                       decode(activity), ms_key_cat, parameter, desc_fl,
+                       QUESTION_TEXT]
             else:
                 fuel = next(fuels)
                 row = [DESC, country, NFR_CODE, INVENTORY_YEAR, pollutants,
-                       REVIEW_YEAR, fuel, ms_key_cat, parameter, desc_fl]
+                       REVIEW_YEAR, fuel, ms_key_cat, parameter, desc_fl,
+                       QUESTION_TEXT]
 
             sheet.append(row)
 
@@ -113,7 +125,10 @@ class GetSampleXLS(BrowserView):
 
             for cell in column:
                 if cell.value:
-                    multi_lines_length = [len(c.rstrip()) for c in cell.value.splitlines()]
+                    multi_lines_length = [
+                        len(c.rstrip())
+                        for c in cell.value.splitlines()
+                    ]
                     length.append(max(multi_lines_length))
                     cell.alignment = Alignment(wrap_text=True)
 

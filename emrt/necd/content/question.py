@@ -36,6 +36,7 @@ class IQuestion(form.Schema, IImageScaleTraversable):
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
 
+
 PENDING_STATUS_NAMES = ['answered']
 OPEN_STATUS_NAMES = []
 DRAFT_STATUS_NAMES = []
@@ -45,6 +46,26 @@ PENDING_STATUS_NAME = 'pending'
 DRAFT_STATUS_NAME = 'draft'
 OPEN_STATUS_NAME = 'open'
 CLOSED_STATUS_NAME = 'closed'
+
+
+def create_question(context):
+    fti = getUtility(IDexterityFTI, name='Question')
+    container = aq_inner(context)
+    content = createObject(fti.factory)
+    if hasattr(content, '_setPortalTypeName'):
+        content._setPortalTypeName(fti.getId())
+
+    # Acquisition wrap temporarily to satisfy things like vocabularies
+    # depending on tools
+    if IAcquirer.providedBy(content):
+        content = content.__of__(container)
+
+    ids = [id for id in context.keys() if id.startswith('question-')]
+    id = len(ids) + 1
+    content.title = 'Question %d' % id
+
+    return aq_base(content)
+
 
 @implementer(IQuestion)
 class Question(Container):
@@ -70,7 +91,10 @@ class Question(Container):
 
     def get_state(self):
         state = api.content.get_state(self)
-        workflows = api.portal.get_tool('portal_workflow').getWorkflowsFor(self)
+        workflows = (
+            api.portal.get_tool('portal_workflow')
+            .getWorkflowsFor(self)
+        )
         if workflows:
             for w in workflows:
                 if state in w.states:
@@ -116,9 +140,9 @@ class Question(Container):
             # We need to check that the question was created in the previous
             # step. We will now allow deleting the question after a comment
             # loop
-            question_history = self.workflow_history['esd-question-review-workflow']
+            q_history = self.workflow_history['esd-question-review-workflow']
             current_status = api.content.get_state(self)
-            previous_action = question_history[-1]
+            previous_action = q_history[-1]
             if current_status == 'draft':
                 return previous_action['action'] in [
                     'add-followup-question',
@@ -166,11 +190,13 @@ class Question(Container):
 
     def can_see_comment_discussion(self):
         sm = getSecurityManager()
-        return sm.checkPermission('emrt.necd.content: View Comment Discussion', self)
+        return sm.checkPermission(
+            'emrt.necd.content: View Comment Discussion', self)
 
     def can_see_answer_discussion(self):
         sm = getSecurityManager()
-        return sm.checkPermission('emrt.necd.content: View Answer Discussion', self)
+        return sm.checkPermission(
+            'emrt.necd.content: View Answer Discussion', self)
 
 # View class
 # The view will render when you request a content object with this
@@ -189,29 +215,17 @@ class AddForm(add.DefaultAddForm):
     def updateFields(self):
         super(AddForm, self).updateFields()
         self.fields = field.Fields(IComment).select('text')
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        self.groups = [
+            g for g in self.groups
+            if g.label == 'label_schema_default'
+        ]
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
 
     def create(self, data={}):
-        fti = getUtility(IDexterityFTI, name=self.portal_type)
-        container = aq_inner(self.context)
-        content = createObject(fti.factory)
-        if hasattr(content, '_setPortalTypeName'):
-            content._setPortalTypeName(fti.getId())
-
-        # Acquisition wrap temporarily to satisfy things like vocabularies
-        # depending on tools
-        if IAcquirer.providedBy(content):
-            content = content.__of__(container)
-        context = self.context
-        ids = [id for id in context.keys() if id.startswith('question-')]
-        id = len(ids) + 1
-        content.title = 'Question %d' % id
-
-        return aq_base(content)
+        return create_question(self.context)
 
     def add(self, object):
         super(AddForm, self).add(object)
@@ -306,6 +320,7 @@ class AddAnswerForm(Form):
         for k in self.actions.keys():
             self.actions[k].addClass('standardButton')
 
+
 class AddFollowUpQuestion(BrowserView):
     def render(self):
         api.content.transition(
@@ -330,7 +345,10 @@ class AddConclusions(BrowserView):
 
 class DeleteLastComment(BrowserView):
     def render(self):
-        comments = [c for c in self.context.values() if c.portal_type == 'Comment']
+        comments = [
+            c for c in self.context.values()
+            if c.portal_type == 'Comment'
+        ]
         if comments:
             last_comment = comments[-1]
             question = aq_inner(self.context)
@@ -339,13 +357,17 @@ class DeleteLastComment(BrowserView):
                 self.context.manage_delObjects([last_comment.getId()])
                 observation = aq_parent(question)
                 del observation[question.getId()]
-                return self.request.response.redirect(observation.absolute_url())
+                return self.request.response.redirect(
+                    observation.absolute_url())
             else:
                 question_state = api.content.get_state(obj=question)
                 self.context.manage_delObjects([last_comment.getId()])
                 url = question.absolute_url()
                 if question_state == 'draft':
-                    url += '/content_status_modify?workflow_action=delete-question'
+                    url += (
+                        '/content_status_modify'
+                        '?workflow_action=delete-question'
+                    )
                 return self.request.response.redirect(url)
 
 
@@ -353,7 +375,10 @@ class DeleteLastAnswer(BrowserView):
     def render(self):
         question = aq_inner(self.context)
         url = question.absolute_url()
-        comments = [c for c in self.context.values() if c.portal_type == 'CommentAnswer']
+        comments = [
+            c for c in self.context.values()
+            if c.portal_type == 'CommentAnswer'
+        ]
         if comments:
             last_comment = comments[-1]
             question_state = api.content.get_state(obj=question)
