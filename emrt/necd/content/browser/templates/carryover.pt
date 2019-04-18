@@ -1,0 +1,9 @@
+<form action="./carryover" method="POST" enctype="multipart/form-data">
+    <select name="action">
+        <option value="">Select copy action</option>
+        <option value="direct">Direct copy</option>
+        <option value="complex">Complex copy</option>
+    </select>
+    <Label>Mapping file<input type="file" name="xls" /></Label>
+    <input type="submit" value="Submit" />
+</form>

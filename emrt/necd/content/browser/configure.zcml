@@ -226,4 +226,19 @@
         attribute="render"
         />
 
+    <browser:page
+        name="carryover-form"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        class=".carryover.CarryOverView"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="carryover"
+        for="emrt.necd.content.reviewfolder.IReviewFolder"
+        class=".carryover.CarryOverView"
+        permission="cmf.ManagePortal"
+        attribute="start"
+        />
+
 </configure>

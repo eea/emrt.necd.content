@@ -430,6 +430,10 @@
       <div class="row">
         <div id="conclusions">
           <dl>
+            <tal:carryover condition="here/carryover_from|nothing">
+            <dt>Observation from:</dt>
+            <dd>${here/carryover_from}</dd>
+            </tal:carryover>
             <dt>Final status of observation:</dt>
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
