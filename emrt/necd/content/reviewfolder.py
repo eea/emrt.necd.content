@@ -290,8 +290,17 @@ class ReviewFolderMixin(BrowserView):
         return review_years
 
     def get_inventory_years(self):
-        return set(b.year for b in self.context.getFolderContents(
-            dict(portal_type='Observation')))
+        years = []
+        gfc = self.context.getFolderContents
+        for b in gfc(dict(portal_type='Observation')):
+            year = b.year
+            # handle projection years
+            if isinstance(year, list):
+                years.extend(year)
+            elif year:
+                years.append(year)
+
+        return set(years)
 
     def get_nfr_categories(self):
         vocab_factory = getUtility(

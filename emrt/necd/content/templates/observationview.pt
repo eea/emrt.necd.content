@@ -274,7 +274,7 @@
           <div class="cell position-10 width-2" tal:content="context/activity_data_type"></div>
           <div class="cell position-14 width-2" tal:content="context/reference_year">Reference year placeholder</div>
           <div class="cell position-12 width-2">
-            <span tal:replace="structure python:view.widgets['year'].render()"></span>
+            <span tal:replace="structure python:', '.join(context.year or [])"></span>
           </div>
         </tal:is_projection>
       </div>

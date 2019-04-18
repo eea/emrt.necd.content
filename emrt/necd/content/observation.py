@@ -1011,20 +1011,10 @@ def set_form_fields(form_instance):
                     ]
                 ),
                 required=True,
+                __name__='year',  # otherwise there will be no value on edit
             )
 
             fields['year'].widgetFactory = CheckBoxFieldWidget
-
-            # if hide_for_user:
-            #     # [refs #104852]
-            #     # New field instance so we don't modify it globally.
-            #     # Set required to False.
-            #     fields['reference_year'].field = schema.Int(
-            #         title=u'Reference year',
-            #         required=False,
-            #         min=1000,
-            #         max=9999
-            #     )
 
 
 class EditForm(edit.DefaultEditForm):

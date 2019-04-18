@@ -175,7 +175,7 @@ class Entry(object):
                 return ''
             proj_years = [u'2020', u'2025', u'2030', u'2040', u'2050']
             is_correct = bool(set(years) & set(proj_years))
-            return u','.join(years) if is_correct else False
+            return list(years) if is_correct else False
 
         # Inventory year
         return self.constants['year'](self.row)
