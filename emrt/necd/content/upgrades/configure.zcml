@@ -498,13 +498,13 @@
     profile="emrt.necd.content:default">
 
     <genericsetup:upgradeStep
-      title="Delete highlight_projection vocabulary"
-      description="Remove the vocabulary to reimport the new version"
+      title="Delete highlight and highlight_projection vocabularies"
+      description="Remove the vocabularies to import the new versions"
       handler="emrt.necd.content.upgrades.evolve235.run"
      />
 
     <genericsetup:upgradeDepends
-      title="Reimport missing vocabularies."
+      title="Reimport missing vocabularies. Migrate Observation.highlight"
       description="[refs #104852] Updating vocabularies"
       import_steps="emrt.necd.content.setup.vocabularies plone.app.registry"
       />
