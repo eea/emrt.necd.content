@@ -688,7 +688,7 @@
       <div id="question-add-form" style="display: none" tal:condition="view/can_add_question">
         <span tal:replace="structure view/add_question_form"></span>
       </div>
-      <div class="question" tal:repeat="question view/get_chat" tal:attributes="id question/getId; class string:question ${question/portal_type/lower};">
+      <div class="question" tal:repeat="question view/get_chat" tal:attributes="id question/getId; class string:question ${question/portal_type/lower} ${python:'old-qa' if view.is_old_qa(question) else ''};">
         <tal:block tal:define="portalType question/portal_type/lower"
           tal:condition="python:portalType == 'comment'">
           <div class="arrow-right-border"></div>
