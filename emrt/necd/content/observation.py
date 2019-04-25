@@ -969,7 +969,6 @@ def set_form_widgets(form_instance):
         w_activity_data.mode = interfaces.HIDDEN_MODE
         widgets['scenario'].mode = interfaces.HIDDEN_MODE
         widgets['activity_data_type'].mode = interfaces.HIDDEN_MODE
-        widgets['reference_year'].mode = interfaces.HIDDEN_MODE
         widgets['pollutants'].template = Z3ViewPageTemplateFile(
             'templates/widget_pollutants.pt'
         )
@@ -1015,6 +1014,8 @@ def set_form_fields(form_instance):
             )
 
             fields['year'].widgetFactory = CheckBoxFieldWidget
+    else:
+        del fields['reference_year']
 
 
 class EditForm(edit.DefaultEditForm):

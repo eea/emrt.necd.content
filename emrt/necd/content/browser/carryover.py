@@ -12,6 +12,8 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
+from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
+
 import openpyxl
 
 
@@ -63,11 +65,12 @@ def prepend_qa(target, source):
     target_qa = target.get_question()
 
     if source_qa and target_qa:
-        ordering = target_qa.getOrdering()
         for comment in source_qa.values():
             _copy_obj(target_qa, comment)
-            ordering.notifyAdded(comment.getId())
+
+        ordering = target_qa.getOrdering()
         ordering.orderObjects(key='creation_date')
+
     elif source_qa and not target_qa:
         _copy_obj(target, source_qa)
 
@@ -104,6 +107,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     ob = _copy_and_flag(context, obj)
 
     replace_conclusion_text(ob, conclusion_text)
+    grant_local_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob)
 
     catalog.catalog_object(ob)
@@ -121,6 +125,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
 
     replace_conclusion_text(ob, conclusion_text)
     prepend_qa(ob, older_obj)
+    grant_local_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob)
 
     catalog.catalog_object(ob)

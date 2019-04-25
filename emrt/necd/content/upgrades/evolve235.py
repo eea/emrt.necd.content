@@ -16,6 +16,7 @@ HIGHLIGHT = {
 
 def delete_voc(portal):
     atvm = getToolByName(portal, 'portal_vocabularies')
+    atvm._delObject('pollutants')
     atvm._delObject('highlight_projection')
     atvm._delObject('highlight')
 
