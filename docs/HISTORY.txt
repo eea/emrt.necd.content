@@ -1,6 +1,16 @@
 Changelog
 =========
 
+2.3.5 (2019-04-25)
+
+- Task #104852 - Projection improvements
+- Task #104494 - Improve bulk import
+- Task #103622 - Carry-over feature
+- Task #105186 - Add BaP to pollutants
+- Bug #105206 - Fix carry-over duplicates
+- Bug #105204 - Fix reference_year mandatory
+  [batradav]
+
 2.3.4 (2019-03-07)
 
 - Feature #88845 - Create a new view with a tableau viewer
