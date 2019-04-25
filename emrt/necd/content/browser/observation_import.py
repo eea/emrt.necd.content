@@ -4,6 +4,7 @@ from itertools import islice
 from itertools import chain
 from operator import itemgetter
 
+from zope.interface import Invalid
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -20,6 +21,7 @@ import openpyxl
 from emrt.necd.content.vocabularies import get_registry_interface_field_data
 from emrt.necd.content.vocabularies import INECDVocabularies
 from emrt.necd.content.observation import create_comment
+from emrt.necd.content.observation import inventory_year
 from emrt.necd.content.question import create_question
 
 
@@ -178,7 +180,12 @@ class Entry(object):
             return list(years) if is_correct else False
 
         # Inventory year
-        return self.constants['year'](self.row)
+        cell_value = self.constants['year'](self.row)
+        try:
+            inventory_year(cell_value)
+            return cell_value
+        except Invalid:
+            return False
 
     @property
     def reference_year(self):
