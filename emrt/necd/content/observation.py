@@ -361,7 +361,11 @@ validator.WidgetValidatorDiscriminators(
 def set_title_to_observation(obj, event):
     sector = safe_unicode(obj.ghg_source_category_value())
     pollutants = safe_unicode(obj.pollutants_value())
-    inventory_year = safe_unicode(str(obj.year))
+    obj_year = (
+        obj.year if isinstance(obj.year, basestring)
+        else ', '.join(obj.year)
+    )
+    inventory_year = safe_unicode(str(obj_year))
     parameter = safe_unicode(obj.parameter_value())
     obj.title = u' '.join([sector, pollutants, inventory_year, parameter])
     grant_local_roles(obj)
@@ -1041,7 +1045,9 @@ class EditForm(edit.DefaultEditForm):
         elif ROLE_LR in roles:
             fields = ['text', 'highlight']
 
-        self.fields = self.fields.select(*fields)
+        self.fields = self.fields.select(
+            *set(fields).intersection(self.fields))
+
         self.groups = [g for g in self.groups if
                        g.label == 'label_schema_default']
 
@@ -1075,7 +1081,6 @@ class EditForm(edit.DefaultEditForm):
         if errors:
             self.status = self.formErrorsMessage
             return
-        data['year'] = u','.join(data['year'])
         content = self.getContent()
         for key, value in data.items():
             if data[key] is interfaces.NOT_CHANGED:
@@ -1127,8 +1132,6 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        if _is_projection(self.context):
-            data['year'] = u','.join(data.get('year', []))
         for key, value in data.items():
             content._setPropValue(key, value)
         notify(ObjectModifiedEvent(container))
