@@ -364,7 +364,7 @@ def set_title_to_observation(obj, event):
     obj_year = (
         obj.year if isinstance(obj.year, basestring)
         else ', '.join(obj.year)
-    )
+    ) if obj.year else u''
     inventory_year = safe_unicode(str(obj_year))
     parameter = safe_unicode(obj.parameter_value())
     obj.title = u' '.join([sector, pollutants, inventory_year, parameter])
