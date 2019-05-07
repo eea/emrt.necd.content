@@ -25,6 +25,22 @@ def _read_col(row, nr):
     return val.strip() if val else val
 
 
+def _clear_local_roles(obj):
+    obj.__ac_local_roles__ = None
+
+
+def clear_and_grant_roles(obj):
+    """ Clear any local roles already granted and grant just those
+        that make sense in the current review folder context.
+
+        [refs #105604] This makes sure that users that were granted
+        local roles on the old observation will not continue to
+        have them (e.g. CounterPart).
+    """
+    _clear_local_roles(obj)
+    grant_local_roles(obj)
+
+
 def _copy_obj(target, ob, new_id=None):
     orig_ob = ob
     ob_id = new_id or orig_ob.getId()
@@ -107,7 +123,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     ob = _copy_and_flag(context, obj)
 
     replace_conclusion_text(ob, conclusion_text)
-    grant_local_roles(ob)
+    clear_and_grant_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob)
 
     catalog.catalog_object(ob)
@@ -125,7 +141,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
 
     replace_conclusion_text(ob, conclusion_text)
     prepend_qa(ob, older_obj)
-    grant_local_roles(ob)
+    clear_and_grant_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob)
 
     catalog.catalog_object(ob)

@@ -511,4 +511,17 @@
 
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.3.5"
+    destination="2.3.6"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Reimport workflows."
+      description="[refs #105604] Update view roles for Anonymous."
+      import_steps="workflow"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

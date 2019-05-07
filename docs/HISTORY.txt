@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.3.6 (2019-05-07)
+
+- Task #104852 - Projection improvements
+  [boteziri]
+- Bug #105604 - Fix carry-over roles
+  [batradav]
+
 2.3.5 (2019-04-25)
 
 - Task #104852 - Projection improvements
