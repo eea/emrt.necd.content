@@ -1,11 +1,13 @@
 Changelog
 =========
 
-2.3.6 (2019-05-07)
+2.3.6 (2019-05-08)
 
 - Task #104852 - Projection improvements
   [boteziri]
 - Bug #105604 - Fix carry-over roles
+- Bug #103164 - Visibility of follow up questions in the EMRT
+- Bug #105620 - Export to Excel is not fuctioning properly
   [batradav]
 
 2.3.5 (2019-04-25)
