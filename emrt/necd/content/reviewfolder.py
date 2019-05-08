@@ -472,11 +472,11 @@ def fields_vocabulary_factory(context):
         exclude_fields = EXCLUDE_PROJECTION_FIELDS
 
     for key, value in EXPORT_FIELDS.items():
-            if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
-                continue
-            elif key in exclude_fields:
-                continue
-            terms.append(SimpleVocabulary.createTerm(key, key, value))
+        if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
+            continue
+        elif key in exclude_fields:
+            continue
+        terms.append(SimpleVocabulary.createTerm(key, key, value))
 
     return SimpleVocabulary(terms)
 
@@ -588,7 +588,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             term.title for term in vocab_highlight
         ])
 
-        highlight_split_item = 'rh' if is_projection else 'nsms'
+        highlight_split_item = 'ec' if is_projection else 'nsms'
 
         # Split highlight to differentiate between
         # description and conclusion flags.
@@ -643,7 +643,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         observation['observation_status'],
                     ))
                 elif key == 'fuel':
-                    fuel =  get_vocabulary_value(
+                    fuel = get_vocabulary_value(
                         self, 'emrt.necd.content.fuel',
                         observation.getObject().fuel, exportForm=True
                     )
@@ -658,7 +658,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     row.append(observation.getObject().activity_data_type)
                 elif key == 'activity_data':
                     row.append(
-                        '\n'.join(observation.getObject().activity_data_value())
+                        '\n'.join(
+                            observation.getObject().activity_data_value())
                     )
 
                 else:
