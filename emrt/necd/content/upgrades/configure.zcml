@@ -517,9 +517,9 @@
     profile="emrt.necd.content:default">
 
     <genericsetup:upgradeDepends
-      title="Reimport workflows."
-      description="[refs #105604] Update view roles for Anonymous."
-      import_steps="workflow"
+      title="Reimport workflows and registry"
+      description="[refs #105604] Update view roles for Anonymous. [refs #104852] Update sector list"
+      import_steps="workflow plone.app.registry"
       />
 
   </genericsetup:upgradeSteps>
