@@ -1,7 +1,15 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
   i18n_domain="emrt.necd.content">
+
+  <browser:page
+    name="apply-and-reindex"
+    for="Products.CMFCore.interfaces._tools.IWorkflowTool"
+    class=".portal_workflow.ApplyAndReindex"
+    permission="cmf.ManagePortal"
+    />
 
   <genericsetup:upgradeSteps
     source="2.0"
@@ -521,6 +529,12 @@
       description="[refs #105604] Update view roles for Anonymous. [refs #104852] Update sector list"
       import_steps="workflow plone.app.registry"
       />
+
+    <genericsetup:upgradeStep
+      title="Fix QA permissions."
+      description="[refs #103164] - Visibility of follow up questions in the EMRT"
+      handler="emrt.necd.content.upgrades.evolve236.run"
+    />
 
   </genericsetup:upgradeSteps>
 
