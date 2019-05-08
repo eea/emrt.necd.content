@@ -526,13 +526,13 @@
 
     <genericsetup:upgradeDepends
       title="Reimport workflows and registry"
-      description="[refs #105604] Update view roles for Anonymous. [refs #104852] Update sector list"
+      description="[refs #105604] Update view roles. [refs #104852] Update sector list"
       import_steps="workflow plone.app.registry"
       />
 
     <genericsetup:upgradeStep
-      title="Fix QA permissions."
-      description="[refs #103164] - Visibility of follow up questions in the EMRT"
+      title="Fix QA permissions and carryover permissions."
+      description="[refs #103164 #105604] - Visibility of follow up questions in the EMRT"
       handler="emrt.necd.content.upgrades.evolve236.run"
     />
 
