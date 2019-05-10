@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.3.7 (2019-05-10)
+
+- Bug #105620 - Export to Excel is not fuctioning properly
+  [batradav]
+
 2.3.6 (2019-05-08)
 
 - Task #104852 - Projection improvements
