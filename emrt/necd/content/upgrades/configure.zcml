@@ -538,4 +538,17 @@
 
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.3.6"
+    destination="2.3.7"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Fix Parameter value in brains"
+      description="[refs #105620] - Go through the brain values and update as needed."
+      handler="emrt.necd.content.upgrades.evolve237.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

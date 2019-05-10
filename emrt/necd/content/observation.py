@@ -372,6 +372,26 @@ def set_title_to_observation(obj, event):
     grant_local_roles(obj)
 
 
+def get_join_from_vocab(context, vocab, values):
+    result = u''
+
+    if values:
+        get_value = partial(get_vocabulary_value, context, vocab)
+        result = u', '.join([get_value(v) for v in values if v])
+
+    return result
+
+
+def get_list_from_vocab(context, vocab, values):
+    result = []
+
+    if values:
+        get_value = partial(get_vocabulary_value, context, vocab)
+        result = [get_value(v) for v in values]
+
+    return result
+
+
 @implementer(IObservation)
 class Observation(Container):
 
@@ -426,59 +446,37 @@ class Observation(Container):
         return get_category_value_from_nfr_code(self.nfr_code, self.aq_parent)
 
     def parameter_value(self):
-        parameters = [
-            get_vocabulary_value(self, 'emrt.necd.content.parameter', p)
-            for p in self.parameter
-            ]
-        return u', '.join(filter(None, parameters))
+        return get_join_from_vocab(
+            self.aq_parent, 'emrt.necd.content.parameter', self.parameter)
 
     def pollutants_value(self):
-        get_value = partial(
-            get_vocabulary_value,
-            self.context, 'emrt.necd.content.pollutants')
-
-        pollutants = [get_value(p) for p in self.pollutants]
-        return u', '.join(filter(None, pollutants))
+        return get_join_from_vocab(
+            self.aq_parent, 'emrt.necd.content.pollutants', self.pollutants)
 
     def activity_data_value(self):
-        if self.activity_data:
-            activities = [
-                get_vocabulary_value(
-                    self, 'emrt.necd.content.activity_data', a)
-                for a in self.activity_data
-            ]
-            return activities
-        return []
+        return get_list_from_vocab(
+            self.aq_parent,
+            'mrt.necd.content.activity_data', self.activity_data)
 
     def highlight_value(self):
-        if self.highlight:
-            highlight = [
-                get_vocabulary_value(self, 'emrt.necd.content.highlight', h)
-                for h in self.highlight
-                ]
-            return u', '.join(highlight)
-        return u''
+        return get_join_from_vocab(
+            self.aq_parent, 'emrt.necd.content.highlight', self.highlight)
 
     def scenario_type_value(self):
-        if self.scenario:
-            scenario = [
-                get_vocabulary_value(
-                    self, 'emrt.necd.content.scenario_type', s)
-                for s in self.scenario
-                ]
-            return u', '.join(scenario)
-        return u''
+        return get_join_from_vocab(
+            self.aq_parent, 'emrt.necd.content.scenario_type', self.scenario)
 
     def finish_reason_value(self):
         return get_vocabulary_value(
-            self,
+            self.aq_parent,
             'emrt.necd.content.finishobservationreasons',
             self.closing_reason
         )
 
     def finish_deny_reason_value(self):
         return get_vocabulary_value(
-            self, 'emrt.necd.content.finishobservationdenyreasons',
+            self.aq_parent,
+            'emrt.necd.content.finishobservationdenyreasons',
             self.closing_deny_reason
         )
 
