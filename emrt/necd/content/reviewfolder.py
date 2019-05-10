@@ -549,12 +549,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         if not self.request.get('form.buttons.extend', None):
             return super(ExportReviewFolderForm, self).render()
 
-    def translate_highlights(self, highlights):
-        return [
-            get_vocabulary_value(
-                self, 'emrt.necd.content.highlight', highlight, exportForm=True
-            ) for highlight in highlights
-        ]
+    def translate_highlights(self, vocab, keys):
+        return tuple(vocab.getTerm(x).title for x in keys)
 
     def extract_data(self, form_data):
         """ Create xls file
@@ -581,27 +577,28 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         rows = []
 
-        voc_name = 'highlight_projection' if is_projection else 'highlight'
-        vocab_highlight = vtool.getVocabularyByName(voc_name)
+        vocab_highlight = getUtility(
+            IVocabularyFactory,
+            name='emrt.necd.content.highlight')(self.context)
 
         vocab_highlight_values = tuple([
-            term.title for term in vocab_highlight
+            term.value for term in vocab_highlight
         ])
 
         highlight_split_item = 'ec' if is_projection else 'nsms'
 
         # Split highlight to differentiate between
         # description and conclusion flags.
-        highlight_split = [
-            term for term in vocab_highlight].index(highlight_split_item)
-        vocab_description_flags = vocab_highlight_values[:highlight_split]
-        vocab_conclusion_flags = vocab_highlight_values[highlight_split:]
+        highlight_split = vocab_highlight_values.index(highlight_split_item)
+        vocab_description_flags = self.translate_highlights(
+            vocab_highlight, vocab_highlight_values[:highlight_split])
+        vocab_conclusion_flags = self.translate_highlights(
+            vocab_highlight, vocab_highlight_values[highlight_split:])
 
         for observation in observations:
             row = [observation.getId]
-            highlights = tuple(self.translate_highlights(
-                observation['get_highlight'] or []
-            ))
+            highlights = self.translate_highlights(
+                vocab_highlight, observation['get_highlight'] or [])
 
             for key in fields_to_export:
                 if key == 'observation_is_potential_technical_correction':
@@ -644,10 +641,13 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     ))
                 elif key == 'fuel':
                     fuel = get_vocabulary_value(
-                        self, 'emrt.necd.content.fuel',
-                        observation.getObject().fuel, exportForm=True
+                        self.context.aq_parent, 'emrt.necd.content.fuel',
+                        observation.getObject().fuel
                     )
                     row.append(fuel)
+
+                # XXX: these are projection fields and need rework,
+                # getObject kill performance.
                 elif key == 'nfr_code_inventory':
                     row.append(observation.getObject().nfr_code_inventory)
                 elif key == 'reference_year':

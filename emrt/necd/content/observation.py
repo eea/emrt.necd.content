@@ -5,6 +5,7 @@ except ImportError:
 import datetime
 import simplejson as json
 import re
+from functools import partial
 from docx import Document
 from docx.shared import Pt
 from docx.enum.style import WD_STYLE_TYPE
@@ -432,10 +433,11 @@ class Observation(Container):
         return u', '.join(filter(None, parameters))
 
     def pollutants_value(self):
-        pollutants = [
-            get_vocabulary_value(self, 'emrt.necd.content.pollutants', p)
-            for p in self.pollutants
-            ]
+        get_value = partial(
+            get_vocabulary_value,
+            self.context, 'emrt.necd.content.pollutants')
+
+        pollutants = [get_value(p) for p in self.pollutants]
         return u', '.join(filter(None, pollutants))
 
     def activity_data_value(self):

@@ -91,9 +91,7 @@ def hidden(menuitem):
     return False
 
 
-def get_vocabulary_value(context, vocabulary, term, exportForm=None):
-    if exportForm:
-        context = context.aq_parent
+def get_vocabulary_value(context, vocabulary, term):
 
     vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
     vocabulary = vocab_factory(context)

@@ -55,7 +55,7 @@ class StatisticsView(BrowserView):
             factory = getUtility(IVocabularyFactory, name)
             vocabulary = factory(self.context)
             return sorted([k for k, v in vocabulary.by_token.items()])
-        except:
+        except Exception:
             return []
 
     def _generic_getter(self, objs, key, value, columns=[], filter_fun=None):
