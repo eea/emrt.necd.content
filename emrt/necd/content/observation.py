@@ -77,7 +77,7 @@ from emrt.necd.content.vocabularies import INECDVocabularies
 
 # [refs #104852] Hide Projection Year and Reference Year for
 # users with these sectors.
-PROJECTION_HIDE_YEARS = ('sector6', 'sector7', 'sector8')
+PROJECTION_HIDE_YEARS = ('sector6', 'sector7', 'sector8', 'sector9')
 
 
 def projection_hide_for_user():
@@ -110,7 +110,14 @@ def _is_projection(context):
 
 def check_parameter(value):
     if len(value) == 0:
-        raise Invalid(u'You need to select at least one parameter')
+        raise Invalid(u'You need to select at least one parameter.')
+
+    return True
+
+
+def check_pollutants(value):
+    if len(value) == 0:
+        raise Invalid(u'You need to select at least one pollutant.')
 
     return True
 
@@ -222,6 +229,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.pollutants',
         ),
+        constraint=check_pollutants,
         required=True,
     )
 
@@ -995,6 +1003,20 @@ def set_form_fields(form_instance):
         if hide_for_user:
             del fields['year']
             del fields['reference_year']
+            fields['parameter'].field = schema.List(
+                title=u"Parameter",
+                value_type=schema.Choice(
+                    vocabulary='emrt.necd.content.parameter',
+                ),
+                required=False,
+            )
+            fields['pollutants'].field = schema.List(
+                title=u"Pollutants",
+                value_type=schema.Choice(
+                    vocabulary='emrt.necd.content.pollutants',
+                ),
+                required=False,
+            )
         else:
             fields['year'].field = schema.List(
                 title=u'Projection year',
