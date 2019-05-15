@@ -6,7 +6,7 @@ from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
 import os
 
-VERSION = '2.3.7'
+VERSION = '2.3.8'
 
 
 class BuildFailed(Exception):

@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.3.8 (2019-05-15)
+
+- Bug #104852 - Make pollutants and parameter not mandatory for
+  sector{6,7,8,9} users.
+  [batradav]
+
 2.3.7 (2019-05-10)
 
 - Bug #105620 - Export to Excel is not fuctioning properly
@@ -42,7 +48,7 @@ Changelog
 
 - Feature #102793 - Error when editing conclusion
   - Updating the Conclusions EditForm.getContent to
-    work around the new changes in z3c.form.
+  work around the new changes in z3c.form.
   [batradav]
 
 2.3.1 (2018-12-17)
@@ -141,7 +147,8 @@ Changelog
 
 - Feature #92459 - Add additional options to "Description Flags"
 - Feature #92457 - Add additional pollutants into "Create and observation"
-    * split pollutants in 4 different rows for an user point of view
+  * split pollutants in 4 different rows for an user point of view
+
   [boteziri]
 
 2.0.37 (2017-06-30)
@@ -357,10 +364,11 @@ Changelog
 -------------------
 
 - Task #83488 - Various fixes.
-    - Missing observation NFR code.
-    - Wrong link when clicking on observation.
-    - Allow Managers full access to the listings.
-    - Email "do not reply" rephrasing
+  - Missing observation NFR code.
+  - Wrong link when clicking on observation.
+  - Allow Managers full access to the listings.
+  - Email "do not reply" rephrasing
+
   [batradav]
 
 
@@ -505,14 +513,14 @@ Changelog
   [batradav]
 
 1.59.30 (2016-06-23)
------------------
+--------------------
 
 - Task #73129 Don't show internal discussions to MS users.
 - Task #72922 Implemented automatization using plone registry
 
 
 1.59.29 (2016-05-31)
------------------
+--------------------
 
 - Task #72885 Change a heading
 - Bug #72890 Overview list links not working
@@ -520,19 +528,19 @@ Changelog
   [lucas]
 
 1.59.28 (2016-05-30)
------------------
+--------------------
 
 - Fix #72796 observations export in xls
   [lucas]
 
 1.59.27.1 (2016-05-27)
------------------
+----------------------
 
 - Fix error on edit conclusionphase2 objects
   [lucas]
 
 1.59.27 (2016-05-26)
-------------------
+--------------------
 
 - refs #72138, #72739 fixed workflow permissions
   [lucas]
@@ -540,26 +548,26 @@ Changelog
   [lucas]
 
 1.59.26 (2016-05-17)
------------------
+--------------------
 
 - refs #72197 interface fixes
   [cornel]
 
 1.59.25 (2016-05-16)
------------------
+--------------------
 
 - refs #28348 review "my view" for sector expert and review
   [cornel]
 
 1.59.23 (2016-05-16)
------------------
+--------------------
 
 - refs #28348 review "my view" for sector expert and review
   [lucas]
 
 
 1.59.21 (2016-05-09)
------------------
+--------------------
 
 - refs #68683 ajax sorting on reviewfolder view added
 - refs #30550 added Counterpart's names in commenting loop
@@ -567,7 +575,7 @@ Changelog
   [lucas]
 
 1.59.20.1 (2016-05-05)
------------------
+----------------------
 
 - refs #68919  fix Internal comments invisble for QA expert
 - refs #71992 fix notifications emails
@@ -575,40 +583,40 @@ Changelog
   [lucas]
 
 1.59.19 (2016-04-27)
------------------
+--------------------
 
 - refs #71752, #71692 fix "go to conclusion" in step1
   [lucas]
 
 1.59.18 (2016-04-26)
------------------
+--------------------
 
 - refs #69929, #71670 added exports view
   added "esdrt.content: Export Observations" and "esdrt.content: Export an Observation" permissions
   [lucas]
 
 1.59.17 (2016-04-22)
--------------------
+--------------------
 
 - refs #71532 check if the user can create a conclusion
 - refs #71619 Extraction of step 1 conclusions for observation in step 2
   [lucas]
 
 1.59.16 (2016-04-21)
------------------
+--------------------
 
 - refs #71598, #71602 bug fixed
   [lucas]
 
 
 1.59.15 (2016-04-20)
------------------
+--------------------
 
 - refs #71532 fixed ValueError: Subobject type disallowed by IConstrainTypes adapter: ConclusionsPhase2
   [lucas]
 
 1.59.14 (2016-04-19)
--------------------
+--------------------
 
 - refs #71051 fix rules to show "Edit Key Flags"
   [lucas]
@@ -616,30 +624,30 @@ Changelog
   [lucas]
 
 1.59.13.2 (2016-04-15)
--------------------
+----------------------
 
 - refs #28230 added upgraded steps
   [lucas]
 
 1.59.13 (2016-04-12)
------------------
+--------------------
 
 - refs #28230 added area subscribe notifications configurations
   [lucas]
 
 1.59.12 (2016-04-08)
------------------
+--------------------
 
 - Nothing changed yet.
 
 1.59.11 (2016-04-07)
------------------
+--------------------
 
 - refs #71016 add view to manage objects states
   [lucas]
 
 1.59.10 (2016-04-04)
------------------
+--------------------
 
 - refs #69911 added list of the years format to Inventory year
   [lucas]
@@ -858,7 +866,7 @@ Changelog
 
 - Task #29664: please add another to the CRF categories
 - Bug #29308: Observation look locked. Remove validation that allows only the answer author to submit it
--Task #29635: missing fuel type: peat
+- Task #29635: missing fuel type: peat
 
 
 1.41 (2015-10-01)
