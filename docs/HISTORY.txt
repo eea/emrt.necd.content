@@ -1,9 +1,14 @@
 Changelog
 =========
 
+2.3.9 (2019-05-16)
+
+- Feature #88845 - Fix empty snapshot and timestamps
+  [batradav]
+
 2.3.8 (2019-05-15)
 
-- Bug #104852 - Make pollutants and parameter not mandatory for
+- Task #104852 - Make pollutants and parameter not mandatory for
   sector{6,7,8,9} users.
   [batradav]
 
