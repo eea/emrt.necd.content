@@ -104,7 +104,7 @@
               lead_reviewer: entry['Lead reviewer'].join(', '),
               review_sector: entry['Review sector'].join(', '),
               sector_expert: entry['Sector expert'].join(', '),
-              timestamp: entry['Timestamp'],
+              timestamp: new Date(entry['Timestamp']),
               url: entry['URL']
             }
           }

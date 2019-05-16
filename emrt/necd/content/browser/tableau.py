@@ -58,7 +58,14 @@ except ImportError:
 
 def insert_snapshot(data, snapshot):
     # type: (str, list) -> str
-    return data[:1] + json.dumps(snapshot) + ',' + data[1:]
+    updated = data
+    if snapshot:
+        if len(data) > 2:  # '[]'
+            sep = ','
+        else:
+            sep = ''
+        updated = data[:1] + json.dumps(snapshot) + sep + data[1:]
+    return updated
 
 
 def reduce_count_brains(acc, b):
