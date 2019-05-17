@@ -1,6 +1,5 @@
 import os
 import simplejson as json
-from StringIO import StringIO
 
 from gzip import GzipFile
 from datetime import datetime
@@ -13,7 +12,6 @@ from itertools import islice
 from itertools import chain
 
 from functools import partial
-from functools import reduce
 
 from zope.component.hooks import getSite
 from zope.component import getUtility
@@ -49,6 +47,9 @@ COL_SE__RS = itemgetter(0)
 COL_CAT__RS = itemgetter(1)
 
 
+GET_TIMESTAMP = itemgetter('Timestamp')
+
+
 try:
     from flatten_json import flatten as do_flatten
 except ImportError:
@@ -56,16 +57,61 @@ except ImportError:
         return json.dumps(list(chain(*json.loads(json_str))))
 
 
+def entry_for_cmp(entry):
+    """ Return entry data, without Timestamp.
+        Suited for comparison.
+    """
+    return {
+        k: v
+        for k, v in entry.items()
+        if k != 'Timestamp'
+    }
+
+
+def should_append_entry(latest, entry):
+    # If there is no earlier entry, append.
+    should_append = True
+
+    # If there is an earlier entry, compare it with
+    # this one, append if different.
+    if latest:
+        cmp_latest = entry_for_cmp(latest)
+        cmp_entry = entry_for_cmp(entry)
+        if cmp_entry == cmp_latest:
+            should_append = False
+
+    return should_append
+
+
+def update_history_with_snapshot(data, snapshot):
+    # type: (str, list) -> dict
+    updated = defaultdict(list)
+    updated.update(json.loads(data))
+
+    for entry in snapshot:
+        found = updated[entry['ID']]
+        latest = found[-1] if found else None
+
+        if should_append_entry(latest, entry):
+            found.append(entry)
+
+    return updated
+
+
 def insert_snapshot(data, snapshot):
     # type: (str, list) -> str
-    updated = data
-    if snapshot:
-        if len(data) > 2:  # '[]'
-            sep = ','
-        else:
-            sep = ''
-        updated = data[:1] + json.dumps(snapshot) + sep + data[1:]
-    return updated
+    return json.dumps(update_history_with_snapshot(data, snapshot))
+
+
+def flatten_historical_data(data):
+    """ Return a list of Observation data items, sorted on
+        timestamp, latest to oldest.
+    """
+    return sorted(
+        chain.from_iterable(data.values()),
+        key=GET_TIMESTAMP,
+        reverse=True
+    )
 
 
 def reduce_count_brains(acc, b):
@@ -264,7 +310,7 @@ def get_historical_data(context):
     # create empty Blob, if missing
     if not hasattr(target, HISTORICAL_ATTR_NAME):
         setattr(target, HISTORICAL_ATTR_NAME, Blob())
-        write_historical_data(context, '[]')
+        write_historical_data(context, '{}')
 
     # gunzip data
     blob = getattr(target, HISTORICAL_ATTR_NAME).open('r')
@@ -292,7 +338,7 @@ class TableauView(BrowserView):
 
 
 class TableauHistoricalView(BrowserView):
-    def __call__(self, flatten=False):
+    def __call__(self):
         data = dict(status=401)
         request = self.request
 
@@ -301,18 +347,17 @@ class TableauHistoricalView(BrowserView):
 
             data = get_historical_data(context)
             snapshot = get_snapshot(context)
-            data = insert_snapshot(data, snapshot)
+            data = flatten_historical_data(
+                update_history_with_snapshot(data, snapshot))
 
         else:
             request.RESPONSE.setStatus(401)
 
-        if flatten:
-            data = do_flatten(data)
-
         header = request.RESPONSE.setHeader
         header("Content-Type", "application/json")
+        header("Surrogate-control", "no-store")
 
-        return data
+        return json.dumps(data)
 
 
 class TableauCreateSnapshotView(BrowserView):
@@ -339,31 +384,15 @@ class ConnectorView(BrowserView):
 
     index = ViewPageTemplateFile('./templates/tableau_connector.pt')
 
-    def __call__(self, historical=False):
+    def __call__(self):
         request = self.request
 
         # Make sure the response doesn't get cached in proxies.
         request.RESPONSE.setHeader('Surrogate-control', 'no-store')
 
         if validate_token(request):
-
-            if historical:
-                data = self.historical_data()
-            else:
-                data = self.data()
-
             return self.index(
                 portal_url=getSite().absolute_url(),
-                data=data
             )
 
         request.RESPONSE.setStatus(401)
-
-    def data(self):
-        return json.dumps(get_snapshot(self.context))
-
-    def historical_data(self):
-        context = self.context
-        data = get_historical_data(context)
-        data = insert_snapshot(data, get_snapshot(context))
-        return do_flatten(data)

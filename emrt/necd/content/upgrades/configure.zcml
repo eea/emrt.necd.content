@@ -551,4 +551,17 @@
 
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.3.7"
+    destination="2.4.0"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Migrate tableau storage"
+      description="[refs #88845] - Improve Tableau data performance."
+      handler="emrt.necd.content.upgrades.evolve240.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

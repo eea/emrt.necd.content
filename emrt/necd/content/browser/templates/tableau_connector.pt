@@ -114,7 +114,7 @@
 
         function fetchData(callback) {
           var xhr = new XMLHttpRequest();
-          var url = './tableau-historical.json?flatten=true&tableau_token=' + '${token_c}';
+          var url = './tableau-historical.json?tableau_token=' + '${token_c}';
           xhr.open('GET', url, true);
 
           xhr.onload = function(resp) {
