@@ -88,6 +88,12 @@ def update_history_with_snapshot(data, snapshot):
     updated = defaultdict(list)
     updated.update(json.loads(data))
 
+    # We do this so that data format is consistent with the one stored
+    # in the history (json). JSON deserializes ASCII encoded strings
+    # as Unicode, resulting in the comparison of Unicode with ASCII encoded
+    # string, which fails and data gets duplicated by should_append_entry.
+    snapshot = json.loads(json.dumps(snapshot))
+
     for entry in snapshot:
         found = updated[entry['ID']]
         latest = found[-1] if found else None
