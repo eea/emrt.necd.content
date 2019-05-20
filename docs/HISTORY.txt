@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.4.0 (2019-05-20)
+
+- Feature #88845 - Migrate to new storage format. Snapshot only modified observations.
+  [batradav]
+
 2.3.9 (2019-05-16)
 
 - Feature #88845 - Fix empty snapshot and timestamps
