@@ -464,7 +464,7 @@ class Observation(Container):
     def activity_data_value(self):
         return get_list_from_vocab(
             self.aq_parent,
-            'mrt.necd.content.activity_data', self.activity_data)
+            'emrt.necd.content.activity_data', self.activity_data)
 
     def highlight_value(self):
         return get_join_from_vocab(

@@ -12,6 +12,14 @@ from zope.globalrequest import getRequest
 def notify(observation, template, subject, role, notification_name):
     users = get_users_in_context(observation, role, notification_name)
     content = template(**dict(observation=observation))
+
+    if observation.aq_parent.type == 'projection':
+        prepend = '[NECD Projection Review]'
+    else:
+        prepend = '[NECD Inventory Review]'
+
+    subject = '{} {}'.format(prepend, subject)
+
     send_mail(subject, safe_unicode(content), users)
 
 
