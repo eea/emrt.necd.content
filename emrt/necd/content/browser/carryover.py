@@ -91,12 +91,12 @@ def prepend_qa(target, source):
         _copy_obj(target, source_qa)
 
 
-def add_to_wh(wf, obj, action, state):
+def add_to_wh(wf, obj, action, state, actor):
     wh = obj.workflow_history
     wf_id = wf.getId()
     wh[wf_id] = wh[wf_id] + ({
         'comments': 'Carryover force state',
-        'actor': '',
+        'actor': actor,
         'time': DateTime(),
         'action': action,
         'review_state': state,
@@ -104,27 +104,28 @@ def add_to_wh(wf, obj, action, state):
     wf.updateRoleMappingsFor(obj)
 
 
-def reopen_with_qa(wf, wf_q, wf_c, obj):
-    add_to_wh(wf, obj, 'reopen-qa-chat', 'pending')
+def reopen_with_qa(wf, wf_q, wf_c, obj, actor):
+    add_to_wh(wf, obj, 'reopen-qa-chat', 'pending', actor)
     question = obj.get_question()
     if question:
-        add_to_wh(wf_q, question, 'reopen', 'draft')
+        add_to_wh(wf_q, question, 'reopen', 'draft', actor)
 
     conclusion = obj.get_conclusion()
     if conclusion:
-        add_to_wh(wf_c, conclusion, 'redraft', 'draft')
+        add_to_wh(wf_c, conclusion, 'redraft', 'draft', actor)
 
 
 def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
+    actor = _read_col(row, 2)
 
     obj = obj_from_url(source)
     ob = _copy_and_flag(context, obj)
 
     replace_conclusion_text(ob, conclusion_text)
     clear_and_grant_roles(ob)
-    reopen_with_qa(wf, wf_q, wf_c, ob)
+    reopen_with_qa(wf, wf_q, wf_c, ob, actor)
 
     catalog.catalog_object(ob)
 
@@ -133,6 +134,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     source = _read_col(row, 0)
     older_source = _read_col(row, 1)
     conclusion_text = _read_col(row, 2)
+    actor = _read_col(row, 3)
 
     obj = obj_from_url(source)
     older_obj = obj_from_url(older_source)
@@ -142,7 +144,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     replace_conclusion_text(ob, conclusion_text)
     prepend_qa(ob, older_obj)
     clear_and_grant_roles(ob)
-    reopen_with_qa(wf, wf_q, wf_c, ob)
+    reopen_with_qa(wf, wf_q, wf_c, ob, actor)
 
     catalog.catalog_object(ob)
 
@@ -159,9 +161,12 @@ class CarryOverView(BrowserView):
         wb = openpyxl.load_workbook(xls, read_only=True, data_only=True)
         sheet = wb.worksheets[0]
 
-        # extract rows with values, skip first row (header)
+
+        sheet_rows = sheet.rows
+        next(sheet_rows)  # skip first row (header)
+        # extract rows with values
         valid_rows = tuple(takewhile(
-            lambda row: any(c.value for c in row), sheet.rows))[1:]
+            lambda row: any(c.value for c in row), sheet_rows))
 
         context = self.context
         site_url = portal.absolute_url()
@@ -184,6 +189,10 @@ class CarryOverView(BrowserView):
         for row in valid_rows:
             copy_func(row)
 
-        (IStatusMessage(self.request)
-            .add('Carryover successfull!', type='info'))
+        if len(valid_rows) > 0:
+            (IStatusMessage(self.request)
+                .add('Carryover successfull!', type='info'))
+        else:
+            (IStatusMessage(self.request)
+                .add('No data provided!', type='warn'))
         self.request.RESPONSE.redirect(context.absolute_url())
