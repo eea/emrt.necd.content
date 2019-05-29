@@ -874,7 +874,15 @@ class InboxReviewFolderView(BrowserView):
 
         query.update(kw)
 
-        observations = [b.getObject() for b in catalog.searchResults(query)]
+        observations = []
+        for b in catalog.searchResults(query):
+            # Handle bad indexes, where the catalog thinks the user has View
+            # permission, but getObject() fails because the permissions differ.
+            try:
+                observations.append(b.getObject())
+            except Unauthorized:
+                pass
+
         if rolecheck is None:
             return observations
 
