@@ -564,4 +564,23 @@
 
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.4.0"
+    destination="2.4.3"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update workflows"
+      description="[refs #106008] Small bug in the comment loop"
+      import_steps="workflow"
+      />
+
+    <genericsetup:upgradeStep
+      title="Update permissions of existing content"
+      description="[refs #106008] Small bug in the comment loop"
+      handler="emrt.necd.content.upgrades.evolve243.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
