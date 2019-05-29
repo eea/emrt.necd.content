@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.4.3 (2019-05-29)
+
+- Task #106008 - Small bug in the comment loop
+  [batradav]
+
 2.4.2 (2019-05-24)
 
 - Task #106088 - userid field for carryover
