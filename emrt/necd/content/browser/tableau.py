@@ -8,7 +8,6 @@ from collections import defaultdict
 from collections import Counter
 
 from operator import itemgetter
-from itertools import islice
 from itertools import chain
 
 from functools import partial
@@ -24,8 +23,6 @@ from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
-from openpyxl import load_workbook
-
 from emrt.necd.content.utils import jsonify
 from emrt.necd.content.reviewfolder import QUESTION_WORKFLOW_MAP
 
@@ -34,17 +31,6 @@ TOKEN_VIEW = os.environ.get("TABLEAU_TOKEN")
 TOKEN_SNAP = os.environ.get("TABLEAU_TOKEN_SNAPSHOT")
 
 HISTORICAL_ATTR_NAME = '__tableau_historical_store__'
-
-
-SHEET_MS_ROLES = itemgetter(0)
-SHEET_RS = itemgetter(1)
-
-COL_MS__ROLES_MS = itemgetter(0)
-COL_LR__ROLES_MS = itemgetter(1)
-COL_SE__ROLES_MS = itemgetter(2)
-
-COL_SE__RS = itemgetter(0)
-COL_CAT__RS = itemgetter(1)
 
 
 GET_TIMESTAMP = itemgetter('Timestamp')
@@ -64,7 +50,7 @@ def entry_for_cmp(entry):
     return {
         k: v
         for k, v in entry.items()
-        if k != 'Timestamp'
+        if k not in ['Timestamp', 'Modified']
     }
 
 
@@ -164,29 +150,12 @@ def ipcc_sector(brain):
     return brain['get_ghg_source_sectors'][0]
 
 
-def review_sector(mapping, se):
-    return list({COL_CAT__RS(mapping[s]) for s in se})
-
-
 def author_name(brain):
     return brain['get_author_name'].title()
 
 
-def sector_expert(ms_roles, country):
-    return list(set(map(COL_SE__ROLES_MS, ms_roles[country])))
-
-
-def lead_reviewer(ms_roles, country):
-    return list(set(map(COL_LR__ROLES_MS, ms_roles[country])))
-
-
-def extract_entry(qa, timestamp, mappings, vocab_highlights, brain):
+def extract_entry(qa, timestamp, vocab_highlights, brain):
     b_id = brain['id']
-    ms_roles = mappings['ms_roles']
-    review_sectors = mappings['review_sectors']
-
-    country_code = brain['country']
-    se = sector_expert(ms_roles, country_code)
 
     obs_status = brain['observation_status']
 
@@ -196,13 +165,12 @@ def extract_entry(qa, timestamp, mappings, vocab_highlights, brain):
     return {
         'Current status': current_status(brain),
         'IPCC Sector': ipcc_sector(brain),
-        'Review sector': review_sector(review_sectors, se),
+        'Review sector': brain['get_ghg_source_sectors'],
         'Author': author_name(brain),
         'Questions answered': count_answers(len_q, len_a, obs_status),
         'Questions asked': count_questions(len_q, len_a, obs_status),
-        'Sector expert': se,
-        'Lead reviewer': lead_reviewer(ms_roles, country_code),
         'Timestamp': timestamp,
+        'Modified': brain['modified'].asdatetime().isoformat(),
         'Country': brain['country_value'],
         'ID': b_id,
         'URL': brain.getURL(),
@@ -213,35 +181,6 @@ def extract_entry(qa, timestamp, mappings, vocab_highlights, brain):
 
 def validate_token(request, token=TOKEN_VIEW):
     return request.get('tableau_token') == token if token else False
-
-
-def sheet_ms_roles(sheet):
-    rows = islice(sheet.rows, 1, None)  # skip header
-
-    result = defaultdict(tuple)
-
-    for row in rows:
-        values = tuple(c.value for c in row)
-        result[COL_MS__ROLES_MS(values).lower()] += (values, )
-
-    return dict(result)
-
-
-def sheet_review_sectors(sheet):
-    rows = islice(sheet.rows, 1, None)  # skip header
-    return {
-        COL_SE__RS(values): values
-        for values in (tuple(cell.value for cell in row) for row in rows)
-    }
-
-
-def values_from_xls(xls):
-    sheets = xls.worksheets
-
-    return dict(
-        ms_roles=sheet_ms_roles(SHEET_MS_ROLES(sheets)),
-        review_sectors=sheet_review_sectors(SHEET_RS(sheets))
-    )
 
 
 def get_snapshot(context):
@@ -268,14 +207,7 @@ def get_snapshot(context):
         IVocabularyFactory,
         name='emrt.necd.content.highlight')(context)
 
-    xls_file = load_workbook(
-        context.xls_mappings.open(), read_only=True)
-
-    mappings = values_from_xls(xls_file)
-
-    entry = partial(
-        extract_entry,
-        qa, timestamp, mappings, vocab_highlights)
+    entry = partial(extract_entry, qa, timestamp, vocab_highlights)
 
     brains = catalog.unrestrictedSearchResults(
         portal_type=['Observation'],

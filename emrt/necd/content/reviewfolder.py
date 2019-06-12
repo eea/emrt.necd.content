@@ -166,19 +166,6 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
         required=True,
     )
 
-    xls_mappings = NamedBlobFile(
-        title=u'Mapping XLS',
-        description=(
-            u'XLS file providing helper mappings for the Tableau JSON.'
-            u'You can <a href="'
-            u'./++resource++emrt.necd.content/tableau_mappings.xlsx">'
-            u'download an example XLS</a> and modify it as appropriate.'
-            u'The header for each sheet needs to exist but is ignored.'
-            u'<strong>'
-            u'The order of the sheets and columns is important!</strong>'
-        ),
-        required=False,
-    )
 
 @implementer(IReviewFolder)
 class ReviewFolder(Container):

@@ -52,23 +52,18 @@
               dataType: tableau.dataTypeEnum.int
             },
             {
-              id: 'lead_reviewer',
-              alias: 'Lead reviewer',
-              dataType: tableau.dataTypeEnum.string
-            },
-            {
               id: 'review_sector',
               alias: 'Review sector',
               dataType: tableau.dataTypeEnum.string
             },
             {
-              id: 'sector_expert',
-              alias: 'Sector expert',
-              dataType: tableau.dataTypeEnum.string
-            },
-            {
               id: 'timestamp',
               alias: 'Timestamp',
+              dataType: tableau.dataTypeEnum.datetime
+            },
+            {
+              id: 'modified',
+              alias: 'Modified',
               dataType: tableau.dataTypeEnum.datetime
             },
             {
@@ -93,6 +88,9 @@
           for (var i = 0; i < data.length; i++) {
             var entry = data[i];
 
+            var _modified = entry['Modified'] || null;
+            var _review_sector = entry['Review sector'];
+
             tableData[i] = {
               id: entry['ID'],
               country: entry['Country'],
@@ -101,9 +99,8 @@
               ipcc_sector: entry['IPCC Sector'],
               questions_answered: entry['Questions answered'],
               questions_asked: entry['Questions asked'],
-              lead_reviewer: entry['Lead reviewer'].join(', '),
-              review_sector: entry['Review sector'].join(', '),
-              sector_expert: entry['Sector expert'].join(', '),
+              review_sector: Array.isArray(_review_sector) ? _review_sector.join(', ') : _review_sector,
+              modified: _modified ? new Date(_modified) : _modified,
               timestamp: new Date(entry['Timestamp']),
               url: entry['URL']
             }
