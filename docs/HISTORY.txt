@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.5 (2019-06-12)
+
+- Task #88845 - removing XLS mapping, adding Modified date
+- Bug: #106301 - Unauthorized check on getObject()
+  [batradav]
+
 2.4.2 (2019-05-24)
 
 - Task #106088 - userid field for carryover
