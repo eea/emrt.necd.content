@@ -231,7 +231,7 @@
       <element key="1A3a,c,d,e">sector2|1A3a,c,d,e|Energy Mobile|1A3a,c,d,e Off-road transport</element>
       <element key="1A4">sector1|1A4|Energy Stationary|1A4 Other sectors (Commercial, institutional, residential, agriculture and fishing stationary and mobile combustion)</element>
       <element key="1A5">sector1|1A5|Energy Stationary|1A5 Other</element>
-      <element key="1B">sector3|1B|IPPU|1B Fugitive emissions (Fugitive emissions from fuels)</element>
+      <element key="1B">sector1|1B|IPPU|1B Fugitive emissions (Fugitive emissions from fuels)</element>
       <element key="2A,B,C,H,I,J,K,L">sector3|2A,B,C,H,I,J,K,L|IPPU|2A,B,C,H,I,J,K,L Industrial Processes</element>
       <element key="2D, 2G">sector3|2D, 2G|IPPU|2D, 2G Solvent and other product use</element>
       <element key="3B">sector4|3B|Agriculture|3B Animal husbandry and manure management</element>
