@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.1 (2019-06-14)
+
+- Task #88845 - adding extra fields to tableau
+  [batradav]
+
 2.5 (2019-06-12)
 
 - Task #88845 - removing XLS mapping, adding Modified date
