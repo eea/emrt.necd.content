@@ -25,6 +25,9 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from emrt.necd.content.utils import jsonify
 from emrt.necd.content.reviewfolder import QUESTION_WORKFLOW_MAP
+from emrt.necd.content.reviewfolder import get_highlight_vocabs
+from emrt.necd.content.reviewfolder import translate_highlights
+from emrt.necd.content.reviewfolder import get_common
 
 
 TOKEN_VIEW = os.environ.get("TABLEAU_TOKEN")
@@ -141,11 +144,6 @@ def count_questions(len_q, len_a, obs_status):
     return len_q - 1 if question_not_submitted else len_q
 
 
-def description_flags(vocab, brain):
-    value = brain['get_highlight']
-    return [vocab.getTerm(v).title for v in value] if value else []
-
-
 def ipcc_sector(brain):
     return brain['get_ghg_source_sectors'][0]
 
@@ -154,13 +152,22 @@ def author_name(brain):
     return brain['get_author_name'].title()
 
 
-def extract_entry(qa, timestamp, vocab_highlights, brain):
+def convert_flags(vocab, highlights):
+    return ', '.join(get_common(highlights, vocab))
+
+
+def extract_entry(qa, timestamp,
+        vocab_description_flags, vocab_conclusion_flags,
+        vocab_highlight, brain):
     b_id = brain['id']
 
     obs_status = brain['observation_status']
 
     len_a = qa['CommentAnswer'][b_id]
     len_q = qa['Comment'][b_id]
+
+    highlights = translate_highlights(
+        vocab_highlight, brain['get_highlight'] or [])
 
     return {
         'Current status': current_status(brain),
@@ -174,7 +181,10 @@ def extract_entry(qa, timestamp, vocab_highlights, brain):
         'Country': brain['country_value'],
         'ID': b_id,
         'URL': brain.getURL(),
-        'Description flags': description_flags(vocab_highlights, brain)
+        'Description flags': convert_flags(vocab_description_flags, highlights),
+        'Conclusion flags': convert_flags(vocab_conclusion_flags, highlights),
+        'Potential technical correction': bool(
+            brain['observation_is_potential_technical_correction'])
 
     }
 
@@ -203,11 +213,13 @@ def get_snapshot(context):
         CommentAnswer=Counter(p.split('/')[3] for p in p_comment_answer),
     )
 
-    vocab_highlights = getUtility(
-        IVocabularyFactory,
-        name='emrt.necd.content.highlight')(context)
 
-    entry = partial(extract_entry, qa, timestamp, vocab_highlights)
+    vocab_description_flags, vocab_conclusion_flags, vocab_highlight = (
+        get_highlight_vocabs(context)
+    )
+
+    entry = partial(extract_entry, qa, timestamp,
+        vocab_description_flags, vocab_conclusion_flags, vocab_highlight)
 
     brains = catalog.unrestrictedSearchResults(
         portal_type=['Observation'],

@@ -119,6 +119,33 @@ def get_finalisation_reasons(reviewfolder):
     return reasons
 
 
+def translate_highlights(vocab, keys):
+    return tuple(vocab.getTerm(x).title for x in keys)
+
+
+def get_highlight_vocabs(context):
+    vocab_highlight = getUtility(
+        IVocabularyFactory,
+        name='emrt.necd.content.highlight')(context)
+
+    vocab_highlight_values = tuple([
+        term.value for term in vocab_highlight
+    ])
+
+    is_projection = context.type == 'projection'
+    highlight_split_item = 'ec' if is_projection else 'nsms'
+
+    # Split highlight to differentiate between
+    # description and conclusion flags.
+    highlight_split = vocab_highlight_values.index(highlight_split_item)
+    vocab_description_flags = translate_highlights(
+        vocab_highlight, vocab_highlight_values[:highlight_split])
+    vocab_conclusion_flags = translate_highlights(
+        vocab_highlight, vocab_highlight_values[highlight_split:])
+
+    return vocab_description_flags, vocab_conclusion_flags, vocab_highlight
+
+
 def filter_for_ms(brains, context):
     if api.user.is_anonymous():
         return brains
@@ -536,13 +563,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         if not self.request.get('form.buttons.extend', None):
             return super(ExportReviewFolderForm, self).render()
 
-    def translate_highlights(self, vocab, keys):
-        return tuple(vocab.getTerm(x).title for x in keys)
-
     def extract_data(self, form_data):
         """ Create xls file
         """
-        is_projection = self.context.type=='projection'
         vtool = getToolByName(self, 'portal_vocabularies')
 
         observations = self.get_questions()
@@ -564,27 +587,13 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         rows = []
 
-        vocab_highlight = getUtility(
-            IVocabularyFactory,
-            name='emrt.necd.content.highlight')(self.context)
-
-        vocab_highlight_values = tuple([
-            term.value for term in vocab_highlight
-        ])
-
-        highlight_split_item = 'ec' if is_projection else 'nsms'
-
-        # Split highlight to differentiate between
-        # description and conclusion flags.
-        highlight_split = vocab_highlight_values.index(highlight_split_item)
-        vocab_description_flags = self.translate_highlights(
-            vocab_highlight, vocab_highlight_values[:highlight_split])
-        vocab_conclusion_flags = self.translate_highlights(
-            vocab_highlight, vocab_highlight_values[highlight_split:])
+        vocab_description_flags, vocab_conclusion_flags, vocab_highlight = (
+            get_highlight_vocabs(self.context)
+        )
 
         for observation in observations:
             row = [observation.getId]
-            highlights = self.translate_highlights(
+            highlights = translate_highlights(
                 vocab_highlight, observation['get_highlight'] or [])
 
             for key in fields_to_export:

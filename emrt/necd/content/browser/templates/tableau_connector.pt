@@ -57,6 +57,21 @@
               dataType: tableau.dataTypeEnum.string
             },
             {
+              id: 'description_flags',
+              alias: 'Description flags',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'conclusion_flags',
+              alias: 'Conclusion flags',
+              dataType: tableau.dataTypeEnum.string
+            },
+            {
+              id: 'potential_technical_correction',
+              alias: 'Potential technical correction',
+              dataType: tableau.dataTypeEnum.bool
+            },
+            {
               id: 'timestamp',
               alias: 'Timestamp',
               dataType: tableau.dataTypeEnum.datetime
@@ -90,6 +105,9 @@
 
             var _modified = entry['Modified'] || null;
             var _review_sector = entry['Review sector'];
+            var _description_flags = entry['Description flags'] || null;
+            var _conclusion_flags = entry['Conclusion flags'] || null;
+
 
             tableData[i] = {
               id: entry['ID'],
@@ -100,6 +118,9 @@
               questions_answered: entry['Questions answered'],
               questions_asked: entry['Questions asked'],
               review_sector: Array.isArray(_review_sector) ? _review_sector.join(', ') : _review_sector,
+              description_flags: Array.isArray(_description_flags) ? _description_flags.join(', ') : _description_flags,
+              conclusion_flags: Array.isArray(_conclusion_flags) ? _conclusion_flags.join(', ') : _conclusion_flags,
+              potential_technical_correction: entry['Potential technical correction'] || null,
               modified: _modified ? new Date(_modified) : _modified,
               timestamp: new Date(entry['Timestamp']),
               url: entry['URL']
