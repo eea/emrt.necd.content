@@ -49,7 +49,7 @@ def observation_status_flag(context):
 @indexer(IObservation)
 def observation_year(context):
     year = context.year
-    if isinstance(year, list):
+    if isinstance(year, (list, tuple)):
         return ', '.join(year)
     return year
 

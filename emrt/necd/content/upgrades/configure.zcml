@@ -564,4 +564,31 @@
 
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.4.0"
+    destination="2.5.2"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Migrate tuple years"
+      description="[refs #107150] - Export XLS doesn't work in the projection tab"
+      handler="emrt.necd.content.upgrades.evolve252.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
+ <!-- Migration for emrt-necd-test, which had the 2.4.3 code. -->
+ <genericsetup:upgradeSteps
+    source="2.4.3"
+    destination="2.5.2"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Migrate tuple years"
+      description="[refs #107150] - Export XLS doesn't work in the projection tab"
+      handler="emrt.necd.content.upgrades.evolve252.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
