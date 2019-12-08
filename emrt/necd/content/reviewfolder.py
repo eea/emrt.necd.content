@@ -22,6 +22,7 @@ from Products.Five import BrowserView
 from emrt.necd.content.timeit import timeit
 from eea.cache import cache
 from zope.component import getUtility
+import plone.directives
 import zope.schema as schema
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.interfaces import IContextSourceBinder
@@ -29,6 +30,7 @@ from zc.dict import OrderedDict
 from z3c.form import form
 from z3c.form import button
 from z3c.form import field
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from plone.z3cform.layout import wrap_form
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema import List, Choice, TextLine, Bool
@@ -193,6 +195,17 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
         required=True,
     )
 
+    tableau_statistics = schema.Text(
+        title=u'Tableau statistics embed code',
+        required=False,
+    )
+
+    plone.directives.form.widget(tableau_statistics_roles=CheckBoxFieldWidget)
+    tableau_statistics_roles = schema.List(
+        title=u'Roles that can access the statistics',
+        value_type=schema.Choice(vocabulary='emrt.necd.content.roles'),
+    )
+
 
 @implementer(IReviewFolder)
 class ReviewFolder(Container):
@@ -263,6 +276,10 @@ class ReviewFolderMixin(BrowserView):
     def can_add_observation(self):
         sm = getSecurityManager()
         return sm.checkPermission('emrt.necd.content: Add Observation', self)
+
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
 
     def is_secretariat(self):
         user = api.user.get_current()
@@ -823,6 +840,10 @@ class InboxReviewFolderView(BrowserView):
         self.rolemap_observations = dict()
         return super(InboxReviewFolderView, self).__call__()
 
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
+
     def get_sections(self):
         is_sec = self.is_secretariat()
         viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)]
@@ -1311,6 +1332,10 @@ class InboxReviewFolderView(BrowserView):
 
 
 class FinalisedFolderView(BrowserView):
+
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
 
     def get_finalisation_reasons(self):
         key = itemgetter(0)

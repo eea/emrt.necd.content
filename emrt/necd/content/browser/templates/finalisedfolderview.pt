@@ -41,6 +41,9 @@
           <div>
             <a class="eea-icon inbox" href="${here/absolute_url}/inboxview">My view</a>
           </div>
+          <div tal:condition="python:view.can_view_tableau_dashboard()">
+            <a class="eea-icon overview" href="${here/absolute_url}/tableau_dashboard">Statistics</a>
+          </div>
           <div class="active">
             <a class="eea-icon inbox" href="${here/absolute_url}/finalisedfolderview">Finalised observations</a>
           </div>

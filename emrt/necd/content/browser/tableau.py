@@ -18,6 +18,8 @@ from zope.schema.interfaces import IVocabularyFactory
 
 from ZODB.blob import Blob
 
+from zExceptions import Unauthorized
+
 from Products.Five import BrowserView
 
 from Products.CMFCore.utils import getToolByName
@@ -28,6 +30,8 @@ from emrt.necd.content.reviewfolder import QUESTION_WORKFLOW_MAP
 from emrt.necd.content.reviewfolder import get_highlight_vocabs
 from emrt.necd.content.reviewfolder import translate_highlights
 from emrt.necd.content.reviewfolder import get_common
+
+import plone.api as api
 
 
 TOKEN_VIEW = os.environ.get("TABLEAU_TOKEN")
@@ -346,3 +350,26 @@ class ConnectorView(BrowserView):
             )
 
         request.RESPONSE.setStatus(401)
+
+
+class DashboardView(BrowserView):
+
+    index = ViewPageTemplateFile('./templates/tableau_dashboard.pt')
+
+    def __call__(self):
+        if self.can_access(self.context):
+            return self.index(tableau_embed=self.context.tableau_statistics)
+
+        raise Unauthorized('Cannot access dashboard.', self.context)
+
+    @staticmethod
+    def can_access(context):
+        has_embed = context.tableau_statistics
+        can_access = context.tableau_statistics_roles
+
+        if has_embed and can_access:
+
+            user = api.user.get_current()
+            roles = api.user.get_roles(user=user, obj=context)
+
+            return set(roles).intersection(can_access)
