@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.5.3 (2019-12-09)
+
+- Task #108206 - Embed Tableau Statistics into EMRT-NECD Projections
+- Removed now unused C implementation for flatten_json.
+  [batradav]
+
 2.5.2 (2019-06-26)
 
 - Task #107150 - Export XLS doesn't work in the projection tab
