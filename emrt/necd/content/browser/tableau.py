@@ -13,8 +13,6 @@ from itertools import chain
 from functools import partial
 
 from zope.component.hooks import getSite
-from zope.component import getUtility
-from zope.schema.interfaces import IVocabularyFactory
 
 from ZODB.blob import Blob
 
@@ -41,13 +39,6 @@ HISTORICAL_ATTR_NAME = '__tableau_historical_store__'
 
 
 GET_TIMESTAMP = itemgetter('Timestamp')
-
-
-try:
-    from flatten_json import flatten as do_flatten
-except ImportError:
-    def do_flatten(json_str):
-        return json.dumps(list(chain(*json.loads(json_str))))
 
 
 def entry_for_cmp(entry):
