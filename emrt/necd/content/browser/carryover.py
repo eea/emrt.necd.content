@@ -1,8 +1,13 @@
+import re
+
 from logging import getLogger
 from itertools import takewhile
 from functools import partial
 
 from zope.component.hooks import getSite
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 from DateTime import DateTime
 
@@ -14,15 +19,55 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 
+from plone.app.discussion.conversation import ANNOTATION_KEY
+
 import openpyxl
 
 
 LOG = getLogger('emrt.necd.content.carryover')
 
 
+def get_vocabulary_values(context, name):
+    try:
+        factory = getUtility(IVocabularyFactory, name)
+        vocabulary = factory(context)
+        return sorted([k for k, v in vocabulary.by_token.items()])
+    except:
+        return []
+
+
+def read_int(value):
+    result = 0
+    if value:
+        try:
+            result = int(value)
+        except (ValueError, TypeError):
+            result = 0
+    return result
+
+
+def read_list(value):
+    result = []
+    if value:
+        splitted = re.split(r'[,\n]\s*', value)
+        result = list(val.strip() for val in splitted)
+    return result
+
+
+def read_unicode(value):
+    return value if value else u""
+
+
+EXTRA_FIELDS = (
+    ("review_year", read_int),
+    ("nfr_code", read_unicode),
+    ("pollutants", read_list),
+)
+
+
 def _read_col(row, nr):
     val = row[nr].value
-    return val.strip() if val else val
+    return val.strip() if val and hasattr(val, "strip") else val
 
 
 def _clear_local_roles(obj):
@@ -76,6 +121,24 @@ def replace_conclusion_text(obj, text):
         conclusion.text = text
 
 
+def clear_conclusion_discussion(obj):
+    conclusion = obj.get_conclusion()
+    annotations = IAnnotations(conclusion)
+    if ANNOTATION_KEY in annotations:
+        del annotations[ANNOTATION_KEY]
+
+
+def clear_conclusion_history(obj, wf_id):
+    conclusion = obj.get_conclusion()
+    cur_history = conclusion.workflow_history[wf_id]
+    conclusion.workflow_history[wf_id] = (cur_history[0], )
+
+
+def save_extra_fields(obj, extra_fields):
+    for fname, fvalue in extra_fields.items():
+        setattr(obj, fname, fvalue)
+
+
 def prepend_qa(target, source):
     source_qa = source.get_question()
     target_qa = target.get_question()
@@ -115,15 +178,27 @@ def reopen_with_qa(wf, wf_q, wf_c, obj, actor):
         add_to_wh(wf_c, conclusion, 'redraft', 'draft', actor)
 
 
+def read_extra_fields(row, start_at):
+    result = dict()
+    for idx, (fname, reader) in enumerate(EXTRA_FIELDS):
+        result[fname] = reader(_read_col(row, start_at + idx))
+    return result
+
+
 def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
     actor = _read_col(row, 2)
+    extra_fields = read_extra_fields(row, start_at=3)
 
     obj = obj_from_url(source)
     ob = _copy_and_flag(context, obj)
 
     replace_conclusion_text(ob, conclusion_text)
+    clear_conclusion_discussion(ob)
+    clear_conclusion_history(ob, wf_c.getId())
+    save_extra_fields(ob, extra_fields)
+
     clear_and_grant_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob, actor)
 
@@ -135,6 +210,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     older_source = _read_col(row, 1)
     conclusion_text = _read_col(row, 2)
     actor = _read_col(row, 3)
+    extra_fields = read_extra_fields(row, start_at=4)
 
     obj = obj_from_url(source)
     older_obj = obj_from_url(older_source)
@@ -142,6 +218,10 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     ob = _copy_and_flag(context, obj, older_obj.getId())
 
     replace_conclusion_text(ob, conclusion_text)
+    clear_conclusion_discussion(ob)
+    clear_conclusion_history(ob, wf_c.getId())
+    save_extra_fields(ob, extra_fields)
+
     prepend_qa(ob, older_obj)
     clear_and_grant_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob, actor)
@@ -154,7 +234,19 @@ class CarryOverView(BrowserView):
     index = ViewPageTemplateFile('templates/carryover.pt')
 
     def __call__(self):
-        return self.index()
+        values_for_pollutants = get_vocabulary_values(
+            self.context, "emrt.necd.content.pollutants")
+        if self.context.type == 'projection':
+            values_for_nfr_code = get_vocabulary_values(
+                self.context, "emrt.necd.content.nfr_code")
+        else:
+            values_for_nfr_code = get_vocabulary_values(
+                self.context, "emrt.necd.content.nfr_code_inventories")
+
+        return self.index(
+            values_for_nfr_code=u", ".join(values_for_nfr_code),
+            values_for_pollutants=u", ".join(values_for_pollutants)
+        )
 
     def start(self, action, xls):
         portal = getSite()
