@@ -248,4 +248,19 @@
         attribute="start"
         />
 
+    <browser:page
+        name="bulk-update-form"
+        for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+        class=".bulk_update.BulkUpdateView"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="bulk-update"
+        for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+        class=".bulk_update.BulkUpdateView"
+        permission="cmf.ManagePortal"
+        attribute="start"
+        />
+
 </configure>
