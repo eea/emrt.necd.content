@@ -1054,7 +1054,7 @@ class EditForm(edit.DefaultEditForm):
         fields = []
         if 'Manager' in roles:
             fields = field.Fields(IObservation)
-        if ROLE_SE in roles:
+        elif ROLE_SE in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',
