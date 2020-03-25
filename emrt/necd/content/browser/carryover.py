@@ -1,30 +1,26 @@
 import re
-
-from logging import getLogger
-from itertools import takewhile
 from functools import partial
+from itertools import takewhile
+from logging import getLogger
 
-from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
+from zope.component.hooks import getSite
 from zope.schema.interfaces import IVocabularyFactory
-
-from DateTime import DateTime
 
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
-from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
-from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
+from Products.CMFCore.utils import getToolByName
 
 from plone.app.discussion.conversation import ANNOTATION_KEY
 
 import openpyxl
+from DateTime import DateTime
+from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 
-
-LOG = getLogger('emrt.necd.content.carryover')
+LOG = getLogger("emrt.necd.content.carryover")
 
 
 def get_vocabulary_values(context, name):
@@ -49,7 +45,7 @@ def read_int(value):
 def read_list(value):
     result = []
     if value:
-        splitted = re.split(r'[,\n]\s*', value)
+        splitted = re.split(r"[,\n]\s*", value)
         result = list(val.strip() for val in splitted)
     return result
 
@@ -96,15 +92,13 @@ def _copy_obj(target, ob, new_id=None):
 
 
 def _copy_and_flag(context, obj, new_id=None):
-    _, _, year, index = (new_id or obj.getId()).split('-')
+    _, _, year, index = (new_id or obj.getId()).split("-")
     ob = _copy_obj(context, obj, new_id=new_id)
     ob.carryover_from = year
     ob.review_year = int(year)
 
     LOG.info(
-        'Copied %s -> %s',
-        obj.absolute_url(1),
-        ob.absolute_url(1),
+        "Copied %s -> %s", obj.absolute_url(1), ob.absolute_url(1),
     )
 
     return ob
@@ -121,6 +115,13 @@ def replace_conclusion_text(obj, text):
         conclusion.text = text
 
 
+def delete_conclusion_file(obj):
+    conclusion = obj.get_conclusion()
+    for ob in conclusion.values():
+        if ob.portal_type == "NECDFile":
+            conclusion.manage_delObjects([ob.getId()])
+
+
 def clear_conclusion_discussion(obj):
     conclusion = obj.get_conclusion()
     annotations = IAnnotations(conclusion)
@@ -131,7 +132,7 @@ def clear_conclusion_discussion(obj):
 def clear_conclusion_history(obj, wf_id):
     conclusion = obj.get_conclusion()
     cur_history = conclusion.workflow_history[wf_id]
-    conclusion.workflow_history[wf_id] = (cur_history[0], )
+    conclusion.workflow_history[wf_id] = (cur_history[0],)
 
 
 def save_extra_fields(obj, extra_fields):
@@ -148,7 +149,7 @@ def prepend_qa(target, source):
             _copy_obj(target_qa, comment)
 
         ordering = target_qa.getOrdering()
-        ordering.orderObjects(key='creation_date')
+        ordering.orderObjects(key="creation_date")
 
     elif source_qa and not target_qa:
         _copy_obj(target, source_qa)
@@ -157,25 +158,27 @@ def prepend_qa(target, source):
 def add_to_wh(wf, obj, action, state, actor):
     wh = obj.workflow_history
     wf_id = wf.getId()
-    wh[wf_id] = wh[wf_id] + ({
-        'comments': 'Carryover force state',
-        'actor': actor,
-        'time': DateTime(),
-        'action': action,
-        'review_state': state,
-    }, )
+    wh[wf_id] = wh[wf_id] + (
+        {
+            "comments": "Carryover force state",
+            "actor": actor,
+            "time": DateTime(),
+            "action": action,
+            "review_state": state,
+        },
+    )
     wf.updateRoleMappingsFor(obj)
 
 
 def reopen_with_qa(wf, wf_q, wf_c, obj, actor):
-    add_to_wh(wf, obj, 'reopen-qa-chat', 'pending', actor)
+    add_to_wh(wf, obj, "reopen-qa-chat", "pending", actor)
     question = obj.get_question()
     if question:
-        add_to_wh(wf_q, question, 'reopen', 'draft', actor)
+        add_to_wh(wf_q, question, "reopen", "draft", actor)
 
     conclusion = obj.get_conclusion()
     if conclusion:
-        add_to_wh(wf_c, conclusion, 'redraft', 'draft', actor)
+        add_to_wh(wf_c, conclusion, "redraft", "draft", actor)
 
 
 def read_extra_fields(row, start_at):
@@ -197,6 +200,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     replace_conclusion_text(ob, conclusion_text)
     clear_conclusion_discussion(ob)
     clear_conclusion_history(ob, wf_c.getId())
+    delete_conclusion_file(ob)
     save_extra_fields(ob, extra_fields)
 
     clear_and_grant_roles(ob)
@@ -220,6 +224,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     replace_conclusion_text(ob, conclusion_text)
     clear_conclusion_discussion(ob)
     clear_conclusion_history(ob, wf_c.getId())
+    delete_conclusion_file(ob)
     save_extra_fields(ob, extra_fields)
 
     prepend_qa(ob, older_obj)
@@ -231,21 +236,24 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
 
 class CarryOverView(BrowserView):
 
-    index = ViewPageTemplateFile('templates/carryover.pt')
+    index = ViewPageTemplateFile("templates/carryover.pt")
 
     def __call__(self):
         values_for_pollutants = get_vocabulary_values(
-            self.context, "emrt.necd.content.pollutants")
-        if self.context.type == 'projection':
+            self.context, "emrt.necd.content.pollutants"
+        )
+        if self.context.type == "projection":
             values_for_nfr_code = get_vocabulary_values(
-                self.context, "emrt.necd.content.nfr_code")
+                self.context, "emrt.necd.content.nfr_code"
+            )
         else:
             values_for_nfr_code = get_vocabulary_values(
-                self.context, "emrt.necd.content.nfr_code_inventories")
+                self.context, "emrt.necd.content.nfr_code_inventories"
+            )
 
         return self.index(
             values_for_nfr_code=u", ".join(values_for_nfr_code),
-            values_for_pollutants=u", ".join(values_for_pollutants)
+            values_for_pollutants=u", ".join(values_for_pollutants),
         )
 
     def start(self, action, xls):
@@ -253,38 +261,43 @@ class CarryOverView(BrowserView):
         wb = openpyxl.load_workbook(xls, read_only=True, data_only=True)
         sheet = wb.worksheets[0]
 
-
         sheet_rows = sheet.rows
         next(sheet_rows)  # skip first row (header)
         # extract rows with values
-        valid_rows = tuple(takewhile(
-            lambda row: any(c.value for c in row), sheet_rows))
+        valid_rows = tuple(
+            takewhile(lambda row: any(c.value for c in row), sheet_rows)
+        )
 
         context = self.context
         site_url = portal.absolute_url()
         obj_from_url = partial(_obj_from_url, context, site_url)
-        catalog = getToolByName(portal, 'portal_catalog')
-        wft = getToolByName(portal, 'portal_workflow')
+        catalog = getToolByName(portal, "portal_catalog")
+        wft = getToolByName(portal, "portal_workflow")
 
-        wf_obs = wft.getWorkflowById(wft.getChainFor('Observation')[0])
-        wf_question = wft.getWorkflowById(wft.getChainFor('Question')[0])
-        wf_conclusion = wft.getWorkflowById(wft.getChainFor('Conclusions')[0])
+        wf_obs = wft.getWorkflowById(wft.getChainFor("Observation")[0])
+        wf_question = wft.getWorkflowById(wft.getChainFor("Question")[0])
+        wf_conclusion = wft.getWorkflowById(wft.getChainFor("Conclusions")[0])
 
         actions = dict(direct=copy_direct, complex=copy_complex)
         copy_func = partial(
             actions[action],
-            context, catalog,
-            wf_obs, wf_question, wf_conclusion,
-            obj_from_url
+            context,
+            catalog,
+            wf_obs,
+            wf_question,
+            wf_conclusion,
+            obj_from_url,
         )
 
         for row in valid_rows:
             copy_func(row)
 
         if len(valid_rows) > 0:
-            (IStatusMessage(self.request)
-                .add('Carryover successfull!', type='info'))
+            (
+                IStatusMessage(self.request).add(
+                    "Carryover successfull!", type="info"
+                )
+            )
         else:
-            (IStatusMessage(self.request)
-                .add('No data provided!', type='warn'))
+            (IStatusMessage(self.request).add("No data provided!", type="warn"))
         self.request.RESPONSE.redirect(context.absolute_url())
