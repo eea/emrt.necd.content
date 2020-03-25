@@ -1,19 +1,25 @@
-from emrt.necd.content.commentanswer import ICommentAnswer
-from emrt.necd.content.comment import IComment
-from conclusions import IConclusions
-from .observation import IObservation
-import plone.api as api
-from plone.app.discussion.interfaces import IConversation
-from plone.app.textfield.interfaces import IRichTextValue
-from plone.indexer import indexer
-from Products.CMFPlone.utils import safe_unicode
 from types import FloatType
 from types import IntType
 from types import ListType
 from types import StringType
 from types import TupleType
 from types import UnicodeType
+
 from zope.schema import getFieldsInOrder
+
+from Products.CMFPlone.utils import safe_unicode
+
+import plone.api as api
+from plone.app.discussion.interfaces import IConversation
+from plone.app.textfield.interfaces import IRichTextValue
+from plone.indexer import indexer
+
+from conclusions import IConclusions
+from emrt.necd.content.comment import IComment
+from emrt.necd.content.commentanswer import ICommentAnswer
+from emrt.necd.content.utils import get_vocabulary_value
+
+from .observation import IObservation
 
 
 @indexer(IObservation)
@@ -133,9 +139,9 @@ def index_fields(fields, context):
         value = getattr(context, name)
         if getattr(field, 'vocabularyName', None):
             if type(value) in [ListType, TupleType]:
-                vals = [context._vocabulary_value(field.vocabularyName, v) for v in value]
+                vals = [get_vocabulary_value(context, field.vocabularyName, v) for v in value]
             else:
-                vals = context._vocabulary_value(field.vocabularyName, value)
+                vals = get_vocabulary_value(context, field.vocabularyName, value)
             items.extend(to_unicode(vals))
 
         if IRichTextValue.providedBy(value):
