@@ -144,6 +144,7 @@
   <permission-map name="emrt.necd.content: Add NECDFile" acquired="True">
    <permission-role>Manager</permission-role>
    <permission-role>Owner</permission-role>
+   <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="emrt.necd.content: View Conclusion Discussion" acquired="False">
    <permission-role>LeadReviewer</permission-role>
