@@ -591,4 +591,17 @@
 
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.5.3"
+    destination="2.5.4"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update roles."
+      description="SE permissions on conclusion."
+      import_steps="workflow"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
