@@ -596,6 +596,7 @@ class Observation(Container):
         elif status in ['drafted', 'recalled-lr']:
             return 'LR'
         elif status in ['pending',
+                        'recalled-msa',
                         'pending-answer-drafting',
                         'expert-comments']:
             return 'MSC'
