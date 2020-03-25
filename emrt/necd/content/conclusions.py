@@ -39,14 +39,6 @@ from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 
 
-DEFAULTCONCLUSIONTEXT = u"""For category x and pollutants a, b, c for year[s]... the TERT noted that...
-In response to a question raised during the review, [the Member State] explained that... [the Member State provided [a] revised estimate[s] for year[s] [and stated that it will be included in the next submission.]]
-The TERT [disagreed][agreed][party agreed] with the [explanation] [revised estimate] provided by [the Member State].
-[The TERT decided to calculate a technical correction.][The TERT noted that the issue is below the threshold of significance for technical correction.]
-The TERT recommends that... [[the Member State] include the revised estimate in its next submission.]
-"""
-
-
 class ITableRowSchema(form.Schema):
 
     line_title = schema.TextLine(title=_(u'Title'), required=True)
@@ -73,7 +65,7 @@ class IConclusions(form.Schema, IImageScaleTraversable):
     text = schema.Text(
         title=_(u'Text'),
         required=True,
-        default=DEFAULTCONCLUSIONTEXT,
+        default=u'',
     )
 
     form.widget(ghg_estimations=DataGridFieldFactory)
@@ -236,7 +228,7 @@ class ConclusionsView(BrowserView):
 
 # @implementer(IConclusions, IObservation)
 class PseudoConclusion(object):
-    text = DEFAULTCONCLUSIONTEXT
+    text = u''
     closing_reason = ''
     highlight = ''
 
