@@ -17,6 +17,9 @@
 
     $(document).ready(function(){
 
+      $.tools.overlay.conf.closeOnClick = false;
+      $.tools.overlay.conf.closeOnEsc = false;
+
         //for conclusion form pop-up
         var conclusion_action = $('.standardButton:contains("Conclusions")');
         if (!conclusion_action.hasClass("edit")){
