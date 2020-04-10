@@ -6,6 +6,7 @@ from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
 from AccessControl import getSecurityManager, Unauthorized
+from DateTime import DateTime
 from plone import api
 from plone import directives
 from plone.app.content.browser.tableview import Table
@@ -452,7 +453,9 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_finalisation_text', 'Conclusion note'),
     ('observation_questions_workflow', 'Question workflow'),
     ('observation_questions_workflow_current', 'Current question workflow'),
-    ('get_author_name', 'Author')
+    ('get_author_name', 'Author'),
+    ('modified', 'Timestamp'),
+    ('extract_timestamp', 'Extract Timestamp'),
 ])
 
 # Don't show conclusion notes to MS users.
@@ -500,6 +503,7 @@ def fields_vocabulary_factory(context):
         EXPORT_FIELDS['year'] = 'Projection Year'
         exclude_fields = EXCLUDE_INVENTORY_FIELDS
     else:
+        EXPORT_FIELDS['year'] = 'Inventory Year'
         exclude_fields = EXCLUDE_PROJECTION_FIELDS
 
     for key, value in EXPORT_FIELDS.items():
@@ -658,6 +662,10 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         observation.getObject().fuel
                     )
                     row.append(fuel)
+                elif key == 'modified':
+                    row.append(observation.modified.asdatetime().isoformat())
+                elif key == 'extract_timestamp':
+                    row.append(DateTime().asdatetime().isoformat())
 
                 # XXX: these are projection fields and need rework,
                 # getObject kill performance.
@@ -677,6 +685,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
                 else:
                     row.append(safe_unicode(observation[key]))
+
 
             if base_len == 0:
                 base_len = len(row)
