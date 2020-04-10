@@ -62,6 +62,7 @@ QUESTION_WORKFLOW_MAP = {
     'SE': 'Sector Expert',
     'LR': 'Lead Reviewer',
     'MSC': 'MS Coordinator',
+    'recalled-msa': 'MS Coordinator',
     'answered': 'Answered',
     'conclusions': 'Conclusions',
     'conclusions-lr-denied': 'Conclusions - LR denied',
