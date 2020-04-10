@@ -1,6 +1,16 @@
 Changelog
 =========
 
+2.5.5 (2020-04-10)
+
+- Bug #108671 - Issues with NECD excel extract
+- Bug #108672 - Free text search bar
+- Task #108662 - Remove automatic conclusion text from the 'go to conclusions' tab
+- Bug #108674 - Recalled MSA not in current state MS Coordinator
+- Feature #111496 - Non-editable fields in the EMR
+- Feature #111498 - Conclusion box alteration
+  [batradav]
+
 2.5.4 (2020-03-25)
 
 - Bug #106895 - Upload file potential bug in the conclusion tab
