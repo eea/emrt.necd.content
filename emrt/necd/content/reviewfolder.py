@@ -6,6 +6,7 @@ from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
 from AccessControl import getSecurityManager, Unauthorized
+from DateTime import DateTime
 from plone import api
 from plone import directives
 from plone.app.content.browser.tableview import Table
@@ -455,6 +456,7 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_questions_workflow_current', 'Current question workflow'),
     ('get_author_name', 'Author'),
     ('modified', 'Timestamp'),
+    ('extract_timestamp', 'Extract Timestamp'),
 ])
 
 # Don't show conclusion notes to MS users.
@@ -663,6 +665,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     row.append(fuel)
                 elif key == 'modified':
                     row.append(observation.modified.asdatetime().isoformat())
+                elif key == 'extract_timestamp':
+                    row.append(DateTime().asdatetime().isoformat())
 
                 # XXX: these are projection fields and need rework,
                 # getObject kill performance.
