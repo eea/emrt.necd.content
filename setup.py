@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-VERSION = '2.5.6'
+VERSION = '2.5.7'
 
 
 setup(
