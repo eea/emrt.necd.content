@@ -596,6 +596,7 @@ class Observation(Container):
         elif status in ['drafted', 'recalled-lr']:
             return 'LR'
         elif status in ['pending',
+                        'recalled-msa',
                         'pending-answer-drafting',
                         'expert-comments']:
             return 'MSC'
@@ -1054,7 +1055,7 @@ class EditForm(edit.DefaultEditForm):
         fields = []
         if 'Manager' in roles:
             fields = field.Fields(IObservation)
-        if ROLE_SE in roles:
+        elif ROLE_SE in roles:
             fields = [f for f in field.Fields(IObservation) if f not in [
                 'country',
                 'nfr_code',
