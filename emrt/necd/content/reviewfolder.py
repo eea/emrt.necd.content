@@ -856,7 +856,7 @@ class InboxReviewFolderView(BrowserView):
 
     def get_sections(self):
         is_sec = self.is_secretariat()
-        viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)]
+        viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)()]
 
         total_sum = 0
         for section in viewable:
@@ -1264,9 +1264,10 @@ class InboxReviewFolderView(BrowserView):
         return self.get_observations(
             rolecheck=ROLE_MSE,
             observation_question_status=[
+                'recalled-msa',
                 'expert-comments',
                 'pending-answer-drafting'],
-            reply_comments_by_mse=True,
+            reply_comments_by_mse=[api.user.get_current().getId()],
         )
 
     @timeit
@@ -1277,10 +1278,8 @@ class InboxReviewFolderView(BrowserView):
         """
         return self.get_observations(
             rolecheck=ROLE_MSE,
-            observation_question_status=[
-                'answered',
-                'recalled-msa'],
-            reply_comments_by_mse=True,
+            observation_question_status=['answered'],
+            reply_comments_by_mse=[api.user.get_current().getId()],
         )
 
     def can_add_observation(self):
