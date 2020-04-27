@@ -5,6 +5,7 @@ except ImportError:
 import datetime
 import simplejson as json
 import re
+from itertools import chain
 from functools import partial
 from docx import Document
 from docx.shared import Pt
@@ -66,6 +67,7 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
+from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utils import get_user_sectors
@@ -914,19 +916,25 @@ class Observation(Container):
         return replynum
 
     def reply_comments_by_mse(self):
-        questions = self.get_values_cat('Question')
-        user = api.user.get_current().id
-        if questions:
-            comments = [
-                c for c in questions[-1].values()
-                if c.portal_type == "CommentAnswer"
-            ]
-            if comments:
-                last = comments[-1]
-                # disc = IConversation(last)
-                return user in IConversation(last).commentators
+        question = self.get_question()
+        commentators = []
+        if question:
+            commentators = list(
+                set(
+                    chain.from_iterable(
+                        [
+                            IConversation(c).commentators
+                            for c in question.values()
+                        ]
+                    )
+                )
+            )
 
-        return False
+        return [
+            uid
+            for uid in commentators
+            if ROLE_MSE in api.user.get_roles(username=uid, obj=self)
+        ]
 
     def observation_already_replied(self):
 
