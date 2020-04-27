@@ -16,6 +16,8 @@ from Products.CMFCore.utils import getToolByName
 
 from plone.app.discussion.conversation import ANNOTATION_KEY
 
+import plone.api as api
+
 import openpyxl
 from DateTime import DateTime
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
@@ -55,6 +57,7 @@ def read_unicode(value):
 
 
 EXTRA_FIELDS = (
+    ("text", read_unicode),
     ("review_year", read_int),
     ("nfr_code", read_unicode),
     ("pollutants", read_list),
@@ -129,6 +132,11 @@ def clear_conclusion_discussion(obj):
         del annotations[ANNOTATION_KEY]
 
 
+def clear_conclusion_closing_reason(obj):
+    conclusion = obj.get_conclusion()
+    conclusion.closing_reason = u''
+
+
 def clear_conclusion_history(obj, wf_id):
     conclusion = obj.get_conclusion()
     cur_history = conclusion.workflow_history[wf_id]
@@ -137,7 +145,8 @@ def clear_conclusion_history(obj, wf_id):
 
 def save_extra_fields(obj, extra_fields):
     for fname, fvalue in extra_fields.items():
-        setattr(obj, fname, fvalue)
+        if fvalue:
+            setattr(obj, fname, fvalue)
 
 
 def prepend_qa(target, source):
@@ -191,7 +200,7 @@ def read_extra_fields(row, start_at):
 def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
-    actor = _read_col(row, 2)
+    actor = _read_col(row, 2) or api.user.get_current().getId()
     extra_fields = read_extra_fields(row, start_at=3)
 
     obj = obj_from_url(source)
@@ -199,6 +208,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
 
     replace_conclusion_text(ob, conclusion_text)
     clear_conclusion_discussion(ob)
+    clear_conclusion_closing_reason(ob)
     clear_conclusion_history(ob, wf_c.getId())
     delete_conclusion_file(ob)
     save_extra_fields(ob, extra_fields)
@@ -223,6 +233,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
 
     replace_conclusion_text(ob, conclusion_text)
     clear_conclusion_discussion(ob)
+    clear_conclusion_closing_reason(ob)
     clear_conclusion_history(ob, wf_c.getId())
     delete_conclusion_file(ob)
     save_extra_fields(ob, extra_fields)
