@@ -30,6 +30,7 @@
                   <th>Source observation</th>
                   <th>Conclusion text</th>
                   <th>userid</th>
+                  <th>Description text</th>
                   <th>Review year</th>
                   <th>NFR Code</th>
                   <th>Pollutants</th>
@@ -39,6 +40,7 @@
                   <td>${portal_url}/2018/AT-1A-2018-0000</td>
                   <td>Conclusion text that will replace the existing one.</td>
                   <td>someuserid</td>
+                  <td>Description text that will replace the existing one.</td>
                   <td>2018</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
@@ -68,6 +70,7 @@
                   <th>Older source</th>
                   <th>Conclusion text</th>
                   <th>userid</th>
+                  <th>Description text</th>
                   <th>Review year</th>
                   <th>NFR Code</th>
                   <th>Pollutants</th>
@@ -78,6 +81,7 @@
                   <td>${portal_url}/2018/AT-1A-2017-0000</td>
                   <td>Conclusion text that will replace the existing one.</td>
                   <td>someuserid</td>
+                  <td>Description text that will replace the existing one.</td>
                   <td>2018</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
