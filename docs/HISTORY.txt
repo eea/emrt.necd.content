@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.8 (2020-04-28)
+
+- Task #117167 - Flags to add
+  [batradav]
+
 2.5.7 (2020-04-22)
 
 - Task #114128 - Start 2020 Tabs for both "Inventory"
