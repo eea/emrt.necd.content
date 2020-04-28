@@ -19,21 +19,24 @@
     <div>
       <strong>Direct copy</strong>
       <p>
-        Expects a 2 column XLS file, as below.
+        Expects a 3 column XLS file, as below.
         Observations are modified in-place.
-        If provided, the conclusion text will replace the existing conclusion text.
+        If provided, the conclusion text will replace the existing conclusion text,
+        and the description text will replace the existing observation description.
       </p>
       <table class="listing">
         <thead>
           <tr>
             <th>Target observation</th>
             <th>Conclusion text</th>
+            <th>Description text</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>${portal_url}/2018/AT-1A-2018-0000</td>
             <td>Conclusion text that will replace the existing one.</td>
+            <td>Description text that will replace the existing one.</td>
           </tr>
         </tbody>
       </table>

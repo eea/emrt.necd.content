@@ -18,8 +18,11 @@ LOG = getLogger('emrt.necd.content.bulk_update')
 
 
 def _read_col(row, nr):
-    val = row[nr].value
-    return val.strip() if val else val
+    try:
+        val = row[nr].value
+    except IndexError:
+        val = u''
+    return val.strip() if val else u''
 
 
 def _obj_from_url(context, site_url, url):
@@ -31,6 +34,10 @@ def replace_conclusion_text(obj, text):
     conclusion = obj.get_conclusion()
     if text and conclusion:
         conclusion.text = text
+
+def replace_description_text(obj, text):
+    if text:
+        obj.text = text
 
 
 class BulkUpdateView(BrowserView):
@@ -59,8 +66,10 @@ class BulkUpdateView(BrowserView):
         for row in valid_rows:
             target = _read_col(row, 0)
             conclusion_text = _read_col(row, 1)
+            description_text = _read_col(row, 2)
             ob = obj_from_url(target)
             replace_conclusion_text(ob, conclusion_text)
+            replace_description_text(ob, description_text)
             catalog.reindexObject(ob, idxs=["SearchableText"])
 
         if len(valid_rows) > 0:
