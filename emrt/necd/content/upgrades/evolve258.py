@@ -36,7 +36,7 @@ def reindex_index(catalog):
                 idx, len_brains, brain.getURL()
             )
             continue
-        if idx % 100:
+        if idx % 100 == 0:
             transaction.savepoint(optimistic=True)
             logger.info('Savepoint...')
 
