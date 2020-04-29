@@ -20,17 +20,31 @@
         <div>
             <strong>Direct copy</strong>
             <p>
-                Expects a 3 column XLS file, as below.
+                Expects a 6 column XLS file, as below.
                 Observations are copied as-is, the ID will be preserved.
                 If provided, the conclusion text will replace the existing conclusion text.
             </p>
             <table class="listing">
-              <thead><tr><th>Source observation</th><th>Conclusion text</th><th>userid</th></tr></thead>
-                <tbody><tr>
-                    <td>${portal_url}/2018/AT-1A-2018-0000</td>
-                    <td>Conclusion text that will replace the existing one.</td>
-                    <td>someuserid</td>
-                </tr></tbody>
+              <thead>
+                <tr>
+                  <th>Source observation</th>
+                  <th>Conclusion text</th>
+                  <th>userid</th>
+                  <th>Description text</th>
+                  <th>Review year</th>
+                  <th>NFR Code</th>
+                  <th>Pollutants</th>
+                </tr>
+              </thead>
+              <tbody><tr>
+                  <td>${portal_url}/2018/AT-1A-2018-0000</td>
+                  <td>Conclusion text that will replace the existing one.</td>
+                  <td>someuserid</td>
+                  <td>Description text that will replace the existing one.</td>
+                  <td>2018</td>
+                  <td>1A2d</td>
+                  <td>PCBs<br />HCB<br />SO2</td>
+              </tr></tbody>
             </table>
 
         </div>
@@ -38,24 +52,52 @@
         <div>
             <strong>Complex copy</strong>
             <p>
-                Expects a 4 column XLS file, as below. Observations are copied as-is from the "Source" and:
+                Expects a 7 column XLS file, as below. Observations are copied as-is from the "Source" and:
                 <ul>
                     <li>The ID will be changed to that of the "Older source".</li>
                     <li>"Older source" Q&A will be prepended to the "Source" one.</li>
                     <li>The review year will be set to the "Older source".</li>
+                    <li>Field: Review year (int) - single value.</li>
+                    <li>Field: NFR category code (string) - single value.</li>
+                    <li>Field: Pollutants (list) - multiple values, separated by newline.</li>
                 </ul>
                 If provided, the conclusion text will replace the existing conclusion text.
             </p>
             <table class="listing">
-                <thead><tr><th>Source observation</th><th>Older source</th><th>Conclusion text</th><th>userid</th></tr></thead>
-                <tbody><tr>
-                    <td>${portal_url}/2018/AT-1A-2018-0000</td>
-                    <td>${portal_url}/2018/AT-1A-2017-0000</td>
-                    <td>Conclusion text that will replace the existing one.</td>
-                    <td>someuserid</td>
-                </tr></tbody>
+              <thead>
+                <tr>
+                  <th>Source observation</th>
+                  <th>Older source</th>
+                  <th>Conclusion text</th>
+                  <th>userid</th>
+                  <th>Description text</th>
+                  <th>Review year</th>
+                  <th>NFR Code</th>
+                  <th>Pollutants</th>
+                </tr>
+              </thead>
+              <tbody><tr>
+                  <td>${portal_url}/2018/AT-1A-2018-0000</td>
+                  <td>${portal_url}/2018/AT-1A-2017-0000</td>
+                  <td>Conclusion text that will replace the existing one.</td>
+                  <td>someuserid</td>
+                  <td>Description text that will replace the existing one.</td>
+                  <td>2018</td>
+                  <td>1A2d</td>
+                  <td>PCBs<br />HCB<br />SO2</td>
+              </tr></tbody>
             </table>
 
+        </div>
+
+        <div>
+          <strong>Possible values</strong>
+          <dl>
+            <dt>NFR category code</dt>
+            <dd>${python:options.get('values_for_nfr_code')}</dd>
+            <dt>Pollutants</dt>
+            <dd>${python:options.get('values_for_pollutants')}</dd>
+          </dl>
         </div>
 
     </div>
