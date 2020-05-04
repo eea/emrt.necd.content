@@ -942,10 +942,21 @@ class Observation(Container):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
-            # state = self.get_status()
-            for witem in winfo.get('esd-question-review-workflow', []):
-                if witem.get('review_state', '') == 'answered':
-                    return True
+            states = [
+                w.get('review_state')
+                for w in winfo.get('esd-question-review-workflow', [])
+            ]
+            if states:
+                sp = { s: idx for idx, s in enumerate(states) }
+                return (
+                    states[-1] not in [
+                        'recalled-msa',
+                        'pending',
+                        'pending-answer-drafting',
+                        'expert-comments',
+                    ]
+                    and sp.get('answered')
+                )
 
         return False
 
