@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.10 (2020-05-04)
+
+- Feature #117019 - My View bugs
+  [batradav]
+
 2.5.9 (2020-04-29)
 
 - Feature #111497 - Revised carry over process
