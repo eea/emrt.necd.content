@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.11 (2020-05-07)
+
+- Bug #117574 - Web Data Connector and Tableau
+  [batradav]
+
 2.5.10 (2020-05-04)
 
 - Feature #117019 - My View bugs
