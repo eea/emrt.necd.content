@@ -4,6 +4,8 @@ import simplejson as json
 from gzip import GzipFile
 from datetime import datetime
 
+from DateTime import DateTime
+
 from collections import defaultdict
 from collections import Counter
 
@@ -190,7 +192,7 @@ def validate_token(request, token=TOKEN_VIEW):
 
 def get_snapshot(context):
     catalog = getToolByName(context, 'portal_catalog')
-    timestamp = datetime.now().isoformat()
+    timestamp = DateTime().asdatetime().isoformat()
 
     # Grab QA information. It's much faster to fetch the data
     # directly from the indexes than it is to query for it.
