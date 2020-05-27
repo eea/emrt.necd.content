@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.5.12 (2020-05-27)
+
+- Bug #117896 - Sector Expert Rights
+- Bug #118043 - Q&A format
+- Bug #118046 - Export error
+  [batradav]
+
 2.5.11 (2020-05-07)
 
 - Bug #117574 - Web Data Connector and Tableau
