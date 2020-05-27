@@ -1307,7 +1307,7 @@ class ObservationMixin(DefaultView):
             return values
 
     def is_old_qa(self, comment):
-        return comment.creation_date.year() < datetime.datetime.now().year
+        return comment.modification_date.year() < datetime.datetime.now().year
 
     def actions(self):
         context = aq_inner(self.context)
