@@ -140,4 +140,15 @@ def observation_transition(observation, event):
                     transition='ask-approval'
                 )
 
+    if event.action in ['redraft']:
+        wf = getToolByName(question, 'portal_workflow')
+        comment_id = wf.getInfoFor(question,
+            'comments', wf_id='esd-question-review-workflow')
+        comment = question.get(comment_id, None)
+        if comment is not None:
+            comment_state = api.content.get_state(obj=comment)
+            if comment_state in ['public']:
+                api.content.transition(obj=comment, transition='retract')
+
+
     observation.reindexObject()

@@ -3,7 +3,8 @@
   <head>
     <title>EMRT-NECD Tableau Connector</title>
     <meta http-equiv="Cache-Control" content="no-store" />
-    <script src="${options/portal_url}/++resource++emrt.necd.content/tableauwdc-2.3.latest.min.js" type="text/javascript"></script>
+    <script src="${options/portal_url}/++resource++emrt.necd.content/moment.min.js" type="text/javascript"></script>
+    <script src="${options/portal_url}/++resource++emrt.necd.content/tableauwdc-2.3.1.min.js" type="text/javascript"></script>
   </head>
 
   <body tal:define="token_c python:here.REQUEST.get('tableau_token', '');">
@@ -100,6 +101,10 @@
         function convertData(data) {
           var tableData = [];
 
+          function tableauDate(isoDate) {
+            return moment(isoDate).format("DD-MMM-YYYY HH:mm:ss");
+          }
+
           for (var i = 0; i < data.length; i++) {
             var entry = data[i];
 
@@ -121,8 +126,8 @@
               description_flags: Array.isArray(_description_flags) ? _description_flags.join(', ') : _description_flags,
               conclusion_flags: Array.isArray(_conclusion_flags) ? _conclusion_flags.join(', ') : _conclusion_flags,
               potential_technical_correction: entry['Potential technical correction'] || null,
-              modified: _modified ? new Date(_modified) : _modified,
-              timestamp: new Date(entry['Timestamp']),
+              modified: _modified ? tableauDate(_modified) : _modified,
+              timestamp: tableauDate(entry['Timestamp']),
               url: entry['URL']
             }
           }

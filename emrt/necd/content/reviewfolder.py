@@ -700,7 +700,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                 )
                 row.extend(extracted_qa)
 
-            rows.append(row)
+            rows.append([c.strip() if hasattr(c, "strip") else c for c in row])
 
         for row in rows:
             # Fill columns that are too short with emtpy values
