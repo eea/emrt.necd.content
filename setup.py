@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-VERSION = '2.5.12'
+VERSION = '2.5.13'
 
 
 setup(

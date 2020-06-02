@@ -233,6 +233,8 @@ class ReviewFolderMixin(BrowserView):
         wfStatus = req.get('wfStatus', '')
         nfrCode = req.get('nfrCode', req.get('nfrCode[]', []))
         sectorId = req.get('sectorId', req.get('sectorId[]', []))
+        pollutants = req.get('pollutants', req.get('pollutants[]', []))
+        pollutants = pollutants if isinstance(pollutants, list) else [pollutants]
 
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
@@ -272,6 +274,8 @@ class ReviewFolderMixin(BrowserView):
             query['nfr_code'] = dict(query=nfrCode, operator='or')
         if sectorId:
             query['GHG_Source_Category'] = dict(query=sectorId, operator='or')
+        if pollutants:
+            query["Title"] = " OR ".join([p.strip() for p in pollutants])
 
         return filter_for_ms(catalog(query), context=self.context)
 
@@ -340,6 +344,12 @@ class ReviewFolderMixin(BrowserView):
             IVocabularyFactory, name='emrt.necd.content.nfr_code')
         vocabulary = vocab_factory(self.context)
         return [(x.value, x.title) for x in vocabulary]
+
+    def get_pollutants(self):
+        vocab_factory = getUtility(
+            IVocabularyFactory, name='emrt.necd.content.pollutants')
+        vocabulary = vocab_factory(self.context)
+        return tuple((x.value, x.title) for x in vocabulary)
 
     def get_sector_names(self):
         vocab_factory = getUtility(

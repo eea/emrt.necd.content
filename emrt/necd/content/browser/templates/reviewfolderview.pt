@@ -183,6 +183,14 @@
                   }
                   filter += encodeArrForRequest("sectorId", $('#sectorFilter').val());
                 }
+                if ($('#pollutantsFilter').val() != ""){
+                  if (filter == ""){
+                    filter += "?";
+                  }else{
+                    filter += "&";
+                  }
+                  filter += encodeArrForRequest("pollutants", $('#pollutantsFilter').val());
+                }
                 window.location.href = window.location.pathname + filter;
             });
 
@@ -317,7 +325,8 @@
         </div>
         <div class="row" style="padding-top:30px">
             <div class="cell position-1 width-5 esdLabel">NFR category code</div>
-            <div class="cell position-6 width-4 esdLabel" tal:condition="is_lr">Sector name</div>
+            <div class="cell position-6 width-2 esdLabel" tal:condition="is_lr">Sector name</div>
+            <div class="cell position-8 width-2 esdLabel" tal:condition="is_lr">Pollutants</div>
         </div>
         <div class="row" tal:define="width python:'width-5' if is_lr else 'width-9'">
           <div tal:attributes="class string:cell position-1 ${width} esdLabel">
@@ -332,7 +341,7 @@
               </tal:block>
             </select>
           </div>
-          <div class="cell position-6 width-4 esdLabel" tal:condition="is_lr">
+          <div class="cell position-6 width-2 esdLabel" tal:condition="is_lr">
             <select id="sectorFilter" multiple="multiple" class="chosen-select" data-placeholder="Select sector name">
               <option></option>
               <tal:block tal:repeat="item view/get_sector_names">
@@ -340,6 +349,18 @@
                   tal:define="sectors python:request.get('sectorId[]', [])"
                   tal:attributes="value python:item[0];
                                   selected python:item[0] in sectors"
+                  tal:content="python:item[1]"></option>
+              </tal:block>
+            </select>
+          </div>
+          <div class="cell position-8 width-2 esdLabel" tal:condition="is_lr">
+            <select id="pollutantsFilter" multiple="multiple" class="chosen-select" data-placeholder="Select pollutants">
+              <option></option>
+              <tal:block tal:repeat="item view/get_pollutants">
+                <option
+                  tal:define="pollutants python:request.get('pollutants[]', [])"
+                  tal:attributes="value python:item[0];
+                                  selected python:item[0] in pollutants"
                   tal:content="python:item[1]"></option>
               </tal:block>
             </select>
