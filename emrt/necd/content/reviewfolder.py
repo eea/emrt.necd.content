@@ -900,11 +900,13 @@ class InboxReviewFolderView(BrowserView):
         freeText = self.request.form.get('freeText', '')
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
+        req = {k: v for k, v in self.request.form.items()}
+        req.update(kw)
         query = {
             'path': path,
             'portal_type': 'Observation',
-            'sort_on': 'modified',
-            'sort_order': 'reverse',
+            'sort_on': req.get('sort_on', 'modified'),
+            'sort_order': req.get('sort_order', 'reverse'),
         }
         if freeText:
             query['SearchableText'] = freeText
