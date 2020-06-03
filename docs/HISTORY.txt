@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.14 (2020-06-03)
+
+- Bug #108673 - Unable to order my view over multiple pages
+  [batradav]
+
 2.5.13 (2020-06-02)
 
 - Feature #111499 - Add pollutant filter on the overview list
