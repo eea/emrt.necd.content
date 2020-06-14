@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.15 (2020-06-14)
+
+- Bug #118640 - New feature in the extract
+  [batradav]
+
 2.5.14 (2020-06-03)
 
 - Bug #108673 - Unable to order my view over multiple pages
