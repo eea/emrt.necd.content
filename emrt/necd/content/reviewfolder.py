@@ -464,6 +464,7 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_finalisation_text', 'Conclusion note'),
     ('observation_questions_workflow', 'Question workflow'),
     ('observation_questions_workflow_current', 'Current question workflow'),
+    ('latest_question_id', 'ID of latest question'),
     ('get_author_name', 'Author'),
     ('modified', 'Timestamp'),
     ('extract_timestamp', 'Extract Timestamp'),
@@ -693,10 +694,16 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         '\n'.join(
                             observation.getObject().activity_data_value())
                     )
-
+                elif key == 'latest_question_id':
+                    b_comments = catalog(
+                        portal_type="Comment",
+                        path=dict(query=observation.getPath())
+                    )
+                    comment_ids = sorted([b.getId for b in b_comments])
+                    last_question_id = comment_ids[-1] if comment_ids else "-"
+                    row.append(last_question_id)
                 else:
                     row.append(safe_unicode(observation[key]))
-
 
             if base_len == 0:
                 base_len = len(row)
