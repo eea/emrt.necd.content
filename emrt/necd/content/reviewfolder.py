@@ -474,6 +474,9 @@ EXPORT_FIELDS = OrderedDict([
 EXCLUDE_FIELDS_FOR_MS = (
     'observation_finalisation_text',
 )
+INCLUDE_FOR_LR = (
+    'latest_question_id',
+)
 
 EXCLUDE_PROJECTION_FIELDS = (
     'nfr_code_inventory',
@@ -507,8 +510,11 @@ def get_common(iter1, iter2):
 def fields_vocabulary_factory(context):
     terms = []
 
+    user_roles = api.user.get_roles(obj=context)
+    user_is_manager = 'Manager' in user_roles
+
+    user_is_lr = user_is_manager or (ROLE_LR in user_roles)
     user_is_ms = getUtility(IUserIsMS)(context)
-    user_is_manager = 'Manager' in api.user.get_roles()
     skip_for_user = user_is_ms and not user_is_manager
 
     if context.type == 'projection':
@@ -519,6 +525,8 @@ def fields_vocabulary_factory(context):
         exclude_fields = EXCLUDE_PROJECTION_FIELDS
 
     for key, value in EXPORT_FIELDS.items():
+        if key in INCLUDE_FOR_LR and not user_is_lr:
+            continue
         if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
             continue
         elif key in exclude_fields:
