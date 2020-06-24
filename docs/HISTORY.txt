@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.17 (2020-06-24)
+
+- Bug #119090 - A Question is missing in the workflow for an observation
+  [batradav]
+
 2.5.16 (2020-06-15)
 
 - Bug #118640 - New feature in the extract
