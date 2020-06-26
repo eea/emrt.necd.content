@@ -80,12 +80,23 @@ def update_history_with_snapshot(data, snapshot):
     # string, which fails and data gets duplicated by should_append_entry.
     snapshot = json.loads(json.dumps(snapshot))
 
+    snapshot_ids = []
     for entry in snapshot:
-        found = updated[entry['ID']]
+        entry_id = entry['ID']
+        # Append the Observation ID so that we can compare and delete
+        # missing entries from the historical data (Observation deleted).
+        snapshot_ids.append(entry_id)
+
+        found = updated[entry_id]
         latest = found[-1] if found else None
 
         if should_append_entry(latest, entry):
             found.append(entry)
+
+    # Cleanup entries for deleted Observations
+    to_delete = [key for key in updated.keys() if key not in snapshot_ids]
+    for key in to_delete:
+        del updated[key]
 
     return updated
 
