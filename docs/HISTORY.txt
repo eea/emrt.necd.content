@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.18 (2020-06-26)
+
+- Bug #118760 - Web Data Connector and Tableau Problems
+  [batradav]
+
 2.5.17 (2020-06-24)
 
 - Bug #119090 - A Question is missing in the workflow for an observation
