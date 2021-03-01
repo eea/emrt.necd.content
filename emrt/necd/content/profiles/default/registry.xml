@@ -201,6 +201,7 @@
       <element key="HMs">HMs</element>
       <element key="POPs">POPs</element>
       <element key="GHGs">GHGs</element>
+      <element key="TSP">TSP</element>
     </value>
   </record>
   <record name="emrt.necd.content.vocabularies.INECDVocabularies.projection_parameter">
