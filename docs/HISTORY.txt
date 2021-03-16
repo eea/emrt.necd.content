@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.5.19 (2021-03-16)
+
+- Bug  #129972 - LR recall questions feature doesn't work
+- Task #129979 - Carry Over Feature - add inventory year and gridded and LPS NFR codes
+  [batradav]
+
 2.5.18 (2020-06-26)
 
 - Bug #118760 - Web Data Connector and Tableau Problems
