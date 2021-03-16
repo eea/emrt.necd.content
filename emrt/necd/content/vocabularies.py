@@ -16,6 +16,9 @@ import plone.api as api
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.constants import ROLE_MSE
 
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
@@ -375,6 +378,22 @@ class ScenarioType(object):
                 # create a term - the arguments are the value, the token, and
                 # the title (optional)
                 terms.append(SimpleVocabulary.createTerm(key, key, value))
+        return SimpleVocabulary(terms)
+
+
+@implementer(IVocabularyFactory)
+class Roles(object):
+
+    def __call__(self, context):
+        terms = list(itertools.starmap(
+            mk_term, [
+                ('Manager', 'Manager'),
+                (ROLE_SE, 'Sector Expert'),
+                (ROLE_LR, 'Lead Reviewer'),
+                (ROLE_MSA, 'MS Authority'),
+                (ROLE_MSE, 'MS Expert'),
+            ]))
+
         return SimpleVocabulary(terms)
 
 

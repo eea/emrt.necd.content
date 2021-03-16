@@ -1,6 +1,111 @@
 Changelog
 =========
 
+2.5.18 (2020-06-26)
+
+- Bug #118760 - Web Data Connector and Tableau Problems
+  [batradav]
+
+2.5.17 (2020-06-24)
+
+- Bug #119090 - A Question is missing in the workflow for an observation
+  [batradav]
+
+2.5.16 (2020-06-15)
+
+- Bug #118640 - New feature in the extract
+  [batradav]
+
+2.5.15 (2020-06-14)
+
+- Bug #118640 - New feature in the extract
+  [batradav]
+
+2.5.14 (2020-06-03)
+
+- Bug #108673 - Unable to order my view over multiple pages
+  [batradav]
+
+2.5.13 (2020-06-02)
+
+- Feature #111499 - Add pollutant filter on the overview list
+  [batradav]
+
+2.5.12 (2020-05-27)
+
+- Bug #117896 - Sector Expert Rights
+- Bug #118043 - Q&A format
+- Bug #118046 - Export error
+  [batradav]
+
+2.5.11 (2020-05-07)
+
+- Bug #117574 - Web Data Connector and Tableau
+  [batradav]
+
+2.5.10 (2020-05-04)
+
+- Feature #117019 - My View bugs
+  [batradav]
+
+2.5.9 (2020-04-29)
+
+- Feature #111497 - Revised carry over process
+  [batradav]
+
+2.5.8 (2020-04-28)
+
+- Task #117167 - Flags to add
+  [batradav]
+
+2.5.7 (2020-04-22)
+
+- Task #114128 - Start 2020 Tabs for both "Inventory"
+  [batradav]
+
+2.5.6 (2020-04-15)
+
+- Task #114128 - Start 2020 Tabs for both "Inventory"
+  [batradav]
+
+2.5.5 (2020-04-10)
+
+- Bug #108671 - Issues with NECD excel extract
+- Bug #108672 - Free text search bar
+- Task #108662 - Remove automatic conclusion text from the 'go to conclusions' tab
+- Bug #108674 - Recalled MSA not in current state MS Coordinator
+- Feature #111496 - Non-editable fields in the EMR
+- Feature #111498 - Conclusion box alteration
+  [batradav]
+
+2.5.4 (2020-03-25)
+
+- Bug #106895 - Upload file potential bug in the conclusion tab
+- Task #111500 - Consistency of EMRT and Review Reports
+  [batradav]
+
+2.5.3 (2019-12-09)
+
+- Task #108206 - Embed Tableau Statistics into EMRT-NECD Projections
+- Removed now unused C implementation for flatten_json.
+  [batradav]
+
+2.5.2 (2019-06-26)
+
+- Task #107150 - Export XLS doesn't work in the projection tab
+  [batradav]
+
+2.5.1 (2019-06-14)
+
+- Task #88845 - adding extra fields to tableau
+  [batradav]
+
+2.5 (2019-06-12)
+
+- Task #88845 - removing XLS mapping, adding Modified date
+- Bug: #106301 - Unauthorized check on getObject()
+  [batradav]
+
 2.4.3 (2019-05-29)
 
 - Task #106008 - Small bug in the comment loop

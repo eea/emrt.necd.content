@@ -12,6 +12,13 @@
         />
 
     <browser:page
+        name="tableau_dashboard"
+        for="..reviewfolder.IReviewFolder"
+        class=".tableau.DashboardView"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="tableauConnector.html"
         for="..reviewfolder.IReviewFolder"
         class=".tableau.ConnectorView"
@@ -237,6 +244,21 @@
         name="carryover"
         for="emrt.necd.content.reviewfolder.IReviewFolder"
         class=".carryover.CarryOverView"
+        permission="cmf.ManagePortal"
+        attribute="start"
+        />
+
+    <browser:page
+        name="bulk-update-form"
+        for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+        class=".bulk_update.BulkUpdateView"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="bulk-update"
+        for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+        class=".bulk_update.BulkUpdateView"
         permission="cmf.ManagePortal"
         attribute="start"
         />

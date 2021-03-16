@@ -6,6 +6,7 @@ from operator import itemgetter
 from datetime import datetime
 from Acquisition import aq_inner
 from AccessControl import getSecurityManager, Unauthorized
+from DateTime import DateTime
 from plone import api
 from plone import directives
 from plone.app.content.browser.tableview import Table
@@ -22,6 +23,7 @@ from Products.Five import BrowserView
 from emrt.necd.content.timeit import timeit
 from eea.cache import cache
 from zope.component import getUtility
+import plone.directives
 import zope.schema as schema
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.interfaces import IContextSourceBinder
@@ -29,6 +31,7 @@ from zc.dict import OrderedDict
 from z3c.form import form
 from z3c.form import button
 from z3c.form import field
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from plone.z3cform.layout import wrap_form
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema import List, Choice, TextLine, Bool
@@ -59,6 +62,7 @@ QUESTION_WORKFLOW_MAP = {
     'SE': 'Sector Expert',
     'LR': 'Lead Reviewer',
     'MSC': 'MS Coordinator',
+    'recalled-msa': 'MS Coordinator',
     'answered': 'Answered',
     'conclusions': 'Conclusions',
     'conclusions-lr-denied': 'Conclusions - LR denied',
@@ -119,6 +123,33 @@ def get_finalisation_reasons(reviewfolder):
     return reasons
 
 
+def translate_highlights(vocab, keys):
+    return tuple(vocab.getTerm(x).title for x in keys)
+
+
+def get_highlight_vocabs(context):
+    vocab_highlight = getUtility(
+        IVocabularyFactory,
+        name='emrt.necd.content.highlight')(context)
+
+    vocab_highlight_values = tuple([
+        term.value for term in vocab_highlight
+    ])
+
+    is_projection = context.type == 'projection'
+    highlight_split_item = 'ec' if is_projection else 'nsms'
+
+    # Split highlight to differentiate between
+    # description and conclusion flags.
+    highlight_split = vocab_highlight_values.index(highlight_split_item)
+    vocab_description_flags = translate_highlights(
+        vocab_highlight, vocab_highlight_values[:highlight_split])
+    vocab_conclusion_flags = translate_highlights(
+        vocab_highlight, vocab_highlight_values[highlight_split:])
+
+    return vocab_description_flags, vocab_conclusion_flags, vocab_highlight
+
+
 def filter_for_ms(brains, context):
     if api.user.is_anonymous():
         return brains
@@ -166,19 +197,17 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
         required=True,
     )
 
-    xls_mappings = NamedBlobFile(
-        title=u'Mapping XLS',
-        description=(
-            u'XLS file providing helper mappings for the Tableau JSON.'
-            u'You can <a href="'
-            u'./++resource++emrt.necd.content/tableau_mappings.xlsx">'
-            u'download an example XLS</a> and modify it as appropriate.'
-            u'The header for each sheet needs to exist but is ignored.'
-            u'<strong>'
-            u'The order of the sheets and columns is important!</strong>'
-        ),
+    tableau_statistics = schema.Text(
+        title=u'Tableau statistics embed code',
         required=False,
     )
+
+    plone.directives.form.widget(tableau_statistics_roles=CheckBoxFieldWidget)
+    tableau_statistics_roles = schema.List(
+        title=u'Roles that can access the statistics',
+        value_type=schema.Choice(vocabulary='emrt.necd.content.roles'),
+    )
+
 
 @implementer(IReviewFolder)
 class ReviewFolder(Container):
@@ -204,6 +233,8 @@ class ReviewFolderMixin(BrowserView):
         wfStatus = req.get('wfStatus', '')
         nfrCode = req.get('nfrCode', req.get('nfrCode[]', []))
         sectorId = req.get('sectorId', req.get('sectorId[]', []))
+        pollutants = req.get('pollutants', req.get('pollutants[]', []))
+        pollutants = pollutants if isinstance(pollutants, list) else [pollutants]
 
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
@@ -243,12 +274,18 @@ class ReviewFolderMixin(BrowserView):
             query['nfr_code'] = dict(query=nfrCode, operator='or')
         if sectorId:
             query['GHG_Source_Category'] = dict(query=sectorId, operator='or')
+        if pollutants:
+            query["Title"] = " OR ".join([p.strip() for p in pollutants])
 
         return filter_for_ms(catalog(query), context=self.context)
 
     def can_add_observation(self):
         sm = getSecurityManager()
         return sm.checkPermission('emrt.necd.content: Add Observation', self)
+
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
 
     def is_secretariat(self):
         user = api.user.get_current()
@@ -307,6 +344,12 @@ class ReviewFolderMixin(BrowserView):
             IVocabularyFactory, name='emrt.necd.content.nfr_code')
         vocabulary = vocab_factory(self.context)
         return [(x.value, x.title) for x in vocabulary]
+
+    def get_pollutants(self):
+        vocab_factory = getUtility(
+            IVocabularyFactory, name='emrt.necd.content.pollutants')
+        vocabulary = vocab_factory(self.context)
+        return tuple((x.value, x.title) for x in vocabulary)
 
     def get_sector_names(self):
         vocab_factory = getUtility(
@@ -421,12 +464,18 @@ EXPORT_FIELDS = OrderedDict([
     ('observation_finalisation_text', 'Conclusion note'),
     ('observation_questions_workflow', 'Question workflow'),
     ('observation_questions_workflow_current', 'Current question workflow'),
-    ('get_author_name', 'Author')
+    ('latest_question_id', 'ID of latest question'),
+    ('get_author_name', 'Author'),
+    ('modified', 'Timestamp'),
+    ('extract_timestamp', 'Extract Timestamp'),
 ])
 
 # Don't show conclusion notes to MS users.
 EXCLUDE_FIELDS_FOR_MS = (
     'observation_finalisation_text',
+)
+INCLUDE_FOR_LR = (
+    'latest_question_id',
 )
 
 EXCLUDE_PROJECTION_FIELDS = (
@@ -461,17 +510,23 @@ def get_common(iter1, iter2):
 def fields_vocabulary_factory(context):
     terms = []
 
+    user_roles = api.user.get_roles(obj=context)
+    user_is_manager = 'Manager' in user_roles
+
+    user_is_lr = user_is_manager or (ROLE_LR in user_roles)
     user_is_ms = getUtility(IUserIsMS)(context)
-    user_is_manager = 'Manager' in api.user.get_roles()
     skip_for_user = user_is_ms and not user_is_manager
 
     if context.type == 'projection':
         EXPORT_FIELDS['year'] = 'Projection Year'
         exclude_fields = EXCLUDE_INVENTORY_FIELDS
     else:
+        EXPORT_FIELDS['year'] = 'Inventory Year'
         exclude_fields = EXCLUDE_PROJECTION_FIELDS
 
     for key, value in EXPORT_FIELDS.items():
+        if key in INCLUDE_FOR_LR and not user_is_lr:
+            continue
         if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
             continue
         elif key in exclude_fields:
@@ -549,13 +604,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         if not self.request.get('form.buttons.extend', None):
             return super(ExportReviewFolderForm, self).render()
 
-    def translate_highlights(self, vocab, keys):
-        return tuple(vocab.getTerm(x).title for x in keys)
-
     def extract_data(self, form_data):
         """ Create xls file
         """
-        is_projection = self.context.type=='projection'
         vtool = getToolByName(self, 'portal_vocabularies')
 
         observations = self.get_questions()
@@ -577,27 +628,13 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         rows = []
 
-        vocab_highlight = getUtility(
-            IVocabularyFactory,
-            name='emrt.necd.content.highlight')(self.context)
-
-        vocab_highlight_values = tuple([
-            term.value for term in vocab_highlight
-        ])
-
-        highlight_split_item = 'ec' if is_projection else 'nsms'
-
-        # Split highlight to differentiate between
-        # description and conclusion flags.
-        highlight_split = vocab_highlight_values.index(highlight_split_item)
-        vocab_description_flags = self.translate_highlights(
-            vocab_highlight, vocab_highlight_values[:highlight_split])
-        vocab_conclusion_flags = self.translate_highlights(
-            vocab_highlight, vocab_highlight_values[highlight_split:])
+        vocab_description_flags, vocab_conclusion_flags, vocab_highlight = (
+            get_highlight_vocabs(self.context)
+        )
 
         for observation in observations:
             row = [observation.getId]
-            highlights = self.translate_highlights(
+            highlights = translate_highlights(
                 vocab_highlight, observation['get_highlight'] or [])
 
             for key in fields_to_export:
@@ -645,6 +682,10 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         observation.getObject().fuel
                     )
                     row.append(fuel)
+                elif key == 'modified':
+                    row.append(observation.modified.asdatetime().isoformat())
+                elif key == 'extract_timestamp':
+                    row.append(DateTime().asdatetime().isoformat())
 
                 # XXX: these are projection fields and need rework,
                 # getObject kill performance.
@@ -661,7 +702,14 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         '\n'.join(
                             observation.getObject().activity_data_value())
                     )
-
+                elif key == 'latest_question_id':
+                    b_comments = catalog(
+                        portal_type="Comment",
+                        path=dict(query=observation.getPath())
+                    )
+                    comment_ids = sorted([b.getId for b in b_comments])
+                    last_question_id = comment_ids[-1] if comment_ids else "-"
+                    row.append(last_question_id)
                 else:
                     row.append(safe_unicode(observation[key]))
 
@@ -677,7 +725,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                 )
                 row.extend(extracted_qa)
 
-            rows.append(row)
+            rows.append([c.strip() if hasattr(c, "strip") else c for c in row])
 
         for row in rows:
             # Fill columns that are too short with emtpy values
@@ -827,9 +875,13 @@ class InboxReviewFolderView(BrowserView):
         self.rolemap_observations = dict()
         return super(InboxReviewFolderView, self).__call__()
 
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
+
     def get_sections(self):
         is_sec = self.is_secretariat()
-        viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)]
+        viewable = [sec for sec in SECTIONS if is_sec or sec['check'](self)()]
 
         total_sum = 0
         for section in viewable:
@@ -863,11 +915,13 @@ class InboxReviewFolderView(BrowserView):
         freeText = self.request.form.get('freeText', '')
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
+        req = {k: v for k, v in self.request.form.items()}
+        req.update(kw)
         query = {
             'path': path,
             'portal_type': 'Observation',
-            'sort_on': 'modified',
-            'sort_order': 'reverse',
+            'sort_on': req.get('sort_on', 'modified'),
+            'sort_order': req.get('sort_order', 'reverse'),
         }
         if freeText:
             query['SearchableText'] = freeText
@@ -1237,9 +1291,10 @@ class InboxReviewFolderView(BrowserView):
         return self.get_observations(
             rolecheck=ROLE_MSE,
             observation_question_status=[
+                'recalled-msa',
                 'expert-comments',
                 'pending-answer-drafting'],
-            reply_comments_by_mse=True,
+            reply_comments_by_mse=[api.user.get_current().getId()],
         )
 
     @timeit
@@ -1250,10 +1305,8 @@ class InboxReviewFolderView(BrowserView):
         """
         return self.get_observations(
             rolecheck=ROLE_MSE,
-            observation_question_status=[
-                'answered',
-                'recalled-msa'],
-            reply_comments_by_mse=True,
+            observation_question_status=['answered'],
+            reply_comments_by_mse=[api.user.get_current().getId()],
         )
 
     def can_add_observation(self):
@@ -1315,6 +1368,10 @@ class InboxReviewFolderView(BrowserView):
 
 
 class FinalisedFolderView(BrowserView):
+
+    def can_view_tableau_dashboard(self):
+        view = self.context.restrictedTraverse('@@tableau_dashboard')
+        return view.can_access(self.context)
 
     def get_finalisation_reasons(self):
         key = itemgetter(0)

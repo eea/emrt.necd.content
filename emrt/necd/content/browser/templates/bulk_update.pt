@@ -1,0 +1,56 @@
+<metal:page use-macro="here/main_template/macros/master">
+<metal:content fill-slot="main">
+  <h1 class="documentFirstHeading">Observations bulk update</h1>
+
+  <br />
+
+  <div class="import-info">
+    <div>
+      <strong>Important: </strong>
+      <ul>
+        <li>
+          You need to upload an XLS file with a specific format, depending on the selected action.
+          <strong>Please note that the first row of the XLS file will be ignored.</strong>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div>
+    <div>
+      <strong>Direct copy</strong>
+      <p>
+        Expects a 3 column XLS file, as below.
+        Observations are modified in-place.
+        If provided, the conclusion text will replace the existing conclusion text,
+        and the description text will replace the existing observation description.
+      </p>
+      <table class="listing">
+        <thead>
+          <tr>
+            <th>Target observation</th>
+            <th>Conclusion text</th>
+            <th>Description text</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${portal_url}/2018/AT-1A-2018-0000</td>
+            <td>Conclusion text that will replace the existing one.</td>
+            <td>Description text that will replace the existing one.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <br />
+  <div>
+    <form action="./bulk-update" method="POST" enctype="multipart/form-data">
+      <div class="field">
+        <Label>Mapping file<input type="file" name="xls" /></Label>
+      </div>
+      <input type="submit" value="Submit" />
+    </form>
+  </div>
+</metal:content>
+
+</metal:page>

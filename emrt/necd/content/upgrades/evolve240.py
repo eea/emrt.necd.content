@@ -1,3 +1,4 @@
+from itertools import chain
 import logging
 from collections import defaultdict
 
@@ -7,12 +8,21 @@ import plone.api as api
 
 from emrt.necd.content.browser.tableau import get_historical_data
 from emrt.necd.content.browser.tableau import write_historical_data
-from emrt.necd.content.browser.tableau import do_flatten
 from emrt.necd.content.browser.tableau import entry_for_cmp
 from emrt.necd.content.browser.tableau import GET_TIMESTAMP
 
 
 logger = logging.getLogger(__name__)
+
+
+def do_flatten(json_str):
+    """ This used to be implemented as a C extension, which is no longer
+        required with the current implementation, and was removed.
+        This function exists for historical purposes, as there is nothing
+        else to migrate.
+        Last version released with the C extension is 2.5.2.
+    """
+    return json.dumps(list(chain(*json.loads(json_str))))
 
 
 def migrate_historical_data(ctx):

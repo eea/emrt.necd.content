@@ -76,4 +76,9 @@
     name="emrt.necd.content.scenario_type"
     factory=".vocabularies.ScenarioType"
     />
+
+  <utility
+    name="emrt.necd.content.roles"
+    factory=".vocabularies.Roles"
+    />
 </configure>

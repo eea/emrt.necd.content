@@ -580,6 +580,57 @@
       description="[refs #106008] Small bug in the comment loop"
       handler="emrt.necd.content.upgrades.evolve243.run"
     />
+  </genericsetup:upgradeSteps>
+
+ <!-- Migration for emrt-necd-test, which had the 2.4.3 code. -->
+ <genericsetup:upgradeSteps
+    source="2.4.3"
+    destination="2.5.2"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Migrate tuple years"
+      description="[refs #107150] - Export XLS doesn't work in the projection tab"
+      handler="emrt.necd.content.upgrades.evolve252.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
+ <genericsetup:upgradeSteps
+    source="2.5.3"
+    destination="2.5.4"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update roles."
+      description="SE permissions on conclusion."
+      import_steps="workflow"
+      />
+
+  </genericsetup:upgradeSteps>
+
+ <genericsetup:upgradeSteps
+    source="2.5.4"
+    destination="2.5.8"
+    profile="emrt.necd.content:default">
+
+
+    <genericsetup:upgradeStep
+      title="[refs #117019] MSE permissions in recalled-msa state - delete index."
+      description="Delete reply_comments_by_mse index. Will be added back by the catalog import step."
+      handler=".evolve258.delete_index"
+      />
+
+    <genericsetup:upgradeDepends
+      title="Import workflows and catalog"
+      import_steps="workflow catalog"
+      />
+
+    <genericsetup:upgradeStep
+      title="[refs #117019] MSE permissions in recalled-msa state - reindex content."
+      description="Bring MSE permissions for recalled-msa in line with pending-answer-drafting"
+      handler=".evolve258.upgrade"
+      />
 
   </genericsetup:upgradeSteps>
 

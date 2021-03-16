@@ -3,6 +3,9 @@
      tal:define="items view/items">
 
   <tal:item repeat="item items">
+    <tal:row condition="python:item['value'] in ['NA']">
+        <br/>
+    </tal:row>
     <span class="options">
       <input type="checkbox"
              tal:attributes="id item/id;
@@ -32,12 +35,13 @@
                              alt view/alt;
                              accesskey view/accesskey;
                              onselect view/onselect"
-      /><label tal:attributes="for item/id">
+      />
+      <label tal:attributes="for item/id">
         <span class="label" tal:content="item/label">Label</span>
       </label>
-      <tal:row condition="python:item['value'] in ['PM2.5', 'HCB', 'PAHs']  ">
-          <br/>
-      </tal:row>
     </span>
+    <tal:row condition="python:item['value'] in ['PM2.5', 'HCB', 'PAHs']">
+        <br/>
+    </tal:row>
   </tal:item>
 </html>
