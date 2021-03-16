@@ -784,6 +784,7 @@ class Observation(Container):
                 elif i_rstate == 'recalled-lr':
                     item['state'] = 'Question recalled'
                     item['role'] = "Lead reviewer"
+                    question_wf.append(item)
                 elif i_rstate == 'answered':
                     item['state'] = 'Answer sent'
                     item['role'] = "Member state coordinator"

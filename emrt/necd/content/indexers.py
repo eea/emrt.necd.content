@@ -14,7 +14,7 @@ from plone.app.discussion.interfaces import IConversation
 from plone.app.textfield.interfaces import IRichTextValue
 from plone.indexer import indexer
 
-from conclusions import IConclusions
+from .conclusions import IConclusions
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.commentanswer import ICommentAnswer
 from emrt.necd.content.utils import get_vocabulary_value
@@ -236,9 +236,17 @@ def observation_sent_to_msc(context):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
+            was_or_is_pending = False
+            has_public_questions = False
             for witem in winfo.get('esd-question-review-workflow', []):
                 if witem.get('review_state', '').endswith('pending'):
-                    return True
+                    was_or_is_pending = True
+                    break
+            for q in question.get_questions():
+                if api.content.get_state(obj=q) == "public":
+                    has_public_questions = True
+                    break
+            return was_or_is_pending and has_public_questions
         return False
     except:
         return False
