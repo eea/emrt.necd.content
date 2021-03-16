@@ -3,6 +3,7 @@ from functools import partial
 from itertools import takewhile
 from logging import getLogger
 
+from zope.interface import Invalid
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import getSite
@@ -21,6 +22,7 @@ import plone.api as api
 import openpyxl
 from DateTime import DateTime
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
+from emrt.necd.content.observation import _is_projection, inventory_year
 
 LOG = getLogger("emrt.necd.content.carryover")
 
@@ -43,6 +45,23 @@ def read_int(value):
             result = 0
     return result
 
+def read_inventory_year(value):
+
+    try:
+        inventory_year(value)
+        return value
+    except Invalid:
+        return 0
+    except TypeError:
+        return read_int(value)
+
+def read_projection_year(value):
+    years = read_list(value)
+    proj_years = [u'2020', u'2025', u'2030', u'2040', u'2050']
+    is_correct = bool(set(years) & set(proj_years))
+    if is_correct:
+        return years
+    return []
 
 def read_list(value):
     result = []
@@ -59,6 +78,15 @@ def read_unicode(value):
 EXTRA_FIELDS = (
     ("text", read_unicode),
     ("review_year", read_int),
+    ("year", read_inventory_year),
+    ("nfr_code", read_unicode),
+    ("pollutants", read_list),
+)
+
+EXTRA_FIELDS_PROJECTION = (
+    ("text", read_unicode),
+    ("review_year", read_int),
+    ("year", read_projection_year),
     ("nfr_code", read_unicode),
     ("pollutants", read_list),
 )
@@ -190,9 +218,10 @@ def reopen_with_qa(wf, wf_q, wf_c, obj, actor):
         add_to_wh(wf_c, conclusion, "redraft", "draft", actor)
 
 
-def read_extra_fields(row, start_at):
+def read_extra_fields(row, start_at, context):
+    extra_fields = EXTRA_FIELDS_PROJECTION if context.type == "projection" else EXTRA_FIELDS
     result = dict()
-    for idx, (fname, reader) in enumerate(EXTRA_FIELDS):
+    for idx, (fname, reader) in enumerate(extra_fields):
         result[fname] = reader(_read_col(row, start_at + idx))
     return result
 
@@ -201,7 +230,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
     actor = _read_col(row, 2) or api.user.get_current().getId()
-    extra_fields = read_extra_fields(row, start_at=3)
+    extra_fields = read_extra_fields(row, start_at=3, context=context)
 
     obj = obj_from_url(source)
     ob = _copy_and_flag(context, obj)
@@ -224,7 +253,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     older_source = _read_col(row, 1)
     conclusion_text = _read_col(row, 2)
     actor = _read_col(row, 3)
-    extra_fields = read_extra_fields(row, start_at=4)
+    extra_fields = read_extra_fields(row, start_at=4, context=context)
 
     obj = obj_from_url(source)
     older_obj = obj_from_url(older_source)
@@ -253,18 +282,13 @@ class CarryOverView(BrowserView):
         values_for_pollutants = get_vocabulary_values(
             self.context, "emrt.necd.content.pollutants"
         )
-        if self.context.type == "projection":
-            values_for_nfr_code = get_vocabulary_values(
-                self.context, "emrt.necd.content.nfr_code"
-            )
-        else:
-            values_for_nfr_code = get_vocabulary_values(
-                self.context, "emrt.necd.content.nfr_code_inventories"
-            )
-
+        values_for_nfr_code = get_vocabulary_values(
+            self.context, "emrt.necd.content.nfr_code"
+        )
         return self.index(
             values_for_nfr_code=u", ".join(values_for_nfr_code),
             values_for_pollutants=u", ".join(values_for_pollutants),
+            is_projection=self.context.type == "projection",
         )
 
     def start(self, action, xls):
