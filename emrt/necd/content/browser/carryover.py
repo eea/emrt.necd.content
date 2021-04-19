@@ -3,10 +3,13 @@ from functools import partial
 from itertools import takewhile
 from logging import getLogger
 
-from zope.interface import Invalid
+import openpyxl
+
+from DateTime import DateTime
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.component.hooks import getSite
+from zope.interface import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 
 from Products.Five.browser import BrowserView
@@ -15,16 +18,28 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from Products.CMFCore.utils import getToolByName
 
+import plone.api as api
 from plone.app.discussion.conversation import ANNOTATION_KEY
 
-import plone.api as api
-
-import openpyxl
-from DateTime import DateTime
+from emrt.necd.content.observation import _is_projection
+from emrt.necd.content.observation import inventory_year
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
-from emrt.necd.content.observation import _is_projection, inventory_year
 
 LOG = getLogger("emrt.necd.content.carryover")
+
+
+R_OBS_ID = r"(\w+)-([\w-]+)-(\d+)-(\d+)"
+
+
+class ReadId(object):
+    def __init__(self, obs_id):
+        self.match = re.match(R_OBS_ID, obs_id)
+        self.result = self.match.groups()
+
+        self.country_code = self.result[0]
+        self.nfr_code = self.result[1]
+        self.year = self.result[2]
+        self.index = self.result[3]
 
 
 def get_vocabulary_values(context, name):
@@ -45,6 +60,7 @@ def read_int(value):
             result = 0
     return result
 
+
 def read_inventory_year(value):
 
     try:
@@ -55,13 +71,15 @@ def read_inventory_year(value):
     except TypeError:
         return read_int(value)
 
+
 def read_projection_year(value):
     years = read_list(value)
-    proj_years = [u'2020', u'2025', u'2030', u'2040', u'2050']
+    proj_years = [u"2020", u"2025", u"2030", u"2040", u"2050"]
     is_correct = bool(set(years) & set(proj_years))
     if is_correct:
         return years
     return []
+
 
 def read_list(value):
     result = []
@@ -102,12 +120,12 @@ def _clear_local_roles(obj):
 
 
 def clear_and_grant_roles(obj):
-    """ Clear any local roles already granted and grant just those
-        that make sense in the current review folder context.
+    """Clear any local roles already granted and grant just those
+    that make sense in the current review folder context.
 
-        [refs #105604] This makes sure that users that were granted
-        local roles on the old observation will not continue to
-        have them (e.g. CounterPart).
+    [refs #105604] This makes sure that users that were granted
+    local roles on the old observation will not continue to
+    have them (e.g. CounterPart).
     """
     _clear_local_roles(obj)
     grant_local_roles(obj)
@@ -123,13 +141,15 @@ def _copy_obj(target, ob, new_id=None):
 
 
 def _copy_and_flag(context, obj, new_id=None):
-    _, _, year, index = (new_id or obj.getId()).split("-")
+    parse_id = ReadId(new_id or obj.getId())
     ob = _copy_obj(context, obj, new_id=new_id)
-    ob.carryover_from = year
-    ob.review_year = int(year)
+    ob.carryover_from = parse_id.year
+    ob.review_year = int(parse_id.year)
 
     LOG.info(
-        "Copied %s -> %s", obj.absolute_url(1), ob.absolute_url(1),
+        "Copied %s -> %s",
+        obj.absolute_url(1),
+        ob.absolute_url(1),
     )
 
     return ob
@@ -148,27 +168,31 @@ def replace_conclusion_text(obj, text):
 
 def delete_conclusion_file(obj):
     conclusion = obj.get_conclusion()
-    for ob in conclusion.values():
-        if ob.portal_type == "NECDFile":
-            conclusion.manage_delObjects([ob.getId()])
+    if conclusion:
+        for ob in conclusion.values():
+            if ob.portal_type == "NECDFile":
+                conclusion.manage_delObjects([ob.getId()])
 
 
 def clear_conclusion_discussion(obj):
     conclusion = obj.get_conclusion()
-    annotations = IAnnotations(conclusion)
-    if ANNOTATION_KEY in annotations:
-        del annotations[ANNOTATION_KEY]
+    if conclusion:
+        annotations = IAnnotations(conclusion)
+        if ANNOTATION_KEY in annotations:
+            del annotations[ANNOTATION_KEY]
 
 
 def clear_conclusion_closing_reason(obj):
     conclusion = obj.get_conclusion()
-    conclusion.closing_reason = u''
+    if conclusion:
+        conclusion.closing_reason = u""
 
 
 def clear_conclusion_history(obj, wf_id):
     conclusion = obj.get_conclusion()
-    cur_history = conclusion.workflow_history[wf_id]
-    conclusion.workflow_history[wf_id] = (cur_history[0],)
+    if conclusion:
+        cur_history = conclusion.workflow_history[wf_id]
+        conclusion.workflow_history[wf_id] = (cur_history[0],)
 
 
 def save_extra_fields(obj, extra_fields):
@@ -218,19 +242,33 @@ def reopen_with_qa(wf, wf_q, wf_c, obj, actor):
         add_to_wh(wf_c, conclusion, "redraft", "draft", actor)
 
 
-def read_extra_fields(row, start_at, context):
-    extra_fields = EXTRA_FIELDS_PROJECTION if context.type == "projection" else EXTRA_FIELDS
+def read_extra_fields(row, row_nr, start_at, context):
+    extra_fields = (
+        EXTRA_FIELDS_PROJECTION
+        if context.type == "projection"
+        else EXTRA_FIELDS
+    )
     result = dict()
     for idx, (fname, reader) in enumerate(extra_fields):
-        result[fname] = reader(_read_col(row, start_at + idx))
+        col_idx = start_at + idx
+        try:
+            result[fname] = reader(_read_col(row, col_idx))
+        except IndexError:
+            msg = "Cannot read field {} on column {}, row {}.".format(
+                fname, col_idx + 1, row_nr
+            )
+            request = api.env.getRequest()
+            api.portal.show_message(msg, request=request, type="error")
+            raise
+
     return result
 
 
-def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
+def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
     actor = _read_col(row, 2) or api.user.get_current().getId()
-    extra_fields = read_extra_fields(row, start_at=3, context=context)
+    extra_fields = read_extra_fields(row, row_nr, start_at=3, context=context)
 
     obj = obj_from_url(source)
     ob = _copy_and_flag(context, obj)
@@ -248,12 +286,12 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
     catalog.catalog_object(ob)
 
 
-def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row):
+def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     source = _read_col(row, 0)
     older_source = _read_col(row, 1)
     conclusion_text = _read_col(row, 2)
     actor = _read_col(row, 3)
-    extra_fields = read_extra_fields(row, start_at=4, context=context)
+    extra_fields = read_extra_fields(row, row_nr, start_at=4, context=context)
 
     obj = obj_from_url(source)
     older_obj = obj_from_url(older_source)
@@ -324,8 +362,10 @@ class CarryOverView(BrowserView):
             obj_from_url,
         )
 
-        for row in valid_rows:
-            copy_func(row)
+        for row_nr, row in enumerate(
+            valid_rows, start=2
+        ):  # start at 2 since we skip header
+            copy_func(row, row_nr)
 
         if len(valid_rows) > 0:
             (
@@ -334,5 +374,9 @@ class CarryOverView(BrowserView):
                 )
             )
         else:
-            (IStatusMessage(self.request).add("No data provided!", type="warn"))
+            (
+                IStatusMessage(self.request).add(
+                    "No data provided!", type="warn"
+                )
+            )
         self.request.RESPONSE.redirect(context.absolute_url())

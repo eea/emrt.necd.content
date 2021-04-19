@@ -116,7 +116,7 @@
         <form action="./carryover" method="POST" enctype="multipart/form-data">
             <div class="field">
                 <label>Copy action
-                    <select name="action">
+                    <select name="action" required="required">
                         <option value="">Select copy action</option>
                         <option value="direct">Direct copy</option>
                         <option value="complex">Complex copy</option>
@@ -124,7 +124,7 @@
                 </label>
             </div>
             <div class="field">
-                <Label>Mapping file<input type="file" name="xls" /></Label>
+                <Label>Mapping file<input type="file" name="xls" required="required"/></Label>
             </div>
             <input type="submit" value="Submit" />
         </form>
