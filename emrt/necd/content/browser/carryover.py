@@ -28,7 +28,7 @@ from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 LOG = getLogger("emrt.necd.content.carryover")
 
 
-R_OBS_ID = r"(\w+)-([\w-]+)-(\d+)-(\d+)"
+R_OBS_ID = r"(\w+)-([\w\-\)\()]+)-(\d+)-(\d+)"
 
 
 class ReadId(object):
