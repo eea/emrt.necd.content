@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.22 (2021-05-23)
+
+- Task #134338 - Carry over feature error - Fix Observation ID handling - spaces.
+  [batradav]
+
 2.5.21 (2021-04-27)
 
 - Task #129979 - Carry Over Feature - Fix Observation ID handling - paranthesis.
