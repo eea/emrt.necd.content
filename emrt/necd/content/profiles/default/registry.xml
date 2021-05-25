@@ -255,6 +255,7 @@
   </record>
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection">
     <value purge="True">
+      <element key="0A">sector6|0A|0A National Total|0A National total - National total for the entire territory - Based on fuel sold/fuel used</element>
       <element key="1A1">sector1|1A1|Energy Stationary|1A1 Energy industries (Combustion in power plants &amp; Energy Production)</element>
       <element key="1A2">sector1|1A2|Energy Stationary|1A2 Manufacturing Industries and Construction (Combustion in industry including Mobile)</element>
       <element key="1A3b">sector2|1A3b|Energy Mobile|1A3b Road Transport</element>
