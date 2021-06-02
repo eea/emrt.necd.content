@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.23 (2021-06-02)
+
+- Task #134554 - Missing fields for Sector Experts creating new observations
+  [batradav]
+
 2.5.22 (2021-05-23)
 
 - Task #134338 - Carry over feature error - Fix Observation ID handling - spaces.
