@@ -79,18 +79,21 @@ from emrt.necd.content.vocabularies import INECDVocabularies
 
 # [refs #104852] Hide Projection Year and Reference Year for
 # users with these sectors.
-PROJECTION_HIDE_YEARS = ('sector6', 'sector7', 'sector8', 'sector9')
+# [refs #134554] No longer used
+PROJECTION_HIDE_YEARS = ('sector9', )
 
 
 def projection_hide_for_user():
-    user = api.user.get_current()
+    # This is no longer used (#134554)
+    return False
+    # user = api.user.get_current()
 
-    # Managers (Secretariat) should never be excluded.
-    if 'Manager' in user.getRoles():
-        return False
+    # # Managers (Secretariat) should never be excluded.
+    # if 'Manager' in user.getRoles():
+    #     return False
 
-    user_sectors = get_user_sectors(user)
-    return set(PROJECTION_HIDE_YEARS).intersection(user_sectors)
+    # user_sectors = get_user_sectors(user)
+    # return set(PROJECTION_HIDE_YEARS).intersection(user_sectors)
 
 
 def get_nfr_title_projection(fname):
