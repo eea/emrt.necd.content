@@ -325,18 +325,19 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         category = get_category_ldap_from_nfr_code(value, self.context)
         user = api.user.get_current()
         groups = user.getGroups()
-        valid = False
-        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
-        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
-        for group in groups:
-            if group.startswith('{}-{}-'.format(ldap_se, category)):
-                valid = True
-                break
-        if not valid:
-            raise Invalid(
-                u'You are not allowed to add observations '
-                u'for this sector category.'
-            )
+        if "Manager" not in api.user.get_roles(user=user):
+            valid = False
+            ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+            ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+            for group in groups:
+                if group.startswith('{}-{}-'.format(ldap_se, category)):
+                    valid = True
+                    break
+            if not valid:
+                raise Invalid(
+                    u'You are not allowed to add observations '
+                    u'for this sector category.'
+                )
 
 
 validator.WidgetValidatorDiscriminators(
@@ -349,21 +350,22 @@ class CountryContextValidator(validator.SimpleFieldValidator):
     def validate(self, value):
         user = api.user.get_current()
         groups = user.getGroups()
-        valid = False
+        if "Manager" not in api.user.get_roles(user=user):
+            valid = False
 
-        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
-        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+            ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+            ldap_se = ldap_wrapper(LDAP_SECTOREXP)
 
-        for group in groups:
-            is_se = group.startswith('{}-'.format(ldap_se))
-            if is_se and group.endswith('-%s' % value):
-                valid = True
-                break
+            for group in groups:
+                is_se = group.startswith('{}-'.format(ldap_se))
+                if is_se and group.endswith('-%s' % value):
+                    valid = True
+                    break
 
-        if not valid:
-            raise Invalid(
-                u'You are not allowed to add observations for this country.'
-            )
+            if not valid:
+                raise Invalid(
+                    u'You are not allowed to add observations for this country.'
+                )
 
 
 validator.WidgetValidatorDiscriminators(
@@ -946,9 +948,13 @@ class Observation(Container):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
+            this_year = datetime.datetime.now().year
+            # [refs #134160] only count events that happened this year
+            # as the Observation may be a carry-over.
             states = [
                 w.get('review_state')
                 for w in winfo.get('esd-question-review-workflow', [])
+                if w["time"].year == this_year
             ]
             if states:
                 sp = { s: idx for idx, s in enumerate(states) }

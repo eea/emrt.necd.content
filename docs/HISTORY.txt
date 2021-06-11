@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.24 (2021-06-11)
+
+- Task #134160 - MS coordinator MyView bug.
+
 2.5.23 (2021-06-02)
 
 - Task #134554 - Missing fields for Sector Experts creating new observations

@@ -5,6 +5,8 @@ from types import StringType
 from types import TupleType
 from types import UnicodeType
 
+import datetime
+
 from zope.schema import getFieldsInOrder
 
 from Products.CMFPlone.utils import safe_unicode
@@ -238,7 +240,15 @@ def observation_sent_to_msc(context):
             winfo = question.workflow_history
             was_or_is_pending = False
             has_public_questions = False
-            for witem in winfo.get('esd-question-review-workflow', []):
+            this_year = datetime.datetime.now().year
+            # [refs #134160] only count events that happened this year
+            # as the Observation may be a carry-over.
+            witems = [
+                w
+                for w in winfo.get('esd-question-review-workflow', [])
+                if w["time"].year == this_year
+            ]
+            for witem in witems:
                 if witem.get('review_state', '').endswith('pending'):
                     was_or_is_pending = True
                     break
@@ -259,7 +269,15 @@ def observation_sent_to_mse(context):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
-            for witem in winfo.get('esd-question-review-workflow', []):
+            this_year = datetime.datetime.now().year
+            # [refs #134160] only count events that happened this year
+            # as the Observation may be a carry-over.
+            witems = [
+                w
+                for w in winfo.get('esd-question-review-workflow', [])
+                if w["time"].year == this_year
+            ]
+            for witem in witems:
                 if witem.get('review_state', '').endswith('expert-comments'):
                     return True
         return False

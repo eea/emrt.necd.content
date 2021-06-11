@@ -634,4 +634,18 @@
 
   </genericsetup:upgradeSteps>
 
+ <genericsetup:upgradeSteps
+    source="2.5.8"
+    destination="2.5.24"
+    profile="emrt.necd.content:default">
+
+
+    <genericsetup:upgradeStep
+      title="[refs #134160] Correctly index for current year."
+      description="Reindex 'observation_already_replied', 'observation_sent_to_msc' and 'observation_sent_to_mse'."
+      handler=".evolve2524.upgrade"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
