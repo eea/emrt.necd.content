@@ -246,7 +246,7 @@ def observation_sent_to_msc(context):
             witems = [
                 w
                 for w in winfo.get('esd-question-review-workflow', [])
-                if w["time"].year == this_year
+                if w["time"].year() == this_year
             ]
             for witem in witems:
                 if witem.get('review_state', '').endswith('pending'):
@@ -275,7 +275,7 @@ def observation_sent_to_mse(context):
             witems = [
                 w
                 for w in winfo.get('esd-question-review-workflow', [])
-                if w["time"].year == this_year
+                if w["time"].year() == this_year
             ]
             for witem in witems:
                 if witem.get('review_state', '').endswith('expert-comments'):

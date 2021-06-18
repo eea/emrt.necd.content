@@ -13,7 +13,7 @@ def upgrade(_):
     for folder in [portal[f] for f in rf]:
         for idx, obj in enumerate(folder.objectValues(), start=1):
             if obj.portal_type == "Observation":
-                if idx % 1 == 0:
+                if idx % 100 == 0:
                     transaction.savepoint(optimistic=True)
                 logger.info("[%s] Reindexing %s...", idx, obj.absolute_url(1))
                 obj.reindexObject(

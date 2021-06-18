@@ -954,7 +954,7 @@ class Observation(Container):
             states = [
                 w.get('review_state')
                 for w in winfo.get('esd-question-review-workflow', [])
-                if w["time"].year == this_year
+                if w["time"].year() == this_year
             ]
             if states:
                 sp = { s: idx for idx, s in enumerate(states) }
