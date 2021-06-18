@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.25 (2021-06-18)
+
+- Task #134160 - Fix .date() call.
+
 2.5.24 (2021-06-11)
 
 - Task #134160 - MS coordinator MyView bug.
