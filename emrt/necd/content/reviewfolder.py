@@ -869,11 +869,31 @@ def _do_section_queries(view, action):
     return action['num_obs']
 
 
-class InboxReviewFolderView(BrowserView):
+class InboxReviewFolderView(ReviewFolderMixin):
 
     def __call__(self):
         self.rolemap_observations = dict()
         return super(InboxReviewFolderView, self).__call__()
+
+    def req_params(self):
+        req_form = self.request.form
+        return [
+            (k, v)
+            for k, v
+            in req_form.items()
+            if k != 'section'
+            and 'b_start' not in k
+        ]
+
+    def join_req_params(self, req_params):
+        params = []
+        for k, v in req_params:
+            if isinstance(v, list):
+                param = ["{}:list={}".format(k, v) for v in v]
+                params.extend(param)
+            else:
+                params.append("{}={}".format(k, v))
+        return params
 
     def can_view_tableau_dashboard(self):
         view = self.context.restrictedTraverse('@@tableau_dashboard')
@@ -912,7 +932,8 @@ class InboxReviewFolderView(BrowserView):
         return observationsBatch
 
     def get_observations(self, rolecheck=None, **kw):
-        freeText = self.request.form.get('freeText', '')
+        freeText = self.request.get('freeText', '')
+        highlights = self.request.get('highlights', None)
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
         req = {k: v for k, v in self.request.form.items()}
@@ -923,6 +944,9 @@ class InboxReviewFolderView(BrowserView):
             'sort_on': req.get('sort_on', 'modified'),
             'sort_order': req.get('sort_order', 'reverse'),
         }
+        if highlights:
+            query['highlight'] = highlights
+
         if freeText:
             query['SearchableText'] = freeText
 
