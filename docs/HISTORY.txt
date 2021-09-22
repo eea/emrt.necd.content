@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.26 (2021-09-22)
+
+- Task #125989 - Filter My View on flags
+
 2.5.25 (2021-06-18)
 
 - Task #134160 - Fix .date() call.
