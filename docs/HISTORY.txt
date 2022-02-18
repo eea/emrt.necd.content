@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.27 (2022-02-18)
+
+- Task #135014 - SE unable to see carried over observations
+
 2.5.26 (2021-09-22)
 
 - Task #125989 - Filter My View on flags
