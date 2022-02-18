@@ -91,7 +91,7 @@ def read_list(value):
 
 
 def read_unicode(value):
-    return value if value else u""
+    return unicode(value) if value else u""
 
 
 EXTRA_FIELDS = (
