@@ -1547,7 +1547,7 @@ class ObservationView(ObservationMixin):
             found = catalog(portal_type="Observation", id=self.context.getId())
             for brain in found:
                 obj = brain.getObject()
-                if obj is not self.context:
+                if obj != self.context:
                     return obj
 
     def carryover_source_view(self):
