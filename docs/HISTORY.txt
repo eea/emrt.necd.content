@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.29 (2022-04-28)
+
+- Feature #142225 - Show source recommendation and LR comments on carried over observations - fixes
+
 2.5.28 (2022-04-28)
 
 - Feature #142225 - Show source recommendation and LR comments on carried over observations
