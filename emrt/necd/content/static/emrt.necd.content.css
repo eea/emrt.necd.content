@@ -830,3 +830,17 @@ input[name="xls_file"]{
     color: #00529B;
     background-color: #BDE5F8;
     }
+
+.carryover-box {
+    border: 1px solid lightgray;
+    padding: 0.5em 1em;
+    background-color: #dedede;
+    margin-bottom: 1em;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.carryover-box dd,
+.carryover-box dl {
+    margin-bottom: 0!important;
+}
