@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.28 (2022-04-28)
+
+- Feature #142225 - Show source recommendation and LR comments on carried over observations
+
 2.5.27 (2022-02-18)
 
 - Task #135014 - SE unable to see carried over observations
