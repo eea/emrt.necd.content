@@ -47,6 +47,7 @@ from zope.browserpage.viewpagetemplatefile import (
 )
 from zope.component import createObject
 from zope.component import getUtility
+from zope.component import getMultiAdapter
 from zope.event import notify
 from zope.i18n import translate
 from zope.interface import alsoProvides
@@ -1539,6 +1540,20 @@ class ObservationView(ObservationMixin):
 
     def is_projection(self):
         return _is_projection(self.context.aq_parent)
+
+    def carryover_source(self):
+        if getattr(self.context, "carryover_from", None):
+            catalog = api.portal.get_tool("portal_catalog")
+            found = catalog(portal_type="Observation", id=self.context.getId())
+            for brain in found:
+                obj = brain.getObject()
+                if obj is not self.context:
+                    return obj
+
+    def carryover_source_view(self):
+        source = self.carryover_source()
+        if source:
+            return getMultiAdapter((source, self.request), name="view")
 
 
 class ExportAsDocView(ObservationMixin):
