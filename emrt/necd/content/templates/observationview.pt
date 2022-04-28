@@ -441,11 +441,19 @@
                   <dt>Source observation:</dt>
                   <dd><a href="${python:carryover_source.absolute_url()}" target="_blank">${carryover_source/getId}</a></dd>
                   <tal:block condition="show_internal_notes">
-                    <tal:notes define="carryover_source_view view/carryover_source_view; carryover_source_conclusion carryover_source_view/get_conclusion">
-                      <dt>Source recommendation/internal note:</dt>
-                      <dd><span tal:replace="carryover_source_conclusion/text/output|carryover_source_conclusion/text|nothing" /></dd>
-                      <dt>Source LR comments on finish observation request:</dt>
-                      <dd><span tal:replace="carryover_source/closing_deny_comments/output|carryover_source/closing_deny_comments|nothing" /></dd>
+                    <tal:notes define="
+                      carryover_source_view view/carryover_source_view;
+                      carryover_source_conclusion carryover_source_view/get_conclusion;
+                      carryover_source_conclusion_text carryover_source_conclusion/text/output|carryover_source_conclusion/text|nothing;
+                      carryover_source_closing_deny_comments carryover_source/closing_deny_comments/output|carryover_source/closing_deny_comments|nothing">
+                      <tal:cond condition="carryover_source_conclusion_text">
+                        <dt>Source recommendation/internal note:</dt>
+                        <dd>${carryover_source_conclusion_text}</dd>
+                      </tal:cond>
+                      <tal:cond condition="carryover_source_closing_deny_comments">
+                        <dt>Source LR comments on finish observation request:</dt>
+                        <dd>${carryover_source_closing_deny_comments}</dd>
+                      </tal:cond>
                     </tal:notes>
                   </tal:block>
                 </tal:source>
