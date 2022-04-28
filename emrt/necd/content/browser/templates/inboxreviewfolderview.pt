@@ -22,7 +22,7 @@
                 sections_viewable sections/viewable;
                 sections_total_obs sections/total_sum;
                 sec_cur python:request.get('section', '');
-                req_params python:[(k, v) for k, v in request.form.items() if k != 'section' and 'b_start' not in k]">
+                req_params python:view.req_params()">
     <metal:content-core define-macro="content-core">
 
   <div id="inbox-view-content">
@@ -50,17 +50,35 @@
   <div id="filters">
     <div class="row" style="padding-top:30px">
       <div class="cell position-1 width-3 esdLabel">Free text</div>
+      <div class="cell position-11 width-3 esdLabel tooltipIconBlue" title="Key flags highlight important information that is closely related to the item.">Description flags</div>
     </div>
     <div class="row">
       <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
-        <div class="cell position-1 width-12 esdLabel">
-          <tal:params repeat="req_param python:[x for x in req_params if x[0] != 'freeText']">
+        <div class="cell position-1 width-10">
+          <tal:params repeat="req_param python:[x for x in req_params if x[0] not in ['freeText', 'highlights']]">
             <input type="hidden" name="${python:req_param[0]}" value="${python:req_param[1]}" />
           </tal:params>
           <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" value="${freeText}" />
+          <div class="row" style="padding-top:30px">
+            <input type="submit" class="standardButton" id="btnFilter" value="Search" />
+          </div>
         </div>
-        <div class="cell position-14 width-1">
-          <input type="submit" class="standardButton" id="btnFilter" value="Search" />
+        <div class="cell position-11 width-5">
+          <tal:block tal:repeat="item view/get_highlights">
+            <tal:block tal:define="highlights python:[];
+                                   highlights request/highlights | highlights">
+              <input type="checkbox"
+                name="highlights:list"
+                tal:attributes="value python:item[0];
+                                checked python:item[0] in highlights;
+                                id python:item[0]"/>
+              <label tal:attributes="for python:item[0];"
+                tal:content="python:item[1]"></label><br/>
+                <br tal:condition="python:item[0] in ['unece','acc']"/>
+              <div tal:condition="python:item[0] in ['unece','acc']" class="esdLabel">Draft/final conclusion flags</div>
+
+            </tal:block>
+          </tal:block>
         </div>
       </form>
     </div>
@@ -81,7 +99,7 @@
                     <tal:subsec-def define="current python:subsec['slug'] == sec_cur; num_obs subsec/num_obs">
                     <li class="section-subsection ${python:'current' if current else ''}">
                       <span tal:condition="not:num_obs" class="muted">${subsec/title}</span>
-                      <a tal:condition="num_obs" href="./inboxview?${python:'&'.join(['='.join(x) for x in req_params + [('section', subsec['slug'])]])}">${subsec/title}</a>
+                      <a tal:condition="num_obs" href="./inboxview?${python:'&'.join(view.join_req_params(req_params + [('section', subsec['slug'])]))}">${subsec/title}</a>
                       <span tal:condition="num_obs" class="obs-count">(${num_obs})</span>
                     </li>
                     </tal:subsec-def>

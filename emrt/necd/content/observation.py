@@ -79,18 +79,21 @@ from emrt.necd.content.vocabularies import INECDVocabularies
 
 # [refs #104852] Hide Projection Year and Reference Year for
 # users with these sectors.
-PROJECTION_HIDE_YEARS = ('sector6', 'sector7', 'sector8', 'sector9')
+# [refs #134554] No longer used
+PROJECTION_HIDE_YEARS = ('sector9', )
 
 
 def projection_hide_for_user():
-    user = api.user.get_current()
+    # This is no longer used (#134554)
+    return False
+    # user = api.user.get_current()
 
-    # Managers (Secretariat) should never be excluded.
-    if 'Manager' in user.getRoles():
-        return False
+    # # Managers (Secretariat) should never be excluded.
+    # if 'Manager' in user.getRoles():
+    #     return False
 
-    user_sectors = get_user_sectors(user)
-    return set(PROJECTION_HIDE_YEARS).intersection(user_sectors)
+    # user_sectors = get_user_sectors(user)
+    # return set(PROJECTION_HIDE_YEARS).intersection(user_sectors)
 
 
 def get_nfr_title_projection(fname):
@@ -322,18 +325,19 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
         category = get_category_ldap_from_nfr_code(value, self.context)
         user = api.user.get_current()
         groups = user.getGroups()
-        valid = False
-        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
-        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
-        for group in groups:
-            if group.startswith('{}-{}-'.format(ldap_se, category)):
-                valid = True
-                break
-        if not valid:
-            raise Invalid(
-                u'You are not allowed to add observations '
-                u'for this sector category.'
-            )
+        if "Manager" not in api.user.get_roles(user=user):
+            valid = False
+            ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+            ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+            for group in groups:
+                if group.startswith('{}-{}-'.format(ldap_se, category)):
+                    valid = True
+                    break
+            if not valid:
+                raise Invalid(
+                    u'You are not allowed to add observations '
+                    u'for this sector category.'
+                )
 
 
 validator.WidgetValidatorDiscriminators(
@@ -346,21 +350,22 @@ class CountryContextValidator(validator.SimpleFieldValidator):
     def validate(self, value):
         user = api.user.get_current()
         groups = user.getGroups()
-        valid = False
+        if "Manager" not in api.user.get_roles(user=user):
+            valid = False
 
-        ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
-        ldap_se = ldap_wrapper(LDAP_SECTOREXP)
+            ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
+            ldap_se = ldap_wrapper(LDAP_SECTOREXP)
 
-        for group in groups:
-            is_se = group.startswith('{}-'.format(ldap_se))
-            if is_se and group.endswith('-%s' % value):
-                valid = True
-                break
+            for group in groups:
+                is_se = group.startswith('{}-'.format(ldap_se))
+                if is_se and group.endswith('-%s' % value):
+                    valid = True
+                    break
 
-        if not valid:
-            raise Invalid(
-                u'You are not allowed to add observations for this country.'
-            )
+            if not valid:
+                raise Invalid(
+                    u'You are not allowed to add observations for this country.'
+                )
 
 
 validator.WidgetValidatorDiscriminators(
@@ -784,6 +789,7 @@ class Observation(Container):
                 elif i_rstate == 'recalled-lr':
                     item['state'] = 'Question recalled'
                     item['role'] = "Lead reviewer"
+                    question_wf.append(item)
                 elif i_rstate == 'answered':
                     item['state'] = 'Answer sent'
                     item['role'] = "Member state coordinator"
@@ -942,9 +948,13 @@ class Observation(Container):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
+            this_year = datetime.datetime.now().year
+            # [refs #134160] only count events that happened this year
+            # as the Observation may be a carry-over.
             states = [
                 w.get('review_state')
                 for w in winfo.get('esd-question-review-workflow', [])
+                if w["time"].year() == this_year
             ]
             if states:
                 sp = { s: idx for idx, s in enumerate(states) }

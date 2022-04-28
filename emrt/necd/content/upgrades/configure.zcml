@@ -566,15 +566,20 @@
 
  <genericsetup:upgradeSteps
     source="2.4.0"
-    destination="2.5.2"
+    destination="2.4.3"
     profile="emrt.necd.content:default">
 
-    <genericsetup:upgradeStep
-      title="Migrate tuple years"
-      description="[refs #107150] - Export XLS doesn't work in the projection tab"
-      handler="emrt.necd.content.upgrades.evolve252.run"
-    />
+    <genericsetup:upgradeDepends
+      title="Update workflows"
+      description="[refs #106008] Small bug in the comment loop"
+      import_steps="workflow"
+      />
 
+    <genericsetup:upgradeStep
+      title="Update permissions of existing content"
+      description="[refs #106008] Small bug in the comment loop"
+      handler="emrt.necd.content.upgrades.evolve243.run"
+    />
   </genericsetup:upgradeSteps>
 
  <!-- Migration for emrt-necd-test, which had the 2.4.3 code. -->
@@ -627,6 +632,19 @@
       handler=".evolve258.upgrade"
       />
 
+  </genericsetup:upgradeSteps>
+
+ <genericsetup:upgradeSteps
+    source="2.5.8"
+    destination="2.5.24"
+    profile="emrt.necd.content:default">
+
+
+    <genericsetup:upgradeStep
+      title="[refs #134160] Correctly index for current year."
+      description="Reindex 'observation_already_replied', 'observation_sent_to_msc' and 'observation_sent_to_mse'."
+      handler=".evolve2524.upgrade"
+      />
 
   </genericsetup:upgradeSteps>
 

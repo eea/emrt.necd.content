@@ -5,6 +5,8 @@ from types import StringType
 from types import TupleType
 from types import UnicodeType
 
+import datetime
+
 from zope.schema import getFieldsInOrder
 
 from Products.CMFPlone.utils import safe_unicode
@@ -14,7 +16,7 @@ from plone.app.discussion.interfaces import IConversation
 from plone.app.textfield.interfaces import IRichTextValue
 from plone.indexer import indexer
 
-from conclusions import IConclusions
+from .conclusions import IConclusions
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.commentanswer import ICommentAnswer
 from emrt.necd.content.utils import get_vocabulary_value
@@ -236,9 +238,25 @@ def observation_sent_to_msc(context):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
-            for witem in winfo.get('esd-question-review-workflow', []):
+            was_or_is_pending = False
+            has_public_questions = False
+            this_year = datetime.datetime.now().year
+            # [refs #134160] only count events that happened this year
+            # as the Observation may be a carry-over.
+            witems = [
+                w
+                for w in winfo.get('esd-question-review-workflow', [])
+                if w["time"].year() == this_year
+            ]
+            for witem in witems:
                 if witem.get('review_state', '').endswith('pending'):
-                    return True
+                    was_or_is_pending = True
+                    break
+            for q in question.get_questions():
+                if api.content.get_state(obj=q) == "public":
+                    has_public_questions = True
+                    break
+            return was_or_is_pending and has_public_questions
         return False
     except:
         return False
@@ -251,7 +269,15 @@ def observation_sent_to_mse(context):
         if questions:
             question = questions[0]
             winfo = question.workflow_history
-            for witem in winfo.get('esd-question-review-workflow', []):
+            this_year = datetime.datetime.now().year
+            # [refs #134160] only count events that happened this year
+            # as the Observation may be a carry-over.
+            witems = [
+                w
+                for w in winfo.get('esd-question-review-workflow', [])
+                if w["time"].year() == this_year
+            ]
+            for witem in witems:
                 if witem.get('review_state', '').endswith('expert-comments'):
                     return True
         return False

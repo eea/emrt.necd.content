@@ -1,5 +1,5 @@
 <metal:page use-macro="here/main_template/macros/master">
-<metal:content fill-slot="main">
+<metal:content fill-slot="main" tal:define="is_projection python:options.get('is_projection')">
     <h1 class="documentFirstHeading">Observations carry-over</h1>
 
     <br />
@@ -20,7 +20,7 @@
         <div>
             <strong>Direct copy</strong>
             <p>
-                Expects a 6 column XLS file, as below.
+                Expects a 8 column XLS file, as below.
                 Observations are copied as-is, the ID will be preserved.
                 If provided, the conclusion text will replace the existing conclusion text.
             </p>
@@ -32,6 +32,8 @@
                   <th>userid</th>
                   <th>Description text</th>
                   <th>Review year</th>
+                  <th tal:condition="not:is_projection">Inventory year</th>
+                  <th tal:condition="is_projection">Projection year</th>
                   <th>NFR Code</th>
                   <th>Pollutants</th>
                 </tr>
@@ -42,6 +44,8 @@
                   <td>someuserid</td>
                   <td>Description text that will replace the existing one.</td>
                   <td>2018</td>
+                  <td tal:condition="not:is_projection">2018-2020</td>
+                  <td tal:condition="is_projection">2020<br />2025<br />2030<br />2040<br />2050</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
               </tr></tbody>
@@ -52,12 +56,14 @@
         <div>
             <strong>Complex copy</strong>
             <p>
-                Expects a 7 column XLS file, as below. Observations are copied as-is from the "Source" and:
+                Expects a 9 column XLS file, as below. Observations are copied as-is from the "Source" and:
                 <ul>
                     <li>The ID will be changed to that of the "Older source".</li>
                     <li>"Older source" Q&A will be prepended to the "Source" one.</li>
                     <li>The review year will be set to the "Older source".</li>
                     <li>Field: Review year (int) - single value.</li>
+                    <li tal:condition="not:is_projection">Field: Inventory year (string) - single value (2018), comma separated list (2017,2018,2019), or range (2017-2019).</li>
+                    <li tal:condition="is_projection">Field: Projection year (list) - multiple values, separated by newline. Valid values: 2020, 2025, 2030, 2040, 2050</li>
                     <li>Field: NFR category code (string) - single value.</li>
                     <li>Field: Pollutants (list) - multiple values, separated by newline.</li>
                 </ul>
@@ -72,6 +78,8 @@
                   <th>userid</th>
                   <th>Description text</th>
                   <th>Review year</th>
+                  <th tal:condition="not:is_projection">Inventory year</th>
+                  <th tal:condition="is_projection">Projection year</th>
                   <th>NFR Code</th>
                   <th>Pollutants</th>
                 </tr>
@@ -83,6 +91,8 @@
                   <td>someuserid</td>
                   <td>Description text that will replace the existing one.</td>
                   <td>2018</td>
+                  <td tal:condition="not:is_projection">2018-2020</td>
+                  <td tal:condition="is_projection">2020<br />2025<br />2030<br />2040<br />2050</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
               </tr></tbody>
@@ -106,7 +116,7 @@
         <form action="./carryover" method="POST" enctype="multipart/form-data">
             <div class="field">
                 <label>Copy action
-                    <select name="action">
+                    <select name="action" required="required">
                         <option value="">Select copy action</option>
                         <option value="direct">Direct copy</option>
                         <option value="complex">Complex copy</option>
@@ -114,7 +124,7 @@
                 </label>
             </div>
             <div class="field">
-                <Label>Mapping file<input type="file" name="xls" /></Label>
+                <Label>Mapping file<input type="file" name="xls" required="required"/></Label>
             </div>
             <input type="submit" value="Submit" />
         </form>
