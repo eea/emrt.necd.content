@@ -1542,13 +1542,29 @@ class ObservationView(ObservationMixin):
         return _is_projection(self.context.aq_parent)
 
     def carryover_source(self):
+        result = None
         if getattr(self.context, "carryover_from", None):
-            catalog = api.portal.get_tool("portal_catalog")
-            found = catalog(portal_type="Observation", id=self.context.getId())
-            for brain in found:
-                obj = brain.getObject()
-                if obj != self.context:
-                    return obj
+            carryover_source_path = getattr(self.context, "carryover_source_path", None)
+            if carryover_source_path:
+                try:
+                    portal = api.portal.get()
+                    result = portal.restrictedTraverse(carryover_source_path)
+                except Exception:
+                    pass
+            if not result:
+                catalog = api.portal.get_tool("portal_catalog")
+                found = catalog(
+                    portal_type="Observation",
+                    id=self.context.getId(),
+                    sort_on="modified",
+                    sort_order="descending"
+                )
+                for brain in found:
+                    obj = brain.getObject()
+                    if obj != self.context:
+                        result = obj
+                        break
+        return result
 
     def carryover_source_view(self):
         source = self.carryover_source()
