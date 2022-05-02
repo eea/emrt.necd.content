@@ -379,7 +379,10 @@ def set_title_to_observation(obj, event):
     sector = safe_unicode(obj.ghg_source_category_value())
     pollutants = safe_unicode(obj.pollutants_value())
     obj_year = (
-        obj.year if isinstance(obj.year, basestring)
+        obj.year if (
+            isinstance(obj.year, basestring)
+            or isinstance(obj.year, int)
+        )
         else ', '.join(obj.year)
     ) if obj.year else u''
     inventory_year = safe_unicode(str(obj_year))
