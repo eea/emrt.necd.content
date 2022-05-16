@@ -82,6 +82,7 @@ from emrt.necd.content.vocabularies import INECDVocabularies
 # users with these sectors.
 # [refs #134554] No longer used
 PROJECTION_HIDE_YEARS = ('sector9', )
+RE_YEAR = r'\d{4}'
 
 
 def projection_hide_for_user():
@@ -745,10 +746,9 @@ class Observation(Container):
                 observation_wf.append(item)
 
         history = list(observation_wf)
-        questions = self.get_values_cat()
+        question = self.get_question()
 
-        if questions:
-            question = questions[0]
+        if question:
             question_history = question.workflow_history.get(
                 'esd-question-review-workflow', [])
             for item in question_history:
@@ -1555,6 +1555,8 @@ class ObservationView(ObservationMixin):
                 except Exception:
                     pass
             if not result:
+                my_path = self.context.getPhysicalPath()
+                my_year = int(re.match(RE_YEAR, my_path[-2]).group())
                 catalog = api.portal.get_tool("portal_catalog")
                 found = catalog(
                     portal_type="Observation",
@@ -1562,11 +1564,16 @@ class ObservationView(ObservationMixin):
                     sort_on="modified",
                     sort_order="descending"
                 )
+                candidates = []
                 for brain in found:
-                    obj = brain.getObject()
-                    if obj != self.context:
-                        result = obj
-                        break
+                    their_path = brain.getPath().split("/")
+                    if their_path != my_path:
+                        their_year = int(re.match(RE_YEAR, their_path[-2]).group())
+                        if my_year > their_year:
+                            candidates.append(brain)
+                if candidates:
+                    result = candidates[0].getObject()
+
         return result
 
     def carryover_source_view(self):
