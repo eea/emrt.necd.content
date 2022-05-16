@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.36 (2022-05-16)
+
+- Bug #149838 - Follow-up question issue on previous recommendations
+- Feature #142225 - Better identification of source observation
+
 2.5.35 (2022-05-11)
 
 - Task #149632 - Prevent unnecessary calls to the carried-over observation source
