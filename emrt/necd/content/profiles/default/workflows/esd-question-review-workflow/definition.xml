@@ -37,8 +37,10 @@
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -99,6 +101,7 @@
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -161,6 +164,7 @@
    <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
+   <permission-role>Manager</permission-role>
    <permission-role>SectorExpert</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -226,6 +230,7 @@
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="False">
+   <permission-role>Manager</permission-role>
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
@@ -278,10 +283,13 @@
   <permission-map name="CMFEditions: Save new version" acquired="False">
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Reply to item" acquired="False">
    <permission-role>MSAuthority</permission-role>
@@ -343,6 +351,7 @@
    <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -398,10 +407,13 @@
    <permission-role>MSAuthority</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Reply to item" acquired="False">
   </permission-map>
@@ -453,8 +465,10 @@
    <permission-role>LeadReviewer</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
    <permission-role>Manager</permission-role>
@@ -506,10 +520,13 @@
    <permission-role>MSExpert</permission-role>
   </permission-map>
   <permission-map name="Delete objects" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Delete portal content" acquired="True">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Modify portal content" acquired="False">
+   <permission-role>Manager</permission-role>
   </permission-map>
   <permission-map name="Reply to item" acquired="False">
   </permission-map>
