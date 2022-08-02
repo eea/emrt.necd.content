@@ -37,6 +37,7 @@ setup(
         "plone.app.dexterity [relations]",
         "plone.namedfile [blobs]",
         "collective.z3cform.datagridfield",
+        "plone.formwidget.multifile",
         "plone.api",
         "Products.ATVocabularyManager",
         "plone.app.versioningbehavior",
