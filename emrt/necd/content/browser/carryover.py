@@ -144,6 +144,7 @@ def _copy_obj(target, ob, new_id=None):
 def _copy_and_flag(context, obj, new_id=None):
     parse_id = ReadId(new_id or obj.getId())
     ob = _copy_obj(context, obj, new_id=new_id)
+    ob.carryover_source_path = "/".join(obj.getPhysicalPath())
     ob.carryover_from = parse_id.year
     ob.review_year = int(parse_id.year)
 

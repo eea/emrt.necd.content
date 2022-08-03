@@ -648,4 +648,18 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.24"
+    destination="2.5.33"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update NFR codes."
+      description="[refs #149631] Adding new LDAP Sector for NFR sector 2D"
+      import_steps="plone.app.registry"
+      />
+
+  </genericsetup:upgradeSteps>
+
+
 </configure>

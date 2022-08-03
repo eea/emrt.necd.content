@@ -3,7 +3,7 @@ import os
 from setuptools import find_packages
 from setuptools import setup
 
-VERSION = "2.5.27"
+VERSION = "2.5.36"
 
 
 setup(
@@ -37,6 +37,7 @@ setup(
         "plone.app.dexterity [relations]",
         "plone.namedfile [blobs]",
         "collective.z3cform.datagridfield",
+        "plone.formwidget.multifile",
         "plone.api",
         "Products.ATVocabularyManager",
         "plone.app.versioningbehavior",
