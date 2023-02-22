@@ -882,10 +882,13 @@ class Observation(Container):
         return False
 
     def observation_is_technical_correction(self):
-        if self.get_status() == "closed":
-            con = self.get_conclusion()
-            if con:
-                return con.closing_reason == "technical-correction"
+        if self.highlight:
+            return 'tc' in self.highlight
+        return False
+
+    def observation_is_revised_estimate(self):
+        if self.highlight:
+            return 'rev-est' in self.highlight
         return False
 
     def get_conclusion(self):

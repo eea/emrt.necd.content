@@ -807,6 +807,8 @@ def decorate(item):
         item.observation_is_potential_technical_correction()
     new_item['observation_is_technical_correction'] = \
         item.observation_is_technical_correction()
+    new_item['observation_is_revised_estimate'] = \
+        item.observation_is_revised_estimate()
     new_item['text'] = item.text
     new_item['nfr_code_value'] = item.nfr_code_value()
     new_item['modified'] = item.modified()

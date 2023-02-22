@@ -668,6 +668,12 @@
     profile="emrt.necd.content:default">
 
     <genericsetup:upgradeDepends
+      title="[refs #162078] Import catalog"
+      description="[refs #162078] New column added: observation_is_revised_estimate."
+      import_steps="catalog"
+      />
+
+    <genericsetup:upgradeDepends
       title="Update NFR codes."
       description="[refs #162117] Remove GRID and LPS NFR codes."
       import_steps="plone.app.registry"
