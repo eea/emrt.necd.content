@@ -673,6 +673,18 @@
       import_steps="plone.app.registry"
       />
 
+    <genericsetup:upgradeStep
+      title="[refs #162073] Delete highlight vocabulary"
+      description="Will be reimported by next step"
+      handler="emrt.necd.content.upgrades.evolve2537.run"
+     />
+
+    <genericsetup:upgradeDepends
+      title="Reimport missing vocabularies."
+      description="[refs #162073] Updating vocabularies"
+      import_steps="emrt.necd.content.setup.vocabularies"
+      />
+
   </genericsetup:upgradeSteps>
 
 </configure>
