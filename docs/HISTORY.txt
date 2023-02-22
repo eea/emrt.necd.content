@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.5.37 (2023-02-22)
+
+- Feature #162073 - Creation of a Transparency flag
+- Feature #162078 - Creation of revised estimate and technical correction stamps
+- Feature #162117 - Hide Grid and LPS NFR codes in 2023 inventory
+
 2.5.36 (2022-05-16)
 
 - Bug #149838 - Follow-up question issue on previous recommendations
