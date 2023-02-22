@@ -22,12 +22,19 @@ from zope.annotation import factory
 from zope.component import adapts
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+from plone.formwidget.multifile import MultiFileFieldWidget
 
 
 class ICommentExtenderFields(Interface):
     attachment = NamedBlobFile(
         title=_(u"Attachment"),
         description=_(u""),
+        required=False,
+    )
+
+    attachments = schema.List(
+        title=u"Attachments",
+        value_type=NamedBlobFile(),
         required=False,
     )
 
@@ -78,3 +85,5 @@ class CommentExtender(extensible.FormExtender):
         )
         self.form.fields['redraft_message'].mode = interfaces.HIDDEN_MODE
         self.form.fields['redraft_date'].mode = interfaces.HIDDEN_MODE
+        self.form.fields['attachment'].mode = interfaces.HIDDEN_MODE
+        self.form.fields['attachments'].widgetFactory = MultiFileFieldWidget

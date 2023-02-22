@@ -189,6 +189,13 @@
         />
 
     <browser:page
+        name="multi-download"
+        for="plone.app.discussion.interfaces.IComment"
+        class=".attachmentdownload.MultiDownload"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="manage_forcing_workflow_state"
         for="*"
         class=".statechange.UpdateWorkflow"
