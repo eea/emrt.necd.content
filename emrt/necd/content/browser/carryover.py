@@ -75,7 +75,7 @@ def read_inventory_year(value):
 def read_projection_year(value):
     value = str(value) if isinstance(value, (int, long)) else value
     years = read_list(value)
-    proj_years = [u"2020", u"2025", u"2030", u"2040", u"2050"]
+    proj_years = [u"2025", u"2030", u"2040", u"2050"]
     is_correct = bool(set(years) & set(proj_years))
     if is_correct:
         return years

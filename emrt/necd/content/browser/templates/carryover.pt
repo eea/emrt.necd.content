@@ -45,7 +45,7 @@
                   <td>Description text that will replace the existing one.</td>
                   <td>2018</td>
                   <td tal:condition="not:is_projection">2018-2020</td>
-                  <td tal:condition="is_projection">2020<br />2025<br />2030<br />2040<br />2050</td>
+                  <td tal:condition="is_projection">2025<br />2030<br />2040<br />2050</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
               </tr></tbody>
@@ -63,7 +63,7 @@
                     <li>The review year will be set to the "Older source".</li>
                     <li>Field: Review year (int) - single value.</li>
                     <li tal:condition="not:is_projection">Field: Inventory year (string) - single value (2018), comma separated list (2017,2018,2019), or range (2017-2019).</li>
-                    <li tal:condition="is_projection">Field: Projection year (list) - multiple values, separated by newline. Valid values: 2020, 2025, 2030, 2040, 2050</li>
+                    <li tal:condition="is_projection">Field: Projection year (list) - multiple values, separated by newline. Valid values: 2025, 2030, 2040, 2050</li>
                     <li>Field: NFR category code (string) - single value.</li>
                     <li>Field: Pollutants (list) - multiple values, separated by newline.</li>
                 </ul>
@@ -92,7 +92,7 @@
                   <td>Description text that will replace the existing one.</td>
                   <td>2018</td>
                   <td tal:condition="not:is_projection">2018-2020</td>
-                  <td tal:condition="is_projection">2020<br />2025<br />2030<br />2040<br />2050</td>
+                  <td tal:condition="is_projection">2025<br />2030<br />2040<br />2050</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
               </tr></tbody>

@@ -7,7 +7,7 @@
     <p class="import-info"><b>Important: </b>
       <br />When writing to your excel file, in case of fields such as 'Pollutants' or 'Parameter',
       if your observation has multiple values, please write them one per line, as in the sample import file.
-      <br /> ${python: "The 'Projection year' field can have multiple values, written as mentioned above. The values have to be: 2020, 2025, 2030, 2040 or 2050." if context.type=='projection' else None}
+      <br /> ${python: "The 'Projection year' field can have multiple values, written as mentioned above. The values have to be: 2025, 2030, 2040 or 2050." if context.type=='projection' else None}
       <br/> The ${python: "'Fuel'" if context.type=='inventory' else "'Activity data type', 'Activity data', 'Scenario type'"}
       and 'Description Flags' fields can be left empty as they are not mandatory fields.
       <br /> The MS Key Category field can be set to 'True' if the observation belongs to this category

@@ -1060,12 +1060,11 @@ def set_form_fields(form_instance):
                 description=(
                     u"Projection year is the year or a "
                     "list of years "
-                    u"(e.g. '2050', '2020, 2025, 2030') when the emissions had"
+                    u"(e.g. '2050', '2025, 2030') when the emissions had"
                     u" occured for which an issue was observed in the review."
                 ),
                 value_type=schema.Choice(
                     values=[
-                        u'2020',
                         u'2025',
                         u'2030',
                         u'2040',

@@ -57,7 +57,7 @@ class GetSampleXLS(BrowserView):
 
         if is_projection:
             header = XLS_SAMPLE_HEADER_PROJECTION
-            proj_years = ['2020', '2025', '2030', '2040', '2050']
+            proj_years = ['2025', '2030', '2040', '2050']
             scenario_voc = get_vocabulary('emrt.necd.content.scenario_type')
             act_type_v = get_vocabulary('emrt.necd.content.activity_data_type')
 

@@ -175,7 +175,7 @@ class Entry(object):
             years = _multi_rows(self.constants['year'](self.row))
             if years == ('',):
                 return ''
-            proj_years = [u'2020', u'2025', u'2030', u'2040', u'2050']
+            proj_years = [u'2025', u'2030', u'2040', u'2050']
             is_correct = bool(set(years) & set(proj_years))
             return list(years) if is_correct else False
 
