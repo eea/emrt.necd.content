@@ -693,4 +693,16 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.37"
+    destination="2.5.38"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update NFR codes."
+      description="[refs #249237] New mapping of solvent/non-solvent IPPU split."
+      import_steps="plone.app.registry"
+      />
+  </genericsetup:upgradeSteps>
+
 </configure>
