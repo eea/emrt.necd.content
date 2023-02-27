@@ -703,6 +703,19 @@
       description="[refs #249237] New mapping of solvent/non-solvent IPPU split."
       import_steps="plone.app.registry"
       />
+
+    <genericsetup:upgradeStep
+      title="[refs #249176] Delete highlight_projection vocabulary"
+      description="Will be reimported by next step"
+      handler="emrt.necd.content.upgrades.evolve2538.run"
+     />
+
+    <genericsetup:upgradeDepends
+      title="Reimport missing vocabularies."
+      description="[refs #249176] Updating vocabularies"
+      import_steps="emrt.necd.content.setup.vocabularies"
+      />
+
   </genericsetup:upgradeSteps>
 
 </configure>
