@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.5.38 (2023-02-28)
+
+- Task #249245 - Projections: Update to the NFR code list
+- Task #249174 - Projections: Removal of projection year 2020
+- Task #249177 - Projections: Update to Parameters list
+- Task #249176 - Projections: update of description flag
+- Feature #249237 - New mapping of solvent/non-solvent IPPU split
+
 2.5.37 (2023-02-22)
 
 - Feature #162073 - Creation of a Transparency flag
