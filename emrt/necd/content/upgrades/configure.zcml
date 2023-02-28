@@ -700,7 +700,7 @@
 
     <genericsetup:upgradeDepends
       title="Update NFR codes."
-      description="[refs #249237] New mapping of solvent/non-solvent IPPU split."
+      description="[refs #249237 #249177 #249245] Update NFR codes, update projection parameter vocab."
       import_steps="plone.app.registry"
       />
 
