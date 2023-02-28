@@ -213,6 +213,9 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
 class ReviewFolder(Container):
     """ """
 
+    def get_review_folder(self):
+        return self
+
 
 class ReviewFolderMixin(BrowserView):
 

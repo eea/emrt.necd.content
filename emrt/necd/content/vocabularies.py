@@ -77,12 +77,14 @@ class INECDVocabularies(Interface):
         value_type=schema.TextLine(title=_(u"Pollutant value"),),
     )
 
-    projection_parameter = schema.Dict(
+    projection_parameter = schema.List(
         title=_(u"Projection parameter vocabulary"),
         description=_(u"Registers the values for parameter in the context of "
                       u"a Projection ReviewFolder"),
-        key_type=schema.TextLine(title=_(u"Parameter key")),
-        value_type=schema.TextLine(title=_(u"Parameter value"),),
+        value_type=schema.Dict(
+            key_type=schema.TextLine(title=_(u"Key")),
+            value_type=schema.TextLine(title=_(u"Value"),),
+        ),
     )
 
     activity_data = schema.Dict(
@@ -231,9 +233,21 @@ class Parameter(object):
             pollutants = get_registry_interface_field_data(
                 INECDVocabularies, 'projection_parameter'
             )
+            try:
+                tool_id = context.get_review_folder().getId()
+            except AttributeError:
+                tool_id = None
 
-            for key, value in pollutants.items():
-                terms.append(SimpleVocabulary.createTerm(key, key, value))
+            for pol in pollutants:
+                key = pol["key"]
+                label = pol["label"]
+
+                if tool_id:
+                    disabled = pol.get("disabled", "").split(",")
+                    if tool_id and tool_id in disabled:
+                        continue
+
+                terms.append(SimpleVocabulary.createTerm(key, key, label))
 
         return SimpleVocabulary(terms)
 

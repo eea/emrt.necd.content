@@ -205,15 +205,44 @@
   </record>
   <record name="emrt.necd.content.vocabularies.INECDVocabularies.projection_parameter">
     <value purge="True">
-      <element key="act">Activity data</element>
-      <element key="efep">Emission factor</element>
-      <element key="emi">Emission</element>
-      <element key="fus">Fuel used/sold</element>
-      <element key="gc">Geographical coverage</element>
-      <element key="pams">PaMs</element>
-      <element key="napcpcs">NAPCP - Compliance screening</element>
-      <element key="napcpidc">NAPCP - In-depth check</element>
-      <element key="other">Other</element>
+      <element>
+        <element key="key">act</element>
+        <element key="label">Activity data</element>
+      </element>
+      <element>
+        <element key="key">efep</element>
+        <element key="label">Emission factor</element>
+      </element>
+      <element>
+        <element key="key">emi</element>
+        <element key="label">Emission</element>
+      </element>
+      <element>
+        <element key="key">fus</element>
+        <element key="label">Fuel used/sold</element>
+      </element>
+      <element>
+        <element key="key">gc</element>
+        <element key="label">Geographical coverage</element>
+      </element>
+      <element>
+        <element key="key">pams</element>
+        <element key="label">PaMs</element>
+      </element>
+      <element>
+        <element key="key">napcpcs</element>
+        <element key="label">NAPCP - Compliance screening</element>
+        <element key="disabled">2023-projection</element>
+      </element>
+      <element>
+        <element key="key">napcpidc</element>
+        <element key="label">NAPCP - In-depth check</element>
+        <element key="disabled">2023-projection</element>
+      </element>
+      <element>
+        <element key="key">other</element>
+        <element key="label">Other</element>
+      </element>
     </value>
   </record>
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection">
