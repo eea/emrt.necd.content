@@ -60,6 +60,8 @@
       <element key="1A4bii">sector2|1A4bii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4bii Residential: Household and gardening (mobile)</element>
       <element key="1A4cii">sector2|1A4cii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4cii Agriculture/Forestry/Fishing: Off-road vehicles and other machinery</element>
       <element key="1A4ciii">sector2|1A4ciii|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4ciii Agriculture/Forestry/Fishing: National fishing</element>
+      <element key="1A4">sector2|1A4|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A4 Commercial/Institutional/Residential Combustion</element>
+      <element key="1A5">sector2|1A5|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A5 Other combustion</element>
       <element key="1A5b">sector2|1A5b|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A5b Other, Mobile (including military, land based and recreational boats)</element>
       <element key="1A5c">sector2|1A5c|1A2gvii, 1A3a, 1A3c, 1A3d, 1A3ei, 1A3eii, 1A4, 1A5 Transport|1A5c Multilateral operations - Memo Item</element>
       <element key="1B">sector1|1B|1B, 2A Energy|1B Fugitive emission from fuels</element>
@@ -98,6 +100,7 @@
       <element key="2C4">sector3|2C4|2B, 2C IPPU|2C4 Magnesium production</element>
       <element key="2C5">sector3|2C5|2B, 2C IPPU|2C5 Lead production</element>
       <element key="2C6">sector3|2C6|2B, 2C IPPU|2C6 Zinc production</element>
+      <element key="2C7">sector3|2C7|2B, 2C IPPU Non-Solvents|2C7 Metal Industry Other</element>
       <element key="2C7a">sector3|2C7a|2B, 2C IPPU|2C7a Copper production</element>
       <element key="2C7b">sector3|2C7b|2B, 2C IPPU|2C7b Nickel production</element>
       <element key="2C7c">sector3|2C7c|2B, 2C IPPU|2C7c Other metal production (please specify in the IIR)</element>
@@ -124,10 +127,12 @@
       <element key="2L">sector3|2L|2G-2L IPPU|2L Other production, consumption, storage, transportation or handling of bulk products (please specify in the IIR)</element>
       <element key="3">sector4|3|3B - 3I Agriculture|3 Agriculture</element>
       <element key="3B">sector4|3B|3B - 3I Agriculture|3B Manure management</element>
+      <element key="3B1">sector4|3B1|3B - 3I Agriculture|3B1 Manure management - Cattle</element>
       <element key="3B1a">sector4|3B1a|3B - 3I Agriculture|3B1a Manure management - Dairy cattle</element>
       <element key="3B1b">sector4|3B1b|3B - 3I Agriculture|3B1b Manure management - Non-dairy cattle</element>
       <element key="3B2">sector4|3B2|3B - 3I Agriculture|3B2 Manure management - Sheep</element>
       <element key="3B3">sector4|3B3|3B - 3I Agriculture|3B3 Manure management - Swine</element>
+      <element key="3B4">sector4|3B4|3B - 3I Agriculture|3B4 Manure management - Other</element>
       <element key="3B4a">sector4|3B4a|3B - 3I Agriculture|3B4a Manure management - Buffalo</element>
       <element key="3B4d">sector4|3B4d|3B - 3I Agriculture|3B4d Manure management - Goats</element>
       <element key="3B4e">sector4|3B4e|3B - 3I Agriculture|3B4e Manure management - Horses</element>
@@ -138,6 +143,7 @@
       <element key="3B4giv">sector4|3B4giv|3B - 3I Agriculture|3B4giv Manure management - Other poultry</element>
       <element key="3B4h">sector4|3B4h|3B - 3I Agriculture|3B4h Manure management - Other animals (please specify in IIR)</element>
       <element key="3D">sector4|3D|3B - 3I Agriculture|3D Crop production and agricultural soils</element>
+      <element key="3Da">sector4|3Da|3B - 3I Agriculture|3Da Fertilizer Application</element>
       <element key="3Da1">sector4|3Da1|3B - 3I Agriculture|3Da1 Inorganic N-fertilizers (includes also urea application)</element>
       <element key="3Da2a">sector4|3Da2a|3B - 3I Agriculture|3Da2a Animal manure applied to soils</element>
       <element key="3Da2b">sector4|3Da2b|3B - 3I Agriculture|3Da2b Sewage sludge applied to soils</element>
@@ -158,6 +164,7 @@
       <element key="5B2">sector5|5B2|5A - 5E Waste|5B2 Biological treatment of waste - Anaerobic digestion at biogas facilities</element>
       <element key="5C">sector5|5C|5A - 5E Waste|5C Waste incineration</element>
       <element key="5C1a">sector5|5C1a|5A - 5E Waste|5C1a Municipal waste incineration</element>
+      <element key="5C1b">sector5|5C1b|5A - 5E Waste|5C1b Waste incineration (excluding Municipal)</element>
       <element key="5C1bi">sector5|5C1bi|5A - 5E Waste|5C1bi Industrial waste incineration</element>
       <element key="5C1bii">sector5|5C1bii|5A - 5E Waste|5C1bii Hazardous waste incineration</element>
       <element key="5C1biii">sector5|5C1biii|5A - 5E Waste|5C1biii Clinical waste incineration</element>
@@ -177,6 +184,7 @@
       <element key="11C">sector6|11C|11C National Total|11C Other natural emissions (please specify in the IIR)</element>
       <element key="0A">sector6|0A|0A National Total|0A National total - National total for the entire territory - Based on fuel sold/fuel used</element>
       <element key="0B">sector6|0B|0B National Total|0B National total for compliance assessment</element>
+      <element key="LPS-E">sector10|LPS-E|E_Solvents IPPU Solvents|LPS-E LPS - E_Solvents</element>
     </value>
   </record>
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.sectorNames">
