@@ -21,7 +21,8 @@ XLS_SAMPLE_HEADER_INVENTORY = (
 
 XLS_SAMPLE_HEADER_PROJECTION = (
     'Observation description', 'Country', 'NFR code projection',
-    'NFR inventories category code', 'Projection year', 'Reference year',
+    # 'NFR inventories category code',
+    'Projection year', 'Reference year',
     'Pollutants', 'Scenario type', 'Review year', 'Activity data type',
     'Activity data', 'MS Key Category', 'Parameter', 'Description Flags',
     'Initial question text',
@@ -62,7 +63,7 @@ class GetSampleXLS(BrowserView):
             act_type_v = get_vocabulary('emrt.necd.content.activity_data_type')
 
             p_year = '\n'.join(proj_years)
-            nfr_inventories = cycle([NFR_CODE, None])
+            # nfr_inventories = cycle([NFR_CODE, None])
             act_type = cycle(map(attrgetter('value'), act_type_v) + [None])
             activity_data = get_registry_interface_field_data(
                 INECDVocabularies, 'activity_data')
@@ -94,14 +95,16 @@ class GetSampleXLS(BrowserView):
             desc_fl = next(description_flags)
 
             if is_projection:
-                nfr_i = next(nfr_inventories)
+                # nfr_i = next(nfr_inventories)
                 activity_type = next(act_type)
                 activity = (
                     u'\n'.join(activity_data[activity_type]).encode('utf-8')
                     if activity_type else None
                 )
                 scenario_type = next(scenario)
-                row = [DESC, country, NFR_CODE, nfr_i, p_year, REFERENCE_YEAR,
+                row = [DESC, country, NFR_CODE,
+                       # nfr_i,
+                       p_year, REFERENCE_YEAR,
                        pollutants, scenario_type, REVIEW_YEAR, activity_type,
                        decode(activity), ms_key_cat, parameter, desc_fl,
                        QUESTION_TEXT]

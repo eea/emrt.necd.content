@@ -994,6 +994,11 @@ def set_form_widgets(form_instance):
     if _is_projection(form_instance.context):
         for fname in ['nfr_code', 'nfr_code_inventory']:
             nfr_w = widgets.get(fname)
+
+            # [refs #250017] Projections: Hiding the review subsectors options
+            if fname == 'nfr_code_inventory':
+                nfr_w.mode = interfaces.HIDDEN_MODE
+
             if nfr_w:  # Some users don't get to edit the nfr_code.
                 nfr_w.label = get_nfr_title_projection(fname)
 
@@ -1686,10 +1691,11 @@ class ExportAsDocView(ObservationMixin):
         if is_projection:
             document.add_paragraph('Scenario Type', style="Label Bold")
             document.add_paragraph(self.context.scenario_type_value())
-            document.add_paragraph(
-                'NFR Inventories Category Code', style="Label Bold"
-            )
-            document.add_paragraph(self.context.nfr_code_inventory)
+            if self.context.nfr_code_inventory:
+                document.add_paragraph(
+                    'NFR Inventories Category Code', style="Label Bold"
+                )
+                document.add_paragraph(self.context.nfr_code_inventory)
             document.add_paragraph('Activity Data', style="Label Bold")
             document.add_paragraph('\n'.join(
                 self.context.activity_data_value()

@@ -450,7 +450,7 @@ EXPORT_FIELDS = OrderedDict([
     ('get_is_time_series_inconsistency', 'Is time series inconsistency'),
     ('get_is_not_estimated', 'Is not estimated'),
     ('nfr_code_value', 'NFR Code'),
-    ('nfr_code_inventory', 'NFR Inventories Category Code'),
+    # ('nfr_code_inventory', 'NFR Inventories Category Code'),
     ('review_year', 'Review Year'),
     ('year', 'Inventory Year'),
     ('reference_year', 'Reference Year'),

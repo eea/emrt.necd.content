@@ -718,4 +718,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.38"
+    destination="2.5.39"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Update Projection NFR codes."
+      description="[refs #249245] Map Projection NFR 1A4aii to sector 2"
+      import_steps="plone.app.registry"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

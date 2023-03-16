@@ -40,7 +40,8 @@ WRONG_DATA_ERR = u'The information you entered in the {} section ' \
 DONE_MSG = u'Successfully imported {} observations!'
 
 PROJECTION_COLS = (
-    'nfr_code_inventory', 'year', 'reference_year',
+    # 'nfr_code_inventory',
+    'year', 'reference_year',
     'pollutants', 'scenario', 'review_year',
     'activity_data_type', 'activity_data', 'ms_key_category',
     'parameter', 'highlight'
