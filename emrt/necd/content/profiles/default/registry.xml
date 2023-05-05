@@ -108,8 +108,8 @@
       <element key="2">sector3|2|2G-2L IPPU|2 Industry</element>
       <element key="2D">sector10|2D|2D IPPU|2D Non energy products from fuels and solvent uses</element>
       <element key="2D3a">sector10|2D3a|2D IPPU|2D3a Domestic solvent use including fungicides</element>
-      <element key="2D3b">sector10|2D3b|2D IPPU|2D3b Road paving with asphalt</element>
-      <element key="2D3c">sector10|2D3c|2D IPPU|2D3c Asphalt roofing</element>
+      <element key="2D3b">sector3|2D3b|2D IPPU|2D3b Road paving with asphalt</element>
+      <element key="2D3c">sector3|2D3c|2D IPPU|2D3c Asphalt roofing</element>
       <element key="2D3d">sector10|2D3d|2D IPPU|2D3d Coating applications</element>
       <element key="2D3e">sector10|2D3e|2D IPPU|2D3e Degreasing</element>
       <element key="2D3f">sector10|2D3f|2D IPPU|2D3f Dry cleaning</element>
