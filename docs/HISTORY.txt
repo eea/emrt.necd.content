@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.40 (2023-05-11)
+
+- Bug #252799 - Issue with pollutant and year field
+
 2.5.39 (2023-03-16)
 
 - Task #249245 - Projections: Update to the NFR code list (move 1A4aii to sector 2)
