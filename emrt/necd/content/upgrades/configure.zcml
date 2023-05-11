@@ -731,4 +731,18 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.39"
+    destination="2.5.40"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Cleanup _x000d_"
+      description="[refs #252799] Issue with pollutant and year field."
+      handler=".evolve2540.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
+
 </configure>

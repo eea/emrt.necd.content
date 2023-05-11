@@ -1,6 +1,5 @@
 import re
 from functools import partial
-from itertools import takewhile
 from logging import getLogger
 
 import openpyxl
@@ -21,9 +20,10 @@ from Products.CMFCore.utils import getToolByName
 import plone.api as api
 from plone.app.discussion.conversation import ANNOTATION_KEY
 
-from emrt.necd.content.observation import _is_projection
 from emrt.necd.content.observation import inventory_year
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
+from emrt.necd.content.browser.xls_utils import get_valid_sheet_rows
+from emrt.necd.content.browser.xls_utils import clean_value
 
 LOG = getLogger("emrt.necd.content.carryover")
 
@@ -112,7 +112,7 @@ EXTRA_FIELDS_PROJECTION = (
 
 
 def _read_col(row, nr):
-    val = row[nr].value
+    val = clean_value(row[nr].value)
     return val.strip() if val and hasattr(val, "strip") else val
 
 
@@ -336,12 +336,7 @@ class CarryOverView(BrowserView):
         wb = openpyxl.load_workbook(xls, read_only=True, data_only=True)
         sheet = wb.worksheets[0]
 
-        sheet_rows = sheet.rows
-        next(sheet_rows)  # skip first row (header)
-        # extract rows with values
-        valid_rows = tuple(
-            takewhile(lambda row: any(c.value for c in row), sheet_rows)
-        )
+        valid_rows = get_valid_sheet_rows(sheet)
 
         context = self.context
         site_url = portal.absolute_url()

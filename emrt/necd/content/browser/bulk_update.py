@@ -1,5 +1,4 @@
 from logging import getLogger
-from itertools import takewhile
 from functools import partial
 
 from zope.component.hooks import getSite
@@ -13,13 +12,15 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 import openpyxl
 
+from emrt.necd.content.browser.xls_utils import get_valid_sheet_rows
+from emrt.necd.content.browser.xls_utils import clean_value
 
 LOG = getLogger('emrt.necd.content.bulk_update')
 
 
 def _read_col(row, nr):
     try:
-        val = row[nr].value
+        val = clean_value(row[nr].value)
     except IndexError:
         val = u''
     return val.strip() if val else u''
@@ -52,11 +53,7 @@ class BulkUpdateView(BrowserView):
         wb = openpyxl.load_workbook(xls, read_only=True, data_only=True)
         sheet = wb.worksheets[0]
 
-        sheet_rows = sheet.rows
-        next(sheet_rows)  # skip first row (header)
-        # extract rows with values
-        valid_rows = tuple(takewhile(
-            lambda row: any(c.value for c in row), sheet_rows))
+        valid_rows = get_valid_sheet_rows(sheet)
 
         context = self.context
         site_url = portal.absolute_url()
