@@ -1,6 +1,6 @@
 import itertools
 import time
-import tablib
+from StringIO import StringIO
 from functools import partial
 from operator import itemgetter
 from datetime import datetime
@@ -39,6 +39,7 @@ from zope.interface import Interface
 from zope.interface import provider
 from zope.interface import implementer
 from z3c.form.interfaces import HIDDEN_MODE
+from openpyxl import Workbook
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utils import reduce_text
@@ -622,8 +623,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             not skip_for_user or name not in EXCLUDE_FIELDS_FOR_MS
         ]
 
-        dataset = tablib.Dataset()
-        dataset.title = "Observations"
+        dataset = []
 
         catalog = api.portal.get_tool('portal_catalog')
         qa_len = 0
@@ -742,8 +742,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         headers = ['Observation']
         headers.extend([EXPORT_FIELDS[k] for k in fields_to_export])
         headers.extend(['Q&A'] * qa_len)
-        dataset.headers = headers
-        return dataset
+        return [headers] + dataset
 
     def extract_qa(self, catalog, observation):
         question_brains = catalog(
@@ -775,8 +774,12 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.context.getId(),
             now.strftime("%d-%m-%Y_%H:%M")
         )
+        wb = Workbook()
+        wb.remove(wb.active)
+        sheet = wb.create_sheet('Observations')
 
-        book = tablib.Databook((self.extract_data(data),))
+        for row in self.extract_data(data):
+            sheet.append(row)
 
         response = self.request.response
         response.setHeader("content-type", "application/vnc.ms-excel")
@@ -784,7 +787,12 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             'Content-disposition',
             'attachment;filename="{filename}"'.format(filename=filename)
         )
-        response.write(book.xls)
+
+        xls = StringIO()
+        wb.save(xls)
+        xls.seek(0)
+        response.write(xls.read())
+
         return
 
 
