@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.41 (2023-05-31)
+
+- Bug #253484 - Inventory data not exporting correctly
+
 2.5.40 (2023-05-11)
 
 - Bug #252799 - Issue with pollutant and year field
