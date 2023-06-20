@@ -1,6 +1,6 @@
 import itertools
 import time
-from StringIO import StringIO
+from io import StringIO
 from functools import partial
 from operator import itemgetter
 from datetime import datetime
@@ -72,8 +72,8 @@ QUESTION_WORKFLOW_MAP = {
 }
 
 REVIEWFOLDER_TYPES = SimpleVocabulary.fromItems((
-    (u'Inventory', 'inventory'),
-    (u'Projection', 'projection')))
+    ('Inventory', 'inventory'),
+    ('Projection', 'projection')))
 
 
 # Cache helper methods
@@ -105,7 +105,7 @@ def get_finalisation_reasons(reviewfolder):
 
     for vocab_id in vocab_ids:
         voc = vtool.getVocabularyByName(vocab_id)
-        voc_terms = voc.getDisplayList(reviewfolder).items()
+        voc_terms = list(voc.getDisplayList(reviewfolder).items())
         all_terms.extend(voc_terms)
 
     # if term ends in the review folder title (e.g. 2016)
@@ -193,19 +193,19 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
     """
 
     type = schema.Choice(
-        title=u"Type",
+        title="Type",
         source=REVIEWFOLDER_TYPES,
         required=True,
     )
 
     tableau_statistics = schema.Text(
-        title=u'Tableau statistics embed code',
+        title='Tableau statistics embed code',
         required=False,
     )
 
     plone.directives.form.widget(tableau_statistics_roles=CheckBoxFieldWidget)
     tableau_statistics_roles = schema.List(
-        title=u'Roles that can access the statistics',
+        title='Roles that can access the statistics',
         value_type=schema.Choice(vocabulary='emrt.necd.content.roles'),
     )
 
@@ -303,7 +303,7 @@ class ReviewFolderMixin(BrowserView):
         vtool = getToolByName(self, 'portal_vocabularies')
         voc = vtool.getVocabularyByName('eea_member_states')
         countries = []
-        voc_terms = voc.getDisplayList(self).items()
+        voc_terms = list(voc.getDisplayList(self).items())
         for term in voc_terms:
             countries.append((term[0], term[1]))
 
@@ -316,7 +316,7 @@ class ReviewFolderMixin(BrowserView):
         else:
             voc = vtool.getVocabularyByName('highlight_projection')
         highlights = []
-        voc_terms = voc.getDisplayList(self).items()
+        voc_terms = list(voc.getDisplayList(self).items())
         for term in voc_terms:
             highlights.append((term[0], term[1]))
 
@@ -326,7 +326,7 @@ class ReviewFolderMixin(BrowserView):
         catalog = api.portal.get_tool('portal_catalog')
         review_years = [
             c for c in catalog.uniqueValuesFor('review_year') if
-            isinstance(c, basestring)
+            isinstance(c, str)
         ]
         return review_years
 
@@ -528,7 +528,7 @@ def fields_vocabulary_factory(context):
         EXPORT_FIELDS['year'] = 'Inventory Year'
         exclude_fields = EXCLUDE_PROJECTION_FIELDS
 
-    for key, value in EXPORT_FIELDS.items():
+    for key, value in list(EXPORT_FIELDS.items()):
         if key in INCLUDE_FOR_LR and not user_is_lr:
             continue
         if skip_for_user and key in EXCLUDE_FIELDS_FOR_MS:
@@ -542,18 +542,18 @@ def fields_vocabulary_factory(context):
 
 class IExportForm(Interface):
     exportFields = List(
-        title=u"Fields to export",
-        description=u"Select which fields you want to add into XLS",
+        title="Fields to export",
+        description="Select which fields you want to add into XLS",
         required=False,
         value_type=Choice(source=fields_vocabulary_factory)
     )
 
     include_qa = Bool(
-        title=u'Include Q&A threads.',
+        title='Include Q&A threads.',
         required=False
     )
 
-    come_from = TextLine(title=u"Come from")
+    come_from = TextLine(title="Come from")
 
 
 class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
@@ -561,8 +561,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     fields = field.Fields(IExportForm)
     ignoreContext = True
 
-    label = u"Export observations in XLS format"
-    name = u"export-observation-form"
+    label = "Export observations in XLS format"
+    name = "export-observation-form"
 
     def updateWidgets(self):
         super(ExportReviewFolderForm, self).updateWidgets()
@@ -580,7 +580,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.request['QUERY_STRING']
         )
 
-    @button.buttonAndHandler(u'Export')
+    @button.buttonAndHandler('Export')
     def handleExport(self, action):
         data, errors = self.extractData()
 
@@ -590,7 +590,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         return self.build_file(data)
 
-    @button.buttonAndHandler(u"Back")
+    @button.buttonAndHandler("Back")
     def handleCancel(self, action):
         return self.request.response.redirect(
             '%s?%s' % (
@@ -601,7 +601,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
     def updateActions(self):
         super(ExportReviewFolderForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
     def render(self):
@@ -760,7 +760,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         mapping = dict(Comment='Question', CommentAnswer='Answer')
         return tuple([
-            u'{}: {}'.format(
+            '{}: {}'.format(
                 mapping[comment.portal_type],
                 safe_unicode(comment.text)
             ) for comment in comments
@@ -893,7 +893,7 @@ class InboxReviewFolderView(ReviewFolderMixin):
         return [
             (k, v)
             for k, v
-            in req_form.items()
+            in list(req_form.items())
             if k != 'section'
             and 'b_start' not in k
         ]
@@ -949,7 +949,7 @@ class InboxReviewFolderView(ReviewFolderMixin):
         highlights = self.request.get('highlights', None)
         catalog = api.portal.get_tool('portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
-        req = {k: v for k, v in self.request.form.items()}
+        req = {k: v for k, v in list(self.request.form.items())}
         req.update(kw)
         query = {
             'path': path,
@@ -992,7 +992,7 @@ class InboxReviewFolderView(ReviewFolderMixin):
 
         filterfunc = makefilter(rolecheck)
 
-        return filter(filterfunc, observations)
+        return list(filter(filterfunc, observations))
 
     @timeit
     def get_draft_observations(self):
@@ -1363,7 +1363,7 @@ class InboxReviewFolderView(ReviewFolderMixin):
         vtool = getToolByName(self, 'portal_vocabularies')
         voc = vtool.getVocabularyByName('eea_member_states')
         countries = []
-        voc_terms = voc.getDisplayList(self).items()
+        voc_terms = list(voc.getDisplayList(self).items())
         for term in voc_terms:
             countries.append((term[0], term[1]))
 
@@ -1373,7 +1373,7 @@ class InboxReviewFolderView(ReviewFolderMixin):
         vtool = getToolByName(self, 'portal_vocabularies')
         voc = vtool.getVocabularyByName('ghg_source_sectors')
         sectors = []
-        voc_terms = voc.getDisplayList(self).items()
+        voc_terms = list(voc.getDisplayList(self).items())
         for term in voc_terms:
             sectors.append((term[0], term[1]))
 
@@ -1430,7 +1430,7 @@ class FinalisedFolderView(BrowserView):
 
         return dict(
             reasons=reason_obs,
-            total_obs=sum(obs['num_obs'] for obs in reason_obs.values())
+            total_obs=sum(obs['num_obs'] for obs in list(reason_obs.values()))
         )
 
     def batch(self, observations, b_size, b_start, orphan, b_start_str):
@@ -1454,8 +1454,8 @@ class FinalisedFolderView(BrowserView):
         if freeText != "":
             query['SearchableText'] = freeText
 
-        return map(
-            decorate, [b.getObject() for b in catalog.searchResults(query)])
+        return list(map(
+            decorate, [b.getObject() for b in catalog.searchResults(query)]))
 
     def get_observations(self, **kw):
         freeText = self.request.form.get('freeText', '')
@@ -1503,7 +1503,7 @@ class FinalisedFolderView(BrowserView):
         vtool = getToolByName(self, 'portal_vocabularies')
         voc = vtool.getVocabularyByName('eea_member_states')
         countries = []
-        voc_terms = voc.getDisplayList(self).items()
+        voc_terms = list(voc.getDisplayList(self).items())
         for term in voc_terms:
             countries.append((term[0], term[1]))
 
@@ -1513,7 +1513,7 @@ class FinalisedFolderView(BrowserView):
         vtool = getToolByName(self, 'portal_vocabularies')
         voc = vtool.getVocabularyByName('ghg_source_sectors')
         sectors = []
-        voc_terms = voc.getDisplayList(self).items()
+        voc_terms = list(voc.getDisplayList(self).items())
         for term in voc_terms:
             sectors.append((term[0], term[1]))
 

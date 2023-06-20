@@ -1,6 +1,6 @@
 from Acquisition import aq_parent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
@@ -15,7 +15,7 @@ def notification_lr(context, event):
 
     if event.action in ['answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,
@@ -34,7 +34,7 @@ def notification_se(context, event):
 
     if event.action in ['answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,
@@ -52,7 +52,7 @@ def notification_rev_msexperts(context, event):
     _temp = PageTemplateFile('question_answered_msexperts_msg.pt')
     if event.action in ['answer-to-lr']:
         observation = aq_parent(context)
-        subject = u'New answer from country'
+        subject = 'New answer from country'
         notify(
             observation,
             _temp,

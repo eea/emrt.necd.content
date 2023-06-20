@@ -26,7 +26,7 @@ def migrate_obs_highlight(portal):
     query = dict(
         portal_type='Observation',
         highlight=dict(
-            query=HIGHLIGHT.keys(),
+            query=list(HIGHLIGHT.keys()),
             operator='or'
         )
     )

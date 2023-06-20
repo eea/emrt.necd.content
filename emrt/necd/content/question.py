@@ -60,7 +60,7 @@ def create_question(context):
     if IAcquirer.providedBy(content):
         content = content.__of__(container)
 
-    ids = [id for id in context.keys() if id.startswith('question-')]
+    ids = [id for id in list(context.keys()) if id.startswith('question-')]
     id = len(ids) + 1
     content.title = 'Question %d' % id
 
@@ -79,11 +79,11 @@ class Question(Container):
 
     def get_questions(self):
         sm = getSecurityManager()
-        values = [v for v in self.values() if sm.checkPermission('View', v)]
+        values = [v for v in list(self.values()) if sm.checkPermission('View', v)]
         return IContentListing(values)
 
     def getFirstComment(self):
-        comments = [v for v in self.values() if v.portal_type == 'Comment']
+        comments = [v for v in list(self.values()) if v.portal_type == 'Comment']
         comments.sort(lambda x, y: cmp(x.created(), y.created()))
         if comments:
             return comments[-1]
@@ -117,11 +117,11 @@ class Question(Container):
         return aq_parent(aq_inner(self))
 
     def has_answers(self):
-        items = self.values()
+        items = list(self.values())
         return len(items) and items[-1].portal_type == 'CommentAnswer' or False
 
     def can_be_sent_to_lr(self):
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -132,7 +132,7 @@ class Question(Container):
         return False
 
     def can_be_deleted(self):
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -153,7 +153,7 @@ class Question(Container):
         return False
 
     def unanswered_questions(self):
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -164,7 +164,7 @@ class Question(Container):
         Check if this question can be closed:
             - There has been at least, one question-answer.
         """
-        items = self.values()
+        items = list(self.values())
         questions = [q for q in items if q.portal_type == 'Comment']
         answers = [q for q in items if q.portal_type == 'CommentAnswer']
 
@@ -181,7 +181,7 @@ class Question(Container):
     def one_pending_answer(self):
         if self.has_answers():
             answers = [
-                q for q in self.values()
+                q for q in list(self.values())
                 if q.portal_type == 'CommentAnswer'
             ]
             return len(answers) > 0
@@ -264,7 +264,7 @@ class AddCommentForm(Form):
         context = aq_inner(self.context)
         text = self.request.form.get('form.widgets.text', '')
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Question text is empty"))
+            raise ActionExecutionError(Invalid("Question text is empty"))
 
         id = str(int(time()))
         item_id = context.invokeFactory(
@@ -282,7 +282,7 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -299,7 +299,7 @@ class AddAnswerForm(Form):
         context = aq_inner(self.context)
         text = self.request.form.get('form.widgets.text', '')
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Answer text is empty"))
+            raise ActionExecutionError(Invalid("Answer text is empty"))
 
         id = str(int(time()))
         item_id = context.invokeFactory(
@@ -317,7 +317,7 @@ class AddAnswerForm(Form):
 
     def updateActions(self):
         super(AddAnswerForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -346,11 +346,11 @@ class AddConclusions(BrowserView):
 class DeleteLastComment(BrowserView):
     def render(self):
         answers = [
-            c for c in self.context.values()
+            c for c in list(self.context.values())
             if c.portal_type == 'CommentAnswer'
         ]
         comments = [
-            c for c in self.context.values()
+            c for c in list(self.context.values())
             if c.portal_type == 'Comment'
         ]
         if comments and len(comments) > len(answers):
@@ -380,11 +380,11 @@ class DeleteLastAnswer(BrowserView):
         question = aq_inner(self.context)
         url = question.absolute_url()
         answers = [
-            c for c in self.context.values()
+            c for c in list(self.context.values())
             if c.portal_type == 'CommentAnswer'
         ]
         comments = [
-            c for c in self.context.values()
+            c for c in list(self.context.values())
             if c.portal_type == 'Comment'
         ]
         if answers and len(answers) == len(comments):

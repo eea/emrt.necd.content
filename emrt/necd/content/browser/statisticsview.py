@@ -8,6 +8,7 @@ import copy
 import itertools
 import operator
 import tablib
+from functools import reduce
 
 
 class StatisticsView(BrowserView):
@@ -54,7 +55,7 @@ class StatisticsView(BrowserView):
         try:
             factory = getUtility(IVocabularyFactory, name)
             vocabulary = factory(self.context)
-            return sorted([k for k, v in vocabulary.by_token.items()])
+            return sorted([k for k, v in list(vocabulary.by_token.items())])
         except Exception:
             return []
 
@@ -73,7 +74,7 @@ class StatisticsView(BrowserView):
         data = []
         items = {}
         # Get the items, filtered if needed
-        filted_items = filter(filter_fun, objs)
+        filted_items = list(filter(filter_fun, objs))
 
         # Set sorting and grouping key into a function
         getkey = operator.itemgetter(key)
@@ -85,7 +86,7 @@ class StatisticsView(BrowserView):
             items[gkey] = val
 
         # Count how many observations are per-each of the columns
-        for gkey, values in items.items():
+        for gkey, values in list(items.items()):
             item = {}
             for column in columns:
                 item[column] = values.count(column)
@@ -105,7 +106,7 @@ class StatisticsView(BrowserView):
 
     def calculate_sum(self, items, key):
         if items:
-            ret = copy.copy(reduce(lambda x, y: dict((k, v + (y and y.get(k, 0) or 0)) for k, v in x.iteritems()), copy.copy(items)))
+            ret = copy.copy(reduce(lambda x, y: dict((k, v + (y and y.get(k, 0) or 0)) for k, v in x.items()), copy.copy(items)))
             ret[key] = 'Sum'
             return ret
         return None
@@ -222,7 +223,7 @@ class DownloadStatisticsView(BrowserView):
         try:
             factory = getUtility(IVocabularyFactory, name)
             vocabulary = factory(self.context)
-            return sorted([k for k, v in vocabulary.by_token.items()])
+            return sorted([k for k, v in list(vocabulary.by_token.items())])
         except:
             return []
 
@@ -241,7 +242,7 @@ class DownloadStatisticsView(BrowserView):
         data = []
         items = {}
         # Get the items, filtered if needed
-        filted_items = filter(filter_fun, objs)
+        filted_items = list(filter(filter_fun, objs))
 
         # Set sorting and grouping key into a function
         getkey = operator.itemgetter(key)
@@ -253,7 +254,7 @@ class DownloadStatisticsView(BrowserView):
             items[gkey] = val
 
         # Count how many observations are per-each of the columns
-        for gkey, values in items.items():
+        for gkey, values in list(items.items()):
             item = {}
             for column in columns:
                 item[column] = values.count(column)
@@ -273,7 +274,7 @@ class DownloadStatisticsView(BrowserView):
 
     def calculate_sum(self, items, key):
         if items:
-            ret = copy.copy(reduce(lambda x, y: dict((k, v + (y and y.get(k, 0) or 0)) for k, v in x.iteritems()), copy.copy(items)))
+            ret = copy.copy(reduce(lambda x, y: dict((k, v + (y and y.get(k, 0) or 0)) for k, v in x.items()), copy.copy(items)))
             ret[key] = 'Sum'
             return ret
         return None

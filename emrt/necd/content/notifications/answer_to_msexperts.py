@@ -1,6 +1,6 @@
 from Acquisition import aq_parent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 from emrt.necd.content.constants import ROLE_MSE
 
 
@@ -19,7 +19,7 @@ def notification_mse(context, event=None, reassign=False):
 
     if should_run:
         observation = aq_parent(context)
-        subject = u'New question for your country'
+        subject = 'New question for your country'
         notify(
             observation,
             _temp,

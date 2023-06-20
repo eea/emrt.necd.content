@@ -65,14 +65,14 @@ def question_transition(question, event):
 def observation_transition(observation, event):
     if event.action == 'reopen-qa-chat':
         with api.env.adopt_roles(roles=['Manager']):
-            qs = [q for q in observation.values() if q.portal_type == 'Question']
+            qs = [q for q in list(observation.values()) if q.portal_type == 'Question']
             if qs:
                 q = qs[0]
                 api.content.transition(obj=q, transition='reopen')
 
     elif event.action in ['request-comments']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusions']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -80,7 +80,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['finish-comments']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusions']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -88,7 +88,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['finish-observation', 'recall-lr']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusions']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -96,7 +96,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['confirm-finishing-observation']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusions']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -104,7 +104,7 @@ def observation_transition(observation, event):
 
     elif event.action in ['deny-finishing-observation']:
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusions']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(obj=conclusion,
@@ -112,7 +112,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'draft-conclusions':
         with api.env.adopt_roles(roles=['Manager']):
-            questions = [c for c in observation.values() if c.portal_type == 'Question']
+            questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
             if questions:
                 question = questions[0]
                 if api.content.get_state(question) == 'draft':
@@ -124,7 +124,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'recall-from':
         with api.env.adopt_roles(roles=['Manager']):
-            questions = [c for c in observation.values() if c.portal_type == 'Question']
+            questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
             if questions:
                 question = questions[0]
                 api.content.transition(
@@ -134,7 +134,7 @@ def observation_transition(observation, event):
 
     elif event.action == 'reopen-closed-observation':
         with api.env.adopt_roles(roles=['Manager']):
-            conclusions = [c for c in observation.values() if c.portal_type == 'Conclusions']
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
             if conclusions:
                 conclusion = conclusions[0]
                 api.content.transition(

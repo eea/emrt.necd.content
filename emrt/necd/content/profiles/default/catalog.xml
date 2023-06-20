@@ -21,10 +21,6 @@
   <indexed_attr value="GHG_Source_Sectors"/>
  </index>
 
- <index name="Status_Flag" meta_type="FieldIndex">
-  <indexed_attr value="Status_Flag"/>
- </index>
-
  <index name="nfr_code" meta_type="FieldIndex">
   <indexed_attr value="NFR_Code"/>
  </index>

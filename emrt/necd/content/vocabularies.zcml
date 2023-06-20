@@ -38,11 +38,6 @@
     />
 
   <utility
-    name="emrt.necd.content.status_flag"
-    factory=".vocabularies.StatusFlag"
-    />
-
-  <utility
     name="emrt.necd.content.nfr_code"
     factory=".vocabularies.NFRCode"
     />

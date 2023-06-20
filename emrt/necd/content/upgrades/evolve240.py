@@ -2,7 +2,7 @@ from itertools import chain
 import logging
 from collections import defaultdict
 
-import simplejson as json
+import json
 
 import plone.api as api
 

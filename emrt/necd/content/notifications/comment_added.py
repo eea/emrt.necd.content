@@ -55,7 +55,7 @@ def notification_mse(comment, event):
     if not USER_IS_MSE(observation):
         return
 
-    NOTIFY_MSE(u'New comment from MS Expert', observation)
+    NOTIFY_MSE('New comment from MS Expert', observation)
 
 
 def notification_msa(comment, event):
@@ -67,7 +67,7 @@ def notification_msa(comment, event):
     if not USER_IS_MSE(observation):
         return
 
-    NOTIFY_MSA(u'New comment from MS Expert', observation)
+    NOTIFY_MSA('New comment from MS Expert', observation)
 
 
 def notify_users(comment, event):
@@ -80,14 +80,14 @@ def notify_users(comment, event):
     """
 
     TEMPLATE = 'new_comment.pt'
-    SUBJECT = u'New comment'
+    SUBJECT = 'New comment'
     ROLES = (ROLE_CP, ROLE_SE, ROLE_LR)
     CURRENT_USER = api.user.get_current()
 
     observation = PARENT_OBSERVATION(comment)
     checker = partial(run_rolecheck, observation)
 
-    has_valid_roles = map(checker, (USER_IS_SE, USER_IS_CP, USER_IS_LR))
+    has_valid_roles = list(map(checker, (USER_IS_SE, USER_IS_CP, USER_IS_LR)))
     if not any(has_valid_roles):
         return
 
@@ -95,7 +95,7 @@ def notify_users(comment, event):
     get_users = lambda role: get_obs_users(role, 'new_comment')
     not_current = lambda user: user != CURRENT_USER
 
-    users = tuple(filter(not_current, set(chain(*map(get_users, ROLES)))))
+    users = tuple(filter(not_current, set(chain(*list(map(get_users, ROLES))))))
 
     template = PageTemplateFile(TEMPLATE)
     content = template(**dict(observation=observation))

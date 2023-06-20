@@ -1,10 +1,10 @@
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
 
 
-MAIL_SUBJECT = u'A {state} observation was recalled'
+MAIL_SUBJECT = 'A {state} observation was recalled'
 MAIL_TEMPLATE = 'observation_recalled_{state}_{suffix}.pt'
 
 

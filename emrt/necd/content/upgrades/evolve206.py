@@ -18,8 +18,8 @@ def run(_):
 
 def update_localroles(context):
     """ Recursively update local roles """
-    map(update_localroles, context.objectValues())
-    new_roles = map(updated_roles, context.get_local_roles())
+    list(map(update_localroles, context.objectValues()))
+    new_roles = list(map(updated_roles, context.get_local_roles()))
     for principal, roles in new_roles:
         context.manage_setLocalRoles(principal, roles)
 

@@ -105,24 +105,24 @@ def exclude_test_users(userdata):
             if ex in userid(data)
         )
 
-    return filter(drop, userdata)
+    return list(filter(drop, userdata))
 
 
 class IFinishObservationReasonForm(Interface):
 
     comments = schema.Text(
-        title=_(u'Enter comments if you want'),
+        title=_('Enter comments if you want'),
         required=False,
     )
 
 
 class FinishObservationReasonForm(Form):
     fields = field.Fields(IFinishObservationReasonForm)
-    label = _(u'Request finalisation of the observation')
-    description = _(u'Check the reason for requesting the closure of this observation')
+    label = _('Request finalisation of the observation')
+    description = _('Check the reason for requesting the closure of this observation')
     ignoreContext = True
 
-    @button.buttonAndHandler(u'Request finalisation of the observation')
+    @button.buttonAndHandler('Request finalisation of the observation')
     def finish_observation(self, action):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
@@ -139,7 +139,7 @@ class FinishObservationReasonForm(Form):
 
     def updateActions(self):
         super(FinishObservationReasonForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
             self.actions[k].addClass('defaultWFButton')
 
@@ -147,18 +147,18 @@ class FinishObservationReasonForm(Form):
 class IDenyFinishObservationReasonForm(Interface):
 
     comments = schema.Text(
-        title=_(u'Enter your reasons to deny the finishing of this observation'),
+        title=_('Enter your reasons to deny the finishing of this observation'),
         required=False,
     )
 
 
 class DenyFinishObservationReasonForm(Form):
     fields = field.Fields(IDenyFinishObservationReasonForm)
-    label = _(u'Deny finish observation')
-    description = _(u'Check the reason for denying the finishing of this observation')
+    label = _('Deny finish observation')
+    description = _('Check the reason for denying the finishing of this observation')
     ignoreContext = True
 
-    @button.buttonAndHandler(u'Deny finishing observation')
+    @button.buttonAndHandler('Deny finishing observation')
     def finish_observation(self, action):
         comments = self.request.get('form.widgets.comments')
         with api.env.adopt_roles(['Manager']):
@@ -176,7 +176,7 @@ class DenyFinishObservationReasonForm(Form):
 
     def updateActions(self):
         super(DenyFinishObservationReasonForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -255,8 +255,8 @@ class AssignFormMixin(BrowserView):
         current_user_id = api.user.get_current().getId()
 
         group_tool = api.portal.get_tool('portal_groups')
-        _groups = map(group_tool.getGroupById, self._target_groupnames())
-        groups = filter(bool, _groups) # filter out None
+        _groups = list(map(group_tool.getGroupById, self._target_groupnames()))
+        groups = list(filter(bool, _groups)) # filter out None
 
         for res in map(self.get_users_from_group, groups):
             matched = [
@@ -304,7 +304,7 @@ class AssignFormMixin(BrowserView):
                     workflow_action=wf_action)
             else:
                 status = IStatusMessage(self.request)
-                msg = _(u'There was an error. Try again please')
+                msg = _('There was an error. Try again please')
                 status.addStatusMessage(msg, "error")
                 url = self.context.absolute_url()
                 return self.request.response.redirect(url)
@@ -317,12 +317,12 @@ class AssignFormMixin(BrowserView):
 
 class IAssignAnswererForm(Interface):
     answerers = schema.Choice(
-        title=_(u'Select the answerers'),
-        vocabulary=u'plone.app.vocabularies.Users',
+        title=_('Select the answerers'),
+        vocabulary='plone.app.vocabularies.Users',
     )
 
     workflow_action = schema.TextLine(
-        title=_(u'Workflow action'),
+        title=_('Workflow action'),
         required=True
     )
 
@@ -334,7 +334,7 @@ class AssignAnswererForm(AssignFormMixin):
     _managed_role = ROLE_MSE
     _revoke_on_call = True
     _msg_no_usernames = _(
-        u'You need to select at least one expert for discussion')
+        'You need to select at least one expert for discussion')
 
     def _assignation_target(self):
         return aq_parent(aq_inner(self.context))
@@ -352,9 +352,9 @@ class AssignAnswererForm(AssignFormMixin):
 
     def _get_wf_action(self):
         if api.content.get_state(self.context) in [
-                u'pending',
-                u'recalled-msa',
-                u'pending-answer-drafting']:
+                'pending',
+                'recalled-msa',
+                'pending-answer-drafting']:
             return 'assign-answerer'
 
 
@@ -366,7 +366,7 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
             usernames = self.request.get('counterparts', None)
             if not usernames:
                 status = IStatusMessage(self.request)
-                msg = _(u'You need to select at least one expert for discussion')
+                msg = _('You need to select at least one expert for discussion')
                 status.addStatusMessage(msg, "error")
                 return self.index()
 
@@ -389,11 +389,11 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
 
 class IAssignCounterPartForm(Interface):
     counterpart = schema.TextLine(
-        title=_(u'Select the counterpart'),
+        title=_('Select the counterpart'),
     )
 
     workflow_action = schema.TextLine(
-        title=_(u'Workflow action'),
+        title=_('Workflow action'),
         required=True
     )
 
@@ -405,7 +405,7 @@ class AssignCounterPartForm(AssignFormMixin):
     _managed_role = ROLE_CP
     _revoke_on_call = True
     _msg_no_usernames = _(
-        u'You need to select at least one counterpart')
+        'You need to select at least one counterpart')
 
     def _assignation_target(self):
         return aq_parent(aq_inner(self.context))
@@ -443,8 +443,8 @@ class AssignCounterPartForm(AssignFormMixin):
 
 class IAssignConclusionReviewerForm(Interface):
     reviewers = schema.Choice(
-        title=_(u'Select the conclusion reviewers'),
-        vocabulary=u'plone.app.vocabularies.Users',
+        title=_('Select the conclusion reviewers'),
+        vocabulary='plone.app.vocabularies.Users',
     )
 
 
@@ -473,7 +473,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             target.reindexObjectSecurity()
 
             status = IStatusMessage(self.request)
-            msg = _(u'CounterParts reassigned correctly')
+            msg = _('CounterParts reassigned correctly')
             status.addStatusMessage(msg, "info")
             url = self.context.absolute_url()
 
@@ -493,7 +493,7 @@ class AssignConclusionReviewerForm(AssignFormMixin):
     _managed_role = ROLE_CP
     _revoke_on_call = False
     _msg_no_usernames = _(
-        u'You need to select at least one reviewer for conclusions')
+        'You need to select at least one reviewer for conclusions')
 
     def update(self):
         self._revoke_all_roles()
@@ -516,7 +516,7 @@ class AssignConclusionReviewerForm(AssignFormMixin):
 
     def updateActions(self):
         super(AssignConclusionReviewerForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 

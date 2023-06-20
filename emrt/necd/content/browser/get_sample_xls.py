@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment
 from operator import attrgetter
 from Products.Five.browser import BrowserView
-from StringIO import StringIO
+from io import StringIO
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -64,7 +64,7 @@ class GetSampleXLS(BrowserView):
 
             p_year = '\n'.join(proj_years)
             # nfr_inventories = cycle([NFR_CODE, None])
-            act_type = cycle(map(attrgetter('value'), act_type_v) + [None])
+            act_type = cycle(list(map(attrgetter('value'), act_type_v)) + [None])
             activity_data = get_registry_interface_field_data(
                 INECDVocabularies, 'activity_data')
             scenario = cycle(['\n'.join(map(get_title, scenario_voc)), None])
@@ -72,14 +72,14 @@ class GetSampleXLS(BrowserView):
             header = XLS_SAMPLE_HEADER_INVENTORY
             fuel_voc = get_vocabulary('emrt.necd.content.fuel')
             # not a mandatory field, value can be none
-            fuels = cycle(map(get_title, fuel_voc) + [None])
+            fuels = cycle(list(map(get_title, fuel_voc)) + [None])
 
         country_voc = get_vocabulary('emrt.necd.content.eea_member_states')
         pollutants_voc = get_vocabulary('emrt.necd.content.pollutants')
         parameter_voc = get_vocabulary('emrt.necd.content.parameter')
         description_flags_voc = get_vocabulary('emrt.necd.content.highlight')
 
-        countries = map(get_title, country_voc)
+        countries = list(map(get_title, country_voc))
 
         ms_key_categ = cycle(['True', None])
         pollutants = '\n'.join(map(get_title, pollutants_voc))
@@ -98,7 +98,7 @@ class GetSampleXLS(BrowserView):
                 # nfr_i = next(nfr_inventories)
                 activity_type = next(act_type)
                 activity = (
-                    u'\n'.join(activity_data[activity_type]).encode('utf-8')
+                    '\n'.join(activity_data[activity_type]).encode('utf-8')
                     if activity_type else None
                 )
                 scenario_type = next(scenario)

@@ -51,7 +51,7 @@ def do_upgrade(obj):
     )
 
     if users:
-        map(revoker, users)
+        list(map(revoker, users))
         obj.reindexObjectSecurity()
 
         LOGGER.info(

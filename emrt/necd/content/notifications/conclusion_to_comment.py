@@ -1,5 +1,5 @@
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 
@@ -12,7 +12,7 @@ def notification_cp(context, event):
 
     if event.action in ['request-comments']:
         observation = context
-        subject = u'New draft conclusion to comment on'
+        subject = 'New draft conclusion to comment on'
         notify(
             observation,
             _temp,
@@ -31,7 +31,7 @@ def notification_lr(context, event):
 
     if event.action in ['request-comments']:
         observation = context
-        subject = u'New draft conclusion to comment on'
+        subject = 'New draft conclusion to comment on'
         notify(
             observation,
             _temp,

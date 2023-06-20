@@ -45,7 +45,7 @@ def do_upgrade(obj):
         obj=obj
     )
 
-    map(revoker, groups)
+    list(map(revoker, groups))
 
     obj.reindexObjectSecurity()
 

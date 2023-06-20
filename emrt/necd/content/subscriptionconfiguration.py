@@ -140,7 +140,7 @@ class SubscriptionConfigurationMixin(BrowserView):
                 if translated is not None:
                     roles.append(translated)
             else:
-                if role in ROLE_TRANSLATOR.keys():
+                if role in list(ROLE_TRANSLATOR.keys()):
                     roles.append(role)
         return roles
 
@@ -198,7 +198,7 @@ class SubscriptionConfigurationReview(SubscriptionConfigurationMixin):
         groups = user.getGroups()
         ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
         return tuple(
-            role for role, checker in LDAP_TO_LOCAL.items()
+            role for role, checker in list(LDAP_TO_LOCAL.items())
             if checker(groups=groups, ldap_wrapper=ldap_wrapper)
         )
 

@@ -46,7 +46,7 @@ def get_vocabulary_values(context, name):
     try:
         factory = getUtility(IVocabularyFactory, name)
         vocabulary = factory(context)
-        return sorted([k for k, v in vocabulary.by_token.items()])
+        return sorted([k for k, v in list(vocabulary.by_token.items())])
     except:
         return []
 
@@ -73,9 +73,9 @@ def read_inventory_year(value):
 
 
 def read_projection_year(value):
-    value = str(value) if isinstance(value, (int, long)) else value
+    value = str(value) if isinstance(value, int) else value
     years = read_list(value)
-    proj_years = [u"2025", u"2030", u"2040", u"2050"]
+    proj_years = ["2025", "2030", "2040", "2050"]
     is_correct = bool(set(years) & set(proj_years))
     if is_correct:
         return years
@@ -91,7 +91,7 @@ def read_list(value):
 
 
 def read_unicode(value):
-    return unicode(value) if value else u""
+    return str(value) if value else ""
 
 
 EXTRA_FIELDS = (
@@ -171,7 +171,7 @@ def replace_conclusion_text(obj, text):
 def delete_conclusion_file(obj):
     conclusion = obj.get_conclusion()
     if conclusion:
-        for ob in conclusion.values():
+        for ob in list(conclusion.values()):
             if ob.portal_type == "NECDFile":
                 conclusion.manage_delObjects([ob.getId()])
 
@@ -187,7 +187,7 @@ def clear_conclusion_discussion(obj):
 def clear_conclusion_closing_reason(obj):
     conclusion = obj.get_conclusion()
     if conclusion:
-        conclusion.closing_reason = u""
+        conclusion.closing_reason = ""
 
 
 def clear_conclusion_history(obj, wf_id):
@@ -198,7 +198,7 @@ def clear_conclusion_history(obj, wf_id):
 
 
 def save_extra_fields(obj, extra_fields):
-    for fname, fvalue in extra_fields.items():
+    for fname, fvalue in list(extra_fields.items()):
         if fvalue:
             setattr(obj, fname, fvalue)
 
@@ -208,7 +208,7 @@ def prepend_qa(target, source):
     target_qa = target.get_question()
 
     if source_qa and target_qa:
-        for comment in source_qa.values():
+        for comment in list(source_qa.values()):
             _copy_obj(target_qa, comment)
 
         ordering = target_qa.getOrdering()
@@ -326,8 +326,8 @@ class CarryOverView(BrowserView):
             self.context, "emrt.necd.content.nfr_code"
         )
         return self.index(
-            values_for_nfr_code=u", ".join(values_for_nfr_code),
-            values_for_pollutants=u", ".join(values_for_pollutants),
+            values_for_nfr_code=", ".join(values_for_nfr_code),
+            values_for_pollutants=", ".join(values_for_pollutants),
             is_projection=self.context.type == "projection",
         )
 

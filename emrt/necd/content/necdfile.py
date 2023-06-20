@@ -19,13 +19,13 @@ class INECDFile(form.Schema, IImageScaleTraversable):
     Files with special needs
     """
     title = schema.TextLine(
-        title=_(u'Title'),
+        title=_('Title'),
         required=False,
     )
 
     form.primary('file')
     file = NamedBlobFile(
-        title=_(u'File'),
+        title=_('File'),
         required=True,
     )
 
@@ -67,10 +67,10 @@ class AddForm(add.DefaultAddForm):
         super(AddForm, self).update()
         status = IStatusMessage(self.request)
 
-        msg = _(u'Handling of confidential files: '
-                u'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
-                u'and send the password per email to the EMRT-NECD Secretariat mailbox. '
-                u'Your password will only be shared with the lead reviewer and sector Expert. '
+        msg = _('Handling of confidential files: '
+                'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
+                'and send the password per email to the EMRT-NECD Secretariat mailbox. '
+                'Your password will only be shared with the lead reviewer and sector Expert. '
         )
 
         status.add(msg, type='info')

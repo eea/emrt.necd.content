@@ -50,11 +50,6 @@ def observation_ghg_source_sectors(context):
 
 
 @indexer(IObservation)
-def observation_status_flag(context):
-    return context.status_flag
-
-
-@indexer(IObservation)
 def observation_year(context):
     year = context.year
     if isinstance(year, (list, tuple)):
@@ -132,7 +127,7 @@ def SearchableText(context):
             getFieldsInOrder(IConclusions), conclusion)
         )
 
-    return u' '.join(items)
+    return ' '.join(items)
 
 
 def index_fields(fields, context):
@@ -149,7 +144,7 @@ def index_fields(fields, context):
         if IRichTextValue.providedBy(value):
             html = value.output
             transforms = api.portal.get_tool('portal_transforms')
-            if isinstance(html, unicode):
+            if isinstance(html, str):
                 html = html.encode('utf-8')
             value = transforms.convertTo('text/plain',
                 html, mimetype='text/html'
@@ -171,7 +166,7 @@ def to_unicode(value):
 
 
 def question_status(context):
-    questions = [c for c in context.values() if c.portal_type == "Question"]
+    questions = [c for c in list(context.values()) if c.portal_type == "Question"]
     status = context.get_status()
     if status != 'pending':
         if status == 'conclusions':
@@ -290,7 +285,7 @@ def observation_finalisation_reason(context):
     try:
         status = context.get_status()
         if status == 'closed':
-            conclusions = [c for c in context.values() if c.portal_type == "Conclusions"]
+            conclusions = [c for c in list(context.values()) if c.portal_type == "Conclusions"]
             return conclusions[0] and conclusions[0].closing_reason or ' '
         else:
             return None
@@ -302,7 +297,7 @@ def observation_finalisation_reason(context):
 def observation_finalisation_text(context):
     try:
         conclusions = [
-            c for c in context.values()
+            c for c in list(context.values())
             if c.portal_type == "Conclusions"
         ]
         return conclusions[0] and conclusions[0].text or ''

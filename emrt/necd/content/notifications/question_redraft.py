@@ -1,6 +1,6 @@
 from Acquisition import aq_parent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 from emrt.necd.content.constants import ROLE_SE
 
 
@@ -13,7 +13,7 @@ def notification_se(context, event):
 
     if event.action in ['redraft']:
         observation = aq_parent(context)
-        subject = u'Redraft requested.'
+        subject = 'Redraft requested.'
         notify(
             observation,
             _temp,

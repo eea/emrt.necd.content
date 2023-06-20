@@ -25,10 +25,10 @@ class RedraftQuestionForm(form.Form):
 
     def updateActions(self):
         super(RedraftQuestionForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
-    @button.buttonAndHandler(u'Ask SE to redraft')
+    @button.buttonAndHandler('Ask SE to redraft')
     def handleSave(self, action):
         data, errors = self.extractData()
         if errors:
@@ -47,7 +47,7 @@ class RedraftQuestionForm(form.Form):
         )
         self.request.response.redirect(question.absolute_url())
 
-    @button.buttonAndHandler(u'Cancel')
+    @button.buttonAndHandler('Cancel')
     def handleCancel(self, action):
         question = self.context.aq_parent
         self.request.response.redirect(question.absolute_url())

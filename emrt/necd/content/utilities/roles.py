@@ -1,7 +1,7 @@
 from functools import partial
 from itertools import chain
 from itertools import product
-from itertools import ifilter as filter
+
 
 from zope.component.hooks import getSite
 from zope.component import getUtility
@@ -57,9 +57,9 @@ def setup_reviewfolder_roles(folder):
     f_start_msa, f_start_lr, f_start_se = get_ldap_role_filters(folder)
 
     grant = chain(
-        product([ROLE_MSA], filter(f_start_msa, groups)),
-        product([ROLE_LR], filter(f_start_lr, groups)),
-        product([ROLE_SE], filter(f_start_se, groups)),
+        product([ROLE_MSA], list(filter(f_start_msa, groups))),
+        product([ROLE_LR], list(filter(f_start_lr, groups))),
+        product([ROLE_SE], list(filter(f_start_se, groups))),
     )
 
     for role, g_name in grant:

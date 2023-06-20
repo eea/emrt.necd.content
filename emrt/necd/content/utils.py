@@ -1,5 +1,5 @@
 import string
-import simplejson as json
+import json
 from itertools import chain
 
 from operator import itemgetter
@@ -48,7 +48,7 @@ def principals_with_roles(context, rolenames):
         roles = itemgetter(1)
         return principal(entry) if match_roles(roles(entry)) else None
 
-    principals = map(filter_entry, context.get_local_roles())
+    principals = list(map(filter_entry, context.get_local_roles()))
     return tuple(filter(bool, principals))
 
 
@@ -96,7 +96,7 @@ def get_vocabulary_value(context, vocabulary, term):
     vocab_factory = getUtility(IVocabularyFactory, name=vocabulary)
     vocabulary = vocab_factory(context)
     if not term:
-        return u''
+        return ''
     try:
         value = vocabulary.getTerm(term)
         return value.title
@@ -123,10 +123,10 @@ def reduce_text(text, limit):
     if clean_text[-1] in string.punctuation:
         clean_text = clean_text[:-1]
 
-    if isinstance(clean_text, unicode):
-        return u'{0}...'.format(clean_text)
+    if isinstance(clean_text, str):
+        return '{0}...'.format(clean_text)
     else:
-        return u'{0}...'.format(clean_text.decode('utf-8'))
+        return '{0}...'.format(clean_text.decode('utf-8'))
 
 
 def format_date(date, fmt='%d %b %Y, %H:%M CET'):

@@ -22,7 +22,7 @@ def add_vocabulary_terms(logger):
     )
 
     for key, val in new:
-        if key not in vocab.keys():
+        if key not in list(vocab.keys()):
             vocab.addTerm(key, val)
             logger.info('Added term: %s.', (key, val))
         else:

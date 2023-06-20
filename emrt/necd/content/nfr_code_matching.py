@@ -13,44 +13,44 @@ class INECDSettings(Interface):
     """
 
     nfrcodeMapping = schema.Dict(
-        title=_(u"NFR Codes"),
-        description=_(u"Maps ldap sectors"),
-        key_type=schema.TextLine(title=_(u"Code")),
+        title=_("NFR Codes"),
+        description=_("Maps ldap sectors"),
+        key_type=schema.TextLine(title=_("Code")),
         value_type=schema.TextLine(
-            title=_(u"Sector Item"),
+            title=_("Sector Item"),
             description=_(
-                u"Descripe a sector in the form: ldap|code|name|title")
+                "Descripe a sector in the form: ldap|code|name|title")
         ),
     )
 
     nfrcodeMapping_projection = schema.Dict(
-        title=_(u"NFR projection category codes"),
-        description=_(u"Maps ldap sectors for Projection ReviewFolders"),
-        key_type=schema.TextLine(title=_(u"Code")),
+        title=_("NFR projection category codes"),
+        description=_("Maps ldap sectors for Projection ReviewFolders"),
+        key_type=schema.TextLine(title=_("Code")),
         value_type=schema.TextLine(
-            title=_(u"Sector Item"),
+            title=_("Sector Item"),
             description=_(
-                u"Describe a sector in the form: ldap|code|name|title")
+                "Describe a sector in the form: ldap|code|name|title")
         ),
     )
 
     nfrcodeMapping_projection_inventory = schema.Dict(
-        title=_(u"NFR inventories category codes"),
-        description=_(u"Maps ldap sectors for Projection ReviewFolders"),
-        key_type=schema.TextLine(title=_(u"Code")),
+        title=_("NFR inventories category codes"),
+        description=_("Maps ldap sectors for Projection ReviewFolders"),
+        key_type=schema.TextLine(title=_("Code")),
         value_type=schema.TextLine(
-            title=_(u"Sector Item"),
+            title=_("Sector Item"),
             description=_(
-                u"Describe a sector in the form: ldap|code|name|title")
+                "Describe a sector in the form: ldap|code|name|title")
         ),
     )
 
     sectorNames = schema.Dict(
-        title=_(u"Sector names"),
-        description=_(u"Maps sector IDs to names"),
-        key_type=schema.TextLine(title=_(u"Sector ID")),
+        title=_("Sector names"),
+        description=_("Maps sector IDs to names"),
+        key_type=schema.TextLine(title=_("Sector ID")),
         value_type=schema.TextLine(
-            title=_(u"Sector name"),
+            title=_("Sector name"),
         ),
     )
 
@@ -58,7 +58,7 @@ class INECDSettings(Interface):
 def map_nfr_codes(codes):
     nfr_codes = {}
 
-    for key, codes in codes.items():
+    for key, codes in list(codes.items()):
         try:
             ldap, code, name, title = codes.split('|')
             nfr_codes[key] = {

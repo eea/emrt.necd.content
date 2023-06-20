@@ -29,15 +29,15 @@ PORTAL_TYPE = 'Observation'
 
 UNUSED_FIELDS = ['closing_comments', 'closing_deny_comments']
 
-UNCOMPLETED_ERR = u'The observation on row no. {} seems to be a bit off. ' \
-                  u'Please fill all the fields as shown in the import file' \
-                  u' sample. '
+UNCOMPLETED_ERR = 'The observation on row no. {} seems to be a bit off. ' \
+                  'Please fill all the fields as shown in the import file' \
+                  ' sample. '
 
-WRONG_DATA_ERR = u'The information you entered in the {} section ' \
-                 u'of row no. {} is not correct. Please consult the columns' \
-                 u' in the sample xls file to see the correct set of data.' \
+WRONG_DATA_ERR = 'The information you entered in the {} section ' \
+                 'of row no. {} is not correct. Please consult the columns' \
+                 ' in the sample xls file to see the correct set of data.' \
 
-DONE_MSG = u'Successfully imported {} observations!'
+DONE_MSG = 'Successfully imported {} observations!'
 
 PROJECTION_COLS = (
     # 'nfr_code_inventory',
@@ -59,7 +59,7 @@ def _read_row(idx, row):
     if not val:
         return ''
 
-    if isinstance(val, (int, long)):
+    if isinstance(val, int):
         val = safe_unicode(str(val))
     return val.strip()
 
@@ -110,7 +110,7 @@ def get_constants(context):
 
 
 def find_dict_key(vocabulary, value):
-    for key, val in vocabulary.items():
+    for key, val in list(vocabulary.items()):
         if isinstance(val, list):
             if value in val:
                 return key
@@ -176,7 +176,7 @@ class Entry(object):
             years = _multi_rows(self.constants['year'](self.row))
             if years == ('',):
                 return ''
-            proj_years = [u'2025', u'2030', u'2040', u'2050']
+            proj_years = ['2025', '2030', '2040', '2050']
             is_correct = bool(set(years) & set(proj_years))
             return list(years) if is_correct else False
 
@@ -309,7 +309,7 @@ class Entry(object):
         try:
             # Moving activity_data_type field first to
             # validate activity_data values
-            fields = self.constants.keys()
+            fields = list(self.constants.keys())
             fields.insert(0, fields.pop(fields.index('activity_data_type')))
         except ValueError:
             pass
@@ -329,13 +329,13 @@ def _create_observation(entry, context, request, portal_type, obj):
 
     errors = []
 
-    if '' in fields.values():
+    if '' in list(fields.values()):
         errors.append(UNCOMPLETED_ERR.format(obj.row_nr - 1))
         # return error_status_message(
         #     context, request, UNCOMPLETED_ERR.format(obj.row_nr - 1)
         # )
 
-    elif False in fields.values():
+    elif False in list(fields.values()):
         key = find_dict_key(fields, False)
         key = 'description flags' if key == 'highlight' else key
         errors.append(WRONG_DATA_ERR.format(key, obj.row_nr - 1))

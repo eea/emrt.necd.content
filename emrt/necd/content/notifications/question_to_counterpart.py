@@ -2,7 +2,7 @@ from Acquisition import aq_parent
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 
 
 def notification_cp(context, event=None, reassign=False):
@@ -20,7 +20,7 @@ def notification_cp(context, event=None, reassign=False):
 
     if should_run:
         observation = aq_parent(context)
-        subject = u'New draft question to comment'
+        subject = 'New draft question to comment'
         notify(
             observation,
             _temp,
@@ -39,7 +39,7 @@ def notification_lr(context, event):
 
     if event.action in ['request-for-counterpart-comments']:
         observation = aq_parent(context)
-        subject = u'New draft question to comment'
+        subject = 'New draft question to comment'
         notify(
             observation,
             _temp,

@@ -27,24 +27,24 @@ from plone.formwidget.multifile import MultiFileFieldWidget
 
 class ICommentExtenderFields(Interface):
     attachment = NamedBlobFile(
-        title=_(u"Attachment"),
-        description=_(u""),
+        title=_("Attachment"),
+        description=_(""),
         required=False,
     )
 
     attachments = schema.List(
-        title=u"Attachments",
+        title="Attachments",
         value_type=NamedBlobFile(),
         required=False,
     )
 
     redraft_message = schema.Text(
-        title=_(u'Redraft reason'),
+        title=_('Redraft reason'),
         required=False,
     )
 
     redraft_date = schema.Datetime(
-        title=_(u'Redraft request date'),
+        title=_('Redraft request date'),
         required=False,
     )
 
@@ -55,10 +55,10 @@ class CommentExtenderFields(Implicit, Persistent):
     security = ClassSecurityInfo()
 
     security.declareProtected(permissions.View, 'attachment')
-    attachment = u""
+    attachment = ""
 
     security.declareProtected(P_OBS_REDRAFT_REASON_VIEW, 'redraft_message')
-    redraft_message = u""
+    redraft_message = ""
 
 InitializeClass(CommentExtenderFields)
 
@@ -78,10 +78,10 @@ class CommentExtender(extensible.FormExtender):
     def update(self):
         self.add(ICommentExtenderFields, prefix="")
         self.move('attachment', after='text', prefix="")
-        self.form.description = _(u'Handling of confidential files: '
-                u'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
-                u'and send the password per email to the EMRT-NECD Secretariat mailbox. '
-                u'Your password will only be shared with the lead reviewer and sector Expert. '
+        self.form.description = _('Handling of confidential files: '
+                'Please zip your file, protect it with a password, upload it to your reply in the EEA review tool '
+                'and send the password per email to the EMRT-NECD Secretariat mailbox. '
+                'Your password will only be shared with the lead reviewer and sector Expert. '
         )
         self.form.fields['redraft_message'].mode = interfaces.HIDDEN_MODE
         self.form.fields['redraft_date'].mode = interfaces.HIDDEN_MODE

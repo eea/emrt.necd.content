@@ -1,9 +1,9 @@
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 import datetime
-import simplejson as json
+import json
 import re
 from itertools import chain
 from functools import partial
@@ -100,8 +100,8 @@ def projection_hide_for_user():
 
 def get_nfr_title_projection(fname):
     names = dict(
-        nfr_code=u'Review sectors for Projections, NAPCP and PaMs',
-        nfr_code_inventory=u'Review sub sectors'
+        nfr_code='Review sectors for Projections, NAPCP and PaMs',
+        nfr_code_inventory='Review sub sectors'
     )
     return names[fname]
 
@@ -117,14 +117,14 @@ def _is_projection(context):
 
 def check_parameter(value):
     if len(value) == 0:
-        raise Invalid(u'You need to select at least one parameter.')
+        raise Invalid('You need to select at least one parameter.')
 
     return True
 
 
 def check_pollutants(value):
     if len(value) == 0:
-        raise Invalid(u'You need to select at least one pollutant.')
+        raise Invalid('You need to select at least one pollutant.')
 
     return True
 
@@ -140,7 +140,7 @@ def check_country(value):
 
     if not valid:
         raise Invalid(
-            u'You are not allowed to add observations for this country'
+            'You are not allowed to add observations for this country'
         )
 
     return True
@@ -170,7 +170,7 @@ def inventory_year(value):
             return False
 
     if not check_valid(value):
-        raise Invalid(u'Inventory year format is not correct. ')
+        raise Invalid('Inventory year format is not correct. ')
 
     return True
 
@@ -185,46 +185,46 @@ class IObservation(model.Schema, IImageScaleTraversable):
     New review observation
     """
     text = schema.Text(
-        title=u'Short description by sector expert',
+        title='Short description by sector expert',
         required=True,
         description=(
-            u"Describe the issue identified. Keep it short, you cannot "
-            u"change this description once you have sent it to LR. MS can "
-            u"only see the question once it has been approved and sent by "
-            u"the LR. The question to the MS should be asked in the Q&A tab, "
-            u"not here."
+            "Describe the issue identified. Keep it short, you cannot "
+            "change this description once you have sent it to LR. MS can "
+            "only see the question once it has been approved and sent by "
+            "the LR. The question to the MS should be asked in the Q&A tab, "
+            "not here."
         )
     )
 
     country = schema.Choice(
-        title=u"Country",
+        title="Country",
         vocabulary='emrt.necd.content.eea_member_states',
         required=True,
     )
 
     nfr_code = schema.Choice(
-        title=u"NFR category codes",
+        title="NFR category codes",
         vocabulary='emrt.necd.content.nfr_code',
         required=True,
     )
 
     nfr_code_inventory = schema.Choice(
-        title=u"NFR inventories category code",
+        title="NFR inventories category code",
         vocabulary='emrt.necd.content.nfr_code_inventories',
         required=False,
     )
 
     year = schema.TextLine(
-        title=u'Inventory year',
-        description=u'Inventory year can be a given year (2014), a range of '
-                    u'years (2012-2014) or a list of the years '
-                    u'(2012, 2014, 2016)',
+        title='Inventory year',
+        description='Inventory year can be a given year (2014), a range of '
+                    'years (2012-2014) or a list of the years '
+                    '(2012, 2014, 2016)',
         constraint=inventory_year,
         required=True,
     )
 
     reference_year = schema.Int(
-        title=u'Reference year',
+        title='Reference year',
         required=True,
         min=1000,
         max=9999
@@ -232,7 +232,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     form.widget(pollutants=CheckBoxFieldWidget)
     pollutants = schema.List(
-        title=u"Pollutants",
+        title="Pollutants",
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.pollutants',
         ),
@@ -242,7 +242,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     form.widget(scenario=CheckBoxFieldWidget)
     scenario = schema.List(
-        title=u"Scenario Type",
+        title="Scenario Type",
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.scenario_type'
         ),
@@ -250,28 +250,28 @@ class IObservation(model.Schema, IImageScaleTraversable):
     )
 
     review_year = schema.Int(
-        title=u'Review year',
-        description=u'Review year is the year in which the inventory was '
-                    u'submitted and the review was carried out',
+        title='Review year',
+        description='Review year is the year in which the inventory was '
+                    'submitted and the review was carried out',
         defaultFactory=default_year,
         required=True,
     )
 
     fuel = schema.Choice(
-        title=u"Fuel",
+        title="Fuel",
         vocabulary='emrt.necd.content.fuel',
         required=False,
     )
 
     activity_data_type = schema.Choice(
-        title=u"Activity Data Type",
+        title="Activity Data Type",
         vocabulary='emrt.necd.content.activity_data_type',
         required=False,
     )
 
     form.widget(activity_data=CheckBoxFieldWidget)
     activity_data = schema.List(
-        title=u"Activity Data",
+        title="Activity Data",
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.activity_data',
         ),
@@ -279,12 +279,12 @@ class IObservation(model.Schema, IImageScaleTraversable):
     )
 
     ms_key_category = schema.Bool(
-        title=u"MS key category",
+        title="MS key category",
     )
 
     form.widget(parameter=CheckBoxFieldWidget)
     parameter = schema.List(
-        title=u"Parameter",
+        title="Parameter",
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.parameter',
         ),
@@ -294,10 +294,10 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     form.widget(highlight=CheckBoxFieldWidget)
     highlight = schema.List(
-        title=u"Description flags",
+        title="Description flags",
         description=(
-            u"Description flags highlight important information "
-            u"that is closely related to the item."
+            "Description flags highlight important information "
+            "that is closely related to the item."
         ),
         value_type=schema.Choice(
             vocabulary='emrt.necd.content.highlight',
@@ -308,13 +308,13 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     form.write_permission(closing_comments='cmf.ManagePortal')
     closing_comments = schema.Text(
-        title=u'Finish request comments',
+        title='Finish request comments',
         required=False,
     )
 
     form.write_permission(closing_deny_comments='cmf.ManagePortal')
     closing_deny_comments = schema.Text(
-        title=u'Finish deny comments',
+        title='Finish deny comments',
         required=False,
     )
 
@@ -337,8 +337,8 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
                     break
             if not valid:
                 raise Invalid(
-                    u'You are not allowed to add observations '
-                    u'for this sector category.'
+                    'You are not allowed to add observations '
+                    'for this sector category.'
                 )
 
 
@@ -366,7 +366,7 @@ class CountryContextValidator(validator.SimpleFieldValidator):
 
             if not valid:
                 raise Invalid(
-                    u'You are not allowed to add observations for this country.'
+                    'You are not allowed to add observations for this country.'
                 )
 
 
@@ -381,23 +381,23 @@ def set_title_to_observation(obj, event):
     pollutants = safe_unicode(obj.pollutants_value())
     obj_year = (
         obj.year if (
-            isinstance(obj.year, basestring)
+            isinstance(obj.year, str)
             or isinstance(obj.year, int)
         )
         else ', '.join(obj.year)
-    ) if obj.year else u''
+    ) if obj.year else ''
     inventory_year = safe_unicode(str(obj_year))
     parameter = safe_unicode(obj.parameter_value())
-    obj.title = u' '.join([sector, pollutants, inventory_year, parameter])
+    obj.title = ' '.join([sector, pollutants, inventory_year, parameter])
     grant_local_roles(obj)
 
 
 def get_join_from_vocab(context, vocab, values):
-    result = u''
+    result = ''
 
     if values:
         get_value = partial(get_vocabulary_value, context, vocab)
-        result = u', '.join([get_value(v) for v in values if v])
+        result = ', '.join([get_value(v) for v in values if v])
 
     return result
 
@@ -419,7 +419,7 @@ class Observation(Container):
         """
         Memoized version of values, to speed-up
         """
-        return self.values()
+        return list(self.values())
 
     def get_values_cat(self, portal_type=None):
         if portal_type is not None:
@@ -640,7 +640,7 @@ class Observation(Container):
         # there is always only one question.
         question = questions[0]
 
-        items = question.values()
+        items = list(question.values())
 
         comments = [i for i in items if i.portal_type == 'Comment']
         # answers = [i for i in items if i.portal_type == 'CommentAnswer']
@@ -903,7 +903,7 @@ class Observation(Container):
         replynum = 0
         if questions:
             comments = [
-                c for c in questions[-1].values()
+                c for c in list(questions[-1].values())
                 if c.portal_type == "Comment"
             ]
             if comments:
@@ -918,7 +918,7 @@ class Observation(Container):
         replynum = 0
         if questions:
             comments = [
-                c for c in questions[-1].values()
+                c for c in list(questions[-1].values())
                 if c.portal_type == "CommentAnswer"
             ]
             if comments:
@@ -937,7 +937,7 @@ class Observation(Container):
                     chain.from_iterable(
                         [
                             IConversation(c).commentators
-                            for c in question.values()
+                            for c in list(question.values())
                         ]
                     )
                 )
@@ -985,7 +985,7 @@ class Observation(Container):
 def set_form_widgets(form_instance):
     fields = form_instance.fields
     widgets = form_instance.widgets
-    if 'IDublinCore.title' in fields.keys():
+    if 'IDublinCore.title' in list(fields.keys()):
         fields['IDublinCore.title'].field.required = False
         widgets['IDublinCore.title'].mode = interfaces.HIDDEN_MODE
         widgets['IDublinCore.description'].mode = interfaces.HIDDEN_MODE
@@ -1046,14 +1046,14 @@ def set_form_fields(form_instance):
             del fields['year']
             del fields['reference_year']
             fields['parameter'].field = schema.List(
-                title=u"Parameter",
+                title="Parameter",
                 value_type=schema.Choice(
                     vocabulary='emrt.necd.content.parameter',
                 ),
                 required=False,
             )
             fields['pollutants'].field = schema.List(
-                title=u"Pollutants",
+                title="Pollutants",
                 value_type=schema.Choice(
                     vocabulary='emrt.necd.content.pollutants',
                 ),
@@ -1061,19 +1061,19 @@ def set_form_fields(form_instance):
             )
         else:
             fields['year'].field = schema.List(
-                title=u'Projection year',
+                title='Projection year',
                 description=(
-                    u"Projection year is the year or a "
+                    "Projection year is the year or a "
                     "list of years "
-                    u"(e.g. '2050', '2025, 2030') when the emissions had"
-                    u" occured for which an issue was observed in the review."
+                    "(e.g. '2050', '2025, 2030') when the emissions had"
+                    " occured for which an issue was observed in the review."
                 ),
                 value_type=schema.Choice(
                     values=[
-                        u'2025',
-                        u'2030',
-                        u'2040',
-                        u'2050',
+                        '2025',
+                        '2030',
+                        '2040',
+                        '2050',
                     ]
                 ),
                 required=True,
@@ -1135,28 +1135,28 @@ class EditForm(edit.DefaultEditForm):
 
     def updateActions(self):
         super(EditForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
-    @button.buttonAndHandler(_(u'Save'), name='save')
+    @button.buttonAndHandler(_('Save'), name='save')
     def handleApply(self, action):
         data, errors = self.extractData()
         if errors:
             self.status = self.formErrorsMessage
             return
         content = self.getContent()
-        for key, value in data.items():
+        for key, value in list(data.items()):
             if data[key] is interfaces.NOT_CHANGED:
                 continue
             content._setPropValue(key, value)
         IStatusMessage(self.request).addStatusMessage(
-            self.success_message, u"info"
+            self.success_message, "info"
         )
         self.request.response.redirect(self.nextURL())
 
         notify(ObjectModifiedEvent(content))
 
-    @button.buttonAndHandler(_(u'Cancel'), name='cancel')
+    @button.buttonAndHandler(_('Cancel'), name='cancel')
     def handleCancel(self, action):
         super(EditForm, self).handleCancel(self, action)
 
@@ -1175,10 +1175,10 @@ class AddForm(add.DefaultAddForm):
 
     def updateActions(self):
         super(AddForm, self).updateActions()
-        self.actions['save'].title = u'Save Observation'
+        self.actions['save'].title = 'Save Observation'
         self.actions['save'].addClass('defaultWFButton')
-        self.actions['cancel'].title = u'Delete Observation'
-        for k in self.actions.keys():
+        self.actions['cancel'].title = 'Delete Observation'
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
     def create(self, data):
@@ -1195,7 +1195,7 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        for key, value in data.items():
+        for key, value in list(data.items()):
             content._setPropValue(key, value)
         notify(ObjectModifiedEvent(container))
 
@@ -1322,7 +1322,7 @@ class ObservationMixin(DefaultView):
         question = self.question()
         if question:
             values = [
-                v for v in question.values()
+                v for v in list(question.values())
                 if sm.checkPermission('View', v)
             ]
             return values
@@ -1381,11 +1381,11 @@ class ObservationMixin(DefaultView):
             p_add = 'emrt.necd.content: Add CommentAnswer'
             permission = sm.checkPermission(p_add, question)
             questions = [
-                q for q in question.values()
+                q for q in list(question.values())
                 if q.portal_type == 'Comment'
             ]
             answers = [
-                q for q in question.values()
+                q for q in list(question.values())
                 if q.portal_type == 'CommentAnswer'
             ]
             return permission and len(questions) > len(answers)
@@ -1445,7 +1445,7 @@ class ObservationMixin(DefaultView):
                     history = self.history = []
                     hist_meta_len = hist_meta.getLength(countPurged=False)
                     # Count backwards from most recent to least recent
-                    for i in xrange(hist_meta_len - 1, -1, -1):
+                    for i in range(hist_meta_len - 1, -1, -1):
                         version = (
                             retrieve(i, countPurged=False)['metadata'].copy()
                         )
@@ -1512,7 +1512,7 @@ class ObservationMixin(DefaultView):
 
         return translate(
             _CMFE(
-                u"version ${version}",
+                "version ${version}",
                 mapping=dict(version=version_name)
             ),
             context=self.request
@@ -1781,12 +1781,12 @@ class AddQuestionForm(Form):
     ignoreContext = True
     fields = field.Fields(IComment).select('text')
 
-    @button.buttonAndHandler(u'Save question')
+    @button.buttonAndHandler('Save question')
     def create_question(self, action):
         context = aq_inner(self.context)
         text = self.request.form.get('form.widgets.text', '')
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Question text is empty"))
+            raise ActionExecutionError(Invalid("Question text is empty"))
 
         qs = self.context.get_values_cat('Question')
         if qs:
@@ -1815,7 +1815,7 @@ class AddQuestionForm(Form):
 
     def updateActions(self):
         super(AddQuestionForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
             self.actions[k].addClass('defaultWFButton')
 
@@ -1825,20 +1825,20 @@ class AddAnswerForm(Form):
     ignoreContext = True
     fields = field.Fields(ICommentAnswer).select('text')
 
-    @button.buttonAndHandler(u'Save answer')
+    @button.buttonAndHandler('Save answer')
     def add_answer(self, action):
         text = self.request.form.get('form.widgets.text', '')
         if not text.strip():
-            raise ActionExecutionError(Invalid(u"Answer text is empty"))
+            raise ActionExecutionError(Invalid("Answer text is empty"))
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values()
+            q for q in list(observation.values())
             if q.portal_type == 'Question'
         ]
         if questions:
             context = questions[0]
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
         id = str(int(time()))
         item_id = context.invokeFactory(
             type_name='CommentAnswer',
@@ -1857,7 +1857,7 @@ class AddAnswerForm(Form):
 
     def updateActions(self):
         super(AddAnswerForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -1865,32 +1865,32 @@ class AddAnswerAndRequestComments(BrowserView):
     def render(self):
         observation = aq_inner(self.context)
         questions = [
-            q for q in observation.values()
+            q for q in list(observation.values())
             if q.portal_type == 'Question'
         ]
         if questions:
             context = questions[0]
         else:
-            raise ActionExecutionError(Invalid(u"Invalid context"))
+            raise ActionExecutionError(Invalid("Invalid context"))
 
-        comments = [q for q in context.values() if q.portal_type == 'Comment']
+        comments = [q for q in list(context.values()) if q.portal_type == 'Comment']
         answers = [
-            q for q in context.values()
+            q for q in list(context.values())
             if q.portal_type == 'CommentAnswer'
         ]
 
         if (len(comments) == len(answers)):
             status = IStatusMessage(self.request)
-            msg = _(u'There is a draft answer created for the question.')
+            msg = _('There is a draft answer created for the question.')
             status.addStatusMessage(msg, "error")
             return self.request.response.redirect(observation.absolute_url())
 
         context = questions[0]
 
         text = (
-            u'For MS coordinator: please draft, edit and finalize '
-            u'here your answer AFTER CLOSING COMMENT within your '
-            u'member state expert.'
+            'For MS coordinator: please draft, edit and finalize '
+            'here your answer AFTER CLOSING COMMENT within your '
+            'member state expert.'
         )
 
         id = str(int(time()))
@@ -1927,7 +1927,7 @@ class AddCommentForm(Form):
     ignoreContext = True
     fields = field.Fields(IComment).select('text')
 
-    @button.buttonAndHandler(u'Add question')
+    @button.buttonAndHandler('Add question')
     def create_question(self, action):
         request = self.request
         observation = self.context
@@ -1935,13 +1935,13 @@ class AddCommentForm(Form):
         # cause a transaction.commit
         question = value_or_error(
             observation.get_question(),
-            u'Invalid context'
+            'Invalid context'
         )
         wid_text = self.widgets['text']
 
         text = value_or_error(
-            wid_text.extract(u'').strip(),
-            u'Question text is empty'
+            wid_text.extract('').strip(),
+            'Question text is empty'
         )
 
         if question.get_status() == 'closed':  # fix for question in "draft"
@@ -1961,7 +1961,7 @@ class AddCommentForm(Form):
 
     def updateActions(self):
         super(AddCommentForm, self).updateActions()
-        for k in self.actions.keys():
+        for k in list(self.actions.keys()):
             self.actions[k].addClass('standardButton')
 
 
@@ -1971,7 +1971,7 @@ class EditConclusionP2AndCloseComments(BrowserView):
         waction = self.request.get('workflow_action')
         if waction != 'finish-comments':
             status = IStatusMessage(self.request)
-            msg = u'There was an error, try again please'
+            msg = 'There was an error, try again please'
             status.addStatusMessage(msg, "error")
 
     def render(self):

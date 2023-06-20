@@ -1,5 +1,5 @@
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 from emrt.necd.content.constants import ROLE_LR
 
 
@@ -12,7 +12,7 @@ def notification_lr(context, event):
 
     if event.action in ['finish-observation']:
         observation = context
-        subject = u'Observation finalisation request'
+        subject = 'Observation finalisation request'
         notify(
             observation,
             _temp,

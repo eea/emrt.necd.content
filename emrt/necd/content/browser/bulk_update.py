@@ -22,8 +22,8 @@ def _read_col(row, nr):
     try:
         val = clean_value(row[nr].value)
     except IndexError:
-        val = u''
-    return val.strip() if val else u''
+        val = ''
+    return val.strip() if val else ''
 
 
 def _obj_from_url(context, site_url, url):

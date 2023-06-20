@@ -1,6 +1,6 @@
 from Acquisition import aq_parent
 from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from utils import notify
+from .utils import notify
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
 
@@ -13,7 +13,7 @@ def notification_ms(context, event):
     _temp = PageTemplateFile('question_to_ms.pt')
     if event.action in ['approve-question']:
         observation = aq_parent(context)
-        subject = u'New question for your country'
+        subject = 'New question for your country'
         notify(
             observation,
             _temp,
@@ -31,7 +31,7 @@ def notification_se(context, event):
     _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
     if event.action in ['approve-question']:
         observation = aq_parent(context)
-        subject = u'Your observation was sent to MS'
+        subject = 'Your observation was sent to MS'
         notify(
             observation,
             _temp,

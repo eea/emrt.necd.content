@@ -3,7 +3,6 @@
     <dependencies>
         <dependency>profile-plone.app.dexterity:default</dependency>
         <dependency>profile-plone.app.ldap:ldap</dependency>
-        <dependency>profile-Products.ATVocabularyManager:default</dependency>
         <dependency>profile-collective.z3cform.datagridfield:default</dependency>
         <dependency>profile-collective.deletepermission:default</dependency>
     </dependencies>

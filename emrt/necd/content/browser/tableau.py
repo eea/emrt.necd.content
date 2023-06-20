@@ -1,5 +1,5 @@
 import os
-import simplejson as json
+import json
 
 from gzip import GzipFile
 from datetime import datetime
@@ -49,7 +49,7 @@ def entry_for_cmp(entry):
     """
     return {
         k: v
-        for k, v in entry.items()
+        for k, v in list(entry.items())
         if k not in ['Timestamp', 'Modified']
     }
 
@@ -94,7 +94,7 @@ def update_history_with_snapshot(data, snapshot):
             found.append(entry)
 
     # Cleanup entries for deleted Observations
-    to_delete = [key for key in updated.keys() if key not in snapshot_ids]
+    to_delete = [key for key in list(updated.keys()) if key not in snapshot_ids]
     for key in to_delete:
         del updated[key]
 
@@ -111,7 +111,7 @@ def flatten_historical_data(data):
         timestamp, latest to oldest.
     """
     return sorted(
-        chain.from_iterable(data.values()),
+        chain.from_iterable(list(data.values())),
         key=GET_TIMESTAMP,
         reverse=True
     )
@@ -234,7 +234,7 @@ def get_snapshot(context):
         path='/'.join(context.getPhysicalPath())
     )
 
-    return map(entry, brains)
+    return list(map(entry, brains))
 
 
 def write_historical_data(context, content):

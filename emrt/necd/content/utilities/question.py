@@ -6,7 +6,7 @@ PERM_ADD_COMMENT = 'emrt.necd.content: Add Comment'
 
 
 def validate_qa(question):
-    comments = question.values()
+    comments = list(question.values())
 
     questions = [q for q in comments if q.portal_type == 'Comment']
     answers = [q for q in comments if q.portal_type == 'CommentAnswer']
