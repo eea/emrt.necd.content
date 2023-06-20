@@ -40,9 +40,9 @@ setup(
         "collective.deletepermission",
         "tablib",
         "python-docx",
-        "zc.dict",
         "collective.monkeypatcher",
         "openpyxl",
+        "eea.cache",
     ],
     entry_points="""
     # -*- Entry points: -*-

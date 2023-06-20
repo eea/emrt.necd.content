@@ -18,8 +18,8 @@ from plone import api
 
 import openpyxl
 
-from emrt.necd.content.vocabularies import get_registry_interface_field_data
-from emrt.necd.content.vocabularies import INECDVocabularies
+from emrt.necd.content.vocabularies.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies.vocabularies import INECDVocabularies
 from emrt.necd.content.observation import create_comment
 from emrt.necd.content.observation import inventory_year
 from emrt.necd.content.question import create_question

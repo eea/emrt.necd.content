@@ -7,14 +7,11 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="emrt.necd.content">
 
-  <!-- Include configuration for dependencies listed in setup.py -->
-  <includeDependencies package="." />
-
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />
   <include file="patches.zcml" />
   <include file="views.zcml" />
-  <include file="vocabularies.zcml" />
+  <include package=".vocabularies" />
   <include package=".upgrades" />
   <include package=".adapters" />
   <include package=".utilities" />

@@ -1,26 +1,18 @@
-from types import FloatType
-from types import IntType
-from types import ListType
-from types import StringType
-from types import TupleType
-from types import UnicodeType
-
 import datetime
 
 from zope.schema import getFieldsInOrder
 
-from Products.CMFPlone.utils import safe_unicode
-
-import plone.api as api
+from plone import api
 from plone.app.discussion.interfaces import IConversation
 from plone.app.textfield.interfaces import IRichTextValue
+from plone.base.utils import safe_text
 from plone.indexer import indexer
 
-from .conclusions import IConclusions
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.commentanswer import ICommentAnswer
 from emrt.necd.content.utils import get_vocabulary_value
 
+from .conclusions import IConclusions
 from .observation import IObservation
 
 
@@ -53,7 +45,7 @@ def observation_ghg_source_sectors(context):
 def observation_year(context):
     year = context.year
     if isinstance(year, (list, tuple)):
-        return ', '.join(year)
+        return ", ".join(year)
     return year
 
 
@@ -80,7 +72,7 @@ def last_answer_reply_number(context):
 @indexer(IObservation)
 def conclusion_reply_number(context):
     replynum = 0
-    conclusions = context.values(['Conclusions'])
+    conclusions = context.values(["Conclusions"])
     if conclusions:
         conclusion = conclusions[0]
         disc = IConversation(conclusion)
@@ -94,61 +86,65 @@ def SearchableText(context):
     items = []
     items.extend(index_fields(getFieldsInOrder(IObservation), context))
     try:
-        questions = context.getFolderContents({'portal_type': 'Question'},
-            full_objects=True
+        questions = context.getFolderContents(
+            {"portal_type": "Question"}, full_objects=True
         )
         items.extend(to_unicode(context.id))
     except:
         questions = []
     try:
         conclusions = context.getFolderContents(
-            {'portal_type': 'Conclusions'},
-            full_objects=True
+            {"portal_type": "Conclusions"}, full_objects=True
         )
     except:
         conclusions = []
 
     for question in questions:
-        comments = question.getFolderContents({'portal_type': 'Comment'},
-            full_objects=True
+        comments = question.getFolderContents(
+            {"portal_type": "Comment"}, full_objects=True
         )
-        answers = question.getFolderContents({'portal_type': 'CommentAnswer'},
-            full_objects=True
+        answers = question.getFolderContents(
+            {"portal_type": "CommentAnswer"}, full_objects=True
         )
         for comment in comments:
             items.extend(index_fields(getFieldsInOrder(IComment), comment))
         for answer in answers:
-            items.extend(index_fields(
-                getFieldsInOrder(ICommentAnswer), answer)
+            items.extend(
+                index_fields(getFieldsInOrder(ICommentAnswer), answer)
             )
 
     for conclusion in conclusions:
-        items.extend(index_fields(
-            getFieldsInOrder(IConclusions), conclusion)
-        )
+        items.extend(index_fields(getFieldsInOrder(IConclusions), conclusion))
 
-    return ' '.join(items)
+    return " ".join(items)
 
 
 def index_fields(fields, context):
     items = []
     for name, field in fields:
         value = getattr(context, name)
-        if getattr(field, 'vocabularyName', None):
-            if type(value) in [ListType, TupleType]:
-                vals = [get_vocabulary_value(context, field.vocabularyName, v) for v in value]
+        if getattr(field, "vocabularyName", None):
+            if isinstance(value, (list, tuple)):
+                vals = [
+                    get_vocabulary_value(context, field.vocabularyName, v)
+                    for v in value
+                ]
             else:
-                vals = get_vocabulary_value(context, field.vocabularyName, value)
+                vals = get_vocabulary_value(
+                    context, field.vocabularyName, value
+                )
             items.extend(to_unicode(vals))
 
         if IRichTextValue.providedBy(value):
             html = value.output
-            transforms = api.portal.get_tool('portal_transforms')
+            transforms = api.portal.get_tool("portal_transforms")
             if isinstance(html, str):
-                html = html.encode('utf-8')
-            value = transforms.convertTo('text/plain',
-                html, mimetype='text/html'
-            ).getData().strip()
+                html = html.encode("utf-8")
+            value = (
+                transforms.convertTo("text/plain", html, mimetype="text/html")
+                .getData()
+                .strip()
+            )
         if value:
             items.extend(to_unicode(value))
 
@@ -156,31 +152,33 @@ def index_fields(fields, context):
 
 
 def to_unicode(value):
-    if type(value) in (StringType, UnicodeType):
-        return [safe_unicode(value)]
-    elif type(value) in [IntType, FloatType]:
-        return [safe_unicode(str(value))]
-    elif type(value) in [ListType, TupleType]:
-        return [' '.join(to_unicode(v)) for v in value if v]
+    if isinstance(value, str):
+        return [safe_text(value)]
+    elif isinstance(value, (int, float)):
+        return [safe_text(str(value))]
+    elif isinstance(value, (list, tuple)):
+        return [" ".join(to_unicode(v)) for v in value if v]
     return []
 
 
 def question_status(context):
-    questions = [c for c in list(context.values()) if c.portal_type == "Question"]
+    questions = [
+        c for c in list(context.values()) if c.portal_type == "Question"
+    ]
     status = context.get_status()
-    if status != 'pending':
-        if status == 'conclusions':
+    if status != "pending":
+        if status == "conclusions":
             if questions:
                 question_state = api.content.get_state(questions[-1])
-                if question_state != 'closed':
+                if question_state != "closed":
                     return question_state
         return status
     else:
         if questions:
             question = questions[0]
             state = api.content.get_state(question)
-            if state == 'closed':
-                return 'answered'
+            if state == "closed":
+                return "answered"
             else:
                 return state
         else:
@@ -229,7 +227,7 @@ def reply_comments_by_mse(context):
 @indexer(IObservation)
 def observation_sent_to_msc(context):
     try:
-        questions = context.get_values_cat(['Question'])
+        questions = context.get_values_cat(["Question"])
         if questions:
             question = questions[0]
             winfo = question.workflow_history
@@ -240,11 +238,11 @@ def observation_sent_to_msc(context):
             # as the Observation may be a carry-over.
             witems = [
                 w
-                for w in winfo.get('esd-question-review-workflow', [])
+                for w in winfo.get("esd-question-review-workflow", [])
                 if w["time"].year() == this_year
             ]
             for witem in witems:
-                if witem.get('review_state', '').endswith('pending'):
+                if witem.get("review_state", "").endswith("pending"):
                     was_or_is_pending = True
                     break
             for q in question.get_questions():
@@ -260,7 +258,7 @@ def observation_sent_to_msc(context):
 @indexer(IObservation)
 def observation_sent_to_mse(context):
     try:
-        questions = context.get_values_cat(['Question'])
+        questions = context.get_values_cat(["Question"])
         if questions:
             question = questions[0]
             winfo = question.workflow_history
@@ -269,11 +267,11 @@ def observation_sent_to_mse(context):
             # as the Observation may be a carry-over.
             witems = [
                 w
-                for w in winfo.get('esd-question-review-workflow', [])
+                for w in winfo.get("esd-question-review-workflow", [])
                 if w["time"].year() == this_year
             ]
             for witem in witems:
-                if witem.get('review_state', '').endswith('expert-comments'):
+                if witem.get("review_state", "").endswith("expert-comments"):
                     return True
         return False
     except:
@@ -284,9 +282,13 @@ def observation_sent_to_mse(context):
 def observation_finalisation_reason(context):
     try:
         status = context.get_status()
-        if status == 'closed':
-            conclusions = [c for c in list(context.values()) if c.portal_type == "Conclusions"]
-            return conclusions[0] and conclusions[0].closing_reason or ' '
+        if status == "closed":
+            conclusions = [
+                c
+                for c in list(context.values())
+                if c.portal_type == "Conclusions"
+            ]
+            return conclusions[0] and conclusions[0].closing_reason or " "
         else:
             return None
     except:
@@ -297,9 +299,8 @@ def observation_finalisation_reason(context):
 def observation_finalisation_text(context):
     try:
         conclusions = [
-            c for c in list(context.values())
-            if c.portal_type == "Conclusions"
+            c for c in list(context.values()) if c.portal_type == "Conclusions"
         ]
-        return conclusions[0] and conclusions[0].text or ''
+        return conclusions[0] and conclusions[0].text or ""
     except:
         return None

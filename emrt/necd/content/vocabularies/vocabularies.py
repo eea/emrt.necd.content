@@ -1,5 +1,6 @@
 import csv
 import itertools
+import os
 from operator import itemgetter
 
 from zope.component import getUtility
@@ -7,8 +8,6 @@ from zope.interface import Interface
 from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
-
-from Products.GenericSetup.tool import SetupTool
 
 from plone import api
 from plone import schema
@@ -24,6 +23,8 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
+
+CSV_PATH = os.path.join(os.path.dirname(__file__), "data")
 
 
 def get_valid_user():
@@ -67,10 +68,10 @@ def check_user_for_vocab(context, user):
 
 
 def read_profile_vocabulary(filename: str) -> str:
-    setup_tool: SetupTool = api.portal.get_tool("setup_tool")
-    profile = setup_tool._getImportContext("emrt.necd.content:default")
-    data = profile.readDataFile(filename, subdir="necdvocabularies")
-    return data
+    result = ""
+    with open(os.path.join(CSV_PATH, filename), "r") as infile:
+        result = infile.read().strip()
+    return result
 
 
 def vocabulary_from_csv_string(data: str):

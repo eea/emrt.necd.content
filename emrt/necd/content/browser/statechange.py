@@ -1,7 +1,7 @@
 import re
 from functools import partial
 from operator import itemgetter
-import Globals
+from App.config import getConfiguration
 from Acquisition import aq_parent, aq_inner
 from emrt.necd.content import MessageFactory as _
 from plone import api
@@ -94,7 +94,7 @@ def revoke_roles(username=None, user=None, obj=None, roles=None, inherit=True):
 def exclude_test_users(userdata):
     """ Filter out test user ids if not in development mode.
     """
-    if Globals.DevelopmentMode:
+    if getConfiguration().debug_mode:
         return userdata
 
     userid = itemgetter(0)

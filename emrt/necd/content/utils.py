@@ -14,8 +14,8 @@ from zope.schema.interfaces import IVocabularyFactory
 from z3c.form.interfaces import WidgetActionExecutionError
 
 from emrt.necd.content.utilities.ldap_wrapper import ldap_inventory
-from emrt.necd.content.vocabularies import get_registry_interface_field_data
-from emrt.necd.content.vocabularies import INECDVocabularies
+from emrt.necd.content.vocabularies.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies.vocabularies import INECDVocabularies
 
 
 def user_has_ldap_role(ldap_name, user=None, groups=None,

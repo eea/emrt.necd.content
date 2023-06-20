@@ -1,37 +1,36 @@
+from time import time
+
 from AccessControl import getSecurityManager
+from z3c.form import field
+
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
-from emrt.necd.content import MessageFactory as _
-from plone import api
-from plone.dexterity.browser import add
-from plone.dexterity.browser import edit
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.content import Container
-from plone.directives import form
-from plone.namedfile.interfaces import IImageScaleTraversable
-from Products.Five import BrowserView
-from time import time
-from z3c.form import field
+from zope import schema
 from zope.component import createObject
 from zope.component import getUtility
 from zope.interface import implementer
-from zope import schema
+
+from Products.Five import BrowserView
+
+from plone import api
+from plone.dexterity.browser import add
+from plone.dexterity.browser import edit
+from plone.dexterity.content import Container
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.namedfile.interfaces import IImageScaleTraversable
+from plone.supermodel import model
+
+from emrt.necd.content import MessageFactory as _
 
 
 # Interface class; used to define content-type schema.
-class ICommentAnswer(form.Schema, IImageScaleTraversable):
-    """
-    Answer for Questions
-    """
-    # If you want a schema-defined interface, delete the form.model
-    # line below and delete the matching file in the models sub-directory.
-    # If you want a model-based interface, edit
-    # models/comment.xml to define the content type
-    # and add directives here as necessary.
+class ICommentAnswer(model.Schema, IImageScaleTraversable):
+    """Answer for Questions."""
+
     text = schema.Text(
-        title=_('Text'),
+        title=_("Text"),
         required=True,
     )
 
@@ -46,23 +45,29 @@ class CommentAnswer(Container):
 
     def can_edit(self):
         sm = getSecurityManager()
-        return sm.checkPermission('emrt.necd.content: Edit CommentAnswer', self)
+        return sm.checkPermission(
+            "emrt.necd.content: Edit CommentAnswer", self
+        )
 
     def can_add_files(self):
         sm = getSecurityManager()
         parent = aq_parent(self)
-        return sm.checkPermission('emrt.necd.content: Add NECDFile', self) and api.content.get_state(parent) not in ['expert-comments']
+        return sm.checkPermission(
+            "emrt.necd.content: Add NECDFile", self
+        ) and api.content.get_state(parent) not in ["expert-comments"]
 
     def get_files(self):
         items = list(self.values())
-        mtool = api.portal.get_tool('portal_membership')
-        return [item for item in items if mtool.checkPermission('View', item)]
+        mtool = api.portal.get_tool("portal_membership")
+        return [item for item in items if mtool.checkPermission("View", item)]
 
     def can_delete(self):
         sm = getSecurityManager()
         parent = aq_parent(self)
         parent_state = api.content.get_state(parent)
-        return sm.checkPermission('Delete portal content', self) and parent_state not in ['expert-comments']
+        return sm.checkPermission(
+            "Delete portal content", self
+        ) and parent_state not in ["expert-comments"]
 
 
 # View class
@@ -75,29 +80,31 @@ class CommentAnswerView(BrowserView):
     def render(self):
         context = aq_inner(self.context)
         parent = aq_parent(context)
-        url = '%s#%s' % (parent.absolute_url(), context.getId())
+        url = "%s#%s" % (parent.absolute_url(), context.getId())
 
         return self.request.response.redirect(url)
 
 
 class AddForm(add.DefaultAddForm):
-    label = 'Answer'
-    description = ''
+    label = "Answer"
+    description = ""
 
     def updateFields(self):
         super(AddForm, self).updateFields()
-        self.fields = field.Fields(ICommentAnswer).select('text')
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        self.fields = field.Fields(ICommentAnswer).select("text")
+        self.groups = [
+            g for g in self.groups if g.label == "label_schema_default"
+        ]
 
     def updateWidgets(self):
         super(AddForm, self).updateWidgets()
-        self.widgets['text'].rows = 15
+        self.widgets["text"].rows = 15
 
     def create(self, data={}):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
-        if hasattr(content, '_setPortalTypeName'):
+        if hasattr(content, "_setPortalTypeName"):
             content._setPortalTypeName(fti.getId())
 
         # Acquisition wrap temporarily to satisfy things like vocabularies
@@ -108,7 +115,7 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        content.text = self.request.form.get('form.widgets.text', '')
+        content.text = self.request.form.get("form.widgets.text", "")
 
         return aq_base(content)
 
@@ -118,19 +125,21 @@ class AddView(add.DefaultAddView):
 
 
 class EditForm(edit.DefaultEditForm):
-    label = 'Answer'
-    description = ''
+    label = "Answer"
+    description = ""
 
     def updateFields(self):
         super(EditForm, self).updateFields()
-        self.fields = field.Fields(ICommentAnswer).select('text')
-        self.groups = [g for g in self.groups if g.label == 'label_schema_default']
+        self.fields = field.Fields(ICommentAnswer).select("text")
+        self.groups = [
+            g for g in self.groups if g.label == "label_schema_default"
+        ]
 
     def updateWidgets(self):
         super(EditForm, self).updateWidgets()
-        self.widgets['text'].rows = 15
+        self.widgets["text"].rows = 15
 
     def updateActions(self):
         super(EditForm, self).updateActions()
         for k in list(self.actions.keys()):
-            self.actions[k].addClass('standardButton')
+            self.actions[k].addClass("standardButton")

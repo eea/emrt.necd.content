@@ -9,8 +9,8 @@ from io import StringIO
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
-from emrt.necd.content.vocabularies import get_registry_interface_field_data
-from emrt.necd.content.vocabularies import INECDVocabularies
+from emrt.necd.content.vocabularies.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies.vocabularies import INECDVocabularies
 
 
 XLS_SAMPLE_HEADER_INVENTORY = (
