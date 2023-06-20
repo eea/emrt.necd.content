@@ -19,7 +19,7 @@ LDAP_ROLE_MAPPING = {
     LDAP_SECRETARIAT: "Manager",
 }
 
-LDAP_PLUGIN_ID = "ldap-plugin"
+LDAP_PLUGIN_ID = "pasldap"
 MEMCACHED_ID = "memcached"
 
 
@@ -58,7 +58,10 @@ def map_ldap_roles(context):
 
 def setup_ldap(portal, ldap_id, memcached_id):
     acl = get_portal_acl(portal)
-    ldap_plugin = get_ldap_plugin(acl, ldap_id)
+    try:
+        ldap_plugin = get_ldap_plugin(acl, ldap_id)
+    except KeyError:
+        LOGGER.warn("LDAP Plugin not found. LDAP setup skipped.")
 
     # map LDAP roles to Plone roles
     ldap_acl = ldap_plugin._getLDAPUserFolder()
@@ -101,7 +104,8 @@ def setup_ldap(portal, ldap_id, memcached_id):
 def post_install(context):
     portal = getSite()
     setup_memcached(portal, MEMCACHED_ID)
-    setup_ldap(portal, LDAP_PLUGIN_ID, MEMCACHED_ID)
+    # TODO: fix
+    # setup_ldap(portal, LDAP_PLUGIN_ID, MEMCACHED_ID)
 
 
 def setupVarious(context):

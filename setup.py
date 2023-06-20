@@ -35,7 +35,7 @@ setup(
         "setuptools",
         "collective.z3cform.datagridfield",
         "plone.formwidget.multifile",
-        "plone.app.ldap",
+        "pas.plugins.ldap",
         "cs.htmlmailer",
         "collective.deletepermission",
         "tablib",

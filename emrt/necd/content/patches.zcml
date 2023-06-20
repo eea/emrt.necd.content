@@ -5,7 +5,7 @@
 
   <include package="collective.monkeypatcher" />
 
-  <monkey:patch
+  <!-- <monkey:patch
     description="Add eea.cache for Products.LDAPUserFolder.LDAPUserFolder._lookupuserbyattr"
     class="Products.LDAPUserFolder.LDAPUserFolder.LDAPUserFolder"
     original="_lookupuserbyattr"
@@ -19,6 +19,6 @@
     original="search"
     replacement=".patches.LDAPDelegate_search"
     preserveOriginal="true"
-    />
+    /> -->
 
 </configure>
