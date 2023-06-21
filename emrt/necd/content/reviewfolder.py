@@ -5,6 +5,8 @@ from datetime import datetime
 from functools import partial
 from io import StringIO
 from operator import itemgetter
+from typing import List, cast
+from typing import Tuple
 
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
@@ -14,7 +16,7 @@ from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
-
+from Products.CMFPlone.CatalogTool import CatalogTool
 from Acquisition import aq_inner
 from DateTime import DateTime
 from zope import schema
@@ -22,12 +24,9 @@ from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.interface import provider
-from zope.schema import Bool
-from zope.schema import Choice
-from zope.schema import List
-from zope.schema import TextLine
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 from Products.CMFCore.utils import getToolByName
@@ -87,8 +86,31 @@ def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
 
 
-def get_finalisation_reasons(reviewfolder):
+def get_vocabulary(context: "ReviewFolder", name: str) -> SimpleVocabulary:
+    factory = getUtility(IVocabularyFactory, name=name)
+    return factory(context)
+
+
+def get_vocabulary_items(
+    context: "ReviewFolder", name: str
+) -> List[Tuple[str, str]]:
+    """Given a vocabulary, returns a list of (token, title)."""
+    voc: SimpleVocabulary = get_vocabulary(context, name)
+    terms: List[SimpleTerm] = iter(voc)
+    return [(cast(str, term.token), cast(str, term.title)) for term in terms]
+
+
+def get_necd_vocabulary_items(context: "ReviewFolder", name: str):
+    """Helper function to avoid using the whole dotted name.
+    
+    Prepends emrt.necd.content to `name`.
+    """
+    return get_vocabulary_items(context, f"emrt.necd.content.{name}")
+
+
+def get_finalisation_reasons(reviewfolder: "ReviewFolder"):
     """Vocabularies are used to fetch available reasons.
+
     This used to have hardcoded values for 2015 and 2016.
     Currently it works like this:
         - try to get vocabulary values that end
@@ -99,20 +121,17 @@ def get_finalisation_reasons(reviewfolder):
     any number of upcoming years, as well as "Test"-type
     review folders.
     """
-    vtool = getToolByName(reviewfolder, "portal_vocabularies")
-    reasons = [("open", "open")]
+    reasons: List[Tuple[str, str]] = [("open", "open")]
 
     context_title = reviewfolder.Title().strip()
 
     vocab_ids = ("conclusion_reasons",)
 
-    to_add = []
-    all_terms = []
+    to_add: List[Tuple[str, str]] = []
+    all_terms: List[Tuple[str, str]] = []
 
     for vocab_id in vocab_ids:
-        voc = vtool.getVocabularyByName(vocab_id)
-        voc_terms = list(voc.getDisplayList(reviewfolder).items())
-        all_terms.extend(voc_terms)
+        all_terms.extend(get_necd_vocabulary_items(reviewfolder, vocab_id))
 
     # if term ends in the review folder title (e.g. 2016)
     for term_key, term_title in all_terms:
@@ -223,6 +242,8 @@ class ReviewFolder(Container):
 
 
 class ReviewFolderMixin(BrowserView):
+    context: ReviewFolder
+
     def __call__(self):
         if api.user.is_anonymous():
             raise Unauthorized
@@ -305,30 +326,13 @@ class ReviewFolderMixin(BrowserView):
         return set(roles).intersection((ROLE_LR, "Manager"))
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_highlights(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        if self.context.type == "inventory":
-            voc = vtool.getVocabularyByName("highlight")
-        else:
-            voc = vtool.getVocabularyByName("highlight_projection")
-        highlights = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            highlights.append((term[0], term[1]))
-
-        return highlights
+        return get_necd_vocabulary_items(self.context, "highlight")
 
     def get_review_years(self):
-        catalog = api.portal.get_tool("portal_catalog")
+        catalog: CatalogTool = api.portal.get_tool("portal_catalog")
         review_years = [
             c
             for c in catalog.uniqueValuesFor("review_year")
@@ -557,16 +561,16 @@ def fields_vocabulary_factory(context):
 
 
 class IExportForm(Interface):
-    exportFields = List(
+    exportFields = schema.List(
         title="Fields to export",
         description="Select which fields you want to add into XLS",
         required=False,
-        value_type=Choice(source=fields_vocabulary_factory),
+        value_type=schema.Choice(source=fields_vocabulary_factory),
     )
 
-    include_qa = Bool(title="Include Q&A threads.", required=False)
+    include_qa = schema.Bool(title="Include Q&A threads.", required=False)
 
-    come_from = TextLine(title="Come from")
+    come_from = schema.TextLine(title="Come from")
 
 
 class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
@@ -621,8 +625,6 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
     def extract_data(self, form_data):
         """Create xls file."""
-        getToolByName(self, "portal_vocabularies")
-
         observations = self.get_questions()
 
         user_is_ms = getUtility(IUserIsMS)(self.context)
@@ -814,7 +816,6 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         wb.save(xls)
         xls.seek(0)
         response.write(xls.read())
-
 
 
 ExportReviewFolderFormView = wrap_form(ExportReviewFolderForm)
@@ -1361,24 +1362,10 @@ class InboxReviewFolderView(ReviewFolderMixin):
         return user.getProperty("fullname", userid)
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_sectors(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("ghg_source_sectors")
-        sectors = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            sectors.append((term[0], term[1]))
-
-        return sectors
+        return get_necd_vocabulary_items(self.context, "ghg_source_sectors")
 
     def is_sector_expert(self):
         ldap_wrapper = getUtility(IGetLDAPWrapper)(self.context)
@@ -1501,31 +1488,15 @@ class FinalisedFolderView(BrowserView):
         return user.getProperty("fullname", userid)
 
     def get_countries(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("eea_member_states")
-        countries = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            countries.append((term[0], term[1]))
-
-        return countries
+        return get_necd_vocabulary_items(self.context, "eea_member_states")
 
     def get_sectors(self):
-        vtool = getToolByName(self, "portal_vocabularies")
-        voc = vtool.getVocabularyByName("ghg_source_sectors")
-        sectors = []
-        voc_terms = list(voc.getDisplayList(self).items())
-        for term in voc_terms:
-            sectors.append((term[0], term[1]))
-
-        return sectors
-
+        return get_necd_vocabulary_items(self.context, "ghg_source_sectors")
 
 class AddForm(add.DefaultAddForm):
     def create(self, *args, **kwargs):
         folder = super(AddForm, self).create(*args, **kwargs)
-        updated = getUtility(ISetupReviewFolderRoles)(folder)
-        updated.reindexObjectSecurity()
+        updated: ReviewFolder = getUtility(ISetupReviewFolderRoles)(folder)
         return updated
 
 

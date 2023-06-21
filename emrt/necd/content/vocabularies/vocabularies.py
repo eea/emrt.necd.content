@@ -1,20 +1,16 @@
 import csv
 import itertools
-import os
 from operator import itemgetter
 
 from zope.component import getUtility
-from zope.interface import Interface
 from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 from plone import api
-from plone import schema
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.registry.interfaces import IRegistry
 
-from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSA
@@ -24,7 +20,7 @@ from emrt.necd.content.nfr_code_matching import INECDSettings
 from emrt.necd.content.nfr_code_matching import nfr_codes
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
-CSV_PATH = os.path.join(os.path.dirname(__file__), "data")
+from .interfaces import INECDVocabularies
 
 
 def get_valid_user():
@@ -67,13 +63,6 @@ def check_user_for_vocab(context, user):
     return not user_is_lr_or_manager and user_has_sectors
 
 
-def read_profile_vocabulary(filename: str) -> str:
-    result = ""
-    with open(os.path.join(CSV_PATH, filename), "r") as infile:
-        result = infile.read().strip()
-    return result
-
-
 def vocabulary_from_csv_string(data: str):
     terms = []
     data = data.strip()
@@ -81,95 +70,6 @@ def vocabulary_from_csv_string(data: str):
         for key, value in csv.reader(data.split("\n")):
             terms.append(SimpleVocabulary.createTerm(key, key, value))
     return SimpleVocabulary(terms)
-
-
-class INECDVocabularies(Interface):
-    projection_pollutants = schema.Dict(
-        title=_("Projection pollutants vocabulary"),
-        description=_(
-            "Registers the values for pollutants in the context of "
-            "a Projection ReviewFolder"
-        ),
-        key_type=schema.TextLine(title=_("Pollutant key")),
-        value_type=schema.TextLine(
-            title=_("Pollutant value"),
-        ),
-    )
-
-    projection_parameter = schema.List(
-        title=_("Projection parameter vocabulary"),
-        description=_(
-            "Registers the values for parameter in the context of "
-            "a Projection ReviewFolder"
-        ),
-        value_type=schema.Dict(
-            key_type=schema.TextLine(title=_("Key")),
-            value_type=schema.TextLine(
-                title=_("Value"),
-            ),
-        ),
-    )
-
-    activity_data = schema.Dict(
-        title=_("Activity data"),
-        description=_("Registers the activity data"),
-        key_type=schema.TextLine(title=_("Activity data type")),
-        value_type=schema.List(
-            value_type=schema.TextLine(
-                title=_("Activity data"),
-            ),
-        ),
-    )
-
-    eea_member_states = schema.Text(
-        title=_("EEA Member States"),
-        default=read_profile_vocabulary("eea_member_states.csv"),
-    )
-
-    ghg_source_category = schema.Text(
-        title=_("NFR category group"),
-        default=read_profile_vocabulary("ghg_source_category.csv"),
-    )
-
-    ghg_source_sectors = schema.Text(
-        title=_("NFR Sector"),
-        default=read_profile_vocabulary("ghg_source_sectors.csv"),
-    )
-
-    fuel = schema.Text(
-        title=_("Fuel"),
-        default=read_profile_vocabulary("fuel.csv"),
-    )
-
-    pollutants = schema.Text(
-        title=_("Pollutants"),
-        default=read_profile_vocabulary("pollutants.csv"),
-    )
-
-    scenario_type = schema.Text(
-        title=_("Scenario Type"),
-        default=read_profile_vocabulary("scenario_type.csv"),
-    )
-
-    highlight = schema.Text(
-        title=_("Highligt"),
-        default=read_profile_vocabulary("highlight.csv"),
-    )
-
-    highlight_projection = schema.Text(
-        title=_("Highlight Projection"),
-        default=read_profile_vocabulary("highlight_projection.csv"),
-    )
-
-    parameter = schema.Text(
-        title=_("Parameter"),
-        default=read_profile_vocabulary("parameter.csv"),
-    )
-
-    conclusion_reasons = schema.Text(
-        title=_("Conclusion Reasons"),
-        default=read_profile_vocabulary("conclusion_reasons.csv"),
-    )
 
 
 def mk_term(key, value):
@@ -438,3 +338,6 @@ class Roles(object):
         )
 
         return SimpleVocabulary(terms)
+    
+
+import plone.app.registry.exportimport.handler

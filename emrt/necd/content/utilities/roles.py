@@ -2,35 +2,34 @@ from functools import partial
 from itertools import chain
 from itertools import product
 
-
-from zope.component.hooks import getSite
 from zope.component import getUtility
+from zope.component.hooks import getSite
 
-from emrt.necd.content.utilities.interfaces import ILDAPQuery
-from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
-
-from emrt.necd.content.utilities import ldap_utils
-
-from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
+from emrt.necd.content.constants import LDAP_SECTOREXP
+from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
-from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.utilities import ldap_utils
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 
 def context_aware_query(context):
     ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
     return ldap_utils.format_or(
-        'cn', (
-            ldap_wrapper(LDAP_MSA) + '-*',
-            ldap_wrapper(LDAP_LEADREVIEW) + '-*',
-            ldap_wrapper(LDAP_SECTOREXP) + '-sector*-*'
-        )
+        "cn",
+        (
+            ldap_wrapper(LDAP_MSA) + "-*",
+            ldap_wrapper(LDAP_LEADREVIEW) + "-*",
+            ldap_wrapper(LDAP_SECTOREXP) + "-sector*-*",
+        ),
     )
 
 
-def f_start(pat, s):
+def f_start(pat: str, s: bytes | str) -> bool:
+    if isinstance(s, bytes):
+        s = s.decode()
     return s.startswith(pat)
 
 
@@ -45,14 +44,14 @@ def get_ldap_role_filters(context):
 
 
 def setup_reviewfolder_roles(folder):
+    """Grant roles to LDAP groups."""
     site = getSite()
-    acl = site['acl_users']['ldap-plugin']['acl_users']
+    acl = site["acl_users"]["pasldap"]
 
-    with getUtility(ILDAPQuery)(acl, paged=True) as q_ldap:
-        q_groups = q_ldap.query_groups(context_aware_query(folder), ('cn',))
+    with ldap_utils.get_query_utility()(acl, paged=True) as q_ldap:
+        q_groups = q_ldap.query_groups(context_aware_query(folder), ("cn",))
 
-
-    groups = [r[1]['cn'][0] for r in q_groups]
+    groups = [r[1]["cn"][0] for r in q_groups]
 
     f_start_msa, f_start_lr, f_start_se = get_ldap_role_filters(folder)
 
@@ -69,5 +68,7 @@ def setup_reviewfolder_roles(folder):
 
 
 class SetupReviewFolderRoles(object):
+    """Utility to grant roles on LDAP groups."""
     def __call__(self, folder):
+        """Setup roles on given folder."""
         return setup_reviewfolder_roles(folder)

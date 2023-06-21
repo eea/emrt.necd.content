@@ -197,8 +197,8 @@
       <element key="sector6">National total</element>
     </value>
   </record>
-  <records interface="emrt.necd.content.vocabularies.INECDVocabularies" />
-  <record name="emrt.necd.content.vocabularies.INECDVocabularies.projection_pollutants">
+  <records interface="emrt.necd.content.vocabularies.interfaces.INECDVocabularies" />
+  <record name="emrt.necd.content.vocabularies.interfaces.INECDVocabularies.projection_pollutants">
     <value purge="True">
       <element key="SO2">SO2</element>
       <element key="NOx">NOx</element>
@@ -211,7 +211,7 @@
       <element key="GHGs">GHGs</element>
     </value>
   </record>
-  <record name="emrt.necd.content.vocabularies.INECDVocabularies.projection_parameter">
+  <record name="emrt.necd.content.vocabularies.interfaces.INECDVocabularies.projection_parameter">
     <value purge="True">
       <element>
         <element key="key">act</element>
@@ -532,7 +532,7 @@
       <element key="PaMs 8">sector8|PaMs 8|sector 8|PaMs 8 PaMs additional modelling</element>
     </value>
   </record>
-  <record name="emrt.necd.content.vocabularies.INECDVocabularies.activity_data">
+  <record name="emrt.necd.content.vocabularies.interfaces.INECDVocabularies.activity_data">
     <value purge="True">
       <element key="General economic parameters">
         <element>Gross Domestic Product (GDP) [10^9 €]</element>

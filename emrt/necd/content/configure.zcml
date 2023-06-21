@@ -9,7 +9,6 @@
 
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />
-  <include file="patches.zcml" />
   <include file="views.zcml" />
   <include package=".vocabularies" />
   <include package=".upgrades" />
@@ -188,14 +187,6 @@
          Products.CMFCore.interfaces.IActionSucceededEvent"
     handler="emrt.necd.content.notifications.observation_finalisation_request.notification_lr"
     />
-
-  <!-- Crons view -->
-  <browser:page
-      name="cron_update_vocabularies"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".crons.UpdateLDAPUsersVocabulariesCron"
-      permission="zope.Public"
-  />
 
   <!--Comment forms and events-->
   <adapter

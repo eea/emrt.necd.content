@@ -1,49 +1,46 @@
-from zope.interface import Interface
+"""LDAPQuery interface."""
+
 from zope.interface import Attribute
+from zope.interface import Interface
 
 
 class ILDAPQuery(Interface):
-    """ Query LDAP directly. Using the configuration of the
-        provided LDAPUserFolder.
+    """Query LDAP directly.
+    
+    Using the configuration of the provided LDAPUserFolder.
     """
 
     acl = Attribute("The LDAPUserFolder we're operating on.")
-    config = Attribute('Automatically set, after calling connect().')
-    connection = Attribute('Automatically set, after calling connect().')
+    config = Attribute("Automatically set, after calling connect().")
+    connection = Attribute("Automatically set, after calling connect().")
 
     def connect(acl):
-        """ Start LDAP connection. Sets and returns a connection."""
+        """Start LDAP connection. Sets and returns a connection."""
 
     def query_ou(ou, query, attrs):
-        """ Queries ou for query, requesting attrs.
-            Uses the connection initialized by connect().
+        """Queries ou for query, requesting attrs.
+
+        Uses the connection initialized by connect().
         """
 
     def query_groups(query, attrs):
-        """ Helper method, calls query_ou() with self.config['ou_groups'].
-        """
+        """Helper method, calls query_ou() with self.config['ou_groups']."""
 
     def query_users(query, attrs):
-        """ Helper method, calls query_ou() with self.config['ou_users'].
-        """
+        """Helper method, calls query_ou() with self.config['ou_users']."""
 
 
 class ISetupReviewFolderRoles(Interface):
-    """ Grant local, Zope roles to certain LDAP groups.
-    """
+    """Grant local, Zope roles to certain LDAP groups."""
 
 
 class IFollowUpPermission(Interface):
-    """
-    Permission check for adding a follow up question
-    """
+    """Permission check for adding a follow up question."""
 
 
 class IUserIsMS(Interface):
-    """ Returns True if the user has
-        the MSAuthority or MSExpert roles.
-    """
+    """Returns True if the user has the MSAuthority or MSExpert roles."""
 
 
 class IGetLDAPWrapper(Interface):
-    """Returns the context_based LDAP wrapper"""
+    """Returns the context_based LDAP wrapper."""
