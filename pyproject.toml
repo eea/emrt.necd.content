@@ -48,7 +48,7 @@ max-complexity = 10
 [tool.ruff.isort]
 force-single-line = true
 section-order = ["future", "standard-library", "third-party", "zope", "products", "cmf", "plone", "first-party", "local-folder"]
-known-first-party = ["eea"]
+known-first-party = ["eea", "emrt"]
 known-third-party = ["chameleon", "graphene", "pycountry", "dateutil", "graphql", "reportlab", "openpyxl", "tablib"]
 
 [tool.ruff.isort.sections]

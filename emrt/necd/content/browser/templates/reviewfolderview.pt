@@ -260,170 +260,182 @@
       <div id="filters" tal:define="is_lr view/is_lr;
                                     is_projection python:context.type=='projection';
                                     year_range python: '(e.g. 2050, 2025, 2030)' if is_projection else '(e.g. 2012, 2009-2012)'">
-        <div class="row" style="padding-top:25px">
-          <div class="cell position-1 width-3 esdLabel">Country</div>
-          <div class="cell position-4 width-3 esdLabel tooltipIconBlue" title="Review year is the year in which the emissions inventory was submitted and the review was carried out.">Review year</div>
-          <div class="cell position-7 width-3 esdLabel tooltipIconBlue" title="${python: context.type.title()} year is the year or a range of years ${year_range} in which the emissions occured and an issue was observed in the review.">${python: context.type.title()} year</div>
-          <div class="cell position-11 width-3 esdLabel tooltipIconBlue" title="Key flags highlight important information that is closely related to the item.">Description flags</div>
-        </div>
-        <div class="row">
-          <div class="cell position-1 width-3">
-            <select id="countryFilter" class="chosen-select" data-placeholder="Select country">
-              <option></option>
-              <tal:block tal:repeat="item view/get_countries">
-                <option
-                  tal:define="country python:'';
-                              country request/country | country"
-                  tal:attributes="value python:item[0];
-                                  selected python:item[0]==country"
-                  tal:content="python:item[1]"></option>
-              </tal:block>
-            </select>
-          </div>
-          <div class="cell position-4 width-3">
-            <select id="reviewYearFilter" class="chosen-select" data-placeholder="Select review year">
-              <option></option>
-              <tal:block tal:repeat="item view/get_review_years">
-                <option
-                  tal:define="reviewYear python:'';
-                              reviewYear request/reviewYear | reviewYear"
-                  tal:attributes="value python:item;
-                                  selected python:item==reviewYear"
-                  tal:content="python:item"></option>
-              </tal:block>
-            </select>
-          </div>
-          <div class="cell position-7 width-3">
-            <select id="inventoryYearFilter" class="chosen-select" data-placeholder="Select ${context/type} year">
-              <option></option>
-              <tal:block tal:repeat="item view/get_inventory_years">
-                <option
-                  tal:define="inventoryYear python:'';
-                              inventoryYear request/inventoryYear | inventoryYear"
-                  tal:attributes="value item;
-                                  selected python:item==inventoryYear"
-                  tal:content="item"></option>
-              </tal:block>
-            </select>
-          </div>
-          <div class="cell position-11 width-5" style="position:absolute;z-index:2">
-            <tal:block tal:repeat="item view/get_highlights">
-              <tal:block tal:define="highlights python:'';
-                                     highlights request/highlights | highlights">
-                <input type="checkbox"
-                  tal:attributes="value python:item[0];
-                                  checked python:highlights.find(item[0]) >= 0;
-                                  id python:item[0]"/>
-                <label tal:attributes="for python:item[0];"
-                  tal:content="python:item[1]"></label><br/>
-                  <br tal:condition="python:item[0] in ['unece','acc']"/>
-                <div tal:condition="python:item[0] in ['unece','acc']" class="esdLabel">Draft/final conclusion flags</div>
 
-              </tal:block>
-            </tal:block>
-          </div>
-        </div>
-        <div class="row" style="padding-top:30px">
-            <div class="cell position-1 width-5 esdLabel">NFR category code</div>
-            <div class="cell position-6 width-2 esdLabel" tal:condition="is_lr">Sector name</div>
-            <div class="cell position-8 width-2 esdLabel" tal:condition="is_lr">Pollutants</div>
-        </div>
-        <div class="row" tal:define="width python:'width-5' if is_lr else 'width-9'">
-          <div tal:attributes="class string:cell position-1 ${width} esdLabel">
-            <select id="nfrFilter" multiple="multiple" class="chosen-select" data-placeholder="Select NFR category code">
-              <option></option>
-              <tal:block tal:repeat="item view/get_nfr_categories">
-                <option
-                  tal:define="category python:request.get('nfrCode[]', [])"
-                  tal:attributes="value python:item[0];
-                                  selected python:item[0] in category"
-                  tal:content="python:item[1]"></option>
-              </tal:block>
-            </select>
-          </div>
-          <div class="cell position-6 width-2 esdLabel" tal:condition="is_lr">
-            <select id="sectorFilter" multiple="multiple" class="chosen-select" data-placeholder="Select sector name">
-              <option></option>
-              <tal:block tal:repeat="item view/get_sector_names">
-                <option
-                  tal:define="sectors python:request.get('sectorId[]', [])"
-                  tal:attributes="value python:item[0];
-                                  selected python:item[0] in sectors"
-                  tal:content="python:item[1]"></option>
-              </tal:block>
-            </select>
-          </div>
-          <div class="cell position-8 width-2 esdLabel" tal:condition="is_lr">
-            <select id="pollutantsFilter" multiple="multiple" class="chosen-select" data-placeholder="Select pollutants">
-              <option></option>
-              <tal:block tal:repeat="item view/get_pollutants">
-                <option
-                  tal:define="pollutants python:request.get('pollutants[]', [])"
-                  tal:attributes="value python:item[0];
-                                  selected python:item[0] in pollutants"
-                  tal:content="python:item[1]"></option>
-              </tal:block>
-            </select>
-          </div>
-        </div>
-        <div class="row" style="padding-top:30px">
-          <div class="cell position-1 width-3 esdLabel">Status of observation</div>
-          <div class="cell position-4 width-6 esdLabel">Free text</div>
-        </div>
         <div class="row">
-          <div class="cell position-1 width-3">
-            <select id="statusFilter" class="chosen-select" data-placeholder="Select status">
-              <option></option>
-              <tal:block tal:repeat="item view/get_finalisation_reasons">
-                <option
-                  tal:define="status python:'';
-                              status request/status | status"
-                  tal:attributes="value python:item[0];
-                                  selected python:item[0]==status"
-                  tal:content="python:item[1]"></option>
-              </tal:block>
-            </select>
+          <div class="col-9">
+            <div class="row" style="padding-top:25px">
+              <div class="col esdLabel">Country</div>
+              <div class="col esdLabel tooltipIconBlue" title="Review year is the year in which the emissions inventory was submitted and the review was carried out.">Review year</div>
+              <div class="col esdLabel tooltipIconBlue" title="${python: context.type.title()} year is the year or a range of years ${year_range} in which the emissions occured and an issue was observed in the review.">${python: context.type.title()} year</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <select id="countryFilter" class="chosen-select" data-placeholder="Select country">
+                  <option></option>
+                  <tal:block tal:repeat="item view/get_countries">
+                    <option
+                      tal:define="country python:'';
+                                  country request/country | country"
+                      tal:attributes="value python:item[0];
+                                      selected python:item[0]==country"
+                      tal:content="python:item[1]"></option>
+                  </tal:block>
+                </select>
+              </div>
+              <div class="col">
+                <select id="reviewYearFilter" class="chosen-select" data-placeholder="Select review year">
+                  <option></option>
+                  <tal:block tal:repeat="item view/get_review_years">
+                    <option
+                      tal:define="reviewYear python:'';
+                                  reviewYear request/reviewYear | reviewYear"
+                      tal:attributes="value python:item;
+                                      selected python:item==reviewYear"
+                      tal:content="python:item"></option>
+                  </tal:block>
+                </select>
+              </div>
+              <div class="col">
+                <select id="inventoryYearFilter" class="chosen-select" data-placeholder="Select ${context/type} year">
+                  <option></option>
+                  <tal:block tal:repeat="item view/get_inventory_years">
+                    <option
+                      tal:define="inventoryYear python:'';
+                                  inventoryYear request/inventoryYear | inventoryYear"
+                      tal:attributes="value item;
+                                      selected python:item==inventoryYear"
+                      tal:content="item"></option>
+                  </tal:block>
+                </select>
+              </div>
+            </div>
+            <div class="row" style="padding-top:30px">
+                <div class="col-${python:'6' if is_lr else '9'} esdLabel">NFR category code</div>
+                <div class="col esdLabel" tal:condition="is_lr">Sector name</div>
+                <div class="col esdLabel" tal:condition="is_lr">Pollutants</div>
+            </div>
+            <div class="row">
+              <div class="col-${python:'6' if is_lr else '9'} esdLabel">
+                <select id="nfrFilter" multiple="multiple" class="chosen-select" data-placeholder="Select NFR category code">
+                  <option></option>
+                  <tal:block tal:repeat="item view/get_nfr_categories">
+                    <option
+                      tal:define="category python:request.get('nfrCode[]', [])"
+                      tal:attributes="value python:item[0];
+                                      selected python:item[0] in category"
+                      tal:content="python:item[1]"></option>
+                  </tal:block>
+                </select>
+              </div>
+              <div class="col-3 esdLabel" tal:condition="is_lr">
+                <select id="sectorFilter" multiple="multiple" class="chosen-select" data-placeholder="Select sector name">
+                  <option></option>
+                  <tal:block tal:repeat="item view/get_sector_names">
+                    <option
+                      tal:define="sectors python:request.get('sectorId[]', [])"
+                      tal:attributes="value python:item[0];
+                                      selected python:item[0] in sectors"
+                      tal:content="python:item[1]"></option>
+                  </tal:block>
+                </select>
+              </div>
+              <div class="col-3 esdLabel" tal:condition="is_lr">
+                <select id="pollutantsFilter" multiple="multiple" class="chosen-select" data-placeholder="Select pollutants">
+                  <option></option>
+                  <tal:block tal:repeat="item view/get_pollutants">
+                    <option
+                      tal:define="pollutants python:request.get('pollutants[]', [])"
+                      tal:attributes="value python:item[0];
+                                      selected python:item[0] in pollutants"
+                      tal:content="python:item[1]"></option>
+                  </tal:block>
+                </select>
+              </div>
+            </div>
+            <div class="row" style="padding-top:30px">
+              <div class="col-4 esdLabel">Status of observation</div>
+              <div class="col-8 esdLabel">Free text</div>
+            </div>
+            <div class="row">
+              <div class="col-4">
+                <select id="statusFilter" class="chosen-select" data-placeholder="Select status">
+                  <option></option>
+                  <tal:block tal:repeat="item view/get_finalisation_reasons">
+                    <option
+                      tal:define="status python:'';
+                                  status request/status | status"
+                      tal:attributes="value python:item[0];
+                                      selected python:item[0]==status"
+                      tal:content="python:item[1]"></option>
+                  </tal:block>
+                </select>
+              </div>
+              <div class="col-8 esdLabel">
+                <input type="text" id="freeTextFilter" style="width:100%;border-radius:5px;height:21px"
+                    tal:define="freeText python:'';
+                                freeText request/freeText | freeText"
+                    tal:attributes="value python:freeText"/>
+              </div>
+            </div>
+            <div class="row" style="padding-top:20px">
+              <div class="col-7 esdLabel">Workflow</div>
+            </div>
+            <div class="row">
+              <div class="col-7">
+                <select id="wfStatusFilter"  class="chosen-select" data-placeholder="Select status"
+                    tal:define="wfStatus python:'';
+                                wfStatus request/wfStatus | wfStatus">
+                  <option></option>
+                  <option tal:attributes="selected python:'LR'==wfStatus"
+                    value="LR">Lead Reviewer</option>
+                  <option tal:attributes="selected python:'SE'==wfStatus"
+                    value="SE">Sector Expert</option>
+                  <option tal:attributes="selected python:'MSC'==wfStatus"
+                    value="MSC">MS Coordinator</option>
+                  <option tal:attributes="selected python:'answered'==wfStatus"
+                    value="answered">Answered</option>
+                  <option tal:attributes="selected python:'conclusions'==wfStatus"
+                    value="conclusions">Conclusions</option>
+                  <option tal:attributes="selected python:'conclusions-lr-denied'==wfStatus"
+                    value="conclusions-lr-denied">Conclusions - LR denied</option>
+                  <option tal:attributes="selected python:'close-requested'==wfStatus"
+                    value="close-requested">Close requested</option>
+                  <option tal:attributes="selected python:'finalised'==wfStatus"
+                    value="finalised">Finalised</option>
+                </select>
+              </div>
+            </div>
+            <div class="row" style="padding-top:30px">
+              <div class="col">
+                <a class="standardButton" id="btnFilter">Search</a>
+              </div>
+            </div>
           </div>
-          <div class="cell position-4 width-6 esdLabel">
-            <input type="text" id="freeTextFilter" style="width:100%;border-radius:5px;height:21px"
-                tal:define="freeText python:'';
-                            freeText request/freeText | freeText"
-                tal:attributes="value python:freeText"/>
+          <div class="col-3">
+            <div class="row">
+              <div class="col esdLabel tooltipIconBlue" title="Key flags highlight important information that is closely related to the item.">Description flags</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <tal:block tal:repeat="item view/get_highlights">
+                  <tal:block tal:define="highlights python:'';
+                                        highlights request/highlights | highlights">
+                    <input type="checkbox"
+                      tal:attributes="value python:item[0];
+                                      checked python:highlights.find(item[0]) >= 0;
+                                      id python:item[0]"/>
+                    <label tal:attributes="for python:item[0];"
+                      tal:content="python:item[1]"></label><br/>
+                      <br tal:condition="python:item[0] in ['unece','acc']"/>
+                    <div tal:condition="python:item[0] in ['unece','acc']" class="esdLabel">Draft/final conclusion flags</div>
+
+                  </tal:block>
+                </tal:block>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="row" style="padding-top:20px">
-          <div class="cell position-1 width-6 esdLabel">Workflow</div>
-        </div>
-        <div class="row">
-          <div class="cell position-1 width-6">
-            <select id="wfStatusFilter"  class="chosen-select" data-placeholder="Select status"
-                tal:define="wfStatus python:'';
-                            wfStatus request/wfStatus | wfStatus">
-              <option></option>
-              <option tal:attributes="selected python:'LR'==wfStatus"
-                value="LR">Lead Reviewer</option>
-              <option tal:attributes="selected python:'SE'==wfStatus"
-                value="SE">Sector Expert</option>
-              <option tal:attributes="selected python:'MSC'==wfStatus"
-                value="MSC">MS Coordinator</option>
-              <option tal:attributes="selected python:'answered'==wfStatus"
-                value="answered">Answered</option>
-              <option tal:attributes="selected python:'conclusions'==wfStatus"
-                value="conclusions">Conclusions</option>
-              <option tal:attributes="selected python:'conclusions-lr-denied'==wfStatus"
-                value="conclusions-lr-denied">Conclusions - LR denied</option>
-              <option tal:attributes="selected python:'close-requested'==wfStatus"
-                value="close-requested">Close requested</option>
-              <option tal:attributes="selected python:'finalised'==wfStatus"
-                value="finalised">Finalised</option>
-            </select>
-          </div>
-        </div>
-        <div class="row" style="padding-top:30px">
-          <div class="cell position-1 width-1">
-            <a class="standardButton" id="btnFilter">Search</a>
-          </div>
-        </div>
+            
       </div>
 
       <tal:questions>

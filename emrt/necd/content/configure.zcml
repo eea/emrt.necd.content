@@ -22,11 +22,6 @@
 
   <i18n:registerTranslations directory="locales" />
 
-  <browser:resourceDirectory
-      name="emrt.necd.content"
-      directory="static"
-      />
-
   <!-- Comment Extender -->
   <adapter
     factory=".commentextender.CommentExtenderFactory"
