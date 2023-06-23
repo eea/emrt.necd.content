@@ -217,7 +217,7 @@
           <li tal:condition="view/can_export_observation">
             <a class="standardButton" href=""
                tal:attributes="href string:${context/absolute_url}/export_as_docx">
-               <i class="eea-icon eea-icon-download">&nbsp;</i> Exports in DOCX
+               <i class="bi bi-file-earmark-arrow-down-fill"></i> Exports in DOCX
             </a>
           </li>
           <li class="deleteButton" tal:condition="context/is_secretariat">

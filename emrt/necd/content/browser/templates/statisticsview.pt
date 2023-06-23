@@ -12,7 +12,7 @@
       <div id="tabs">
         <div class="tabs">
           <div>
-            <a class="eea-icon overview" tal:attributes="href string:${here/absolute_url}/view">Overview list</a>
+            <a tal:attributes="href string:${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
           </div>
           <div>
             <a class="eea-icon inbox" tal:attributes="href string:${here/absolute_url}/inboxview">My view</a>

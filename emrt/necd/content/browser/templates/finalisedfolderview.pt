@@ -36,13 +36,13 @@
       <div id="tabs">
         <div class="tabs">
           <div>
-            <a class="eea-icon overview" href="${here/absolute_url}/view">Overview list</a>
+            <a href="${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
           </div>
           <div>
             <a class="eea-icon inbox" href="${here/absolute_url}/inboxview">My view</a>
           </div>
           <div tal:condition="python:view.can_view_tableau_dashboard()">
-            <a class="eea-icon overview" href="${here/absolute_url}/tableau_dashboard">Statistics</a>
+            <a href="${here/absolute_url}/tableau_dashboard"><i class="bi bi-eye-fill"></i> Statistics</a>
           </div>
           <div class="active">
             <a class="eea-icon inbox" href="${here/absolute_url}/finalisedfolderview">Finalised observations</a>
@@ -139,4 +139,3 @@
 </metal:main>
 </body>
 </html>
-
