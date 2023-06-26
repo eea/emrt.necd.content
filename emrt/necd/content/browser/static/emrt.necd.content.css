@@ -738,34 +738,8 @@ span.envelope:before{
 	top: -10px;
 }
 
-.tooltipIcon:after {
-	display: inline-block;
-	font-family: 'FontAwesome';
-	font-weight: normal;
-	font-style: normal;
-	line-height: inherit;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: none;
-	margin: 0 .3em;
-	color: white;
-	content: "\f05a";
-	cursor: help;
-}
-.tooltipIconBlue:after {
-	display: inline-block;
-	font-family: 'FontAwesome';
-	font-weight: normal;
-	font-style: normal;
-	line-height: inherit;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	speak: none;
-	margin: 0 .3em;
+.tooltipIconBlue {
 	color: #427597;
-	content: "\f05a";
 	cursor: help;
 }
 #rolesList li{

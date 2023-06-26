@@ -190,7 +190,6 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/inboxview"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
                   Back to my view
             </a>
           </li>
@@ -198,7 +197,6 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/view"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
                   Back to overview list
             </a>
           </li>
@@ -210,21 +208,19 @@
             <a href=""
               tal:attributes="href string:${here/absolute_url}/subscription-configuration"
               class="standardButton">
-                <span class="eea-icon"><!-- --></span>
                   Configure notifications
             </a>
           </li>
           <li tal:condition="view/can_export_observation">
             <a class="standardButton" href=""
                tal:attributes="href string:${context/absolute_url}/export_as_docx">
-               <i class="bi bi-file-earmark-arrow-down-fill"></i> Exports in DOCX
+               <i class="bi bi-cloud-arrow-down-fill"></i> Exports in DOCX
             </a>
           </li>
           <li class="deleteButton" tal:condition="context/is_secretariat">
             <a href=""
               tal:attributes="href string:${here/absolute_url}/delete_confirmation"
               class="standardButton removeButton">
-                <span class="eea-icon"><!-- --></span>
                   Remove observation
             </a>
           </li>
@@ -233,12 +229,13 @@
     </div>
     <div class="visualClear"><!-- --></div>
     <div style="text-align: right;" tal:condition="view/has_local_notifications_settings">
-      <span class="eea-icon eea-icon-exclamation-triangle"> local notifications present</span>
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      local notifications present
     </div>
     <div class="esdDiv">
       <div class="row" style="margin-top:15px">
         <div class="cell position-0 width-1">
-          <i class="eea-icon eea-icon-4x observation"></i>
+          <i class="bi bi-file-text-fill"></i>
         </div>
         <div class="cell position-1 width-4 esdLabel">Ref. Number</div>
       </div>
@@ -733,7 +730,7 @@
           <span class="esdLabel">to</span>
           <span class="value" tal:condition="python:portalType == 'comment'">Member State</span>
           <span class="value" tal:condition="python:portalType == 'commentanswer'">TERTs</span>
-          <span class="tooltipIconBlue" tal:condition="python:portalType == 'comment'" title="Draft a question for the MS. MS can only see the question once it has been approved and sent by the LR">&nbsp;</span>
+          <span tal:condition="python:portalType == 'comment'">&nbsp; <i class="bi bi-info-circle-fill tooltipIconBlue" title="Draft a question for the MS. MS can only see the question once it has been approved and sent by the LR"></i></span>
           <span class="messageDate">
             <tal:effective condition="question/effective_date">
               Sent on: <span tal:content="python:question.effective().strftime('%d %b %Y, %H:%M CET')">11/12/2013 12:00</span>
@@ -891,7 +888,7 @@
                   <div class="cell position-0 width-16">
                     Internal comments on question between TERTs
                     <span class="eea-icon eea-icon-left"></span>
-                    <span class="tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart TERTs engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the TERTs should use the default sentence: 'Discussed with ...' in the first text field">&nbsp;</span>
+                    <span>&nbsp; <i class="bi bi-info-circle-fill tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart TERTs engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the TERTs should use the default sentence: 'Discussed with ...' in the first text field"></i></span>
                   </div>
                 </div>
                 <div class="question-comments" tal:content="structure provider:emrt.necd.content.commentmanager" style="display:none" />

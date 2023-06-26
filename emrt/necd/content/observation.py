@@ -41,7 +41,7 @@ from zope.lifecycleevent import ObjectModifiedEvent
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
-from Products.CMFPlone.utils import safe_unicode
+from plone.base.utils import safe_text
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
@@ -375,8 +375,8 @@ validator.WidgetValidatorDiscriminators(
 
 
 def set_title_to_observation(obj, event):
-    sector = safe_unicode(obj.ghg_source_category_value())
-    pollutants = safe_unicode(obj.pollutants_value())
+    sector = safe_text(obj.ghg_source_category_value())
+    pollutants = safe_text(obj.pollutants_value())
     obj_year = (
         (
             obj.year
@@ -386,8 +386,8 @@ def set_title_to_observation(obj, event):
         if obj.year
         else ""
     )
-    inventory_year = safe_unicode(str(obj_year))
-    parameter = safe_unicode(obj.parameter_value())
+    inventory_year = safe_text(str(obj_year))
+    parameter = safe_text(obj.parameter_value())
     obj.title = " ".join([sector, pollutants, inventory_year, parameter])
     grant_local_roles(obj)
 

@@ -100,4 +100,4 @@ def notify_users(comment, event):
     template = PageTemplateFile(TEMPLATE)
     content = template(**dict(observation=observation))
 
-    utils.send_mail(SUBJECT, utils.safe_unicode(content), users)
+    utils.send_mail(SUBJECT, utils.safe_text(content), users)

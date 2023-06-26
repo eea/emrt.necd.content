@@ -4,7 +4,7 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from cs.htmlmailer.mailer import create_html_mail
 from plone import api
-from Products.CMFPlone.utils import safe_unicode
+from plone.base.utils import safe_text
 from Products.statusmessages.interfaces import IStatusMessage
 from zope.globalrequest import getRequest
 
@@ -20,7 +20,7 @@ def notify(observation, template, subject, role, notification_name):
 
     subject = '{} {}'.format(prepend, subject)
 
-    send_mail(subject, safe_unicode(content), users)
+    send_mail(subject, safe_text(content), users)
 
 
 def send_mail(subject, email_content, users=[]):

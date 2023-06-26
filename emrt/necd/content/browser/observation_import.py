@@ -10,7 +10,7 @@ from zope.schema.interfaces import IVocabularyFactory
 
 import Acquisition
 
-from Products.CMFPlone.utils import safe_unicode
+from plone.base.utils import safe_text
 from Products.Five.browser import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
@@ -60,7 +60,7 @@ def _read_row(idx, row):
         return ''
 
     if isinstance(val, int):
-        val = safe_unicode(str(val))
+        val = safe_text(str(val))
     return val.strip()
 
 

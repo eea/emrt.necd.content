@@ -1,6 +1,8 @@
 from functools import partial
 from itertools import chain
 from itertools import product
+from typing import Iterable
+from typing import Tuple
 
 from zope.component import getUtility
 from zope.component.hooks import getSite
@@ -11,6 +13,7 @@ from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.reviewfolder import ReviewFolder
 from emrt.necd.content.utilities import ldap_utils
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
@@ -43,7 +46,7 @@ def get_ldap_role_filters(context):
     return f_start_msa, f_start_lr, f_start_se
 
 
-def setup_reviewfolder_roles(folder):
+def setup_reviewfolder_roles(folder: ReviewFolder):
     """Grant roles to LDAP groups."""
     site = getSite()
     acl = site["acl_users"]["pasldap"]
@@ -55,20 +58,21 @@ def setup_reviewfolder_roles(folder):
 
     f_start_msa, f_start_lr, f_start_se = get_ldap_role_filters(folder)
 
-    grant = chain(
+    grant: Iterable[Tuple[str, bytes]] = chain(
         product([ROLE_MSA], list(filter(f_start_msa, groups))),
         product([ROLE_LR], list(filter(f_start_lr, groups))),
         product([ROLE_SE], list(filter(f_start_se, groups))),
     )
 
     for role, g_name in grant:
-        folder.manage_setLocalRoles(g_name, [role])
+        folder.manage_setLocalRoles(g_name.decode(), [role])
 
     return folder
 
 
 class SetupReviewFolderRoles(object):
     """Utility to grant roles on LDAP groups."""
+
     def __call__(self, folder):
         """Setup roles on given folder."""
         return setup_reviewfolder_roles(folder)

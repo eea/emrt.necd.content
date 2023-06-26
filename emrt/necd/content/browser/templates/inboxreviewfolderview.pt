@@ -36,13 +36,13 @@
         <a href="${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
       </div>
       <div class="active">
-        <a class="eea-icon inbox" href="${here/absolute_url}/inboxview">My view</a>
+        <a href="${here/absolute_url}/inboxview"><i class="bi-inbox-fill"></i> My view</a>
       </div>
       <div tal:condition="python:view.can_view_tableau_dashboard()">
         <a href="${here/absolute_url}/tableau_dashboard"><i class="bi bi-eye-fill"></i> Statistics</a>
       </div>
       <div>
-        <a class="eea-icon inbox" href="${here/absolute_url}/finalisedfolderview">Finalised observations</a>
+        <a href="${here/absolute_url}/finalisedfolderview"><i class="bi-inbox-fill"></i> Finalised observations</a>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
   <div id="filters">
     <div class="row" style="padding-top:30px">
       <div class="cell position-1 width-3 esdLabel">Free text</div>
-      <div class="cell position-11 width-3 esdLabel tooltipIconBlue" title="Key flags highlight important information that is closely related to the item.">Description flags</div>
+      <div class="cell position-11 width-3 esdLabel">Description flags <i class="bi bi-info-circle-fill tooltipIconBlue" title="Key flags highlight important information that is closely related to the item."></i></div>
     </div>
     <div class="row">
       <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">

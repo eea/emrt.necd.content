@@ -29,8 +29,7 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
+from plone.base.utils import safe_text
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
@@ -739,7 +738,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     last_question_id = comment_ids[-1] if comment_ids else "-"
                     row.append(last_question_id)
                 else:
-                    row.append(safe_unicode(observation[key]))
+                    row.append(safe_text(observation[key]))
 
             if base_len == 0:
                 base_len = len(row)
@@ -786,7 +785,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         return tuple(
             [
                 "{}: {}".format(
-                    mapping[comment.portal_type], safe_unicode(comment.text)
+                    mapping[comment.portal_type], safe_text(comment.text)
                 )
                 for comment in comments
             ]
