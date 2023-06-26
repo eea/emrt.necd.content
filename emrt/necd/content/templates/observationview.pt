@@ -182,7 +182,7 @@
   <metal:observation define-macro="observation-info"
     tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
     <div class="observationActions row">
-      <div class="cell position-0 width-1:2">
+      <div class="col:2">
         <ul class="observationNavigationMenu visualNoMarker"
           tal:define="pcp here/@@plone_context_state;
                       parent pcp/parent">
@@ -202,7 +202,7 @@
           </li>
         </ul>
       </div>
-      <div class="cell position-5 width-11">
+      <div class="col">
         <ul class="observationActionsMenu visualNoMarker">
           <li class="configurationButton">
             <a href=""
@@ -233,92 +233,97 @@
       local notifications present
     </div>
     <div class="esdDiv">
-      <div class="row" style="margin-top:15px">
-        <div class="cell position-0 width-1">
-          <i class="bi bi-file-text-fill"></i>
-        </div>
-        <div class="cell position-1 width-4 esdLabel">Ref. Number</div>
-      </div>
       <div class="row">
-        <div class="cell position-1 width-4 value">
-          <span tal:content="context/id">
-             UK-WAS-13-001
-          </span>
+        <div class="col-1 d-flex justify-content-center align-items-center">
+          <i class="bi bi-file-text-fill fs-1"></i>
+        </div>
+        <div class="col-11">
+          <div class="row">
+            <div class="col esdLabel">Ref. Number</div>
+          </div>
+          <div class="row">
+            <div class="col value">
+              <span tal:content="context/id">
+                UK-WAS-13-001
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col esdLabel">Country</div>
+            <div class="col esdLabel">Sector</div>
+            <div class="col esdLabel">Pollutants</div>
+            <tal:is_inventory condition="python:not view.is_projection()">
+              <div class="col esdLabel">Fuel</div>
+              <div class="col esdLabel">Inventory year</div>
+            </tal:is_inventory>
+            <tal:is_projection condition="python:view.is_projection()">
+              <div class="col esdLabel">Activity Data Type</div>
+              <div class="col esdLabel">Projection year</div>
+              <div class="col esdLabel">Reference year</div>
+            </tal:is_projection>
+          </div>
+          <div class="row">
+            <div class="col" tal:content="context/country_value">Country</div>
+            <div class="col" tal:content="context/ghg_source_sectors_value">Sector</div>
+            <div class="col" tal:content="context/pollutants_value">Pollutants</div>
+            <tal:is_inventory condition="python:not view.is_projection()">
+              <div class="col">
+                <span tal:replace="structure python:view.widgets['fuel'].render()"></span>
+              </div>
+              <div class="col" tal:content="context/year">Year of emission</div>
+            </tal:is_inventory>
+            <tal:is_projection condition="python:view.is_projection()">
+              <div class="col" tal:content="context/activity_data_type"></div>
+              <div class="col" tal:content="context/reference_year">Reference year placeholder</div>
+              <div class="col">
+                <span tal:replace="structure python:', '.join(context.year or [])"></span>
+              </div>
+            </tal:is_projection>
+          </div>
         </div>
       </div>
-      <div class="row" style="margin-top:15px">
-        <div class="cell position-1 width-2 esdLabel">Country</div>
-        <div class="cell position-3 width-5 esdLabel">Sector</div>
-        <div class="cell position-8 width-2 esdLabel">Pollutants</div>
-        <tal:is_inventory condition="python:not view.is_projection()">
-          <div class="cell position-10 width-2 esdLabel">Fuel</div>
-          <div class="cell position-12 width-2 esdLabel">Inventory year</div>
-        </tal:is_inventory>
-        <tal:is_projection condition="python:view.is_projection()">
-          <div class="cell position-10 width-2 esdLabel">Activity Data Type</div>
-          <div class="cell position-12 width-2 esdLabel">Projection year</div>
-          <div class="cell position-14 width-2 esdLabel">Reference year</div>
-        </tal:is_projection>
-      </div>
-      <div class="row">
-        <div class="cell position-1 width-2" tal:content="context/country_value">Country</div>
-        <div class="cell position-3 width-5" tal:content="context/ghg_source_sectors_value">Sector</div>
-        <div class="cell position-8 width-2" tal:content="context/pollutants_value">Pollutants</div>
-        <tal:is_inventory condition="python:not view.is_projection()">
-          <div class="cell position-10 width-2">
-            <span tal:replace="structure python:view.widgets['fuel'].render()"></span>
-          </div>
-          <div class="cell position-12 width-2" tal:content="context/year">Year of emission</div>
-        </tal:is_inventory>
-        <tal:is_projection condition="python:view.is_projection()">
-          <div class="cell position-10 width-2" tal:content="context/activity_data_type"></div>
-          <div class="cell position-14 width-2" tal:content="context/reference_year">Reference year placeholder</div>
-          <div class="cell position-12 width-2">
-            <span tal:replace="structure python:', '.join(context.year or [])"></span>
-          </div>
-        </tal:is_projection>
-      </div>
+
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
-        <div class="cell position-0 width-16">
+        <div class="col">
+          <i class="bi bi-chevron-down"></i>
           Observation details
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px">
-        <div class="cell position-0 width-2 esdLabel">Review Year</div>
-        <div class="cell position-2 width-5 esdLabel">Parameter</div>
-        <div class="cell position-7 width-2 esdLabel">Key category</div>
-        <div class="cell position-11 width-4 esdLabel">Last update</div>
+        <div class="col esdLabel">Review Year</div>
+        <div class="col esdLabel">Parameter</div>
+        <div class="col esdLabel">Key category</div>
+        <div class="col esdLabel">Last update</div>
       </div>
       <div class="row observation-details" style="display:none">
-        <div class="cell position-0 width-2" tal:content="context/review_year">Year</div>
-        <div class="cell position-2 width-5" tal:content="context/parameter_value">Parameter</div>
-        <div class="cell position-7 width-2">
+        <div class="col" tal:content="context/review_year">Year</div>
+        <div class="col" tal:content="context/parameter_value">Parameter</div>
+        <div class="col">
           <span tal:condition="here/ms_key_category|nothing">
               MS Key category
           </span><br tal:condition="here/ms_key_category|nothing"/>
         </div>
-        <div class="cell position-11 width-4" tal:content="python:context.modified().strftime('%d %b %Y, %H:%M CET')">Last update</div>
+        <div class="col" tal:content="python:context.modified().strftime('%d %b %Y, %H:%M CET')">Last update</div>
       </div>
       <tal:scenario condition="view/is_projection">
         <div class="row observation-details" style="display:none;padding-top:15px">
-          <div class="cell position-0 width-16 esdLabel">Scenario Type</div>
+          <div class="col esdLabel">Scenario Type</div>
         </div>
         <div class="row observation-details" style="display:none;">
-          <div class="cell position-0 width-16" tal:content="context/scenario_type_value">Scenario Type</div>
+          <div class="col" tal:content="context/scenario_type_value">Scenario Type</div>
         </div>
       </tal:scenario>
       <div class="row observation-details" style="display:none;padding-top:15px">
-        <div class="cell position-0 width-16 esdLabel">Description flags</div>
+        <div class="col esdLabel">Description flags</div>
       </div>
       <div class="row observation-details" style="display:none">
-        <div class="cell position-0 width-16" tal:content="context/highlight_value">Status flag</div>
+        <div class="col" tal:content="context/highlight_value">Status flag</div>
       </div>
       <div class="row observation-details" style="display:none;padding-top:15px" tal:condition="view/show_description">
-        <div class="cell position-0 width-4 esdLabel">Short description by sector expert</div>
+        <div class="col esdLabel">Short description by sector expert</div>
       </div>
       <div class="row observation-details" style="display:none" tal:condition="view/show_description">
-        <div class="cell position-0 width-16">
+        <div class="col">
           <span
             tal:replace="context/text/output|context/text">
               Here goes the description
@@ -328,14 +333,14 @@
       <tal:is_projection condition="python:view.is_projection()">
         <tal:nfr2 condition="context/nfr_code_inventory">
           <div class="row observation-details" style="display:none;padding-top:15px">
-            <div class="cell position-0 width-16 esdLabel">NFR inventories category code</div>
+            <div class="col esdLabel">NFR inventories category code</div>
           </div>
           <div class="row observation-details" style="display:none">
-            <div class="cell position-0 width-16" tal:content="context/nfr_code_inventory">NFR inventories code</div>
+            <div class="col" tal:content="context/nfr_code_inventory">NFR inventories code</div>
           </div>
         </tal:nfr2>
         <div class="row observation-details" style="display:none;padding-top:15px">
-            <div class="cell position-0 width-16 esdLabel">Activity Data</div>
+            <div class="col esdLabel">Activity Data</div>
           </div>
           <div class="row observation-details" style="display:none">
             <ul tal:repeat="activity context/activity_data_value">
@@ -344,13 +349,13 @@
           </div>
         </tal:is_projection>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
-        <div class="cell position-0 width-16">
+        <div class="col">
+          <i class="bi bi-chevron-down"></i>
           Observation history
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
       <div class="row observation-workflow" style="display:none">
-        <div class="cell position-0 width-16" style="overflow-x:auto">
+        <div class="col" style="overflow-x:auto">
           <table style="table-layout: fixed" id="workflowTable">
             <tr>
               <tal:item tal:repeat="item context/myHistory">
@@ -644,7 +649,7 @@
 
             <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-1">
-                <div class="cell position-0 width-16">
+                <div class="col">
                   Internal comments on conclusion between TERTs
                   <span class="eea-icon eea-icon-left"></span>
                 </div>
@@ -885,7 +890,7 @@
             <tal:block tal:define="portalType question/portal_type/lower">
               <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
-                  <div class="cell position-0 width-16">
+                  <div class="col">
                     Internal comments on question between TERTs
                     <span class="eea-icon eea-icon-left"></span>
                     <span>&nbsp; <i class="bi bi-info-circle-fill tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart TERTs engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the TERTs should use the default sentence: 'Discussed with ...' in the first text field"></i></span>
@@ -895,7 +900,7 @@
               </tal:block>
               <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="answer-comments">
-                  <div class="cell position-0 width-16">
+                  <div class="col">
                     Comments
                     <span class="eea-icon eea-icon-left"></span>
                   </div>
