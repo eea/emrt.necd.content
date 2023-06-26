@@ -42,7 +42,8 @@ setup(
         "python-docx",
         "collective.monkeypatcher",
         "openpyxl",
-        "eea.cache",
+        # "eea.cache",
+        "pylibmc",
     ],
     entry_points="""
     # -*- Entry points: -*-

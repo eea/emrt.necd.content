@@ -44,7 +44,7 @@ from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 from plone.z3cform.layout import wrap_form
 
-from eea.cache import cache
+from plone.memoize.ram import cache
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
 from emrt.necd.content.constants import LDAP_MSEXPERT

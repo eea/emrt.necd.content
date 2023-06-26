@@ -7,6 +7,9 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="emrt.necd.content">
 
+  <include package="pas.plugins.ldap" file="cache_volatile.zcml" />
+  
+  <include file="patches.zcml" />
   <include file="permissions.zcml" />
   <include file="profiles.zcml" />
   <include file="views.zcml" />

@@ -58,7 +58,7 @@ from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 from plone.z3cform.interfaces import IWrappedForm
 
-from eea.cache import cache
+from plone.memoize.ram import cache
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
