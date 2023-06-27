@@ -1,23 +1,20 @@
-from Acquisition import aq_parent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from .utils import notify
+from Products.CMFCore.WorkflowCore import ActionSucceededEvent
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.question import Question
 
 
-def notification_lr(context, event):
-    """
-    To:     LeadReviewer
-    When:   New question for approval
-    """
-    _temp = PageTemplateFile('question_ready_for_approval.pt')
+class NotificationLR(BaseNotification[Question, ActionSucceededEvent]):
+    """To: LeadReviewer. When: New question for approval."""
 
-    if event.action in ['send-to-lr']:
-        observation = aq_parent(context)
-        subject = 'New question for approval'
-        notify(
-            observation,
-            _temp,
-            subject,
-            ROLE_LR,
-            'question_ready_for_approval'
-        )
+    template = ViewPageTemplateFile("question_ready_for_approval.pt")
+
+    subject = "New question for approval"
+    action_types = ("send-to-lr",)
+    target_role = ROLE_LR
+    notification_name = "question_ready_for_approval"
+
+
+notification_lr = NotificationLR.factory

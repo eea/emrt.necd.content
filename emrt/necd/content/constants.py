@@ -1,5 +1,7 @@
 """LDAP Role mapping constants."""
 
+from typing import Literal
+
 LDAP_BASE = "extranet-necd-review"
 LDAP_BASE_PROJECTION = "extranet-necd-projection"
 LDAP_BASE_DN = "{base_dn}"
@@ -24,9 +26,15 @@ ROLE_MSA = "MSAuthority"
 ROLE_MSE = "MSExpert"
 
 
-P_OBS_REDRAFT_REASON_VIEW = (
-    "emrt.necd.content: View Observation Redraft Reason"
-)
+VALID_ROLES = Literal[
+    "SectorExpert",
+    "CounterPart",
+    "LeadReviewer",
+    "MSAuthority",
+    "MSExpert",
+]
+
+P_OBS_REDRAFT_REASON_VIEW = "emrt.necd.content: View Observation Redraft Reason"
 
 __all__ = (
     "LDAP_BASE",
@@ -44,4 +52,5 @@ __all__ = (
     "ROLE_LR",
     "ROLE_MSA",
     "ROLE_MSE",
+    "VALID_ROLES",
 )

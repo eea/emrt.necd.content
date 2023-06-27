@@ -1,41 +1,33 @@
-from Acquisition import aq_parent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from .utils import notify
+from Products.CMFCore.WorkflowCore import ActionSucceededEvent
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.question import Question
 
 
-def notification_ms(context, event):
-    """
-    To:     MSAuthority
-    When:   New question for your country
-    """
-    _temp = PageTemplateFile('question_to_ms.pt')
-    if event.action in ['approve-question']:
-        observation = aq_parent(context)
-        subject = 'New question for your country'
-        notify(
-            observation,
-            _temp,
-            subject,
-            role=ROLE_MSA,
-            notification_name='question_to_ms'
-        )
+class NotificationMS(BaseNotification[Question, ActionSucceededEvent]):
+    """To: MSAuthority. When: New question for your country."""
+
+    template = ViewPageTemplateFile("question_to_ms.pt")
+
+    subject = "New question for your country"
+    action_types = ("approve-question",)
+    target_role = ROLE_MSA
+    notification_name = "question_to_ms"
 
 
-def notification_se(context, event):
-    """
-    To:     SectorExpert
-    When:   Your question was sent to MS
-    """
-    _temp = PageTemplateFile('question_to_ms_rev_msg.pt')
-    if event.action in ['approve-question']:
-        observation = aq_parent(context)
-        subject = 'Your observation was sent to MS'
-        notify(
-            observation,
-            _temp,
-            subject,
-            role=ROLE_SE,
-            notification_name='question_to_ms'
-        )
+class NotificationSE(BaseNotification[Question, ActionSucceededEvent]):
+    """To: SectorExpert. When: Your question was sent to MS."""
+
+    template = ViewPageTemplateFile("question_to_ms_rev_msg.pt")
+
+    subject = "Your observation was sent to MS"
+    action_types = ("approve-question",)
+    target_role = ROLE_SE
+    notification_name = "question_to_ms"
+
+
+notification_ms = NotificationMS.factory
+notification_se = NotificationSE.factory

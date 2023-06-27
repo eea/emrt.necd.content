@@ -2,9 +2,11 @@ try:
     from io import StringIO
 except ImportError:
     from io import StringIO
+
 import datetime
 import json
 import re
+from enum import Enum
 from functools import partial
 from itertools import chain
 from time import time
@@ -41,7 +43,6 @@ from zope.lifecycleevent import ObjectModifiedEvent
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions import CMFEditionsMessageFactory as _CMFE
-from plone.base.utils import safe_text
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
@@ -49,16 +50,17 @@ from plone import api
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.discussion.interfaces import IConversation
 from plone.autoform import directives
+from plone.base.utils import safe_text
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.browser.view import DefaultView
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.memoize.ram import cache
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 from plone.z3cform.interfaces import IWrappedForm
 
-from plone.memoize.ram import cache
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import LDAP_SECTOREXP
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
@@ -76,12 +78,21 @@ from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.vocabularies.vocabularies import INECDVocabularies
-from emrt.necd.content.vocabularies.vocabularies import get_registry_interface_field_data
+from emrt.necd.content.vocabularies.vocabularies import (
+    get_registry_interface_field_data,
+)
 
 from .comment import IComment
 from .commentanswer import ICommentAnswer
 from .nfr_code_matching import get_category_ldap_from_nfr_code
 from .nfr_code_matching import get_category_value_from_nfr_code
+
+
+class StatusIcon(Enum):
+    OBSERVATION = "bi-file-earmark-text"
+    CONCLUSION = "bi-check"
+    QUESTION = "bi-wechat"
+
 
 # [refs #104852] Hide Projection Year and Reference Year for
 # users with these sectors.
@@ -145,9 +156,7 @@ def check_country(value):
             valid = True
 
     if not valid:
-        raise Invalid(
-            "You are not allowed to add observations for this country"
-        )
+        raise Invalid("You are not allowed to add observations for this country")
 
     return True
 
@@ -165,9 +174,7 @@ def inventory_year(value):
 
     def validate(value):
         normalized_value = (val.strip() for val in split_on_sep(value, "-,;"))
-        return False not in (
-            int(val) in range(1000, 10000) for val in normalized_value
-        )
+        return False not in (int(val) in range(1000, 10000) for val in normalized_value)
 
     def check_valid(value):
         try:
@@ -378,11 +385,7 @@ def set_title_to_observation(obj, event):
     sector = safe_text(obj.ghg_source_category_value())
     pollutants = safe_text(obj.pollutants_value())
     obj_year = (
-        (
-            obj.year
-            if (isinstance(obj.year, int | str))
-            else ", ".join(obj.year)
-        )
+        (obj.year if (isinstance(obj.year, int | str)) else ", ".join(obj.year))
         if obj.year
         else ""
     )
@@ -420,9 +423,7 @@ class Observation(Container):
 
     def get_values_cat(self, portal_type=None):
         if portal_type is not None:
-            return self.listFolderContents(
-                contentFilter={"portal_type": portal_type}
-            )
+            return self.listFolderContents(contentFilter={"portal_type": portal_type})
         else:
             return self.listFolderContents()
 
@@ -568,42 +569,45 @@ class Observation(Container):
 
     def wf_status(self):
         if self.get_status() in ["draft"]:
-            return ["Observation created", "observationIcon"]
+            return ["Observation created", StatusIcon.OBSERVATION.value]
         elif self.get_status() in ["closed"]:
-            return ["Observation finished", "observationIcon"]
+            return ["Observation finished", StatusIcon.OBSERVATION.value]
         elif self.get_status() in ["close-requested"]:
-            return ["Observation finish requested", "observationIcon"]
+            return ["Observation finish requested", StatusIcon.OBSERVATION.value]
         elif self.get_status() in ["conclusions", "conclusions-lr-denied"]:
-            return ["Conclusion ongoing", "conclusionIcon"]
+            return ["Conclusion ongoing", StatusIcon.CONCLUSION.value]
         elif self.get_status() in ["conclusion-discussion"]:
-            return ["Counterparts comments requested", "conclusionIcon"]
+            return ["Counterparts comments requested", StatusIcon.CONCLUSION.value]
         else:
             questions = self.get_values_cat("Question")
             if questions:
                 question = questions[-1]
                 state = question.get_state_api()
                 if state in ["draft"]:
-                    return ["Question drafted", "questionIcon"]
+                    return ["Question drafted", StatusIcon.QUESTION.value]
                 elif state in ["counterpart-comments"]:
-                    return ["Counterpart's comments requested", "questionIcon"]
+                    return [
+                        "Counterpart's comments requested",
+                        StatusIcon.QUESTION.value,
+                    ]
                 elif state in ["answered"]:
-                    return ["Pending question", "questionIcon"]
+                    return ["Pending question", StatusIcon.QUESTION.value]
                 elif state in [
                     "pending",
                     "pending-answer-drafting",
                     "recalled-msa",
                 ]:
-                    return ["Open question", "questionIcon"]
+                    return ["Open question", StatusIcon.QUESTION.value]
                 elif state in ["drafted", "recalled-lr"]:
-                    return ["Draft question", "questionIcon"]
+                    return ["Draft question", StatusIcon.QUESTION.value]
                 elif state in ["expert-comments"]:
-                    return ["MS expert comments requested", "questionIcon"]
+                    return ["MS expert comments requested", StatusIcon.QUESTION.value]
                 elif state in ["closed"]:
-                    return ["Closed question", "questionIcon"]
+                    return ["Closed question", StatusIcon.QUESTION.value]
             else:
-                return ["Observation created", "observationIcon"]
+                return ["Observation created", StatusIcon.OBSERVATION.value]
 
-        return ["Unknown", "observationIcon"]
+        return ["Unknown", StatusIcon.OBSERVATION.value]
 
     def observation_status(self):
         status = self.observation_question_status()
@@ -690,14 +694,12 @@ class Observation(Container):
         return self._author_name(userid)
 
     def myHistory(self):
-        observation_history = self.workflow_history.get(
-            "esd-review-workflow", []
-        )
+        observation_history = self.workflow_history.get("esd-review-workflow", [])
         observation_wf = []
         question_wf = []
         for item in observation_history:
             item["role"] = item["actor"]
-            item["object"] = "observationIcon"
+            item["object"] = StatusIcon.OBSERVATION.value
             item["author"] = self.get_author_name(item["actor"])
             i_rstate = item["review_state"]
             i_action = item["action"]
@@ -730,9 +732,7 @@ class Observation(Container):
                 item["state"] = "Finalisation denied"
                 item["role"] = "Lead reviewer"
                 observation_wf.append(item)
-            elif (
-                i_rstate == "conclusions-lr-denied" and i_action == "recall-lr"
-            ):
+            elif i_rstate == "conclusions-lr-denied" and i_action == "recall-lr":
                 item["state"] = "Recalled by LR"
                 item["role"] = "Lead reviewer"
                 observation_wf.append(item)
@@ -743,17 +743,17 @@ class Observation(Container):
             elif i_rstate == "conclusion-discussion":
                 item["state"] = "Conclusion comments requested"
                 item["role"] = "Sector Expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif i_rstate == "conclusions" and i_action == "finish-comments":
                 item["state"] = "Conclusion comments closed"
                 item["role"] = "Sector Expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             elif i_rstate == "conclusions" and i_action == "draft-conclusions":
                 item["state"] = "Conclusion drafting"
                 item["role"] = "Sector Expert"
-                item["object"] = "conclusionIcon"
+                item["object"] = StatusIcon.CONCLUSION.value
                 observation_wf.append(item)
             else:
                 item["state"] = "*" + i_rstate + "*"
@@ -768,7 +768,7 @@ class Observation(Container):
             )
             for item in question_history:
                 item["role"] = item["actor"]
-                item["object"] = "questionIcon"
+                item["object"] = StatusIcon.QUESTION.value
                 item["author"] = self.get_author_name(item["actor"])
                 i_rstate = item["review_state"]
                 i_action = item["action"]
@@ -800,9 +800,7 @@ class Observation(Container):
                     # Do not add
                     pass
                 elif i_rstate == "pending" and i_action == "approve-question":
-                    item["state"] = (
-                        "Question approved and " "sent to MS coordinator"
-                    )
+                    item["state"] = "Question approved and " "sent to MS coordinator"
                     item["role"] = "Lead reviewer"
                     question_wf.append(item)
                 elif i_rstate == "recalled-lr":
@@ -920,9 +918,7 @@ class Observation(Container):
         replynum = 0
         if questions:
             comments = [
-                c
-                for c in list(questions[-1].values())
-                if c.portal_type == "Comment"
+                c for c in list(questions[-1].values()) if c.portal_type == "Comment"
             ]
             if comments:
                 last = comments[-1]
@@ -954,10 +950,7 @@ class Observation(Container):
             commentators = list(
                 set(
                     chain.from_iterable(
-                        [
-                            IConversation(c).commentators
-                            for c in list(question.values())
-                        ]
+                        [IConversation(c).commentators for c in list(question.values())]
                     )
                 )
             )
@@ -1025,9 +1018,7 @@ def set_form_widgets(form_instance):
             "templates/widget_activity.pt"
         )
         w_activity_data.activity_data_registry = json.dumps(
-            get_registry_interface_field_data(
-                INECDVocabularies, "activity_data"
-            )
+            get_registry_interface_field_data(INECDVocabularies, "activity_data")
         )
         # # [refs #104852] hide fields for PROJECTION_HIDE_YEARS users
         # if projection_hide_for_user():
@@ -1125,13 +1116,9 @@ class EditForm(edit.DefaultEditForm):
         elif ROLE_LR in roles:
             fields = ["text", "highlight"]
 
-        self.fields = self.fields.select(
-            *set(fields).intersection(self.fields)
-        )
+        self.fields = self.fields.select(*set(fields).intersection(self.fields))
 
-        self.groups = [
-            g for g in self.groups if g.label == "label_schema_default"
-        ]
+        self.groups = [g for g in self.groups if g.label == "label_schema_default"]
 
         checkbox_fields = [
             "parameter",
@@ -1171,9 +1158,7 @@ class EditForm(edit.DefaultEditForm):
             if data[key] is interfaces.NOT_CHANGED:
                 continue
             content._setPropValue(key, value)
-        IStatusMessage(self.request).addStatusMessage(
-            self.success_message, "info"
-        )
+        IStatusMessage(self.request).addStatusMessage(self.success_message, "info")
         self.request.response.redirect(self.nextURL())
 
         notify(ObjectModifiedEvent(content))
@@ -1237,12 +1222,8 @@ class ObservationMixin(DefaultView):
     def wf_info(self):
         context = aq_inner(self.context)
         wf = getToolByName(context, "portal_workflow")
-        comments = wf.getInfoFor(
-            self.context, "comments", wf_id="esd-review-workflow"
-        )
-        actor = wf.getInfoFor(
-            self.context, "actor", wf_id="esd-review-workflow"
-        )
+        comments = wf.getInfoFor(self.context, "comments", wf_id="esd-review-workflow")
+        actor = wf.getInfoFor(self.context, "actor", wf_id="esd-review-workflow")
         tim = wf.getInfoFor(self.context, "time", wf_id="esd-review-workflow")
         return {"comments": comments, "actor": actor, "time": tim}
 
@@ -1253,9 +1234,7 @@ class ObservationMixin(DefaultView):
 
     def get_menu_actions(self):
         context = aq_inner(self.context)
-        menu_items = getMenu(
-            "plone_contentmenu_workflow", context, self.request
-        )
+        menu_items = getMenu("plone_contentmenu_workflow", context, self.request)
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_questions(self):
@@ -1340,9 +1319,7 @@ class ObservationMixin(DefaultView):
         question = self.question()
         if question:
             values = [
-                v
-                for v in list(question.values())
-                if sm.checkPermission("View", v)
+                v for v in list(question.values()) if sm.checkPermission("View", v)
             ]
             return values
 
@@ -1397,14 +1374,10 @@ class ObservationMixin(DefaultView):
             p_add = "emrt.necd.content: Add CommentAnswer"
             permission = sm.checkPermission(p_add, question)
             questions = [
-                q
-                for q in list(question.values())
-                if q.portal_type == "Comment"
+                q for q in list(question.values()) if q.portal_type == "Comment"
             ]
             answers = [
-                q
-                for q in list(question.values())
-                if q.portal_type == "CommentAnswer"
+                q for q in list(question.values()) if q.portal_type == "CommentAnswer"
             ]
             return permission and len(questions) > len(answers)
         else:
@@ -1464,9 +1437,7 @@ class ObservationMixin(DefaultView):
                     hist_meta_len = hist_meta.getLength(countPurged=False)
                     # Count backwards from most recent to least recent
                     for i in range(hist_meta_len - 1, -1, -1):
-                        version = retrieve(i, countPurged=False)[
-                            "metadata"
-                        ].copy()
+                        version = retrieve(i, countPurged=False)["metadata"].copy()
                         version["version_id"] = getId(i, countPurged=False)
                         history.append(version)
                     dt = getToolByName(self.context, "portal_diff")
@@ -1481,13 +1452,9 @@ class ObservationMixin(DefaultView):
                             ),
                             reverse=True,
                         )
-                        version1 = self.history[-1].get(
-                            "version_id", "current"
-                        )
+                        version1 = self.history[-1].get("version_id", "current")
                         if len(self.history) > 1:
-                            version2 = self.history[-2].get(
-                                "version_id", "current"
-                            )
+                            version2 = self.history[-2].get("version_id", "current")
                         else:
                             version2 = "current"
                     elif version1 is None:
@@ -1504,9 +1471,7 @@ class ObservationMixin(DefaultView):
                         id2=self.versionTitle(version1),
                     )
                     self.changes = [
-                        change
-                        for change in changeset.getDiffs()
-                        if not change.same
+                        change for change in changeset.getDiffs() if not change.same
                     ]
 
     @property
@@ -1569,9 +1534,7 @@ class ObservationView(ObservationMixin):
     def carryover_source(self):
         result = None
         if getattr(self.context, "carryover_from", None):
-            carryover_source_path = getattr(
-                self.context, "carryover_source_path", None
-            )
+            carryover_source_path = getattr(self.context, "carryover_source_path", None)
             if carryover_source_path:
                 try:
                     portal = api.portal.get()
@@ -1592,9 +1555,7 @@ class ObservationView(ObservationMixin):
                 for brain in found:
                     their_path = brain.getPath().split("/")
                     if their_path != my_path:
-                        their_year = int(
-                            re.match(RE_YEAR, their_path[-2]).group()
-                        )
+                        their_year = int(re.match(RE_YEAR, their_path[-2]).group())
                         if my_year > their_year:
                             candidates.append(brain)
                 if candidates:
@@ -1618,17 +1579,11 @@ class ExportAsDocView(ObservationMixin):
         document = Document()
 
         # Styles
-        style = document.styles.add_style(
-            "Label Bold", WD_STYLE_TYPE.PARAGRAPH
-        )
+        style = document.styles.add_style("Label Bold", WD_STYLE_TYPE.PARAGRAPH)
         style.font.bold = True
-        style = document.styles.add_style(
-            "Table Cell", WD_STYLE_TYPE.PARAGRAPH
-        )
+        style = document.styles.add_style("Table Cell", WD_STYLE_TYPE.PARAGRAPH)
         style.font.size = Pt(9)
-        style = document.styles.add_style(
-            "Table Cell Bold", WD_STYLE_TYPE.PARAGRAPH
-        )
+        style = document.styles.add_style("Table Cell Bold", WD_STYLE_TYPE.PARAGRAPH)
         style.font.size = Pt(9)
         style.font.bold = True
 
@@ -1646,9 +1601,7 @@ class ExportAsDocView(ObservationMixin):
         hdr_cells[2].paragraphs[0].style = "Table Cell Bold"
         hdr_cells[3].text = "Reference year" if is_projection else "Fuel"
         hdr_cells[3].paragraphs[0].style = "Table Cell Bold"
-        hdr_cells[4].text = (
-            "Projection year" if is_projection else "Inventory year"
-        )
+        hdr_cells[4].text = "Projection year" if is_projection else "Inventory year"
         hdr_cells[4].paragraphs[0].style = "Table Cell Bold"
         if is_projection:
             hdr_cells[5].text = "Activity data type"
@@ -1699,9 +1652,7 @@ class ExportAsDocView(ObservationMixin):
             row_cells[2].text = "MS Key category"
         else:
             row_cells[2].text = ""
-        row_cells[3].text = self.context.modified().strftime(
-            "%d %b %Y, %H:%M CET"
-        )
+        row_cells[3].text = self.context.modified().strftime("%d %b %Y, %H:%M CET")
         row_cells[0].paragraphs[0].style = "Table Cell"
         row_cells[1].paragraphs[0].style = "Table Cell"
         row_cells[2].paragraphs[0].style = "Table Cell"
@@ -1710,9 +1661,7 @@ class ExportAsDocView(ObservationMixin):
 
         document.add_paragraph("Description flags", style="Label Bold")
         document.add_paragraph(self.context.highlight_value())
-        document.add_paragraph(
-            "Short description by sector expert", style="Label Bold"
-        )
+        document.add_paragraph("Short description by sector expert", style="Label Bold")
         document.add_paragraph(self.context.text)
         if is_projection:
             document.add_paragraph("Scenario Type", style="Label Bold")
@@ -1723,9 +1672,7 @@ class ExportAsDocView(ObservationMixin):
                 )
                 document.add_paragraph(self.context.nfr_code_inventory)
             document.add_paragraph("Activity Data", style="Label Bold")
-            document.add_paragraph(
-                "\n".join(self.context.activity_data_value())
-            )
+            document.add_paragraph("\n".join(self.context.activity_data_value()))
 
         if self.context.get_status() == "close-requested":
             document.add_heading("Finish observation", level=2)
@@ -1740,13 +1687,9 @@ class ExportAsDocView(ObservationMixin):
             document.add_page_break()
             document.add_heading("Conclusions", level=2)
 
-            document.add_paragraph(
-                "Final status of observation:", style="Label Bold"
-            )
+            document.add_paragraph("Final status of observation:", style="Label Bold")
             document.add_paragraph(conclusion_2.reason_value())
-            document.add_paragraph(
-                "Recommendation/internal note:", style="Label Bold"
-            )
+            document.add_paragraph("Recommendation/internal note:", style="Label Bold")
             document.add_paragraph(conclusion_2.text)
 
         chats = self.get_chat()
@@ -1760,18 +1703,14 @@ class ExportAsDocView(ObservationMixin):
                     sent_info = "Updated on: %s"
 
                 if chat.portal_type.lower() == "comment":
-                    document.add_paragraph(
-                        "> %s" % self.strip_special_chars(chat.text)
-                    )
+                    document.add_paragraph("> %s" % self.strip_special_chars(chat.text))
                     document.add_paragraph(
                         "From TERTs To Member State \t\t %s"
                         % (sent_info % date.strftime("%d %b %Y, %H:%M CET"))
                     )
 
                 if chat.portal_type.lower() == "commentanswer":
-                    document.add_paragraph(
-                        "< %s" % self.strip_special_chars(chat.text)
-                    )
+                    document.add_paragraph("< %s" % self.strip_special_chars(chat.text))
                     document.add_paragraph(
                         "From Member State To TERTs \t\t %s"
                         % (sent_info % date.strftime("%d %b %Y, %H:%M CET"))
@@ -1857,9 +1796,7 @@ class AddAnswerForm(Form):
             raise ActionExecutionError(Invalid("Answer text is empty"))
         observation = aq_inner(self.context)
         questions = [
-            q
-            for q in list(observation.values())
-            if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
@@ -1891,22 +1828,16 @@ class AddAnswerAndRequestComments(BrowserView):
     def render(self):
         observation = aq_inner(self.context)
         questions = [
-            q
-            for q in list(observation.values())
-            if q.portal_type == "Question"
+            q for q in list(observation.values()) if q.portal_type == "Question"
         ]
         if questions:
             context = questions[0]
         else:
             raise ActionExecutionError(Invalid("Invalid context"))
 
-        comments = [
-            q for q in list(context.values()) if q.portal_type == "Comment"
-        ]
+        comments = [q for q in list(context.values()) if q.portal_type == "Comment"]
         answers = [
-            q
-            for q in list(context.values())
-            if q.portal_type == "CommentAnswer"
+            q for q in list(context.values()) if q.portal_type == "CommentAnswer"
         ]
 
         if len(comments) == len(answers):
@@ -1965,21 +1896,15 @@ class AddCommentForm(Form):
         observation = self.context
         # raising errors before transition as that will
         # cause a transaction.commit
-        question = value_or_error(
-            observation.get_question(), "Invalid context"
-        )
+        question = value_or_error(observation.get_question(), "Invalid context")
         wid_text = self.widgets["text"]
 
-        text = value_or_error(
-            wid_text.extract("").strip(), "Question text is empty"
-        )
+        text = value_or_error(wid_text.extract("").strip(), "Question text is empty")
 
         if question.get_status() == "closed":  # fix for question in "draft"
             # transition before adding the comment,
             # so the transition guard passes
-            api.content.transition(
-                obj=question, transition="add-followup-question"
-            )
+            api.content.transition(obj=question, transition="add-followup-question")
         create_comment(text, question)
 
         return request.response.redirect(observation.absolute_url())
@@ -2017,9 +1942,7 @@ class EditHighlightsForm(edit.DefaultEditForm):
         super(EditHighlightsForm, self).updateFields()
         self.fields = field.Fields(IObservation).select("highlight")
         self.fields["highlight"].widgetFactory = CheckBoxFieldWidget
-        self.groups = [
-            g for g in self.groups if g.label == "label_schema_default"
-        ]
+        self.groups = [g for g in self.groups if g.label == "label_schema_default"]
 
     def updateWidgets(self):
         super(EditHighlightsForm, self).updateWidgets()

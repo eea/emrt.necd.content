@@ -42,10 +42,6 @@
 	max-width: 100%;
 	width: 100%;
 	overflow: auto;
-	/**border-width: 0px 0px 0px 1px;
-	border-style: dotted;
-	border-left: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;*/
 	border: 1px solid #b6b6b6;
 	color: #666666;
 	line-height: normal;
@@ -77,24 +73,18 @@
 }
 .standardButton{
 	background-color: #38758a;
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
 	border-radius: 8px;
 	padding: 10px 13px;
-	font-weight: bold;
 	color:#fff !important;
 	position: relative;
 	display: inline-block;
 	border: 1px solid #346F83;
+	text-decoration: none;
 }
 .standardButton.removeButton,
 .standardButton.defaultWFButton {
 	background-color:#f6a800 !important;
 	border-color: #999999;
-	-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-ms-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-o-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 }
 .standardButton:hover,
@@ -103,10 +93,6 @@
 	color: #FFFFFF !important;
 	cursor:pointer;
 	border-color: #999999;
-	-webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-ms-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-	-o-box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
 	text-shadow: none;
 }
@@ -161,8 +147,6 @@
 }
 .question {
 	background-color: white;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	border: 1px solid lightgray;
 	position: relative;
@@ -248,8 +232,6 @@
 	cursor: pointer;
 	background-color: #e6eff0 !important;
 	color: #88afb8 !important;
-	/**border: 0.1em solid #e7e7e7;
-	border-style: solid solid none;*/
 	border-right: 1px solid white;
 	padding: 4px;
 	text-transform: uppercase;
@@ -265,14 +247,11 @@
 .sort-order-reverse:after{
 	content: '▼';
 }
-/**.observationList thead tr{
-	border-left: 5px solid #e6eff0;
-}*/
+
 .observationList tr{
 	border-bottom: 0px !important;
 	border-right: 0px !important;
 	border-top: 1px solid #ddd !important;
-	/**border-left: 5px solid white;*/
 }
 .observationList tbody tr:hover{
 	cursor: pointer;
@@ -283,13 +262,7 @@
 	background-color: white !important;
 	vertical-align: middle !important;
 }
-/**.observationList tr.psiBackground,
-.observationList tr.ptcBackground{
-	border-left: 5px solid #F6D18B !important;
-}
-.observationList tr.technicalCorrectionBackground{
-	border-left: 5px solid #FFA500 !important;
-}*/
+
 .observationRefCell{
 	color: #427597;
 	font-weight: bold;
@@ -299,8 +272,6 @@
 	text-align: center;
 }
 .statusCell span{
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
 	border-radius: 10px;
 	padding: 5px 14px;
 }
@@ -381,9 +352,7 @@
 	content: "\f023";
 }
 .collapsiblePanelTitle {
-	/**background-color:#2c8da2; */
 	line-height:30px;
-	/**color:white; */
 	cursor:pointer;
 	margin-top:10px;
 	font-weight: bold;
@@ -399,6 +368,27 @@
 	content: "\f078";
 	color:#2c8da2;
 }
+
+.collapsiblePanelTitle.collapsed .icon-expanded {
+	display: none;
+}
+
+.collapsiblePanelTitle.collapsed .icon-collapsed {
+	display: unset;
+}
+
+.collapsiblePanelTitle .collapsible-icon:before {
+	font-weight: bold !important;
+}
+
+.collapsiblePanelTitle .icon-expanded {
+	display: unset;
+}
+
+.collapsiblePanelTitle .icon-collapsed {
+	display: none;
+}
+
 .collapsibleListTitle {
 	cursor:pointer;
 }
@@ -422,8 +412,6 @@
 }
 .tabs {
 	overflow: hidden;
-	//*-webkit-box-shadow: 0 1px 0 #FFF inset; -moz-box-shadow: 0 1px 0 #FFF inset;
-	//box-shadow: 0 1px 0 #FFF inset;*/
 	background-color: #FBFBFB;
 }
 .tabs>div {
@@ -435,9 +423,6 @@
 	text-shadow: 0 1px 0 #FFF;
 	position: relative;
 	overflow: hidden;
-	/**background: #e1e1e1;
-	background: -moz-linear-gradient(center top , #f2f2f2, #e1e1e1);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f2f2), color-stop(100%,#e1e1e1)); */
 	border-top: 6px solid transparent;
 }
 .tabs>div.active{
@@ -519,13 +504,9 @@ ul.eea-tabs{
 }
 #visual-portal-wrapper ul.eea-tabs {
 	border-radius: 0px;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
 }
 #visual-portal-wrapper ul.eea-tabs li:first-child > a {
 	border-radius: 0px !important;
-	-webkit-border-radius: 0px !important;
-	-moz-border-radius: 0px !important;
 }
 #visual-portal-wrapper ul.eea-tabs a {
 	border-top: 6px solid transparent !important;
@@ -636,20 +617,8 @@ span.envelope:before{
 	z-index: 4;
 }
 .workflowButton{
-	-webkit-transform: rotate(-90deg);
-	-moz-transform: rotate(-90deg);
-	-ms-transform: rotate(-90deg);
-	-o-transform: rotate(-90deg);
 	transform: rotate(-90deg);
-
-	/* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
-	-webkit-transform-origin: 40% 100%;
-	-moz-transform-origin: 40% 100%;
-	-ms-transform-origin: 40% 100%;
-	-o-transform-origin: 40% 100%;
 	transform-origin: 40% 100%;
-	/* Should be unset in IE9+ I think. */
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 	border-radius: 0px 0px 8px 8px;
 	background-color: #38758a;
 	color: #fff;
@@ -700,8 +669,6 @@ span.envelope:before{
 .potentialTechnicalCorrectionTag,
 .potentialSignificantIssue{
 	background-color: #F6D18B;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	color: #593c05;
 	font-weight: normal !important;
@@ -712,8 +679,6 @@ span.envelope:before{
 }
 .technicalCorrectionTag{
 	background-color: #24a848;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	color: white;
 	font-weight: normal !important;
@@ -724,8 +689,6 @@ span.envelope:before{
 }
 .revisedEstimateTag{
 	background-color: #2c669d;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	color: white;
 	font-weight: normal !important;

@@ -285,7 +285,8 @@
 
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-details" style="margin-top:15px">
         <div class="col">
-          <i class="bi bi-chevron-down"></i>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation details
         </div>
       </div>
@@ -350,7 +351,8 @@
         </tal:is_projection>
       <div class="row collapsiblePanelTitle collapsed" data-panel="observation-workflow" style="margin-top:15px">
         <div class="col">
-          <i class="bi bi-chevron-down"></i>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observation history
         </div>
       </div>
@@ -362,8 +364,9 @@
                 <td
                   tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime;">
                     <span class="border"></span>
-                    <span class="eea-icon eea-icon-lg wfPoint"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfRole"><!-- --></span>
+                    <i class="bi bi-circle-fill wfPoint"></i>
+                    <br/>
+                    <i class="bi bi-person-fill wfRole"></i>
                     <span tal:content="item/role"></span><br/>
                     <a
                       tal:attributes="href python:'http://www.eionet.europa.eu/directory/user?uid='+item['actor']"
@@ -372,7 +375,7 @@
                     <span
                       tal:attributes="class python: ' '.join(['eea-icon eea-icon-lg wfStep', item['object']])"><!-- --></span>
                     <span tal:content="item/state"></span><br/>
-                    <span class="eea-icon eea-icon-lg wfTime"><!-- --></span>
+                    <i class="bi bi-clock wfTime"></i>
                     <span tal:attributes="title python:item['time'].strftime('%d %b %Y, %H:%M CET')" class="datetimeWF">
                       <span tal:replace="item/time"></span>
                     </span><br/>
@@ -650,8 +653,9 @@
             <div tal:condition="show_internal_notes">
               <div class="row collapsiblePanelTitle collapsed" data-panel="conclusion-discussion-1">
                 <div class="col">
+                  <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                  <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                   Internal comments on conclusion between TERTs
-                  <span class="eea-icon eea-icon-left"></span>
                 </div>
               </div>
               <div class="conclusion-discussion conclusion-discussion-1" tal:content="structure provider:emrt.necd.content.commentmanager"  style="display:none"/>
@@ -717,7 +721,7 @@
       <div id="question-add-form" style="display: none" tal:condition="view/can_add_question">
         <span tal:replace="structure view/add_question_form"></span>
       </div>
-      <div class="question" tal:repeat="question view/get_chat" tal:attributes="id question/getId; class string:question ${question/portal_type/lower} ${python:'old-qa' if view.is_old_qa(question) else ''};">
+      <div class="question" tal:repeat="question view/get_chat" id="${question/getId}" class="question ${question/portal_type/lower} ${python:'old-qa' if view.is_old_qa(question) else ''}">
         <tal:block tal:define="portalType question/portal_type/lower"
           tal:condition="python:portalType == 'comment'">
           <div class="arrow-right-border"></div>
@@ -891,8 +895,9 @@
               <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
                   <div class="col">
+                    <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                    <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                     Internal comments on question between TERTs
-                    <span class="eea-icon eea-icon-left"></span>
                     <span>&nbsp; <i class="bi bi-info-circle-fill tooltipIconBlue" title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart TERTs engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the TERTs should use the default sentence: 'Discussed with ...' in the first text field"></i></span>
                   </div>
                 </div>
@@ -901,8 +906,9 @@
               <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="answer-comments">
                   <div class="col">
+                    <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+                    <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
                     Comments
-                    <span class="eea-icon eea-icon-left"></span>
                   </div>
                 </div>
                 <div class="answer-comments" tal:content="structure provider:emrt.necd.content.commentmanager" style="display:none" />
