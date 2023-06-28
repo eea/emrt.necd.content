@@ -6,7 +6,7 @@ from emrt.necd.content.notifications.base_notification import BaseNotification
 from emrt.necd.content.question import Question
 
 
-class NotificationLR(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationMS(BaseNotification[Question, ActionSucceededEvent]):
     """To: MSAuthority. When: Answer Acknowledged."""
 
     template = ViewPageTemplateFile("answer_acknowledged.pt")
@@ -17,4 +17,4 @@ class NotificationLR(BaseNotification[Question, ActionSucceededEvent]):
     notification_name = "answer_acknowledged"
 
 
-notification_lr = NotificationLR.factory
+notification_ms = NotificationMS.factory

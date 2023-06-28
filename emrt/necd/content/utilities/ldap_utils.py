@@ -75,7 +75,7 @@ def paged_query(ou, connection, lc: SimplePagedResultsControl, query, attrs):
         LOG.info("Requesting page %d!", cur_page)
         # request a page
         msgid = connection.search_ext(
-            ou, ldap.SCOPE_SUBTREE, query, attrs, serverctrls=[lc]
+            ou, ldapurl.LDAP_SCOPE_SUBTREE, query, attrs, serverctrls=[lc]
         )
         # retrieve results
         rtype, rdata, rmsgid, serverctrls = connection.result3(msgid)
@@ -158,9 +158,9 @@ class LDAPQuery(object):
         one instance available. Cleanup on exit.
         """
         self.connection.unbind()
-        self.connection = None
-        self.acl = None
-        self.config = None
+        del self.connection
+        del self.acl
+        del self.config
         self.paged = False
         self.pagesize = PAGESIZE
 

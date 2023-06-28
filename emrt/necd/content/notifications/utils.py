@@ -5,6 +5,7 @@ from cs.htmlmailer.mailer import create_html_mail
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+from zope.component import getUtility
 from zope.globalrequest import getRequest
 
 from Products.CMFCore.MemberDataTool import MemberAdapter
@@ -13,16 +14,17 @@ from Products.CMFPlone.PloneTool import PloneTool
 from plone import api
 from plone.base.utils import safe_text
 
+from emrt.necd.content.constants import LDAP_BASE_DN
 from emrt.necd.content.constants import VALID_ROLES
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions,
 )
+from emrt.necd.content.utilities import ldap_utils
+from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 
-def notify(
-    observation, template, subject, role: VALID_ROLES, notification_name
-):
+def notify(observation, template, subject, role: VALID_ROLES, notification_name):
     users = get_users_in_context(observation, role, notification_name)
     content = template(**dict(observation=observation))
 
@@ -55,15 +57,11 @@ def send_mail(subject, email_content, users=[]):
         )
 
         try:
-            api.portal.send_email(
-                recipient=to_addr, subject=subject, body=mail
-            )
+            api.portal.send_email(recipient=to_addr, subject=subject, body=mail)
             message = "Users have been notified by e-mail"
             log.info(
                 "Emails sent to users %s",
-                ", ".join(
-                    [email.replace("@", " <at> ") for email in user_emails]
-                ),
+                ", ".join([email.replace("@", " <at> ") for email in user_emails]),
             )
             api.portal.show_message(message)
         except Exception as e:
@@ -84,6 +82,20 @@ def extract_emails(users: List[MemberAdapter]):
     return list(set(emails))
 
 
+def get_ldap_group_member_ids(context, groupname):
+    ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
+    ldap_base = ldap_wrapper(LDAP_BASE_DN)
+    acl = api.portal.get()["acl_users"]["pasldap"]
+
+    if groupname.startswith(ldap_base):
+        with ldap_utils.get_query_utility()(acl) as q_ldap:
+            ldap_group = q_ldap.query_groups(f"(cn={groupname})", ("uniqueMember",))
+            ldap_members = [x.decode() for x in ldap_group[0][1]["uniqueMember"]]
+            return [m.split(",")[0].split("=")[1] for m in ldap_members]
+    else:
+        raise ValueError
+
+
 def get_users_in_context(observation, role, notification_name):
     users = []
     local_roles = observation.get_local_roles()
@@ -91,11 +103,15 @@ def get_users_in_context(observation, role, notification_name):
     usernames = []
     for username, userroles in local_roles:
         if role in userroles:
-            group = api.group.get(username)
-            if group:
-                usernames.extend(group.getMemberIds())
-            else:
-                usernames.append(username)
+            try:
+                ldap_members = get_ldap_group_member_ids(observation, username)
+                usernames.extend(ldap_members)
+            except ValueError:
+                group = api.group.get(username)
+                if group:
+                    usernames.extend(group.getMemberIds())
+                else:
+                    usernames.append(username)
 
     usernames = list(set(usernames))
 
