@@ -5,7 +5,6 @@ from cs.htmlmailer.mailer import create_html_mail
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from emrt.necd.content.constants import VALID_ROLES
 from zope.globalrequest import getRequest
 
 from Products.CMFCore.MemberDataTool import MemberAdapter
@@ -14,13 +13,16 @@ from Products.CMFPlone.PloneTool import PloneTool
 from plone import api
 from plone.base.utils import safe_text
 
+from emrt.necd.content.constants import VALID_ROLES
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions,
 )
 
 
-def notify(observation, template, subject, role: VALID_ROLES, notification_name):
+def notify(
+    observation, template, subject, role: VALID_ROLES, notification_name
+):
     users = get_users_in_context(observation, role, notification_name)
     content = template(**dict(observation=observation))
 

@@ -1,23 +1,20 @@
-from Acquisition import aq_parent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from .utils import notify
+from Products.CMFCore.WorkflowCore import ActionSucceededEvent
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from emrt.necd.content.constants import ROLE_MSA
+from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.question import Question
 
 
-def notification_ms(context, event):
-    """
-    To:     MSAuthority
-    When:   Answer Acknowledged
-    """
-    _temp = PageTemplateFile('answer_acknowledged.pt')
+class NotificationLR(BaseNotification[Question, ActionSucceededEvent]):
+    """To: MSAuthority. When: Answer Acknowledged."""
 
-    if event.action in ['validate-answer-msa']:
-        observation = aq_parent(context)
-        subject = 'Your answer was acknowledged'
-        notify(
-            observation,
-            _temp,
-            subject,
-            ROLE_MSA,
-            'answer_acknowledged'
-        )
+    template = ViewPageTemplateFile("answer_acknowledged.pt")
+
+    subject = "Your answer was acknowledged"
+    action_types = ("validate-answer-msa",)
+    target_role = ROLE_MSA
+    notification_name = "answer_acknowledged"
+
+
+notification_lr = NotificationLR.factory

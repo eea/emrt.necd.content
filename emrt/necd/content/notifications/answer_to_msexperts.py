@@ -1,29 +1,24 @@
-from Acquisition import aq_parent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from .utils import notify
+from Products.CMFCore.WorkflowCore import ActionSucceededEvent
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from emrt.necd.content.constants import ROLE_MSE
+from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.question import Question
 
 
-def notification_mse(context, event=None, reassign=False):
-    """
-    To:     MSExperts
-    When:   New question for your country
-    """
-    _temp = PageTemplateFile('answer_to_msexperts.pt')
+class NotificationMSE(BaseNotification[Question, ActionSucceededEvent]):
+    """To: MSExperts. When: New question for your country."""
 
-    should_run = (
-        event
-        and event.action in ['assign-answerer']
-        or reassign
-    )
+    template = ViewPageTemplateFile("answer_to_msexperts.pt")
 
-    if should_run:
-        observation = aq_parent(context)
-        subject = 'New question for your country'
-        notify(
-            observation,
-            _temp,
-            subject,
-            ROLE_MSE,
-            'answer_to_msexperts'
-        )
+    subject = "New question for your country"
+    action_types = ("assign-answerer",)
+    target_role = ROLE_MSE
+    notification_name = "answer_to_msexperts"
+
+    def should_run(self, event: ActionSucceededEvent, reassign=False):
+        """Check if this notification should run."""
+        return super().should_run(event) or reassign
+
+
+notification_mse = NotificationMSE.factory
