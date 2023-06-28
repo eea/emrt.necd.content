@@ -19,3 +19,14 @@ def Group_existing_member_ids(self):
     return self.translate_ids(
         self.context.attrs.get(self._member_attribute, list())
     )
+
+
+def LDAPUserPropertySheet__init__(self, principal, plugin):
+    """Patched LDAPUserPropertySheet.__init__.
+    
+    Join fullname if it's a list.
+    """
+    self._old___init__(principal, plugin)
+    fullname = self._properties.get("fullname", "")
+    if isinstance(fullname, (list, tuple)):
+        self._properties["fullname"] = " ".join(fullname)

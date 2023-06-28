@@ -13,4 +13,12 @@
     preserveOriginal="false"
     />
 
+  <monkey:patch
+    description="Patch pas.plugins.ldap.sheet.LDAPUserPropertySheet.__init__ to join fullname if it's a list."
+    class="pas.plugins.ldap.sheet.LDAPUserPropertySheet"
+    original="__init__"
+    replacement=".patches.LDAPUserPropertySheet__init__"
+    preserveOriginal="true"
+    />
+
 </configure>
