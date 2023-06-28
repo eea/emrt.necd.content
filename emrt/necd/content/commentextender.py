@@ -89,5 +89,6 @@ class CommentExtender(extensible.FormExtender):
         )
         self.form.fields["redraft_message"].mode = interfaces.HIDDEN_MODE
         self.form.fields["redraft_date"].mode = interfaces.HIDDEN_MODE
-        self.form.fields["attachment"].mode = interfaces.HIDDEN_MODE
-        self.form.fields["attachments"].widgetFactory = MultiFileFieldWidget
+        # self.form.fields["attachment"].mode = interfaces.HIDDEN_MODE
+        # TODO: make this work
+        # self.form.fields["attachments"].widgetFactory = MultiFileFieldWidget
