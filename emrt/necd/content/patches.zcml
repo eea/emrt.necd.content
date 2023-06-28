@@ -6,11 +6,11 @@
   <include package="collective.monkeypatcher" />
 
   <monkey:patch
-    description="Add cache for node.ext.ldap.session.LDAPSession.search"
-    class="node.ext.ldap.session.LDAPSession"
-    original="search"
-    replacement=".patches.LDAPSession_search"
-    preserveOriginal="true"
+    description="Patch node.ext.ldap.ugm._api.Group.existing_member_ids to return the members instead of querying ldap for all users."
+    class="node.ext.ldap.ugm._api.Group"
+    original="existing_member_ids"
+    replacement=".patches.Group_existing_member_ids"
+    preserveOriginal="false"
     />
 
 </configure>
