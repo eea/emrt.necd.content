@@ -1,33 +1,40 @@
 from functools import partial
 from itertools import chain
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-import plone.api as api
+from typing import Tuple
 
-from emrt.necd.content.observation import IObservation
-from emrt.necd.content.notifications import utils
-from emrt.necd.content.utils import find_parent_with_interface
+from zope.lifecycleevent import ObjectAddedEvent
+
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from plone import api
+from plone.app.discussion.comment import Comment
+
+from emrt.necd.content.constants import ROLE_CP
+from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
-from emrt.necd.content.constants import ROLE_LR
-from emrt.necd.content.constants import ROLE_CP
+from emrt.necd.content.constants import VALID_ROLES
+from emrt.necd.content.notifications import utils
+from emrt.necd.content.notifications.base_notification import (
+    BaseContentNotification,
+)
+from emrt.necd.content.observation import IObservation
+from emrt.necd.content.utils import find_parent_with_interface
 
 
 def user_has_role_in_context(role, context):
+    """Check the current user for the specified role in the given context."""
     user = api.user.get_current()
     roles = user.getRolesInContext(context)
     return role in roles
 
 
-def notify_role(rolename, tpl_name, notification_name, subject, context):
-    template = PageTemplateFile(tpl_name)
-    utils.notify(context, template, subject, rolename, notification_name)
-
-
 def run_rolecheck(context, func):
-    """ Runs the `func` checker in the given `context`.
-        `func` is a `user_has_role_in_context` partial.
-        (e.g. run_rolecheck(observation, USER_IS_SE))
+    """Runs the `func` checker in the given `context`.
+
+    `func` is a `user_has_role_in_context` partial.
+    (e.g. run_rolecheck(observation, USER_IS_SE)).
     """
     return func(context)
 
@@ -39,65 +46,94 @@ USER_IS_CP = partial(user_has_role_in_context, ROLE_CP)
 USER_IS_LR = partial(user_has_role_in_context, ROLE_LR)
 
 
-NOTIFY_MSE = partial(
-    notify_role, ROLE_MSE, 'comment_to_mse.pt', 'comment_to_mse')
-
-NOTIFY_MSA = partial(
-    notify_role, ROLE_MSA, 'comment_to_msa.pt', 'comment_to_msa')
+class Notification(BaseContentNotification[Comment, ObjectAddedEvent]):
+    """Base notification."""
 
 
-def notification_mse(comment, event):
-    """
-    To:     MSExperts
-    When:   New comment from MSExpert for your country
-    """
-    observation = PARENT_OBSERVATION(comment)
-    if not USER_IS_MSE(observation):
-        return
+class NotificationMSE(Notification):
+    """To: MSExperts. When: New comment from MSExpert for your country."""
 
-    NOTIFY_MSE('New comment from MS Expert', observation)
+    template = ViewPageTemplateFile("comment_to_mse.pt")
 
+    subject = "New comment from MS Expert"
 
-def notification_msa(comment, event):
-    """
-    To:     MSAuthority
-    When:   New comment from MSExpert for your country
-    """
-    observation = PARENT_OBSERVATION(comment)
-    if not USER_IS_MSE(observation):
-        return
+    target_role = ROLE_MSE
+    notification_name = "comment_to_mse"
 
-    NOTIFY_MSA('New comment from MS Expert', observation)
+    def should_run(self, event: ObjectAddedEvent, **kwargs):
+        """Check if this notification should run."""
+        observation = self.get_observation()
+        return USER_IS_MSE(observation)
 
 
-def notify_users(comment, event):
-    """
-    To:     SectorExpert / CounterPart / LeadReviewer
-    When:   New comment
+notification_mse = NotificationMSE.factory
 
-    This is a single function because a user might have multiple roles
+
+class NotificationMSA(Notification):
+    """To: MSAuthority. When: New comment from MSExpert for your country."""
+
+    template = ViewPageTemplateFile("comment_to_msa.pt")
+
+    subject = "New comment from MS Expert"
+
+    target_role = ROLE_MSA
+    notification_name = "comment_to_msa"
+
+    def should_run(self, event: ObjectAddedEvent, **kwargs):
+        """Check if this notification should run."""
+        observation = self.get_observation()
+        return USER_IS_MSE(observation)
+
+
+notification_msa = NotificationMSA.factory
+
+
+class NotificationUsers(Notification):
+    """To: SectorExpert / CounterPart / LeadReviewer. When: New comment.
+
+    This is a single handler because a user might have multiple roles
     (e.g. CounterPart and SectorExpert, resulting in duplicate emails.
     """
 
-    TEMPLATE = 'new_comment.pt'
-    SUBJECT = 'New comment'
-    ROLES = (ROLE_CP, ROLE_SE, ROLE_LR)
-    CURRENT_USER = api.user.get_current()
+    template = ViewPageTemplateFile("new_comment.pt")
+    subject = "New comment"
 
-    observation = PARENT_OBSERVATION(comment)
-    checker = partial(run_rolecheck, observation)
+    notification_name = "new_comment"
 
-    has_valid_roles = list(map(checker, (USER_IS_SE, USER_IS_CP, USER_IS_LR)))
-    if not any(has_valid_roles):
-        return
+    taget_roles: Tuple[VALID_ROLES, ...] = (ROLE_CP, ROLE_SE, ROLE_LR)
 
-    get_obs_users = partial(utils.get_users_in_context, observation)
-    get_users = lambda role: get_obs_users(role, 'new_comment')
-    not_current = lambda user: user != CURRENT_USER
+    def should_run(self, event: ObjectAddedEvent, **kwargs):
+        """Check if this notification should run."""
+        observation = self.get_observation()
+        checker = partial(run_rolecheck, observation)
 
-    users = tuple(filter(not_current, set(chain(*list(map(get_users, ROLES))))))
+        has_valid_roles = list(
+            map(checker, (USER_IS_SE, USER_IS_CP, USER_IS_LR))
+        )
+        return any(has_valid_roles)
 
-    template = PageTemplateFile(TEMPLATE)
-    content = template(**dict(observation=observation))
+    def run(self):
+        """Run notification."""
+        current_user = api.user.get_current()
+        observation = self.get_observation()
+        get_obs_users = partial(utils.get_users_in_context, observation)
 
-    utils.send_mail(SUBJECT, utils.safe_text(content), users)
+        def get_users(role):
+            return get_obs_users(role, self.notification_name)
+
+        def not_current(user):
+            return user != current_user
+
+        users = tuple(
+            filter(
+                not_current,
+                set(chain(*list(map(get_users, self.taget_roles)))),
+            )
+        )
+
+        content = self.template(**dict(observation=observation))
+
+        utils.send_mail(self.subject, utils.safe_text(content), users)
+
+
+notify_users = NotificationUsers.factory

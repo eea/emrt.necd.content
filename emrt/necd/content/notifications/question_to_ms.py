@@ -3,11 +3,11 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
-from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.notifications.base_notification import BaseWorkflowNotification
 from emrt.necd.content.question import Question
 
 
-class NotificationMS(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationMS(BaseWorkflowNotification[Question, ActionSucceededEvent]):
     """To: MSAuthority. When: New question for your country."""
 
     template = ViewPageTemplateFile("question_to_ms.pt")
@@ -18,7 +18,7 @@ class NotificationMS(BaseNotification[Question, ActionSucceededEvent]):
     notification_name = "question_to_ms"
 
 
-class NotificationSE(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationSE(BaseWorkflowNotification[Question, ActionSucceededEvent]):
     """To: SectorExpert. When: Your question was sent to MS."""
 
     template = ViewPageTemplateFile("question_to_ms_rev_msg.pt")

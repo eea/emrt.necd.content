@@ -4,11 +4,11 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
-from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.notifications.base_notification import BaseWorkflowNotification
 from emrt.necd.content.question import Question
 
 
-class NotificationLR(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationLR(BaseWorkflowNotification[Question, ActionSucceededEvent]):
     """To: LeadReviewer. When: New answer from country."""
 
     template = ViewPageTemplateFile("question_answered_lr_msg.pt")
@@ -19,7 +19,7 @@ class NotificationLR(BaseNotification[Question, ActionSucceededEvent]):
     notification_name = "question_answered"
 
 
-class NotificationSE(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationSE(BaseWorkflowNotification[Question, ActionSucceededEvent]):
     """To: SectorExpert. When: New answer from country."""
 
     template = ViewPageTemplateFile("question_answered_rev_msg.pt")
@@ -30,7 +30,7 @@ class NotificationSE(BaseNotification[Question, ActionSucceededEvent]):
     notification_name = "question_answered"
 
 
-class NotificationRevMSE(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationRevMSE(BaseWorkflowNotification[Question, ActionSucceededEvent]):
     """To: MSExperts. When: New answer from country."""
 
     template = ViewPageTemplateFile("question_answered_msexperts_msg.pt")

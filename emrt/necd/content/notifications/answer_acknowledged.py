@@ -2,11 +2,11 @@ from Products.CMFCore.WorkflowCore import ActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from emrt.necd.content.constants import ROLE_MSA
-from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.notifications.base_notification import BaseWorkflowNotification
 from emrt.necd.content.question import Question
 
 
-class NotificationMS(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationMS(BaseWorkflowNotification[Question, ActionSucceededEvent]):
     """To: MSAuthority. When: Answer Acknowledged."""
 
     template = ViewPageTemplateFile("answer_acknowledged.pt")

@@ -26,6 +26,7 @@
   <i18n:registerTranslations directory="locales" />
 
   <!-- Comment Extender -->
+  <adapter factory=".commentextender.MultiFileFieldDataManager" />
   <adapter
     factory=".commentextender.CommentExtenderFactory"
     provides=".commentextender.ICommentExtenderFields" />

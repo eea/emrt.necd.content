@@ -24,7 +24,9 @@ from emrt.necd.content.utilities import ldap_utils
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 
-def notify(observation, template, subject, role: VALID_ROLES, notification_name):
+def notify(
+    observation, template, subject, role: VALID_ROLES, notification_name
+):
     users = get_users_in_context(observation, role, notification_name)
     content = template(**dict(observation=observation))
 
@@ -57,16 +59,24 @@ def send_mail(subject, email_content, users=[]):
         )
 
         try:
-            api.portal.send_email(recipient=to_addr, subject=subject, body=mail)
+            api.portal.send_email(
+                recipient=to_addr, subject=subject, body=mail
+            )
             message = "Users have been notified by e-mail"
             log.info(
                 "Emails sent to users %s",
-                ", ".join([email.replace("@", " <at> ") for email in user_emails]),
+                ", ".join(
+                    [email.replace("@", " <at> ") for email in user_emails]
+                ),
             )
             api.portal.show_message(message)
         except Exception as e:
-            message = "There was an error sending the notification, but your action was completed succesfuly. Contact the EEA Secretariat for further instructions."
-            log.error("Error when sending the notification: %s", e)
+            message = (
+                "There was an error sending the notification, "
+                "but your action was completed succesfuly. "
+                "Contact the EEA Secretariat for further instructions."
+            )
+            log.exception("Error when sending the notification!")
             api.portal.show_message(message, type="error")
 
 
@@ -89,8 +99,12 @@ def get_ldap_group_member_ids(context, groupname):
 
     if groupname.startswith(ldap_base):
         with ldap_utils.get_query_utility()(acl) as q_ldap:
-            ldap_group = q_ldap.query_groups(f"(cn={groupname})", ("uniqueMember",))
-            ldap_members = [x.decode() for x in ldap_group[0][1]["uniqueMember"]]
+            ldap_group = q_ldap.query_groups(
+                f"(cn={groupname})", ("uniqueMember",)
+            )
+            ldap_members = [
+                x.decode() for x in ldap_group[0][1]["uniqueMember"]
+            ]
             return [m.split(",")[0].split("=")[1] for m in ldap_members]
     else:
         raise ValueError

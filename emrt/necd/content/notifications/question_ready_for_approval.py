@@ -2,11 +2,11 @@ from Products.CMFCore.WorkflowCore import ActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from emrt.necd.content.constants import ROLE_LR
-from emrt.necd.content.notifications.base_notification import BaseNotification
+from emrt.necd.content.notifications.base_notification import BaseWorkflowNotification
 from emrt.necd.content.question import Question
 
 
-class NotificationLR(BaseNotification[Question, ActionSucceededEvent]):
+class NotificationLR(BaseWorkflowNotification[Question, ActionSucceededEvent]):
     """To: LeadReviewer. When: New question for approval."""
 
     template = ViewPageTemplateFile("question_ready_for_approval.pt")

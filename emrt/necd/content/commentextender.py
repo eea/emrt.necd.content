@@ -6,7 +6,9 @@ from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from persistent import Persistent
 from z3c.form import interfaces
+from z3c.form.datamanager import AttributeField
 from z3c.form.field import Fields
+from z3c.form.interfaces import IDataManager
 
 from Acquisition import Implicit
 from zope import schema
@@ -15,6 +17,7 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+from zope.schema.interfaces import IList
 
 from Products.CMFCore import permissions
 
@@ -26,6 +29,30 @@ from plone.z3cform.fieldsets import extensible
 
 from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
+from emrt.necd.content.comment import IComment as ICommentContent
+
+class IMultiFileField(IList):
+    """IMultiFileField."""
+
+@implementer(IMultiFileField)
+class MultiFileField(schema.List):
+    """MultiFileField."""
+
+
+@implementer(IDataManager)
+@adapter(ICommentContent, IMultiFileField)
+class MultiFileFieldDataManager(AttributeField):
+    """MultiFileField data manager."""
+
+    @property
+    def adapted_context(self):
+        try:
+            return super().adapted_context
+        except TypeError:
+            return self.context
+        
+    def query(self, default=None):
+        return super().query(default=default)
 
 
 class ICommentExtenderFields(Interface):
@@ -35,7 +62,7 @@ class ICommentExtenderFields(Interface):
         required=False,
     )
 
-    attachments = schema.List(
+    attachments = MultiFileField(
         title="Attachments",
         value_type=NamedBlobFile(),
         required=False,
@@ -58,10 +85,13 @@ class CommentExtenderFields(Implicit, Persistent):
     security = ClassSecurityInfo()
 
     security.declareProtected(permissions.View, "attachment")
-    attachment = ""
+    attachment = None
+    attachments = None
 
     security.declareProtected(P_OBS_REDRAFT_REASON_VIEW, "redraft_message")
     redraft_message = ""
+
+    redraft_date = None
 
 
 InitializeClass(CommentExtenderFields)
@@ -91,4 +121,4 @@ class CommentExtender(extensible.FormExtender):
         self.form.fields["redraft_date"].mode = interfaces.HIDDEN_MODE
         # self.form.fields["attachment"].mode = interfaces.HIDDEN_MODE
         # TODO: make this work
-        # self.form.fields["attachments"].widgetFactory = MultiFileFieldWidget
+        self.form.fields["attachments"].widgetFactory = MultiFileFieldWidget
