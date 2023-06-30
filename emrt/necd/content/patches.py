@@ -1,12 +1,12 @@
 """Patches."""
 
+import hashlib
 from logging import getLogger
 from typing import List
-import hashlib
-
-from plone.memoize.ram import cache
 
 from Products.CMFDiffTool import dexteritydiff
+
+from plone.memoize.ram import cache
 
 EXCLUDED_FIELDS: List[str] = list(dexteritydiff.EXCLUDED_FIELDS)
 EXCLUDED_FIELDS.append("ghg_estimations")
@@ -30,7 +30,7 @@ def Group_existing_member_ids(self):
 
 def LDAPUserPropertySheet__init__(self, principal, plugin):
     """Patched LDAPUserPropertySheet.__init__.
-    
+
     Join fullname if it's a list.
     """
     self._old___init__(principal, plugin)
@@ -49,7 +49,7 @@ def _cachekey(meth, self, *args, **kwargs):
 def cache_wrapper(meth, *args, **kwargs):
     """Wrapper."""
     return meth(*args, **kwargs)
-    
+
 
 def LDAPPrincipals_search(self, *args, **kwargs):
     """Patch LDAPPrincipals.search."""
