@@ -1,23 +1,22 @@
-from Acquisition import aq_parent
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from .utils import notify
+from Products.CMFCore.WorkflowCore import ActionSucceededEvent
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.notifications.base_notification import (
+    BaseWorkflowNotification,
+)
+from emrt.necd.content.question import Question
 
 
-def notification_se(context, event):
-    """
-    To:     SectorExpert
-    When:   Redraft requested by LR.
-    """
-    _temp = PageTemplateFile('question_redraft.pt')
+class NotificationSE(BaseWorkflowNotification[Question, ActionSucceededEvent]):
+    """To: SectorExpert. When: Redraft requested by LR."""
 
-    if event.action in ['redraft']:
-        observation = aq_parent(context)
-        subject = 'Redraft requested.'
-        notify(
-            observation,
-            _temp,
-            subject,
-            ROLE_SE,
-            'question_redraft'
-        )
+    template = ViewPageTemplateFile("question_redraft.pt")
+
+    subject = "Redraft requested."
+    action_types = ("redraft",)
+    target_role = ROLE_SE
+    notification_name = "question_redraft"
+
+
+notification_se = NotificationSE.factory

@@ -1,51 +1,78 @@
-from Products.Five.browser.pagetemplatefile import PageTemplateFile
-from .utils import notify
+from functools import lru_cache
+from typing import Literal
+from typing import Tuple
+
+from Products.CMFCore.WorkflowCore import ActionSucceededEvent
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from emrt.necd.content.constants import ROLE_MSA
 from emrt.necd.content.constants import ROLE_SE
-
-
-MAIL_SUBJECT = 'A {state} observation was recalled'
-MAIL_TEMPLATE = 'observation_recalled_{state}_{suffix}.pt'
-
+from emrt.necd.content.notifications.base_notification import (
+    BaseWorkflowNotification,
+)
+from emrt.necd.content.observation import Observation
 
 OBS_STATES = {
-    'closed': 'closed',
-    'conclusions-lr-denied': 'denied'
+    "closed": "closed",
+    "conclusions-lr-denied": "denied",
 }
 
 
-NOTIFICATION_NAME = 'observation_recalled'
-SKIP_UNLESS_ACTION = 'recall-lr'
+class Notification(
+    BaseWorkflowNotification[Observation, ActionSucceededEvent]
+):
+    """Base notification."""
 
+    template_suffix: Literal["msa", "se"]
+    for_prev_states: Tuple[str, ...]
 
-def factory(role, suffix, for_states):
-    def handler(observation, event):
-        if event.action != SKIP_UNLESS_ACTION:
-            return
+    action_types = ("recall-lr",)
+    notification_name = "observation_recalled"
 
-        # get previous state
-        _wf_state = observation.workflow_history.get(
-            'esd-review-workflow')[-2]['review_state']
-        _obs_state = OBS_STATES[_wf_state]
+    @property
+    def subject(self):
+        """The subject depends on the previous state."""
+        return f"A {self.get_prev_state()} observation was recalled"
 
-        # only handle specific states
-        if _obs_state not in for_states:
-            return
-
-        _mail_subject = MAIL_SUBJECT.format(state=_obs_state)
-        _mail_template = PageTemplateFile(
-            MAIL_TEMPLATE.format(state=_obs_state, suffix=suffix)
+    @property
+    def template(self):
+        """The template used depends on the previous state."""
+        return ViewPageTemplateFile(
+            f"observation_recalled_{self.get_prev_state()}_{self.template_suffix}.pt"
         )
 
-        notify(
-            observation,
-            _mail_template,
-            _mail_subject,
-            role,
-            NOTIFICATION_NAME
-        )
-    return handler
+    def should_run(self, event: ActionSucceededEvent, **kwargs):
+        """Check if this notification should run."""
+        pass_super = super().should_run(event, **kwargs)
+        return pass_super and self.get_prev_state() in self.for_prev_states
+
+    @lru_cache
+    def get_prev_state(self):
+        """Get previous state."""
+        prev_wf_state = self.get_observation().workflow_history.get(
+            "esd-review-workflow"
+        )[-2]["review_state"]
+        return OBS_STATES[prev_wf_state]
 
 
-notification_ms = factory(ROLE_MSA, 'msa', for_states=['closed'])
-notification_se = factory(ROLE_SE, 'se', for_states=['closed', 'denied'])
+class NotificationMS(Notification):
+    """To: MSAuthority. When: Observation was recalled."""
+
+    target_role = ROLE_MSA
+    for_prev_states = ("closed",)
+    template_suffix = "msa"
+
+
+class NotificationSE(Notification):
+    """To: SectorExpert. When: Observation was recalled."""
+
+    target_role = ROLE_SE
+    for_prev_states = (
+        "closed",
+        "denied",
+    )
+    template_suffix = "se"
+
+
+notification_ms = NotificationMS.factory
+notification_se = NotificationSE.factory

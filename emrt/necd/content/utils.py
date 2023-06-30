@@ -1,26 +1,21 @@
-import string
-import json
-from itertools import chain
-
-from operator import itemgetter
 import concurrent.futures
-from typing import Generic, Optional, TypeVar, cast
+import json
+import string
+from itertools import chain
+from operator import itemgetter
+from typing import Optional
+from typing import cast
+
+from OFS.Traversable import Traversable
+
 from Acquisition import aq_parent
-
-import plone.api as api
-
 from zope.component import getUtility
-from zope.interface import Invalid
 from zope.interface.interface import Specification
 from zope.schema.interfaces import IVocabularyFactory
-from OFS.Traversable import Traversable
-from z3c.form.interfaces import WidgetActionExecutionError
+
+from plone import api
 
 from emrt.necd.content.utilities.ldap_wrapper import ldap_inventory
-from emrt.necd.content.vocabularies.vocabularies import (
-    get_registry_interface_field_data,
-)
-from emrt.necd.content.vocabularies.vocabularies import INECDVocabularies
 
 
 def user_has_ldap_role(
@@ -64,12 +59,9 @@ def principals_with_roles(context, rolenames):
 def find_parent_with_interface(
     interface: Specification, context: Traversable
 ) -> Optional[Traversable]:
-    parent: Optional[Traversable] = cast(
-        Optional[Traversable], aq_parent(context)
-    )
-    if parent and interface.providedBy(parent):
-        return parent
-    elif parent:
+    if interface.providedBy(context):
+        return context
+    elif parent := cast(Optional[Traversable], aq_parent(context)):
         return find_parent_with_interface(interface, parent)
     else:
         return None
@@ -78,7 +70,7 @@ def find_parent_with_interface(
 def concurrent_loop(workers, timeout, func, items, *args):
     """Run as:
     my_concurrent = partial(utils.concurrent_loop, 32, 600.0)
-    result = my_concurrent(lambda item: ..., [item, item, ...])
+    result = my_concurrent(lambda item: ..., [item, item, ...]).
     """
     results = []
     tpe = concurrent.futures.ThreadPoolExecutor

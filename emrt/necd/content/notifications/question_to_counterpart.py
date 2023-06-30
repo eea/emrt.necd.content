@@ -3,7 +3,9 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
-from emrt.necd.content.notifications.base_notification import BaseWorkflowNotification
+from emrt.necd.content.notifications.base_notification import (
+    BaseWorkflowNotification,
+)
 from emrt.necd.content.question import Question
 
 

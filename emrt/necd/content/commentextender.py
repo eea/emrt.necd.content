@@ -28,11 +28,13 @@ from plone.namedfile.field import NamedBlobFile
 from plone.z3cform.fieldsets import extensible
 
 from emrt.necd.content import MessageFactory as _
-from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.comment import IComment as ICommentContent
+from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
+
 
 class IMultiFileField(IList):
     """IMultiFileField."""
+
 
 @implementer(IMultiFileField)
 class MultiFileField(schema.List):
@@ -50,7 +52,7 @@ class MultiFileFieldDataManager(AttributeField):
             return super().adapted_context
         except TypeError:
             return self.context
-        
+
     def query(self, default=None):
         return super().query(default=default)
 
