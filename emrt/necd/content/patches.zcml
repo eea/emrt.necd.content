@@ -21,4 +21,12 @@
     preserveOriginal="true"
     />
 
+  <monkey:patch
+    description="Add cache for node.ext.ldap.ugm._api.LDAPPrincipals.search"
+    class="node.ext.ldap.ugm._api.LDAPPrincipals"
+    original="search"
+    replacement=".patches.LDAPPrincipals_search"
+    preserveOriginal="true"
+    />
+
 </configure>
