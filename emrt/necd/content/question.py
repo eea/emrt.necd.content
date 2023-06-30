@@ -1,3 +1,4 @@
+from operator import methodcaller
 from time import time
 
 from AccessControl import getSecurityManager
@@ -89,10 +90,9 @@ class Question(Container):
         return IContentListing(values)
 
     def getFirstComment(self):
-        comments = [
+        comments = sorted([
             v for v in list(self.values()) if v.portal_type == "Comment"
-        ]
-        comments.sort(lambda x, y: cmp(x.created(), y.created()))
+        ], key=methodcaller("created"))
         if comments:
             return comments[-1]
         return None

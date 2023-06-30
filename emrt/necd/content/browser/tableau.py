@@ -1,56 +1,47 @@
-import os
 import json
-
-from gzip import GzipFile
-from datetime import datetime
-
-from DateTime import DateTime
-
-from collections import defaultdict
+import os
 from collections import Counter
-
-from operator import itemgetter
-from itertools import chain
-
+from collections import defaultdict
 from functools import partial
-
-from zope.component.hooks import getSite
-
-from ZODB.blob import Blob
+from gzip import GzipFile
+from itertools import chain
+from operator import itemgetter
+from typing import Dict
+from typing import List
 
 from zExceptions import Unauthorized
+from ZODB.blob import Blob
 
-from Products.Five import BrowserView
+from DateTime import DateTime
+from zope.component.hooks import getSite
 
 from Products.CMFCore.utils import getToolByName
+from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
-from emrt.necd.content.utils import jsonify
+from plone import api
+
 from emrt.necd.content.reviewfolder import QUESTION_WORKFLOW_MAP
+from emrt.necd.content.reviewfolder import get_common
 from emrt.necd.content.reviewfolder import get_highlight_vocabs
 from emrt.necd.content.reviewfolder import translate_highlights
-from emrt.necd.content.reviewfolder import get_common
-
-import plone.api as api
-
+from emrt.necd.content.utils import jsonify
 
 TOKEN_VIEW = os.environ.get("TABLEAU_TOKEN")
 TOKEN_SNAP = os.environ.get("TABLEAU_TOKEN_SNAPSHOT")
 
-HISTORICAL_ATTR_NAME = '__tableau_historical_store__'
+HISTORICAL_ATTR_NAME = "__tableau_historical_store__"
 
 
-GET_TIMESTAMP = itemgetter('Timestamp')
+GET_TIMESTAMP = itemgetter("Timestamp")
 
 
 def entry_for_cmp(entry):
-    """ Return entry data, without Timestamp.
-        Suited for comparison.
-    """
+    """Return entry data, without Timestamp. Suited for comparison."""
     return {
         k: v
         for k, v in list(entry.items())
-        if k not in ['Timestamp', 'Modified']
+        if k not in ["Timestamp", "Modified"]
     }
 
 
@@ -69,8 +60,7 @@ def should_append_entry(latest, entry):
     return should_append
 
 
-def update_history_with_snapshot(data, snapshot):
-    # type: (str, list) -> dict
+def update_history_with_snapshot(data: str, snapshot: List) -> Dict:
     updated = defaultdict(list)
     updated.update(json.loads(data))
 
@@ -82,7 +72,7 @@ def update_history_with_snapshot(data, snapshot):
 
     snapshot_ids = []
     for entry in snapshot:
-        entry_id = entry['ID']
+        entry_id = entry["ID"]
         # Append the Observation ID so that we can compare and delete
         # missing entries from the historical data (Observation deleted).
         snapshot_ids.append(entry_id)
@@ -94,26 +84,28 @@ def update_history_with_snapshot(data, snapshot):
             found.append(entry)
 
     # Cleanup entries for deleted Observations
-    to_delete = [key for key in list(updated.keys()) if key not in snapshot_ids]
+    to_delete = [
+        key for key in list(updated.keys()) if key not in snapshot_ids
+    ]
     for key in to_delete:
         del updated[key]
 
     return updated
 
 
-def insert_snapshot(data, snapshot):
-    # type: (str, list) -> str
+def insert_snapshot(data: str, snapshot: List):
     return json.dumps(update_history_with_snapshot(data, snapshot))
 
 
 def flatten_historical_data(data):
-    """ Return a list of Observation data items, sorted on
-        timestamp, latest to oldest.
+    """Return a list of Observation data items.
+
+    Sorted on timestamp, latest to oldest.
     """
     return sorted(
         chain.from_iterable(list(data.values())),
         key=GET_TIMESTAMP,
-        reverse=True
+        reverse=True,
     )
 
 
@@ -125,18 +117,17 @@ def reduce_count_brains(acc, b):
 def get_qa(catalog, brain):
     path = brain.getPath()
     return catalog.unrestrictedSearchResults(
-        portal_type=['Comment', 'CommentAnswer'],
-        path=path
+        portal_type=["Comment", "CommentAnswer"], path=path
     )
 
 
 def current_status(brain):
-    status = brain['observation_status']
+    status = brain["observation_status"]
     return QUESTION_WORKFLOW_MAP.get(status, status)
 
 
 def count_answers(len_q, len_a, obs_status):
-    wf_is_msc = obs_status == QUESTION_WORKFLOW_MAP['MSC']
+    wf_is_msc = obs_status == QUESTION_WORKFLOW_MAP["MSC"]
     answer_not_submitted = wf_is_msc and len_a and len_q == len_a
 
     return len_a - 1 if answer_not_submitted else len_a
@@ -144,8 +135,8 @@ def count_answers(len_q, len_a, obs_status):
 
 def count_questions(len_q, len_a, obs_status):
     wf_is_se_or_lr = obs_status in [
-        QUESTION_WORKFLOW_MAP['SE'],
-        QUESTION_WORKFLOW_MAP['LR']
+        QUESTION_WORKFLOW_MAP["SE"],
+        QUESTION_WORKFLOW_MAP["LR"],
     ]
     question_not_submitted = wf_is_se_or_lr and len_q and len_q > len_a
 
@@ -153,85 +144,99 @@ def count_questions(len_q, len_a, obs_status):
 
 
 def ipcc_sector(brain):
-    return brain['get_ghg_source_sectors'][0]
+    return brain["get_ghg_source_sectors"][0]
 
 
 def author_name(brain):
-    return brain['get_author_name'].title()
+    return brain["get_author_name"].title()
 
 
 def convert_flags(vocab, highlights):
-    return ', '.join(get_common(highlights, vocab))
+    return ", ".join(get_common(highlights, vocab))
 
 
-def extract_entry(qa, timestamp,
-        vocab_description_flags, vocab_conclusion_flags,
-        vocab_highlight, brain):
-    b_id = brain['id']
+def extract_entry(
+    qa,
+    timestamp,
+    vocab_description_flags,
+    vocab_conclusion_flags,
+    vocab_highlight,
+    brain,
+):
+    b_id = brain["id"]
 
-    obs_status = brain['observation_status']
+    obs_status = brain["observation_status"]
 
-    len_a = qa['CommentAnswer'][b_id]
-    len_q = qa['Comment'][b_id]
+    len_a = qa["CommentAnswer"][b_id]
+    len_q = qa["Comment"][b_id]
 
     highlights = translate_highlights(
-        vocab_highlight, brain['get_highlight'] or [])
+        vocab_highlight, brain["get_highlight"] or []
+    )
 
     return {
-        'Current status': current_status(brain),
-        'IPCC Sector': ipcc_sector(brain),
-        'Review sector': brain['get_ghg_source_sectors'],
-        'Author': author_name(brain),
-        'Questions answered': count_answers(len_q, len_a, obs_status),
-        'Questions asked': count_questions(len_q, len_a, obs_status),
-        'Timestamp': timestamp,
-        'Modified': brain['modified'].asdatetime().isoformat(),
-        'Country': brain['country_value'],
-        'ID': b_id,
-        'URL': brain.getURL(),
-        'Description flags': convert_flags(vocab_description_flags, highlights),
-        'Conclusion flags': convert_flags(vocab_conclusion_flags, highlights),
-        'Potential technical correction': bool(
-            brain['observation_is_potential_technical_correction'])
-
+        "Current status": current_status(brain),
+        "IPCC Sector": ipcc_sector(brain),
+        "Review sector": brain["get_ghg_source_sectors"],
+        "Author": author_name(brain),
+        "Questions answered": count_answers(len_q, len_a, obs_status),
+        "Questions asked": count_questions(len_q, len_a, obs_status),
+        "Timestamp": timestamp,
+        "Modified": brain["modified"].asdatetime().isoformat(),
+        "Country": brain["country_value"],
+        "ID": b_id,
+        "URL": brain.getURL(),
+        "Description flags": convert_flags(
+            vocab_description_flags, highlights
+        ),
+        "Conclusion flags": convert_flags(vocab_conclusion_flags, highlights),
+        "Potential technical correction": bool(
+            brain["observation_is_potential_technical_correction"]
+        ),
     }
 
 
 def validate_token(request, token=TOKEN_VIEW):
-    return request.get('tableau_token') == token if token else False
+    return request.get("tableau_token") == token if token else False
 
 
 def get_snapshot(context):
-    catalog = getToolByName(context, 'portal_catalog')
+    catalog = getToolByName(context, "portal_catalog")
     timestamp = DateTime().asdatetime().isoformat()
 
     # Grab QA information. It's much faster to fetch the data
     # directly from the indexes than it is to query for it.
-    idx_type = catalog._catalog.indexes['portal_type']._index
-    idx_path = catalog._catalog.indexes['path']._unindex
+    idx_type = catalog._catalog.indexes["portal_type"]._index
+    idx_path = catalog._catalog.indexes["path"]._unindex
 
-    b_comment = idx_type['Comment']
-    b_comment_answer = idx_type['CommentAnswer']
+    b_comment = idx_type["Comment"]
+    b_comment_answer = idx_type["CommentAnswer"]
 
     p_comment = [idx_path[x] for x in b_comment]
     p_comment_answer = [idx_path[x] for x in b_comment_answer]
 
     qa = dict(
-        Comment=Counter(p.split('/')[3] for p in p_comment),
-        CommentAnswer=Counter(p.split('/')[3] for p in p_comment_answer),
+        Comment=Counter(p.split("/")[3] for p in p_comment),
+        CommentAnswer=Counter(p.split("/")[3] for p in p_comment_answer),
     )
 
+    (
+        vocab_description_flags,
+        vocab_conclusion_flags,
+        vocab_highlight,
+    ) = get_highlight_vocabs(context)
 
-    vocab_description_flags, vocab_conclusion_flags, vocab_highlight = (
-        get_highlight_vocabs(context)
+    entry = partial(
+        extract_entry,
+        qa,
+        timestamp,
+        vocab_description_flags,
+        vocab_conclusion_flags,
+        vocab_highlight,
     )
-
-    entry = partial(extract_entry, qa, timestamp,
-        vocab_description_flags, vocab_conclusion_flags, vocab_highlight)
 
     brains = catalog.unrestrictedSearchResults(
-        portal_type=['Observation'],
-        path='/'.join(context.getPhysicalPath())
+        portal_type=["Observation"], path="/".join(context.getPhysicalPath())
     )
 
     return list(map(entry, brains))
@@ -241,12 +246,12 @@ def write_historical_data(context, content):
     target = context.aq_inner.aq_self
 
     # get and clear existing data
-    blob = getattr(target, HISTORICAL_ATTR_NAME).open('r+')
+    blob = getattr(target, HISTORICAL_ATTR_NAME).open("r+")
     blob.seek(0)
     blob.truncate()
 
     # gzip
-    gzip = GzipFile(fileobj=blob, mode='w')
+    gzip = GzipFile(fileobj=blob, mode="w")
     gzip.write(content)
 
     gzip.close()
@@ -262,17 +267,17 @@ def write_historical_data(context, content):
 
 
 def get_historical_data(context):
-    """ Returns the raw string, since json.load is much too slow. """
+    """Returns the raw string, since json.load is much too slow."""
     target = context.aq_inner.aq_self
 
     # create empty Blob, if missing
     if not hasattr(target, HISTORICAL_ATTR_NAME):
         setattr(target, HISTORICAL_ATTR_NAME, Blob())
-        write_historical_data(context, '{}')
+        write_historical_data(context, "{}")
 
     # gunzip data
-    blob = getattr(target, HISTORICAL_ATTR_NAME).open('r')
-    gzip = GzipFile(fileobj=blob, mode='r')
+    blob = getattr(target, HISTORICAL_ATTR_NAME).open("r")
+    gzip = GzipFile(fileobj=blob, mode="r")
 
     data = gzip.read()
 
@@ -306,7 +311,8 @@ class TableauHistoricalView(BrowserView):
             data = get_historical_data(context)
             snapshot = get_snapshot(context)
             data = flatten_historical_data(
-                update_history_with_snapshot(data, snapshot))
+                update_history_with_snapshot(data, snapshot)
+            )
 
         else:
             request.RESPONSE.setStatus(401)
@@ -327,11 +333,10 @@ class TableauCreateSnapshotView(BrowserView):
             context = self.context
             historical = get_historical_data(context)
             historical = insert_snapshot(historical, get_snapshot(context))
-            compressed, content = write_historical_data(
-                context, historical)
-            data['size'] = compressed
-            data['deflated'] = content
-            data['status'] = 200
+            compressed, content = write_historical_data(context, historical)
+            data["size"] = compressed
+            data["deflated"] = content
+            data["status"] = 200
         else:
             request.RESPONSE.setStatus(401)
 
@@ -339,14 +344,13 @@ class TableauCreateSnapshotView(BrowserView):
 
 
 class ConnectorView(BrowserView):
-
-    index = ViewPageTemplateFile('./templates/tableau_connector.pt')
+    index = ViewPageTemplateFile("./templates/tableau_connector.pt")
 
     def __call__(self):
         request = self.request
 
         # Make sure the response doesn't get cached in proxies.
-        request.RESPONSE.setHeader('Surrogate-control', 'no-store')
+        request.RESPONSE.setHeader("Surrogate-control", "no-store")
 
         if validate_token(request):
             return self.index(
@@ -357,14 +361,13 @@ class ConnectorView(BrowserView):
 
 
 class DashboardView(BrowserView):
-
-    index = ViewPageTemplateFile('./templates/tableau_dashboard.pt')
+    index = ViewPageTemplateFile("./templates/tableau_dashboard.pt")
 
     def __call__(self):
         if self.can_access(self.context):
             return self.index(tableau_embed=self.context.tableau_statistics)
 
-        raise Unauthorized('Cannot access dashboard.', self.context)
+        raise Unauthorized("Cannot access dashboard.", self.context)
 
     @staticmethod
     def can_access(context):
@@ -372,7 +375,6 @@ class DashboardView(BrowserView):
         can_access = context.tableau_statistics_roles
 
         if has_embed and can_access:
-
             user = api.user.get_current()
             roles = api.user.get_roles(user=user, obj=context)
 
