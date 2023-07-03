@@ -13,6 +13,7 @@ from pas.plugins.ldap.plugin import LDAPPlugin
 from zope.component import getUtility
 
 from emrt.necd.content.utilities.interfaces import ILDAPQuery
+from emrt.necd.content.patches import _cachekey, cache
 
 LOG = logging.getLogger("emrt.necd.content.ILDAPQuery")
 
@@ -105,6 +106,8 @@ def paged_query(ou, connection, lc: SimplePagedResultsControl, query, attrs):
 class LDAPQuery(object):
     """Query LDAP."""
 
+    __name__ = "LDAPQuery"
+
     acl: LDAPPlugin
     config: ConfigDict
     paged: bool = False
@@ -134,6 +137,7 @@ class LDAPQuery(object):
             ou, ldapurl.LDAP_SCOPE_SUBTREE, query, attrs
         )
 
+    @cache(_cachekey)
     def query_ou(self, *args):
         """Use paged or unpaged search."""
         meth = self._query_ou_paged if self.paged else self._query_ou

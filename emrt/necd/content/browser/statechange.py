@@ -30,6 +30,7 @@ from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.notifications import answer_to_msexperts
 from emrt.necd.content.notifications import question_to_counterpart
+from emrt.necd.content.notifications.utils import get_ldap_group_member_ids
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.utils import find_parent_with_interface
@@ -211,12 +212,6 @@ class AssignFormMixin(BrowserView):
                         roles=[self._managed_role],
                     )
 
-    def get_users_from_group(self, group):
-        users = group.getGroupMembers()
-        return [
-            (u.getId(), u.getProperty("fullname", u.getId())) for u in users
-        ]
-
     def get_counterpart_users(self, exclude_test=True):
         users = []
 
@@ -225,17 +220,20 @@ class AssignFormMixin(BrowserView):
 
         current_user_id = api.user.get_current().getId()
 
-        group_tool = api.portal.get_tool("portal_groups")
-        _groups = list(map(group_tool.getGroupById, self._target_groupnames()))
-        groups = list(filter(bool, _groups))  # filter out None
-
-        for res in map(self.get_users_from_group, groups):
-            matched = [
-                (user_id, user_name, self._is_managed_role(user_id))
-                for user_id, user_name in res
-                if user_id != current_user_id
-            ]
-            users.extend(matched)
+        for group_id in self._target_groupnames():
+            group_member_ids = get_ldap_group_member_ids(
+                self.context, group_id
+            )
+            for user_id in group_member_ids:
+                if user_id != current_user_id:
+                    user = api.user.get(username=user_id)
+                    users.append(
+                        (
+                            user_id,
+                            user.getProperty("fullname"),
+                            self._is_managed_role(user_id),
+                        )
+                    )
 
         result = list(set(users))
 
@@ -270,7 +268,7 @@ class AssignFormMixin(BrowserView):
             else:
                 msg = _("There was an error. Try again please")
                 api.portal.show_message(message=msg, type="error")
-                
+
             url = self.context.absolute_url()
             return self.request.response.redirect(url)
 

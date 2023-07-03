@@ -38,9 +38,16 @@ def LDAPUserPropertySheet__init__(self, principal, plugin):
     if isinstance(fullname, (list, tuple)):
         self._properties["fullname"] = " ".join(fullname)
 
+def _items_from_dict(d):
+    if isinstance(d, dict):
+        return tuple([
+            (k, _items_from_dict(v)) 
+            for k, v in d.items()
+        ])
+    return d
 
 def _cachekey(meth, self, *args, **kwargs):
-    kw = tuple([(k, v) for k, v in kwargs.items()])
+    kw = _items_from_dict(kwargs)
     sig = (meth.__name__, self.__name__, args, kw)
     return _sha_cachekey(sig)
 
@@ -53,4 +60,5 @@ def cache_wrapper(meth, *args, **kwargs):
 
 def LDAPPrincipals_search(self, *args, **kwargs):
     """Patch LDAPPrincipals.search."""
-    return cache_wrapper(self._old_search, *args, **kwargs)
+    result = cache_wrapper(self._old_search, *args, **kwargs)
+    return result
