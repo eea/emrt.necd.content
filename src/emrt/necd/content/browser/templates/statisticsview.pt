@@ -30,11 +30,11 @@
 
       <div class="collapsiblePanelTitle" data-panel="observation_status_per_country">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Observations: How many observations are still drafts, open in conclusion state and finished?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
-      <br>
 
       <table class="listing observation_status_per_country">
         <thead>
@@ -128,13 +128,13 @@
         </tfoot>
       </table>
 
-      <div class="collapsiblePanelTitle" data-panel="question_status_per_country">
+      <div class="collapsiblePanelTitle" data-panel="finalised_reason_per_country">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           Finalised observation reason
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
-      <br>
       <table class="listing finalised_reason_per_country">
         <thead>
           <tr>
@@ -223,11 +223,11 @@
 
       <div class="collapsiblePanelTitle" data-panel="observation_highlights_pgf">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           How many observations will potentially require gap filling (initial checks)?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
-      <br>
 
       <table class="listing observation_highlights_pgf">
         <thead>
@@ -266,11 +266,11 @@
 
       <div class="collapsiblePanelTitle" data-panel="observation_highlights_psi">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           How many observations will potentially be significant issues?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
-      <br>
 
       <table class="listing observation_highlights_psi">
         <thead>
@@ -309,11 +309,11 @@
 
       <div class="collapsiblePanelTitle" data-panel="observation_highlights_ptc">
         <div>
+          <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+          <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
           How many observations will potentially be technical corrections (annual review and comprehensive review)?
-          <span class="eea-icon eea-icon-left"></span>
         </div>
       </div>
-      <br>
 
       <table class="listing observation_highlights_ptc">
         <thead>

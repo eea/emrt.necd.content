@@ -242,7 +242,6 @@
         for="emrt.necd.content.reviewfolder.IReviewFolder"
         class=".statisticsview.StatisticsView"
         permission="cmf.ManagePortal"
-        template="templates/statisticsview.pt"
         />
 
     <browser:page

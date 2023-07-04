@@ -1,27 +1,32 @@
-from datetime import datetime
-from Products.CMFCore.utils import getToolByName
-from Products.Five import BrowserView
-from zope.component import getUtility
-from zope.schema.interfaces import IVocabularyFactory
-
 import copy
 import itertools
 import operator
-import tablib
+from datetime import datetime
 from functools import reduce
+
+import tablib
+
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
+
+from Products.CMFCore.utils import getToolByName
+from Products.Five import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 
 class StatisticsView(BrowserView):
+    index = ViewPageTemplateFile("templates/statisticsview.pt")
 
     def __call__(self):
         self.observations = self.get_all_observations()
         self.questions = self.get_all_questions()
+        return self.index()
 
     def get_all_observations(self):
-        catalog = getToolByName(self.context, 'portal_catalog')
+        catalog = getToolByName(self.context, "portal_catalog")
         brains = catalog.unrestrictedSearchResults(
-            portal_type='Observation',
-            path='/'.join(self.context.getPhysicalPath())
+            portal_type="Observation",
+            path="/".join(self.context.getPhysicalPath()),
         )
         data = []
         for brain in brains:
@@ -36,10 +41,10 @@ class StatisticsView(BrowserView):
         return data
 
     def get_all_questions(self):
-        catalog = getToolByName(self.context, 'portal_catalog')
+        catalog = getToolByName(self.context, "portal_catalog")
         brains = catalog.unrestrictedSearchResults(
-            portal_type='Question',
-            path='/'.join(self.context.getPhysicalPath())
+            portal_type="Question",
+            path="/".join(self.context.getPhysicalPath()),
         )
         data = []
         for brain in brains:
@@ -60,15 +65,13 @@ class StatisticsView(BrowserView):
             return []
 
     def _generic_getter(self, objs, key, value, columns=[], filter_fun=None):
-
-        """
-         Generic function to get items for later rendering.
-         Parameters:
-          - Key: name of the field that will be shown in files
-          - Value: name of the field that will be counted
-          - Columns: values of the 'value' field that will be counted and shown
-          - obs_filter: a function returning if a given observation should be
-                        included on the count or not.
+        """Generic function to get items for later rendering.
+        Parameters:
+        - Key: name of the field that will be shown in files
+        - Value: name of the field that will be counted
+        - Columns: values of the 'value' field that will be counted and shown
+        - obs_filter: a function returning if a given observation should be
+        included on the count or not.
 
         """
         data = []
@@ -93,7 +96,7 @@ class StatisticsView(BrowserView):
 
             # Calculate the sum
             val = sum(item.values())
-            item['sum'] = val
+            item["sum"] = val
             item[key] = gkey
             data.append(item)
 
@@ -106,8 +109,15 @@ class StatisticsView(BrowserView):
 
     def calculate_sum(self, items, key):
         if items:
-            ret = copy.copy(reduce(lambda x, y: dict((k, v + (y and y.get(k, 0) or 0)) for k, v in x.items()), copy.copy(items)))
-            ret[key] = 'Sum'
+            ret = copy.copy(
+                reduce(
+                    lambda x, y: dict(
+                        (k, v + (y and y.get(k, 0) or 0)) for k, v in x.items()
+                    ),
+                    copy.copy(items),
+                )
+            )
+            ret[key] = "Sum"
             return ret
         return None
 
@@ -130,82 +140,118 @@ class StatisticsView(BrowserView):
         )
 
     def get_sectors(self):
-        return self.get_vocabulary_values('emrt.necd.content.ghg_source_sectors')
+        return self.get_vocabulary_values(
+            "emrt.necd.content.ghg_source_sectors"
+        )
 
     def get_countries(self):
-        return self.get_vocabulary_values('emrt.necd.content.eea_member_states')
+        return self.get_vocabulary_values(
+            "emrt.necd.content.eea_member_states"
+        )
 
     def observation_status_per_country(self):
         return self._generic_observation(
-            key='country',
-            value='status',
-            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'close-requested', 'finalised']
+            key="country",
+            value="status",
+            columns=[
+                "SE",
+                "LR",
+                "MSC",
+                "answered",
+                "conclusions",
+                "close-requested",
+                "finalised",
+            ],
         )
 
     def observation_status_per_sector(self):
         return self._generic_observation(
-            key='sector',
-            value='status',
-            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'close-requested', 'finalised']
+            key="sector",
+            value="status",
+            columns=[
+                "SE",
+                "LR",
+                "MSC",
+                "answered",
+                "conclusions",
+                "close-requested",
+                "finalised",
+            ],
         )
 
     def finalised_reason_per_country(self):
         return self._generic_observation(
-            key='country',
-            value='finalisation_reason',
-            columns=['no-conclusion-yet', 'no-response-needed', 'partly-resolved', 'resolved', 'unresolved', 'significant-issue']
+            key="country",
+            value="finalisation_reason",
+            columns=[
+                "no-conclusion-yet",
+                "no-response-needed",
+                "partly-resolved",
+                "resolved",
+                "unresolved",
+                "significant-issue",
+            ],
         )
 
     def finalised_reason_per_sector(self):
         return self._generic_observation(
-            key='sector',
-            value='finalisation_reason',
-            columns=['no-conclusion-yet', 'no-response-needed', 'partly-resolved', 'resolved', 'unresolved', 'significant-issue']
+            key="sector",
+            value="finalisation_reason",
+            columns=[
+                "no-conclusion-yet",
+                "no-response-needed",
+                "partly-resolved",
+                "resolved",
+                "unresolved",
+                "significant-issue",
+            ],
         )
 
     def question_status_per_country(self):
         return self._generic_question(
-            key='country',
-            value='status',
-            columns='emrt.necd.content.eea_member_states'
+            key="country",
+            value="status",
+            columns="emrt.necd.content.eea_member_states",
         )
 
     def question_status_per_sector(self):
         return self._generic_question(
-            key='sector',
-            value='status',
-            columns='emrt.necd.content.ghg_source_sectors'
+            key="sector",
+            value="status",
+            columns="emrt.necd.content.ghg_source_sectors",
         )
 
     def observation_highlights_pgf(self):
         return self._generic_observation(
-            key='sector',
-            value='country',
+            key="sector",
+            value="country",
             columns=self.get_countries(),
-            filter_fun=lambda x: 'pgf' in x.get('highlight'),
+            filter_fun=lambda x: "pgf" in x.get("highlight"),
         )
 
     def observation_highlights_psi(self):
         return self._generic_observation(
-            key='sector',
-            value='country',
+            key="sector",
+            value="country",
             columns=self.get_countries(),
-            filter_fun=lambda x: 'psi' in x.get('highlight', []),
+            filter_fun=lambda x: "psi" in x.get("highlight", []),
         )
 
     def observation_highlights_ptc(self):
         return self._generic_observation(
-            key='sector',
-            value='country',
+            key="sector",
+            value="country",
             columns=self.get_countries(),
-            filter_fun=lambda x: 'ptc' in x.get('highlight', []),
+            filter_fun=lambda x: "ptc" in x.get("highlight", []),
         )
+
+
 class DownloadStatisticsView(BrowserView):
     def get_all_observations(self):
-        catalog = getToolByName(self.context, 'portal_catalog')
+        catalog = getToolByName(self.context, "portal_catalog")
         brains = catalog.unrestrictedSearchResults(
-            portal_type='Observation',
-            path='/'.join(self.context.getPhysicalPath())
+            portal_type="Observation",
+            path="/".join(self.context.getPhysicalPath()),
         )
         data = []
         for brain in brains:
@@ -228,15 +274,13 @@ class DownloadStatisticsView(BrowserView):
             return []
 
     def _generic_getter(self, objs, key, value, columns=[], filter_fun=None):
-
-        """
-         Generic function to get items for later rendering.
-         Parameters:
-          - Key: name of the field that will be shown in files
-          - Value: name of the field that will be counted
-          - Columns: values of the 'value' field that will be counted and shown
-          - obs_filter: a function returning if a given observation should be
-                        included on the count or not.
+        """Generic function to get items for later rendering.
+        Parameters:
+        - Key: name of the field that will be shown in files
+        - Value: name of the field that will be counted
+        - Columns: values of the 'value' field that will be counted and shown
+        - obs_filter: a function returning if a given observation should be
+        included on the count or not.
 
         """
         data = []
@@ -261,7 +305,7 @@ class DownloadStatisticsView(BrowserView):
 
             # Calculate the sum
             val = sum(item.values())
-            item['sum'] = val
+            item["sum"] = val
             item[key] = gkey
             data.append(item)
 
@@ -274,8 +318,15 @@ class DownloadStatisticsView(BrowserView):
 
     def calculate_sum(self, items, key):
         if items:
-            ret = copy.copy(reduce(lambda x, y: dict((k, v + (y and y.get(k, 0) or 0)) for k, v in x.items()), copy.copy(items)))
-            ret[key] = 'Sum'
+            ret = copy.copy(
+                reduce(
+                    lambda x, y: dict(
+                        (k, v + (y and y.get(k, 0) or 0)) for k, v in x.items()
+                    ),
+                    copy.copy(items),
+                )
+            )
+            ret[key] = "Sum"
             return ret
         return None
 
@@ -289,28 +340,38 @@ class DownloadStatisticsView(BrowserView):
         )
 
     def get_sectors(self):
-        return self.get_vocabulary_values('emrt.necd.content.ghg_source_sectors')
+        return self.get_vocabulary_values(
+            "emrt.necd.content.ghg_source_sectors"
+        )
 
     def get_countries(self):
-        return self.get_vocabulary_values('emrt.necd.content.eea_member_states')
+        return self.get_vocabulary_values(
+            "emrt.necd.content.eea_member_states"
+        )
 
     def render(self):
         self.observations = self.get_all_observations()
 
         now = datetime.now()
-        filename = 'EMRT-' + now.strftime("%Y%M%d%H%m") + " - " + ".xls"
+        filename = "EMRT-" + now.strftime("%Y%M%d%H%m") + " - " + ".xls"
 
-        book = tablib.Databook((self.observation_status_per_country(),
+        book = tablib.Databook(
+            (
+                self.observation_status_per_country(),
                 self.observation_status_per_sector(),
                 self.finalised_reason_per_sector(),
                 self.finalised_reason_per_country(),
                 self.observation_highlights_pgf(),
                 self.observation_highlights_psi(),
-                self.observation_highlights_ptc()))
+                self.observation_highlights_ptc(),
+            )
+        )
 
         response = self.request.response
         response.setHeader("content-type", "application/vnc.ms-excel")
-        response.setHeader("Content-disposition", "attachment;filename=" + filename)
+        response.setHeader(
+            "Content-disposition", "attachment;filename=" + filename
+        )
 
         return book.xls
 
@@ -319,20 +380,40 @@ class DownloadStatisticsView(BrowserView):
         data.title = "Observation status per country"
 
         observations = self._generic_observation(
-            key='country',
-            value='status',
-            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'finalised']
+            key="country",
+            value="status",
+            columns=[
+                "SE",
+                "LR",
+                "MSC",
+                "answered",
+                "conclusions",
+                "finalised",
+            ],
         )
         for observation in observations:
-            data.append([observation['country'],
-                observation['SE'],
-                observation['LR'],
-                observation['MSC'],
-                observation['answered'],
-                observation['conclusions'],
-                observation['finalised'],
-                observation['sum']])
-        data.headers = ['Country', 'SR/SE', 'LR', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
+            data.append(
+                [
+                    observation["country"],
+                    observation["SE"],
+                    observation["LR"],
+                    observation["MSC"],
+                    observation["answered"],
+                    observation["conclusions"],
+                    observation["finalised"],
+                    observation["sum"],
+                ]
+            )
+        data.headers = [
+            "Country",
+            "SR/SE",
+            "LR",
+            "MSC",
+            "Answer received",
+            "Conclusions",
+            "Finalised",
+            "Sum",
+        ]
 
         return data
 
@@ -341,20 +422,40 @@ class DownloadStatisticsView(BrowserView):
         data.title = "Observation status per sector"
 
         observations = self._generic_observation(
-            key='sector',
-            value='status',
-            columns=['SE', 'LR', 'MSC', 'answered', 'conclusions', 'finalised']
+            key="sector",
+            value="status",
+            columns=[
+                "SE",
+                "LR",
+                "MSC",
+                "answered",
+                "conclusions",
+                "finalised",
+            ],
         )
         for observation in observations:
-            data.append([observation['sector'],
-                observation['SE'],
-                observation['LR'],
-                observation['MSC'],
-                observation['answered'],
-                observation['conclusions'],
-                observation['finalised'],
-                observation['sum']])
-        data.headers = ['Sector', 'SR/SE', 'LR', 'MSC', 'Answer received', 'Conclusions', 'Finalised', 'Sum']
+            data.append(
+                [
+                    observation["sector"],
+                    observation["SE"],
+                    observation["LR"],
+                    observation["MSC"],
+                    observation["answered"],
+                    observation["conclusions"],
+                    observation["finalised"],
+                    observation["sum"],
+                ]
+            )
+        data.headers = [
+            "Sector",
+            "SR/SE",
+            "LR",
+            "MSC",
+            "Answer received",
+            "Conclusions",
+            "Finalised",
+            "Sum",
+        ]
 
         return data
 
@@ -363,20 +464,40 @@ class DownloadStatisticsView(BrowserView):
         data.title = "Finalised reason per country"
 
         observations = self._generic_observation(
-            key='country',
-            value='finalisation_reason',
-            columns=['no-conclusion-yet', 'no-response-needed', 'partly-resolved', 'resolved', 'unresolved', 'significant-issue']
+            key="country",
+            value="finalisation_reason",
+            columns=[
+                "no-conclusion-yet",
+                "no-response-needed",
+                "partly-resolved",
+                "resolved",
+                "unresolved",
+                "significant-issue",
+            ],
         )
         for observation in observations:
-            data.append([observation['country'],
-                observation['no-conclusion-yet'],
-                observation['no-response-needed'],
-                observation['partly-resolved'],
-                observation['resolved'],
-                observation['unresolved'],
-                observation['significant-issue'],
-                observation['sum']])
-        data.headers = ['Country', 'No conclusion yet', 'No response needed', 'Party resolved', 'Resolved', 'Unresolved', 'Significant issue', 'Sum']
+            data.append(
+                [
+                    observation["country"],
+                    observation["no-conclusion-yet"],
+                    observation["no-response-needed"],
+                    observation["partly-resolved"],
+                    observation["resolved"],
+                    observation["unresolved"],
+                    observation["significant-issue"],
+                    observation["sum"],
+                ]
+            )
+        data.headers = [
+            "Country",
+            "No conclusion yet",
+            "No response needed",
+            "Party resolved",
+            "Resolved",
+            "Unresolved",
+            "Significant issue",
+            "Sum",
+        ]
 
         return data
 
@@ -385,62 +506,80 @@ class DownloadStatisticsView(BrowserView):
         data.title = "Finalised reason per sector"
 
         observations = self._generic_observation(
-            key='sector',
-            value='finalisation_reason',
-            columns=['no-conclusion-yet', 'no-response-needed', 'partly-resolved', 'resolved', 'unresolved', 'significant-issue']
+            key="sector",
+            value="finalisation_reason",
+            columns=[
+                "no-conclusion-yet",
+                "no-response-needed",
+                "partly-resolved",
+                "resolved",
+                "unresolved",
+                "significant-issue",
+            ],
         )
         for observation in observations:
-            data.append([observation['sector'],
-                observation['no-conclusion-yet'],
-                observation['no-response-needed'],
-                observation['partly-resolved'],
-                observation['resolved'],
-                observation['unresolved'],
-                observation['significant-issue'],
-                observation['sum']])
-        data.headers = ['Sector', 'No conclusion yet', 'No response needed', 'Party resolved', 'Resolved', 'Unresolved', 'Significant issue', 'Sum']
+            data.append(
+                [
+                    observation["sector"],
+                    observation["no-conclusion-yet"],
+                    observation["no-response-needed"],
+                    observation["partly-resolved"],
+                    observation["resolved"],
+                    observation["unresolved"],
+                    observation["significant-issue"],
+                    observation["sum"],
+                ]
+            )
+        data.headers = [
+            "Sector",
+            "No conclusion yet",
+            "No response needed",
+            "Party resolved",
+            "Resolved",
+            "Unresolved",
+            "Significant issue",
+            "Sum",
+        ]
 
         return data
-
 
     def observation_highlights_pgf(self):
         data = tablib.Dataset()
         data.title = "PGF observations"
 
         observations = self._generic_observation(
-            key='sector',
-            value='country',
+            key="sector",
+            value="country",
             columns=self.get_countries(),
-            filter_fun=lambda x: 'pgf' in x.get('highlight'),
+            filter_fun=lambda x: "pgf" in x.get("highlight"),
         )
         for observation in observations:
-            row = [observation['sector']]
+            row = [observation["sector"]]
             for country in self.get_countries():
                 row += [observation[country]]
-            row += [observation['sum']]
+            row += [observation["sum"]]
             data.append(row)
-        data.headers = ['Sector'] + self.get_countries() + ['Sum']
+        data.headers = ["Sector"] + self.get_countries() + ["Sum"]
 
         return data
-
 
     def observation_highlights_psi(self):
         data = tablib.Dataset()
         data.title = "PSI observations"
 
         observations = self._generic_observation(
-            key='sector',
-            value='country',
+            key="sector",
+            value="country",
             columns=self.get_countries(),
-            filter_fun=lambda x: 'psi' in x.get('highlight'),
+            filter_fun=lambda x: "psi" in x.get("highlight"),
         )
         for observation in observations:
-            row = [observation['sector']]
+            row = [observation["sector"]]
             for country in self.get_countries():
                 row += [observation[country]]
-            row += [observation['sum']]
+            row += [observation["sum"]]
             data.append(row)
-        data.headers = ['Sector'] + self.get_countries() + ['Sum']
+        data.headers = ["Sector"] + self.get_countries() + ["Sum"]
 
         return data
 
@@ -449,17 +588,17 @@ class DownloadStatisticsView(BrowserView):
         data.title = "PTC observations"
 
         observations = self._generic_observation(
-            key='sector',
-            value='country',
+            key="sector",
+            value="country",
             columns=self.get_countries(),
-            filter_fun=lambda x: 'ptc' in x.get('highlight'),
+            filter_fun=lambda x: "ptc" in x.get("highlight"),
         )
         for observation in observations:
-            row = [observation['sector']]
+            row = [observation["sector"]]
             for country in self.get_countries():
                 row += [observation[country]]
-            row += [observation['sum']]
+            row += [observation["sum"]]
             data.append(row)
-        data.headers = ['Sector'] + self.get_countries() + ['Sum']
+        data.headers = ["Sector"] + self.get_countries() + ["Sum"]
 
         return data

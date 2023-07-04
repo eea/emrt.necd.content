@@ -190,6 +190,7 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/inboxview"
               class="standardButton">
+                  <i class="bi bi-chevron-left"></i>
                   Back to my view
             </a>
           </li>
@@ -197,6 +198,7 @@
             <a href=""
               tal:attributes="href string:${parent/absolute_url}/view"
               class="standardButton">
+                  <i class="bi bi-chevron-left"></i>
                   Back to overview list
             </a>
           </li>
@@ -373,7 +375,7 @@
                       tal:content="item/author"></a>
                     <br/>
                     <span
-                      tal:attributes="class python: ' '.join(['eea-icon eea-icon-lg wfStep', item['object']])"><!-- --></span>
+                      tal:attributes="class python: ' '.join(['wfStep', item['object']])"><!-- --></span>
                     <span tal:content="item/state"></span><br/>
                     <i class="bi bi-clock wfTime"></i>
                     <span tal:attributes="title python:item['time'].strftime('%d %b %Y, %H:%M CET')" class="datetimeWF">
@@ -539,7 +541,7 @@
           Files:
           <div class="file" tal:repeat="file conclusion/get_files">
             <p tal:condition="file/file">
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
@@ -756,7 +758,7 @@
           Files:
           <div class="file" tal:repeat="file question/get_files">
             <p tal:condition="file/file">
-              <span class="eea-icon eea-icon-lg attachment"></span>
+              <i class="bi bi-paperclip"></i>
               <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
                 tal:content="file/file/filename">
               </a>
