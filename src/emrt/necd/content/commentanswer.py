@@ -22,7 +22,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 
-from emrt.necd.content import MessageFactory as _
+from emrt.necd.content import _
 
 
 # Interface class; used to define content-type schema.

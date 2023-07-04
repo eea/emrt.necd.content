@@ -2,8 +2,1641 @@ Changelog
 =========
 
 
-1.0a1 (unreleased)
+3.0.0 (unreleased)
+
+- Migrate to Plone 6 and Python 3.11
+
+
+2.5.41 (2023-05-31)
+
+- Bug #253484 - Inventory data not exporting correctly
+
+2.5.40 (2023-05-11)
+
+- Bug #252799 - Issue with pollutant and year field
+
+2.5.39 (2023-03-16)
+
+- Task #249245 - Projections: Update to the NFR code list (move 1A4aii to sector 2)
+- Task #250017 - Projections: Hiding the review subsectors options
+
+2.5.38 (2023-02-28)
+
+- Task #249245 - Projections: Update to the NFR code list
+- Task #249174 - Projections: Removal of projection year 2020
+- Task #249177 - Projections: Update to Parameters list
+- Task #249176 - Projections: update of description flag
+- Feature #249237 - New mapping of solvent/non-solvent IPPU split
+
+2.5.37 (2023-02-22)
+
+- Feature #162073 - Creation of a Transparency flag
+- Feature #162078 - Creation of revised estimate and technical correction stamps
+- Feature #162117 - Hide Grid and LPS NFR codes in 2023 inventory
+
+2.5.36 (2022-05-16)
+
+- Bug #149838 - Follow-up question issue on previous recommendations
+- Feature #142225 - Better identification of source observation
+
+2.5.35 (2022-05-11)
+
+- Task #149632 - Prevent unnecessary calls to the carried-over observation source
+
+2.5.34 (2022-05-09)
+
+- Task #149631 - Adding new LDAP Sector for NFR sector 2D - whitespace cleanup
+
+2.5.33 (2022-05-09)
+
+- Task #149631 - Adding new LDAP Sector for NFR sector 2D
+
+2.5.32 (2022-05-02)
+
+- Feature #142225 - Handle int year during carryover
+
+2.5.31 (2022-04-29)
+
+- Feature #142225 - Show source recommendation and LR comments on carried over observations - better source fetching
+
+2.5.30 (2022-04-28)
+
+- Feature #142225 - Show source recommendation and LR comments on carried over observations - fix identity check
+
+2.5.29 (2022-04-28)
+
+- Feature #142225 - Show source recommendation and LR comments on carried over observations - fixes
+
+2.5.28 (2022-04-28)
+
+- Feature #142225 - Show source recommendation and LR comments on carried over observations
+
+2.5.27 (2022-02-18)
+
+- Task #135014 - SE unable to see carried over observations
+
+2.5.26 (2021-09-22)
+
+- Task #125989 - Filter My View on flags
+
+2.5.25 (2021-06-18)
+
+- Task #134160 - Fix .date() call.
+
+2.5.24 (2021-06-11)
+
+- Task #134160 - MS coordinator MyView bug.
+
+2.5.23 (2021-06-02)
+
+- Task #134554 - Missing fields for Sector Experts creating new observations
+  [batradav]
+
+2.5.22 (2021-05-23)
+
+- Task #134338 - Carry over feature error - Fix Observation ID handling - spaces.
+  [batradav]
+
+2.5.21 (2021-04-27)
+
+- Task #129979 - Carry Over Feature - Fix Observation ID handling - paranthesis.
+  [batradav]
+
+2.5.20 (2021-04-19)
+
+- Task #129979 - Carry Over Feature - Fix Observation ID handling.
+  [batradav]
+
+2.5.19 (2021-03-16)
+
+- Bug  #129972 - LR recall questions feature doesn't work
+- Task #129979 - Carry Over Feature - add inventory year and gridded and LPS NFR codes
+  [batradav]
+
+2.5.18 (2020-06-26)
+
+- Bug #118760 - Web Data Connector and Tableau Problems
+  [batradav]
+
+2.5.17 (2020-06-24)
+
+- Bug #119090 - A Question is missing in the workflow for an observation
+  [batradav]
+
+2.5.16 (2020-06-15)
+
+- Bug #118640 - New feature in the extract
+  [batradav]
+
+2.5.15 (2020-06-14)
+
+- Bug #118640 - New feature in the extract
+  [batradav]
+
+2.5.14 (2020-06-03)
+
+- Bug #108673 - Unable to order my view over multiple pages
+  [batradav]
+
+2.5.13 (2020-06-02)
+
+- Feature #111499 - Add pollutant filter on the overview list
+  [batradav]
+
+2.5.12 (2020-05-27)
+
+- Bug #117896 - Sector Expert Rights
+- Bug #118043 - Q&A format
+- Bug #118046 - Export error
+  [batradav]
+
+2.5.11 (2020-05-07)
+
+- Bug #117574 - Web Data Connector and Tableau
+  [batradav]
+
+2.5.10 (2020-05-04)
+
+- Feature #117019 - My View bugs
+  [batradav]
+
+2.5.9 (2020-04-29)
+
+- Feature #111497 - Revised carry over process
+  [batradav]
+
+2.5.8 (2020-04-28)
+
+- Task #117167 - Flags to add
+  [batradav]
+
+2.5.7 (2020-04-22)
+
+- Task #114128 - Start 2020 Tabs for both "Inventory"
+  [batradav]
+
+2.5.6 (2020-04-15)
+
+- Task #114128 - Start 2020 Tabs for both "Inventory"
+  [batradav]
+
+2.5.5 (2020-04-10)
+
+- Bug #108671 - Issues with NECD excel extract
+- Bug #108672 - Free text search bar
+- Task #108662 - Remove automatic conclusion text from the 'go to conclusions' tab
+- Bug #108674 - Recalled MSA not in current state MS Coordinator
+- Feature #111496 - Non-editable fields in the EMR
+- Feature #111498 - Conclusion box alteration
+  [batradav]
+
+2.5.4 (2020-03-25)
+
+- Bug #106895 - Upload file potential bug in the conclusion tab
+- Task #111500 - Consistency of EMRT and Review Reports
+  [batradav]
+
+2.5.3 (2019-12-09)
+
+- Task #108206 - Embed Tableau Statistics into EMRT-NECD Projections
+- Removed now unused C implementation for flatten_json.
+  [batradav]
+
+2.5.2 (2019-06-26)
+
+- Task #107150 - Export XLS doesn't work in the projection tab
+  [batradav]
+
+2.5.1 (2019-06-14)
+
+- Task #88845 - adding extra fields to tableau
+  [batradav]
+
+2.5 (2019-06-12)
+
+- Task #88845 - removing XLS mapping, adding Modified date
+- Bug: #106301 - Unauthorized check on getObject()
+  [batradav]
+
+2.4.3 (2019-05-29)
+
+- Task #106008 - Small bug in the comment loop
+  [batradav]
+
+2.4.2 (2019-05-24)
+
+- Task #106088 - userid field for carryover
+  [batradav]
+
+2.4.1 (2019-05-22)
+
+- Task #105995 - Modify email subject from EMRT-NECD
+  [batradav]
+
+2.4.0 (2019-05-20)
+
+- Feature #88845 - Migrate to new storage format. Snapshot only modified observations.
+  [batradav]
+
+2.3.9 (2019-05-16)
+
+- Feature #88845 - Fix empty snapshot and timestamps
+  [batradav]
+
+2.3.8 (2019-05-15)
+
+- Task #104852 - Make pollutants and parameter not mandatory for
+  sector{6,7,8,9} users.
+  [batradav]
+
+2.3.7 (2019-05-10)
+
+- Bug #105620 - Export to Excel is not fuctioning properly
+  [batradav]
+
+2.3.6 (2019-05-08)
+
+- Task #104852 - Projection improvements
+  [boteziri]
+- Bug #105604 - Fix carry-over roles
+- Bug #103164 - Visibility of follow up questions in the EMRT
+- Bug #105620 - Export to Excel is not fuctioning properly
+  [batradav]
+
+2.3.5 (2019-04-25)
+
+- Task #104852 - Projection improvements
+- Task #104494 - Improve bulk import
+- Task #103622 - Carry-over feature
+- Task #105186 - Add BaP to pollutants
+- Bug #105206 - Fix carry-over duplicates
+- Bug #105204 - Fix reference_year mandatory
+  [batradav]
+
+2.3.4 (2019-03-07)
+
+- Feature #88845 - Create a new view with a tableau viewer
+  - Updating connector PT.
+  [batradav]
+
+2.3.3 (2019-03-06)
+
+- Feature #88845 - Create a new view with a tableau viewer
+  - huge performance improvements for tableau-related output
+  - added C module for fast json flatten operations
+  [batradav]
+
+2.3.2 (2019-02-18)
+
+- Feature #102793 - Error when editing conclusion
+  - Updating the Conclusions EditForm.getContent to
+  work around the new changes in z3c.form.
+  [batradav]
+
+2.3.1 (2018-12-17)
+
+- Feature #88845 - Create a new view with a tableau viewer
+  - added web connector for Tableau
+  [batradav]
+
+2.3.0 (2018-12-12)
+
+- Feature #93528 - Additional 2018 Tab
+  [boteziri, batradav]
+
+- Feature #88845 - Create a new view with a tableau viewer
+  - snapshot support
+  [batradav]
+
+2.2.3 (2018-06-28)
 ------------------
 
-- Initial release.
-  []
+- Bug #96688 - Bug on adding follow up question
+  [batradav]
+
+2.2.2 (2018-06-21)
+------------------
+
+- Bug #96488 - Bug when adding a follow-up question
+  [batradav]
+
+2.2.1 (2018-06-04)
+------------------
+
+- Feature #88845 - Create a new view with a tableau viewer
+  - new fields in JSON output
+  - fixing Q&A formula
+- Bug #95941 - Misleading information on My View
+- Bug #95338 - Information on the "Overview List" Tab
+  - adding missing migration script for titles
+  [batradav]
+
+2.2.0 (2018-05-09)
+------------------
+
+- Bug #95338 - Information on the "Overview List" Tab
+- Bug #95321 - Update of NFR sector list
+  [batradav]
+
+2.1.0 (2018-05-02)
+------------------
+
+- Feature #91903 - Develompment of bulk file import option
+- Feature #86364 - Add a follow up question
+- Task #93955 - Cleanup Grok implementation
+- Bug #93620 - Broken pagination on test instance
+- Bug #94869 - Reopening Q&A Chat
+- Bug #94870 - Request finalisation of the observation
+- Bug #94456 - Error when editing an observation as an admin
+  [boteziri]
+
+- Feature #88825 - My View Style
+- Feature #93173 - Update of Sector List and Relation with LDAP sector
+- Feature #88845 - Create a new view with a tableau viewer.
+- Feature #93995 - Finalised Observation tab
+- Bug #93175 - List of bugs from 2018 Tab in Test Site
+    * Test users "Sector Expert" don't have "Create New Observation" Button
+    * From "Overview List" the option search "Sector Name" is missing in 2018 tab (it was there in 2017 one, useful for Lead Reviewer)
+    * 2018 Tab: "Overview List" the "inventory year" drop down menu should be empty but it has information from the 2017 dataset
+- Bug #94894 - Error message for EMRT extract
+- Bug #95125 - Internal comments visible to MS
+  [batradav]
+
+2.0.41 (2018-02-19)
+-------------------
+
+- Feature #88826 - My View improvement
+  [batradav]
+
+2.0.40 (2018-02-19)
+-------------------
+
+- Task #92565 - Writing conclusion
+- Task #92457 - Add additional pollutants into "Create and observation"
+  [boteziri]
+
+- Task #88825 - Insert information from this workflow status "Draft Conclusion" into My View Option
+  [batradav]
+
+2.0.39 (2018-02-15)
+-------------------
+
+- Feature #88826 - My View improvement
+  [batradav]
+
+2.0.38 (2018-02-02)
+-------------------
+
+- Feature #92459 - Add additional options to "Description Flags"
+- Feature #92457 - Add additional pollutants into "Create and observation"
+  * split pollutants in 4 different rows for an user point of view
+
+  [boteziri]
+
+2.0.37 (2017-06-30)
+-------------------
+
+- Task #86446 - LR can't remove file from Conclusion
+  [batradav]
+
+
+2.0.36 (2017-06-29)
+-------------------
+
+- Task #83491 - Low priority taks from testing
+    * Recall button for LR
+- Task #86313 - Misleading appeareance in the Comment Looping Box
+  [batradav]
+
+
+2.0.35 (2017-06-26)
+-------------------
+
+- Task #83491 - Low priority taks from testing
+    * Filter on sector name
+- Task #86308 - Lead Reviewer Overview List Filtering
+  [batradav]
+
+
+2.0.34 (2017-06-22)
+-------------------
+
+- Task #83491 - Low priority taks from testing
+    * Sorting by date functionality
+- Task #86258 - Error message displayed when Sector Expert Save Conclusion
+  [batradav]
+
+
+2.0.33 (2017-06-20)
+-------------------
+
+- Task #86161 - Send Conclusion problem
+- Task #85296 - Box text after using "Ask SE to redraft"
+  [batradav]
+
+
+2.0.32 (2017-06-09)
+-------------------
+
+- Task #85578 - Member State Coordinator - NO Send Answer Button
+- Task #85588 - member state expert test user
+  [batradav]
+
+
+2.0.31 (2017-06-09)
+-------------------
+
+- Task #85805 - [Speed issue] - Create observation
+- Task #85445 - Configure notification
+  [batradav]
+
+
+2.0.30 (2017-06-08)
+-------------------
+
+- Task #85804 - Problem with Export observations in XLS format
+- Task #85806 - Problem in overview list filtering
+  [batradav]
+
+
+2.0.29 (2017-06-07)
+-------------------
+
+- Task #85626 - SE asked for comment - System provide error feedback
+- Task #85775 - no response or too long time in order to load the page
+  [batradav]
+
+
+2.0.28 (2017-05-31)
+-------------------
+
+- Task #85445 - Configure notification for MS Expert
+  [batradav]
+
+
+2.0.27 (2017-05-29)
+-------------------
+
+- Task #85477 - New Sector List
+- Task #85464 - MS Expert have too many email notification
+  [batradav]
+
+
+2.0.26 (2017-05-29)
+-------------------
+
+- Task #85413 - SE attach file to a question: the file is not visible
+  [batradav]
+
+
+2.0.25 (2017-05-26)
+-------------------
+
+- Task #85209 - Overview list
+- Task #85341 - A LR has an observation in "My view" menu that she has not to have
+  [batradav]
+
+
+2.0.24 (2017-05-25)
+-------------------
+
+- Task #85233 - Observation history problems
+- Task #85343 - Email notification to MS Expert
+- Task #85316 - Selection of Member State Expert
+  [batradav]
+
+
+2.0.23 (2017-05-18)
+-------------------
+
+- Task #85212 - "Submit Answer" button has been disappeared
+- Task #85222 - "Overview List" Empty for a user
+- Task #85170 - My View Menu doesnt work
+- Task #84723 - Additional column to Extract File
+- Task #85192 - "Request Comment" and "Select new counterpart" buttons are not working
+  [batradav]
+
+
+2.0.22 (2017-05-16)
+-------------------
+
+- Task #82446 - Don't hide things from Manager.
+- Task #85157 - Update sector list.
+- Task #84721 - Extract Excel file.
+- Task #84722 - Add Timestamp to the Extract File.
+- Task #84723 - Additional column to Extract File.
+- Task #84390 - Export observations in XLS format.
+  [batradav]
+
+
+2.0.21 (2017-05-15)
+-------------------
+
+- Task #82446 - Permission fixes.
+  [batradav]
+
+
+2.0.20 (2017-05-12)
+-------------------
+
+- Task #82446 - Various fixes (NFR Code list, JS fixes for table listings).
+  [batradav]
+
+
+2.0.19 (2017-04-25)
+-------------------
+
+- Task #84390 - Export observations in XLS format
+  [batradav]
+
+- Task #84510 - New values in "parameters" inside an Observation
+  [batradav]
+
+
+2.0.18 (2017-04-19)
+-------------------
+
+- Task #84089 - Change into Description Flag and Draft/Final Conclusion Flags
+  [batradav]
+
+
+2.0.17 (2017-04-14)
+-------------------
+
+- Task #84089 - Change into Description Flag and Draft/Final Conclusion Flags
+  [batradav]
+
+- Task #83916 - Workflow "wrongly assigned "finalised"
+  [batradav]
+
+- Task #83915 - Change the column workflow in the overview list
+  [batradav]
+
+
+2.0.16 (2017-04-03)
+-------------------
+
+- Task #83317 - Email notifications on SE comments and LR redraft request.
+  [batradav]
+
+
+2.0.15 (2017-03-29)
+-------------------
+
+- Task #83685 - Fixing possible JS injection.
+  [batradav]
+
+
+2.0.14 (2017-03-27)
+-------------------
+
+- Task #83333 - Fixing workflow permissions.
+  [batradav]
+
+
+2.0.13 (2017-03-24)
+-------------------
+
+- 2.0.12 re-release. Nothing changed.
+  The 2.0.12 egg release was missing kon-python file updates.
+  [batradav]
+
+
+2.0.12 (2017-03-24)
+-------------------
+
+- Task #83488 - Various fixes.
+  - Missing observation NFR code.
+  - Wrong link when clicking on observation.
+  - Allow Managers full access to the listings.
+  - Email "do not reply" rephrasing
+
+  [batradav]
+
+
+2.0.11 (2017-03-21)
+-------------------
+
+- Task #83333 - Inbox and Finalised views. NFR Code filter multiple values.
+  [batradav]
+
+
+2.0.10 (2017-03-20)
+-------------------
+
+- Task #83333 - Implemented feedback changes.
+  [batradav]
+
+
+2.0.9 (2017-03-16)
+------------------
+
+- Task #82527 - Fixing eea.cache patches. Patching LDAPDelegate.search instead of
+  getGroupedUsers.
+
+- Task #82527 - Removing concurrent loop usage from counterpart query method
+  as concurrent.futures seem to not behave well in docker containers.
+  [batradav]
+
+
+2.0.7 (2017-03-15)
+------------------
+
+- Task #82527 - Caching, warmup and concurrent LDAP calls.
+  [batradav]
+
+- Task #82444 - Renaming ESD strings to EMRT-NECD.
+  [batradav]
+
+- Task #82444 - Setting MSExpert local role for LDAP_MSEXPERT-[country].
+  [batradav]
+
+- Task #82444 - Fixing 'assign-answerer' transition not used
+  from 'recalled-msa' state of question.
+  [batradav]
+
+
+2.0.6 (2017-03-08)
+------------------
+
+- Task #82960 - Fixing counterpart candidate users selection
+  [batradav]
+
+
+2.0.5 (2017-03-07)
+------------------
+
+- Task: #82960 EEA Internal Testing - Test User "sectorrevnecd1" - March 02
+- Task: #82622 Bugs from Testing with CORE TEAM - 22 February
+  [batradav]
+
+
+2.0.4 (2017-03-06)
+------------------
+
+- Task: #82672 email notification from the workflow
+  [batradav]
+
+
+2.0.3 (2017-03-01)
+------------------
+
+- Task: #82584 Sector List Update - Reimport NFR codes.
+  [batradav]
+
+- Task: #80370 Internal testing from EEA - Filter NFR codes
+  based on user's ldap sector.
+  [batradav]
+
+- Task: #82622 Bugs from Testing with CORE TEAM - 22 February
+  * fixing go to conclusion workflow state change
+  * fixing observation tabs after "request finalisation"
+  * fixing file upload
+  * fixing "Fuel is shown as some number"
+  * fixing "Cannot delete observation"
+  * fixing "Description flags are hard to read and select"
+  [batradav]
+
+
+2.0.2 (2017-02-22)
+------------------
+
+- Task: #80370 Internal testing from EEA - Fixing some issues
+  [batradav]
+
+
+2.0.1 (2017-02-20)
+------------------
+
+- Task: #82126 Fixing ReAssignCounterPartsForm and statisticsview.
+  [batradav]
+
+
+2.0 (2017-02-16)
+----------------
+
+- emrt.necd.content fork
+- Task: #82126 Cleanup the code in order to eliminate Step1
+- Task: #81680 Changes in the observation form
+- Task: #81679 Changes in the top tabs, ie. 2017
+- Task: #80366 Creation of new metadata
+  [batradav]
+
+
+1.59.34 (2017-01-30)
+--------------------
+
+- Fix: #81027 dead end in the workflow.
+  [batradav]
+
+
+1.59.33 (2017-01-25)
+--------------------
+
+- Task #77946 Fix DOCX export error.
+  [batradav]
+
+
+1.59.32 (2017-01-24)
+--------------------
+
+- Task #81047 Fix delete error for observations and
+  duplicate indexer/properties.
+  [batradav]
+
+- Task #80797 Allow XLS export for all users
+  [batradav]
+
+1.59.31 (2017-01-19)
+--------------------
+
+- Task #80869 Convert ReferenceNumberCreator return value to
+  str. OFS.ObjectManager.checkValidId fails otherwise
+  [batradav]
+
+1.59.30 (2016-06-23)
+--------------------
+
+- Task #73129 Don't show internal discussions to MS users.
+- Task #72922 Implemented automatization using plone registry
+
+
+1.59.29 (2016-05-31)
+--------------------
+
+- Task #72885 Change a heading
+- Bug #72890 Overview list links not working
+- Feature #72887 fix observation status after conclusion2 creation
+  [lucas]
+
+1.59.28 (2016-05-30)
+--------------------
+
+- Fix #72796 observations export in xls
+  [lucas]
+
+1.59.27.1 (2016-05-27)
+----------------------
+
+- Fix error on edit conclusionphase2 objects
+  [lucas]
+
+1.59.27 (2016-05-26)
+--------------------
+
+- refs #72138, #72739 fixed workflow permissions
+  [lucas]
+- refs #72748: Step 2 conclusion changes
+  [lucas]
+
+1.59.26 (2016-05-17)
+--------------------
+
+- refs #72197 interface fixes
+  [cornel]
+
+1.59.25 (2016-05-16)
+--------------------
+
+- refs #28348 review "my view" for sector expert and review
+  [cornel]
+
+1.59.23 (2016-05-16)
+--------------------
+
+- refs #28348 review "my view" for sector expert and review
+  [lucas]
+
+
+1.59.21 (2016-05-09)
+--------------------
+
+- refs #68683 ajax sorting on reviewfolder view added
+- refs #30550 added Counterpart's names in commenting loop
+- refs #28348 review "my view" for sector expert and review
+  [lucas]
+
+1.59.20.1 (2016-05-05)
+----------------------
+
+- refs #68919  fix Internal comments invisble for QA expert
+- refs #71992 fix notifications emails
+- refs #30544 add "Go to conclusion" button for unanswered observation
+  [lucas]
+
+1.59.19 (2016-04-27)
+--------------------
+
+- refs #71752, #71692 fix "go to conclusion" in step1
+  [lucas]
+
+1.59.18 (2016-04-26)
+--------------------
+
+- refs #69929, #71670 added exports view
+  added "esdrt.content: Export Observations" and "esdrt.content: Export an Observation" permissions
+  [lucas]
+
+1.59.17 (2016-04-22)
+--------------------
+
+- refs #71532 check if the user can create a conclusion
+- refs #71619 Extraction of step 1 conclusions for observation in step 2
+  [lucas]
+
+1.59.16 (2016-04-21)
+--------------------
+
+- refs #71598, #71602 bug fixed
+  [lucas]
+
+
+1.59.15 (2016-04-20)
+--------------------
+
+- refs #71532 fixed ValueError: Subobject type disallowed by IConstrainTypes adapter: ConclusionsPhase2
+  [lucas]
+
+1.59.14 (2016-04-19)
+--------------------
+
+- refs #71051 fix rules to show "Edit Key Flags"
+  [lucas]
+- refs #71375 table in phase2 removed from the view
+  [lucas]
+
+1.59.13.2 (2016-04-15)
+----------------------
+
+- refs #28230 added upgraded steps
+  [lucas]
+
+1.59.13 (2016-04-12)
+--------------------
+
+- refs #28230 added area subscribe notifications configurations
+  [lucas]
+
+1.59.12 (2016-04-08)
+--------------------
+
+- Nothing changed yet.
+
+1.59.11 (2016-04-07)
+--------------------
+
+- refs #71016 add view to manage objects states
+  [lucas]
+
+1.59.10 (2016-04-04)
+--------------------
+
+- refs #69911 added list of the years format to Inventory year
+  [lucas]
+- refs #68705 added "back to overview list" button
+  [lucas]
+- refs #29798 added "Delete button" for Secretariat
+  [lucas]
+
+1.59.9 (2016-04-01)
+-------------------
+
+- Small fix
+  [lucas]
+
+
+1.59.8 (2016-04-01)
+-------------------
+
+- refs #70788 refactoring view
+  Upgrade steps: added some metadata into catalog
+  [lucas]
+- refs #70969 checking added to test the state of comment before transition
+  [lucas]
+
+
+1.59.7 (2016-03-31)
+-------------------
+
+- refs #70899 fix patch after update CMFDiffTool
+  [lucas]
+
+
+1.59.6 (2016-03-25)
+-------------------
+
+- Refs #69147 added cron view to update ldap users
+  configure the cron like
+  0 1 * * * root /usr/bin/wget -O /dev/null -q http://localhost:8080/Plone/cron_update_vocabularies
+  [lucas]
+
+1.59.5 (2016-03-23)
+-------------------
+- #70767 User Ralph Harthan appears twice in the expert list
+- #70740 Error pressing request comments button.
+
+1.59.4 (2016-03-16)
+-------------------
+
+- Refs #70377 Anon users doesn't have a group [nituacor]
+
+
+1.59.3 (2016-03-11)
+-------------------
+
+- Brown bag release [erral]
+
+
+1.59.2 (2016-03-11)
+-------------------
+
+- Fix indexing method [erral]
+
+- Cache the methods to get user fullnames [erral]
+
+
+1.59.1 (2016-02-08)
+-------------------
+
+- Nothing changed yet.
+
+
+1.59 (2016-02-08)
+-----------------
+
+- Nothing changed yet.
+
+
+1.58 (2016-02-08)
+-----------------
+
+- Nothing changed yet.
+
+
+1.57 (2016-02-03)
+-----------------
+
+- Nothing changed yet.
+
+
+1.56 (2016-02-02)
+-----------------
+
+- Nothing changed yet.
+
+
+1.54 (2015-11-20)
+-----------------
+
+- Nothing changed yet.
+
+
+1.53 (2015-11-20)
+-----------------
+
+- Nothing changed yet.
+
+
+1.52 (2015-11-19)
+-----------------
+
+- Nothing changed yet.
+
+
+1.51 (2015-11-19)
+-----------------
+
+- Add new filters to overview list
+
+
+1.50 (2015-11-18)
+-----------------
+
+- Nothing changed yet.
+
+
+1.49 (2015-11-18)
+-----------------
+
+- add highlight edition for conclusions in step2. Refs #30764 [MikelL]
+- Task #30779: Please add 'unresolved' [MikelS]
+- Bug #30778: "Go to conclusion" locks observations
+- Open observations in new tab
+
+
+1.48 (2015-11-16)
+-----------------
+
+- Bug #30712: Question was editet, time unchanged
+
+
+1.47 (2015-11-16)
+-----------------
+
+- Bug #30709: History shows wrong history
+- Task #30705: Visibility of real names
+
+
+1.46.1 (2015-11-16)
+-------------------
+
+- Fix typo
+
+
+1.46 (2015-11-03)
+-----------------
+
+- Bug #30304: Lead reviewer cannot access observations
+- Bug #30303: Update Observation History
+- Bug #30301: Update highlights and conclusion for step2
+
+
+1.45.2 (2015-11-02)
+-------------------
+
+- Fix finalised observation view
+
+
+1.45.1 (2015-11-01)
+-------------------
+
+- Add missing metadata
+
+
+1.45 (2015-11-01)
+-----------------
+
+- Task #30190: Add reason for conclusion and change text
+- Update statistics
+- Paginate 'My view'
+- Export statistics to excel
+
+
+1.44.1 (2015-10-20)
+-------------------
+
+- Bug fixing
+
+
+1.44 (2015-10-20)
+-----------------
+
+- Avoid creation of two or more draft answers
+- Bug #29716: „An internal server error occurred. Please try again later“
+
+
+1.43 (2015-10-19)
+-----------------
+
+- Higher default number of observations in list
+
+
+1.42.2 (2015-10-15)
+-------------------
+
+- Nothing changed yet.
+
+
+1.42.1 (2015-10-15)
+-------------------
+
+- Nothing changed yet.
+
+
+1.42 (2015-10-14)
+-----------------
+
+- Task #29664: please add another to the CRF categories
+- Bug #29308: Observation look locked. Remove validation that allows only the answer author to submit it
+- Task #29635: missing fuel type: peat
+
+
+1.41 (2015-10-01)
+-----------------
+
+- Task #29238: Change colour of a button
+- Task #29229: Please change misleading guidance
+- Task #29223: Change visibility of draft observations
+- Task #29235: Please change colour of button
+
+
+1.40 (2015-09-22)
+-----------------
+
+- Missing fuel type [MikelS]
+
+
+1.39 (2015-09-21)
+-----------------
+
+- Create a new tab for "Finalised observations" to speed up the "My view" load time
+- Cache for an hour the LDAP requests (counterparts, member state experts and conclusion counterparts)
+
+
+1.38.1 (2015-09-18)
+-------------------
+
+- Nothing changed yet.
+
+
+1.38 (2015-09-18)
+-----------------
+
+- Paginate observation list to improve performance
+
+
+1.37 (2015-09-17)
+-----------------
+
+- Task #28813: Add reason for conclusion [MikelS]
+- Typos [MikelS]
+
+
+1.36 (2015-09-10)
+-----------------
+
+- Bug  #28615: CRF code missing [MikelS]
+
+
+1.35.1 (2015-09-01)
+-------------------
+
+- Log error [MikelS]
+
+
+1.35 (2015-08-31)
+-----------------
+
+- Bugs fixing [MikelS]
+
+
+1.34 (2015-08-27)
+-----------------
+
+- Bugs fixing [MikelS]
+
+
+1.33 (2015-08-27)
+-----------------
+
+- Bugs fixing [MikelS]
+
+
+1.32.1 (2015-08-26)
+-------------------
+
+- Nothing changed yet.
+
+
+1.32 (2015-08-26)
+-----------------
+
+- Nothing changed yet.
+
+
+1.31 (2015-08-26)
+-----------------
+
+- Bugs fixing [MikelS]
+
+
+1.30.1 (2015-07-08)
+-------------------
+
+- Bugs fixing [MikelS]
+
+
+1.30 (2015-07-06)
+-----------------
+
+- Bugs fixing [MikelS]
+
+
+1.29 (2015-06-16)
+-----------------
+
+- Fix vocabulary typos [MikelS]
+
+- Ticket #22547: Add "Go to conclusions" transtion from phase2-draft [MikelS]
+
+- Ticket #22167: Align key categories [MikelS]
+
+- Ticket #26252: Tool-tip info icon [MikelS]
+
+- Tickets #22538 & #22546: Fix counterparts permissions [MikelS]
+
+- Ticket #26234: Improve home layout [MikelS]
+
+
+1.28 (2015-05-07)
+-----------------
+
+- Ticket #24546: Structure better Observations details
+
+- Ticket #24556: SR, RE, LR, QE, MSC and MSE do not see their comments after discussion
+
+
+1.27.1 (2015-02-17)
+-------------------
+
+- Helper methods to be used in tests [erral]
+
+- Clean whitespace [erral]
+
+
+1.27 (2015-01-19)
+-----------------
+
+- use correct parameter for request [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- show Sector Expert or Review Expert depending when the question was created. Fixes #22547 [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- reindex the my view index on upgrade [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- change label for observation closing actor. Fixes #22544 [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- remove duplicated observations in myview. Fixes #22541+ [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- upgrade step [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- add tooltips for end of phase1 actions. Fixes #22539 [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- show tooltips when available [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- force reindex of observation after transition change. Refs #22217 [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- show key category in the correct place. Fixes #22262 [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+- show modification date of the observation in my view. Fixes #22532 [Mikel Larreategi <mlarreategi@codesyntax.com>]
+
+
+
+1.26.5 (2015-01-12)
+-------------------
+
+- allow inherited roles to make MSCoordinators' queries work. Fixes #22374 [erral]
+
+
+1.26.4 (2015-01-05)
+-------------------
+
+- Bug fixing to avoid cataloging errors when creating the observation [erral]
+
+
+1.26.3 (2014-12-23)
+-------------------
+
+- Enable new inbox view [erral]
+
+
+1.26.2 (2014-12-23)
+-------------------
+
+- Another way to create the inbox view [erral]
+
+
+1.26.1 (2014-12-22)
+-------------------
+
+- Make inboxview cacheable [erral]
+
+
+1.26 (2014-12-22)
+-----------------
+
+- Change local role assignment from dynamic adapter to manual
+  local role assignment on observation creation [erral]
+
+- Improve inbox and overview list [erral]
+
+
+
+1.25 (2014-12-19)
+-----------------
+
+- Fix edit history [erral]
+
+- Allow MS Experts to see conclusions [erral]
+
+- Allow 2nd step reviewers to see 1st step observations [erral]
+
+- Show notification names in subscription configuration screen [erral]
+
+
+1.24 (2014-12-18)
+-----------------
+
+- Worfklow fixes [erral]
+
+- My view improvements [erral]
+
+- Highlights editable through the conclusion edit form [erral]
+
+
+1.23.6 (2014-12-16)
+-------------------
+
+- Bug fixes [erral]
+
+
+1.23.5 (2014-12-16)
+-------------------
+
+- Nothing changed yet.
+
+
+1.23.4 (2014-12-16)
+-------------------
+
+- Bug fixes [erral]
+
+
+1.23.3 (2014-12-15)
+-------------------
+
+- Updated CRF Code list and LDAP role matching [erral]
+
+
+1.23.2 (2014-12-12)
+-------------------
+
+- Use directly observation text, we are not using the HTML field now [erral]
+
+
+1.23.1 (2014-12-12)
+-------------------
+
+- Change some labels in the tool [erral]
+
+1.23 (2014-12-11)
+-----------------
+
+- Metadata changes [erral]
+
+- Do not allow to delete questions/answers after going through comments process [erral]
+
+- Enforce going through the CounterPart each time a question is created [erral]
+
+
+1.22.1 (2014-12-10)
+-------------------
+
+- Fix bugs [erral]
+
+
+1.22 (2014-12-10)
+-----------------
+
+- Bug fixes [erral] [MikelS]
+
+
+1.21 (2014-11-28)
+-----------------
+
+- Notification subscribe/unsubscribe view [erral]
+
+- Fixed some tickets [MikelS]
+
+
+1.20 (2014-11-25)
+-----------------
+
+- Enable notifications [erral]
+
+- Fix question and answer deleting issues [erral]
+
+- Improve 'myview' [MikelS]
+
+
+1.19.4 (2014-10-30)
+-------------------
+
+- New styles for overview list, 'My View' and observation [MikelS]
+
+
+1.19.3 (2014-10-29)
+-------------------
+
+- Bug fixes [MikelS].
+
+
+1.19.2 (2014-10-29)
+-------------------
+
+- Update workflow history and progress with new statuses [MikelS]
+
+
+1.19.1 (2014-10-28)
+-------------------
+
+- Do not show observations in "My View" for admins [MikelS]
+
+
+1.19 (2014-10-28)
+-----------------
+- New indexes for My View [erral]
+- Add filters to overview list [MikelS]
+- Update "My view" for different roles [MikelS]
+
+1.18 (2014-10-17)
+----------------------
+
+- Implementation of phase2 conclusions workflow [erral]
+
+- Finish Observation has no reason, just a comment box [erral]
+
+- Different reasons for phase2 conclusions [erral]
+
+
+1.17 (2014-10-16)
+-------------------
+
+- Change on permissions settings of the workflow [erral]
+
+- Conclusions for phase2 (initial) [erral]
+
+- Reasoning of finalisation [erral]
+
+
+1.16 (2014-10-15)
+--------------------
+
+- Simplify CRF category/code/sector metadata [erral]
+
+- Remove confidential tag from files [erral]
+
+- Move ghg_estimations field to conclusions [erral]
+
+- Allow several gases to be selected in an observation [erral]
+
+1.15 (2014-10-14)
+---------------------
+
+- Phase 2 workflow fixes [erral]
+
+- Action names [erral]
+
+- Visualization improvements [msantamaria]
+
+
+1.14 (2014-09-10)
+--------------------
+- internal-release
+
+- Phase 2 workflow include [erral]
+
+1.13.1 (2014-09-02)
+-----------------------
+
+- Missing profile upgrade [erral]
+
+1.13 (2014-09-02)
+------------------
+
+- Several bugfixes [erral]
+
+1.12 (2014-09-01)
+-----------------
+
+- Fix Finish Observation actions [erral]
+
+1.11 (2014-08-29)
+------------------
+
+- Add link to go to phase 2 [erral]
+
+1.10.3 (2014-08-25)
+-------------------
+
+- Fix stats view [erral]
+
+
+1.10.2 (2014-08-25)
+-------------------
+
+- Fix upgrade step [erral]
+
+1.10.1 (2014-08-25)
+---------------------
+
+- Fix upgrade step [erral]
+
+1.10 (2014-08-25)
+------------------
+
+- Users to be on the dropdown list of the conclusion reviers are the same as the ones to be in the counterpart selection form [erral]
+
+- First version of Secretariat Statistics [erral]
+
+- MSAuthorities can copy the files from the comments of MSExperts to the answer [erral]
+
+- MSExperts can add files to their comments [erral]
+
+
+1.9 (2014-08-20)
+----------------
+
+- Provide a reason selection and comment box for requesting finishing observation and denying finishing observation [erral]
+
+- Added reason selection to conclusions [erral]
+
+- Fix tickets #20623, #20620, #20612, #20636, #20617, #20599, #20645, #20642, #20629, #20624 [MikelS]
+
+- Every RE and LR can be counterparts [MikelS]
+
+- Observation cannot be sent to LR without requestion comments form counterparts [MikelS]
+
+
+1.8 (2014-08-07)
+----------------
+
+- Nothing changed yet.
+
+
+1.7 (2014-08-07)
+----------------
+
+- Update workflow and labeling according to decision tree [MikelS]
+
+
+
+1.6 (2014-07-16)
+---------------------
+
+- Changed workflow to have MSAuthorities to answer the questions [erral]
+
+- Provide discussion box for MSAuthorities and MSExperts [erral]
+
+- Added conclusion drafting and discussion workflow [erral]
+
+- Improved button and workflow labeling [erral]
+
+
+1.5 (2014-07-02)
+-----------------------
+
+- Change notification handling: do it on group-membership basis [erral]
+
+- Fix permission checks to allow file upload [erral]
+
+- Visualization improvements [msantamaria]
+
+- Workflow changes to modify the counterpart review process [erral]
+
+- Workflow history is shown to see the review process [msantamaria]
+
+1.4 (2014-05-23)
+----------------------
+
+- Workflow changes [erral]
+
+- New content-type to save observations in a review process [erral]
+
+
+1.3 (2014-05-07)
+---------------------
+
+- Changes in Workflows [erral]
+
+
+1.2 (2014-04-28)
+-----------------------
+
+- Visualization changes
+  [msantamaria]
+
+- Add content-type: electronic files in comment and answers [erral]
+
+1.1.1 (2014-04-11)
+---------------------
+
+- Add changelog for previous version [erral]
+
+
+1.1 (2014-04-11)
+------------------
+
+- Fix vocabularies
+  [erral]
+
+- Generate id and title automatically
+  [erral]
+
+- New fields for observations
+  [erral]
+
+- Updated security settings for workflows
+  [erral]
+
+
+1.0.1 (2014-04-07)
+------------------
+
+- Fix question permission-listing
+  [erral]
+
+1.0 (2014-04-04)
+-------------------
+
+- Initial release
+  [erral]

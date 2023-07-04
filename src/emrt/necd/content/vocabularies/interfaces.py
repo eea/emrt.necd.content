@@ -6,7 +6,7 @@ from zope.interface import Interface
 
 from plone import schema
 
-from emrt.necd.content import MessageFactory as _
+from emrt.necd.content import _
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), "data")
 

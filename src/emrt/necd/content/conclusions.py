@@ -36,7 +36,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 
-from emrt.necd.content import MessageFactory as _
+from emrt.necd.content import _
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 

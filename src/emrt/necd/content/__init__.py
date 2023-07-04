@@ -2,5 +2,4 @@
 """Init and utils."""
 from zope.i18nmessageid import MessageFactory
 
-
-_ = MessageFactory('emrt.necd.content')
+_ = MessageFactory("emrt.necd.content")

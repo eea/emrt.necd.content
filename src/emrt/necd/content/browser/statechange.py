@@ -20,7 +20,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from plone import api
 
-from emrt.necd.content import MessageFactory as _
+from emrt.necd.content import _
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSEXPERT
 from emrt.necd.content.constants import LDAP_SECTOREXP

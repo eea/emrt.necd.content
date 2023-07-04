@@ -4,7 +4,7 @@ from z3c.form.interfaces import IWidget
 import zope
 from zope.component import adapter
 
-from emrt.necd.content import MessageFactory as _
+from emrt.necd.content import _
 
 symbols = {
     "decimal": ",",

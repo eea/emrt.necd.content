@@ -27,7 +27,7 @@ from plone.formwidget.multifile import MultiFileFieldWidget
 from plone.namedfile.field import NamedBlobFile
 from plone.z3cform.fieldsets import extensible
 
-from emrt.necd.content import MessageFactory as _
+from emrt.necd.content import _
 from emrt.necd.content.comment import IComment as ICommentContent
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 
