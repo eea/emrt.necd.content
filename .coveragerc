@@ -1,0 +1,6 @@
+[report]
+include =
+    src/emrt.necd/*
+omit =
+    */test*
+    */upgrades/*

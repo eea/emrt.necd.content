@@ -1,0 +1,94 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
+  i18n_domain="plone">
+
+  <configure zcml:condition="installed AccessControl.security">
+
+    <permission
+        id="emrt.necd.content.AddConclusions"
+        title="emrt.necd.content: Add Conclusions"
+        />
+
+    <permission
+      id="emrt.necd.content.AddReviewFolder"
+      title="emrt.necd.content: Add ReviewFolder"
+      />
+
+
+    <permission
+      id="emrt.necd.content.AddNECDFile"
+      title="emrt.necd.content: Add NECDFile"
+      />
+
+
+    <permission
+      id="emrt.necd.content.AddCommentAnswer"
+      title="emrt.necd.content: Add CommentAnswer"
+      />
+
+    <permission
+      id="emrt.necd.content.EditCommentAnswer"
+      title="emrt.necd.content: Edit CommentAnswer"
+      />
+
+
+    <permission
+      id="emrt.necd.content.AddComment"
+      title="emrt.necd.content: Add Comment"
+      />
+
+    <permission
+      id="emrt.necd.content.EditComment"
+      title="emrt.necd.content: Edit Comment"
+      />
+
+    <permission
+      id="emrt.necd.content.AddQuestion"
+      title="emrt.necd.content: Add Question"
+      />
+
+    <permission
+      id="emrt.necd.content.ViewCommentDiscussion"
+      title="emrt.necd.content: View Comment Discussion"
+      />
+
+    <permission
+      id="emrt.necd.content.ViewAnswerDiscussion"
+      title="emrt.necd.content: View Answer Discussion"
+      />
+
+    <permission
+      id="emrt.necd.content.ViewConclusionDiscussion"
+      title="emrt.necd.content: View Conclusion Discussion"
+      />
+
+    <permission
+      id="emrt.necd.content.ViewObservationRedraftReason"
+      title="emrt.necd.content: View Observation Redraft Reason"
+      />
+
+    <permission
+      id="emrt.necd.content.AddObservation"
+      title="emrt.necd.content: Add Observation"
+      />
+
+    <permission
+      id="emrt.necd.content.ExportObservations"
+      title="emrt.necd.content: Export Observations"
+      />
+
+    <permission
+      id="emrt.necd.content.ExportAnObservation"
+      title="emrt.necd.content: Export an Observation"
+      />
+
+    <permission
+      id="emrt.necd.content.Warmup"
+      title="emrt.necd.content: Warmup"
+      />
+
+
+  </configure>
+
+</configure>
