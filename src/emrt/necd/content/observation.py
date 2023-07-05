@@ -145,25 +145,6 @@ def check_pollutants(value):
 
     return True
 
-
-def check_country(value):
-    user = api.user.get_current()
-    groups = user.getGroups()
-    valid = False
-    for group in groups:
-        if group.startswith("{}-".format(LDAP_SECTOREXP)) and group.endswith(
-            "-%s" % value
-        ):
-            valid = True
-
-    if not valid:
-        raise Invalid(
-            "You are not allowed to add observations for this country"
-        )
-
-    return True
-
-
 def inventory_year(value):
     """Inventory year can be a given year (2014), a range of years (2012-2014)
     or a list of the years (2012, 2014, 2016).

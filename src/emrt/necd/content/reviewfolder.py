@@ -5,8 +5,9 @@ from datetime import datetime
 from functools import partial
 from io import StringIO
 from operator import itemgetter
-from typing import List, cast
+from typing import List
 from typing import Tuple
+from typing import cast
 
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
@@ -16,7 +17,7 @@ from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
-from Products.CMFPlone.CatalogTool import CatalogTool
+
 from Acquisition import aq_inner
 from DateTime import DateTime
 from zope import schema
@@ -29,22 +30,23 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
-from plone.base.utils import safe_text
+from Products.CMFPlone.CatalogTool import CatalogTool
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone import api
 from plone.app.content.browser.tableview import Table
 from plone.autoform import directives
+from plone.base.utils import safe_text
 from plone.batching import Batch
 from plone.dexterity.browser import add
 from plone.dexterity.content import Container
+from plone.memoize.ram import cache
 from plone.memoize.view import memoize
 from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 from plone.z3cform.layout import wrap_form
 
-from plone.memoize.ram import cache
 from emrt.necd.content.constants import LDAP_LEADREVIEW
 from emrt.necd.content.constants import LDAP_MSA
 from emrt.necd.content.constants import LDAP_MSEXPERT
@@ -101,7 +103,7 @@ def get_vocabulary_items(
 
 def get_necd_vocabulary_items(context: "ReviewFolder", name: str):
     """Helper function to avoid using the whole dotted name.
-    
+
     Prepends emrt.necd.content to `name`.
     """
     return get_vocabulary_items(context, f"emrt.necd.content.{name}")
@@ -1491,6 +1493,7 @@ class FinalisedFolderView(BrowserView):
 
     def get_sectors(self):
         return get_necd_vocabulary_items(self.context, "ghg_source_sectors")
+
 
 class AddForm(add.DefaultAddForm):
     def create(self, *args, **kwargs):
