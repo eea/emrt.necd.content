@@ -22,6 +22,15 @@ class EmrtNecdContentLayer(PloneSandboxLayer):
         self.loadZCML(package=plone.app.dexterity)
         import plone.restapi
         self.loadZCML(package=plone.restapi)
+        import pas.plugins.ldap
+        self.loadZCML(package=pas.plugins.ldap)
+        self.loadZCML(package=pas.plugins.ldap.plonecontrolpanel)
+        import collective.z3cform.datagridfield
+        self.loadZCML(package=collective.z3cform.datagridfield)
+        import collective.deletepermission
+        self.loadZCML(package=collective.deletepermission)
+        import yafowil.plone
+        self.loadZCML(package=yafowil.plone)
         self.loadZCML(package=emrt.necd.content)
 
     def setUpPloneSite(self, portal):

@@ -21,6 +21,7 @@ parts/
 dist/*
 test.plone_addon/
 var/
+__pycache__
 # files
 .installed.cfg
 .mr.developer.cfg
