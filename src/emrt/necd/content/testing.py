@@ -9,34 +9,40 @@ from Products.CMFPlone.Portal import PloneSite
 from plone import api
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import TEST_USER_ID
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
-from plone.testing import z2
-from plone.app.testing import helpers
-from emrt.necd.content.setuphandlers import LDAP_PLUGIN_ID
 from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
+from plone.testing import z2
 
 import emrt.necd.content
+from emrt.necd.content import constants as C
+from emrt.necd.content.setuphandlers import LDAP_PLUGIN_ID
 
 
 @dataclass
 class TestUser:
+    """Keeps user information."""
     name: str
     password: str
     email: str
     roles: List[str]
 
 
+def pwgen():
+    """Generate a random 8 character password."""
+    return uuid.uuid4().hex[:8]
+
+
 class USERS(Enum):
-    SE = TestUser(
-        "user_se",
-        uuid.uuid4().hex[:8],
-        "user-se@eaudeweb.ro",
-        ["SectorExpert"],
-    )
+    """The application users. For easy reference."""
+    SE = TestUser("user_se", pwgen(), "user-se@eaudeweb.ro", [C.ROLE_SE])
+    MSE = TestUser("user_mse", pwgen(), "user-mse@eaudeweb.ro", [C.ROLE_MSE])
+    MSA = TestUser("user_msa", pwgen(), "user-msa@eaudeweb.ro", [C.ROLE_MSA])
+    LR = TestUser("user_lr", pwgen(), "user-lr@eaudeweb.ro", [C.ROLE_LR])
+    CP = TestUser("user_cp", pwgen(), "user-cp@eaudeweb.ro", [C.ROLE_CP])
 
 
 class EmrtNecdContentLayer(PloneSandboxLayer):
