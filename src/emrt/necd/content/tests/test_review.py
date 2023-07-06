@@ -8,6 +8,7 @@ from zope.component import getMultiAdapter
 
 from plone import api
 from plone.app.testing import TEST_USER_ID
+from plone.app.testing import helpers
 from plone.app.testing import setRoles
 
 from emrt.necd.content.comment import EditForm as CommentEditForm
@@ -21,7 +22,6 @@ from emrt.necd.content.testing import (  # noqa: E501
     EMRT_NECD_CONTENT_INTEGRATION_TESTING,
 )
 from emrt.necd.content.testing import USERS
-from emrt.necd.content.testing import helpers
 
 TEST_USER_EMAIL = "test-user@eaudeweb.ro"
 
@@ -162,3 +162,25 @@ class TestSetup(unittest.TestCase):
         content: str = self.get_view(observation, ObservationView)()
         self.assertFalse("Create answer" in content)
         self.assertTrue("Send Question for Approval" in content)
+
+    def test_question_workflow(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+
+        # request approval
+        api.content.transition(obj=question, transition="send-to-lr")
+        self.assertTrue("Recall Question" in self.get_view(observation, ObservationView)())
+
+        # LR approves
+        helpers.login(self.portal, USERS.LR.value.name)
+        comment = question.getFirstComment()
+        comment.restrictedTraverse("approve-question")()
+
+        # SE Doesn't see "Recall question"
+        helpers.login(self.portal, USERS.SE.value.name)
+        self.assertFalse("Recall Question" in self.get_view(observation, ObservationView)())
+
+        # SE Doesn't see "Recall question"
+        helpers.login(self.portal, USERS.SE.value.name)
+        self.assertFalse("Recall Question" in self.get_view(observation, ObservationView)())

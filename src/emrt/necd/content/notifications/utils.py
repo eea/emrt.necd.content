@@ -95,9 +95,9 @@ def extract_emails(users: List[MemberAdapter]):
 def get_ldap_group_member_ids(context, groupname):
     ldap_wrapper = getUtility(IGetLDAPWrapper)(context)
     ldap_base = ldap_wrapper(LDAP_BASE_DN)
-    acl = api.portal.get()["acl_users"]["pasldap"]
+    acl = api.portal.get()["acl_users"].get("pasldap")
 
-    if groupname.startswith(ldap_base):
+    if acl and groupname.startswith(ldap_base):
         with ldap_utils.get_query_utility()(acl) as q_ldap:
             ldap_group = q_ldap.query_groups(
                 f"(cn={groupname})", ("uniqueMember",)

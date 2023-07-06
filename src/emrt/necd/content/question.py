@@ -14,6 +14,7 @@ from Acquisition.interfaces import IAcquirer
 from zope.component import createObject
 from zope.component import getUtility
 from zope.interface import Invalid
+from zope.interface import alsoProvides
 from zope.interface import implementer
 
 from Products.Five import BrowserView
@@ -24,6 +25,7 @@ from plone.dexterity.browser import add
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.namedfile.interfaces import IImageScaleTraversable
+from plone.protect.interfaces import IDisableCSRFProtection
 from plone.supermodel import model
 
 from emrt.necd.content import _
@@ -411,6 +413,7 @@ class DeleteLastAnswer(BrowserView):
 
 class ApproveAndSendView(BrowserView):
     def render(self):
+        alsoProvides(self.request, IDisableCSRFProtection)
         question = self.context.aq_parent
         roles = api.user.get_roles(obj=question)
         is_lr = ROLE_LR in roles or "Manager" in roles
