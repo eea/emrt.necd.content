@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
 import unittest
-from typing import TypeVar, cast
+from typing import TypeVar
+from typing import cast
 
 from zope.component import getMultiAdapter
 
@@ -9,18 +10,20 @@ from plone import api
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 
+from emrt.necd.content.comment import EditForm as CommentEditForm
 from emrt.necd.content.observation import AddView as ObservationAddView
 from emrt.necd.content.observation import Observation
 from emrt.necd.content.observation import ObservationView
 from emrt.necd.content.question import AddView as QuestionAddView
-from emrt.necd.content.comment import Comment
-from emrt.necd.content.comment import EditForm as CommentEditForm
 from emrt.necd.content.question import Question
 from emrt.necd.content.reviewfolder import ReviewFolder
 from emrt.necd.content.testing import (  # noqa: E501
     EMRT_NECD_CONTENT_INTEGRATION_TESTING,
 )
+from emrt.necd.content.testing import USERS
+from emrt.necd.content.testing import helpers
 
+TEST_USER_EMAIL = "test-user@eaudeweb.ro"
 
 T = TypeVar("T")
 
@@ -33,6 +36,9 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
+        self.mailhost = self.portal.MailHost
+        self.portal.email_from_address = "test-portal@devel.enisa.edw.ro"
+        api.user.get_current().setMemberProperties({"email": TEST_USER_EMAIL})
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.request = self.layer["request"]
         self.tool: ReviewFolder = api.content.create(
@@ -109,10 +115,7 @@ class TestSetup(unittest.TestCase):
         observation = cast(Observation, form.createAndAdd(data=form_data))
         self.assertEqual(observation.getId(), "AT-1A1-2023-0001")
         observation = cast(Observation, self.tool[observation.getId()])
-        view = cast(
-            ObservationView,
-            getMultiAdapter((observation, self.request), name="view"),
-        )
+        view = self.get_view(observation, ObservationView)
         content = cast(str, view())
         self.assertTrue("Austria" in content)
         self.assertTrue("1A1 Energy production" in content)
@@ -135,7 +138,7 @@ class TestSetup(unittest.TestCase):
         self.create_question(observation, "question text")
         question = observation.get_question()
         self.assertIsInstance(question, Question)
-        view = self.get_view(observation, QuestionAddView)
+        view = self.get_view(observation, ObservationView)
         content = view()
         self.assertTrue("question text" in content)
 
@@ -146,5 +149,16 @@ class TestSetup(unittest.TestCase):
         edit_form = self.get_view(comment, CommentEditForm, name="edit")
         _: str = edit_form()  # needed to initialize the form
         edit_form.applyChanges({"text": "question text - modified"})
-        content = self.get_view(observation, QuestionAddView)()
+        content = self.get_view(observation, ObservationView)()
         self.assertTrue("question text - modified" in content)
+
+    def test_se_observation_view(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+
+        question = self.create_question(observation, "question text")
+        self.assertIn(USERS.SE.value.name, question.creators)
+
+        content: str = self.get_view(observation, ObservationView)()
+        self.assertFalse("Create answer" in content)
+        self.assertTrue("Send Question for Approval" in content)
