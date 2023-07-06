@@ -121,6 +121,7 @@ class AddForm(add.DefaultAddForm):
 
 
 class AddView(add.DefaultAddView):
+    form_instance: AddForm
     form = AddForm
 
 

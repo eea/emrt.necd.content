@@ -17,6 +17,8 @@ from emrt.necd.content.observation import Observation
 from emrt.necd.content.observation import ObservationView
 from emrt.necd.content.question import AddView as QuestionAddView
 from emrt.necd.content.question import Question
+from emrt.necd.content.commentanswer import CommentAnswer
+from emrt.necd.content.commentanswer import AddView as CommentAnswerAddView
 from emrt.necd.content.reviewfolder import ReviewFolder
 from emrt.necd.content.testing import (  # noqa: E501
     EMRT_NECD_CONTENT_INTEGRATION_TESTING,
@@ -73,6 +75,15 @@ class TestSetup(unittest.TestCase):
         }
         observation = cast(Observation, form.createAndAdd(data=form_data))
         return cast(Observation, self.tool[observation.getId()])
+    
+    def create_answer(self, question: Question, text="") -> CommentAnswer:
+        add_view: CommentAnswerAddView = cast(
+            CommentAnswerAddView,
+            question.restrictedTraverse("++add++CommentAnswer"),
+        )
+        self.request.form["form.widgets.text"] = text
+        answer = cast(CommentAnswer, add_view.form_instance.createAndAdd(data=None))
+        return cast(CommentAnswer, question[answer.getId()])
 
     def create_question(self, observation: Observation, text: str = ""):
         add_view: QuestionAddView = cast(
@@ -184,3 +195,8 @@ class TestSetup(unittest.TestCase):
         # SE Doesn't see "Recall question"
         helpers.login(self.portal, USERS.SE.value.name)
         self.assertFalse("Recall Question" in self.get_view(observation, ObservationView)())
+
+        # MSA Gives answer
+        helpers.login(self.portal, USERS.MSA.value.name)
+        self.create_answer(question, text="The MSA answer")
+        self.assertTrue("The MSA answer" in self.get_view(observation, ObservationView)())
