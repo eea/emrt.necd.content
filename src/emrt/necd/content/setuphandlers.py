@@ -78,8 +78,3 @@ def post_install(context):
 def uninstall(context):
     """Uninstall script"""
     # Do something at the end of the uninstallation of this package.
-
-
-def update_workflow_rolemap(context):
-    portal_workflow = api.portal.get_tool("portal_workflow")
-    portal_workflow.updateRoleMappings()

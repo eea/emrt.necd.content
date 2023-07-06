@@ -47,16 +47,6 @@
       name="emrt.necd.content-hiddenprofiles"
       />
 
-  <!-- Custom import step for re-applying workflow role mapping -->
-
-  <genericsetup:importStep
-    name="emrt.necd.content.setup.workflow_rolemap"
-    title="Reimport workflow rolemaps."
-    description="Run after re-importing the workflow."
-    handler=".setuphandlers.update_workflow_rolemap"
-    />
-
-
   <!-- TODO: Clean-up below -->
 
   <!-- Comment Extender -->
