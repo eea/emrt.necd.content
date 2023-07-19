@@ -411,18 +411,17 @@
 .tabs>div:first-child{
 	margin-left: 10px;
 }
-.tabs div a{
+.tabs div a {
 	border-bottom: 0px !important;
+	text-decoration: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
-.tabs div a.overview:before{
-	content: "\f06e";
-	font-size: 30px;
+.tabs i {
+	font-size: 22pt;
 	color: black;
-}
-.tabs a.inbox:before{
-	content: "\f01c";
-	font-size: 30px;
-	color: black;
+	margin-right: 0.3em;
 }
 #filters .row{
 	background-color: #F3F3F3;
@@ -670,10 +669,6 @@ span.envelope:before{
 	margin-top: 4px;
 	text-align: center;
 }
-#btnFilter{
-	top: -10px;
-}
-
 .tooltipIconBlue {
 	color: #427597;
 	cursor: help;

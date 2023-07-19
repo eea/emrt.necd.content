@@ -48,40 +48,56 @@
   </div>
 
   <div id="filters">
-    <div class="row" style="padding-top:30px">
-      <div class="cell position-1 width-3 esdLabel">Free text</div>
-      <div class="cell position-11 width-3 esdLabel">Description flags <i class="bi bi-info-circle-fill tooltipIconBlue" title="Key flags highlight important information that is closely related to the item."></i></div>
-    </div>
-    <div class="row">
-      <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
-        <div class="cell position-1 width-10">
-          <tal:params repeat="req_param python:[x for x in req_params if x[0] not in ['freeText', 'highlights']]">
-            <input type="hidden" name="${python:req_param[0]}" value="${python:req_param[1]}" />
-          </tal:params>
-          <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" value="${freeText}" />
-          <div class="row" style="padding-top:30px">
-            <input type="submit" class="standardButton" id="btnFilter" value="Search" />
+    <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
+      <div class="row" style="padding-top:30px">
+        <div class="col-9">
+          <div class="row">
+            <div class="col esdLabel">
+              Free text
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <tal:params repeat="req_param python:[x for x in req_params if x[0] not in ['freeText', 'highlights']]">
+                <input type="hidden" name="${python:req_param[0]}" value="${python:req_param[1]}" />
+              </tal:params>
+              <input type="text" style="width:100%;border-radius:5px;height:21px" name="freeText" value="${freeText}" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" style="padding-top:30px">
+              <input type="submit" class="standardButton" id="btnFilter" value="Search" />
+            </div>
           </div>
         </div>
-        <div class="cell position-11 width-5">
-          <tal:block tal:repeat="item view/get_highlights">
-            <tal:block tal:define="highlights python:[];
-                                   highlights request/highlights | highlights">
-              <input type="checkbox"
-                name="highlights:list"
-                tal:attributes="value python:item[0];
-                                checked python:item[0] in highlights;
-                                id python:item[0]"/>
-              <label tal:attributes="for python:item[0];"
-                tal:content="python:item[1]"></label><br/>
-                <br tal:condition="python:item[0] in ['unece','acc']"/>
-              <div tal:condition="python:item[0] in ['unece','acc']" class="esdLabel">Draft/final conclusion flags</div>
-
-            </tal:block>
-          </tal:block>
+        <div class="col-3">
+          <div class="row">
+            <div class="col esdLabel">
+              Description flags <i class="bi bi-info-circle-fill tooltipIconBlue" title="Key flags highlight important information that is closely related to the item."></i>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <tal:block tal:repeat="item view/get_highlights">
+                <tal:block tal:define="highlights python:[];
+                                       highlights request/highlights | highlights">
+                  <input type="checkbox"
+                    name="highlights:list"
+                    tal:attributes="value python:item[0];
+                                    checked python:item[0] in highlights;
+                                    id python:item[0]"/>
+                  <label tal:attributes="for python:item[0];"
+                    tal:content="python:item[1]"></label><br/>
+                    <br tal:condition="python:item[0] in ['unece','acc']"/>
+                  <div tal:condition="python:item[0] in ['unece','acc']" class="esdLabel">Draft/final conclusion flags</div>
+    
+                </tal:block>
+              </tal:block>
+            </div>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
   <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
     <div class="page-content">
