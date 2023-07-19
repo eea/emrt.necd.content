@@ -261,7 +261,7 @@
                                     year_range python: '(e.g. 2050, 2025, 2030)' if is_projection else '(e.g. 2012, 2009-2012)'">
 
         <div class="row">
-          <div class="col-9">
+          <div class="col-8">
             <div class="row" style="padding-top:25px">
               <div class="col esdLabel">Country</div>
               <div class="col esdLabel">Review year <i class="bi bi-info-circle-fill tooltipIconBlue" title="Review year is the year in which the emissions inventory was submitted and the review was carried out."></i></div>
@@ -410,7 +410,7 @@
               </div>
             </div>
           </div>
-          <div class="col-3">
+          <div class="col-4">
             <div class="row">
               <div class="col esdLabel">Description flags <i class="bi bi-info-circle-fill tooltipIconBlue" title="Key flags highlight important information that is closely related to the item."></i></div>
             </div>

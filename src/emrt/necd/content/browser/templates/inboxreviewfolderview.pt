@@ -50,7 +50,7 @@
   <div id="filters">
     <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
       <div class="row" style="padding-top:30px">
-        <div class="col-9">
+        <div class="col-8">
           <div class="row">
             <div class="col esdLabel">
               Free text
@@ -70,7 +70,7 @@
             </div>
           </div>
         </div>
-        <div class="col-3">
+        <div class="col-4">
           <div class="row">
             <div class="col esdLabel">
               Description flags <i class="bi bi-info-circle-fill tooltipIconBlue" title="Key flags highlight important information that is closely related to the item."></i>
