@@ -260,7 +260,7 @@
                                     is_projection python:context.type=='projection';
                                     year_range python: '(e.g. 2050, 2025, 2030)' if is_projection else '(e.g. 2012, 2009-2012)'">
 
-        <div class="row">
+        <div class="row px-2">
           <div class="col-8">
             <div class="row" style="padding-top:25px">
               <div class="col esdLabel">Country</div>

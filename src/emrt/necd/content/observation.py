@@ -1,7 +1,4 @@
-try:
-    from io import StringIO
-except ImportError:
-    from io import StringIO
+from io import BytesIO
 
 import datetime
 import json
@@ -1800,7 +1797,7 @@ class ExportAsDocView(ObservationMixin):
             "attachment;filename=" + self.context.getId() + ".docx",
         )
 
-        f = StringIO()
+        f = BytesIO()
         document.save(f)
         f.seek(0)
         response.setHeader("Content-Length", len(f.getvalue()))

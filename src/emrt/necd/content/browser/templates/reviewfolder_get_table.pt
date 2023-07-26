@@ -2,7 +2,7 @@
   <p class="discreet">There are no observations to review.</p>
 </div>
 
-<div id="observations" tal:condition="view/batch">
+<div id="observations" class="px-2" tal:condition="view/batch">
   <table
     tal:define="sort_on request/sort_on|string:modified; sort_order request/sort_order|string:reverse;"
     class="observationList listing" id="observations-table" data-sort_on="${sort_on}" data-sort_order="${sort_order}" tal:condition="view/items">

@@ -49,7 +49,7 @@
 
   <div id="filters">
     <form action="./inboxview" method="GET" tal:define="freeText request/freeText|nothing">
-      <div class="row" style="padding-top:30px">
+      <div class="row px-2" style="padding-top:30px">
         <div class="col-8">
           <div class="row">
             <div class="col esdLabel">
@@ -99,7 +99,7 @@
       </div>
     </form>
   </div>
-  <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
+  <div id="observations" class="myview p-2" tal:condition="not:here/@@plone_portal_state/anonymous">
     <div class="page-content">
       <div class="menu">
         <button class="pull-right" style="display: none" id="toggleEmpty">Collapse view</button>

@@ -3,7 +3,7 @@ import time
 from collections import OrderedDict
 from datetime import datetime
 from functools import partial
-from io import StringIO
+from io import BytesIO
 from operator import itemgetter
 from typing import List
 from typing import Tuple
@@ -605,7 +605,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         if errors:
             self.status = self.formErrorsMessage
             return
-
+        
         return self.build_file(data)
 
     @button.buttonAndHandler("Back")
@@ -794,9 +794,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         )
 
     def build_file(self, data):
-        """Export filtered observations in xls."""
+        """Export filtered observations in xlsx."""
         now = datetime.now()
-        filename = "EMRT-observations-{}_{}.xls".format(
+        filename = "EMRT-observations-{}_{}.xlsx".format(
             self.context.getId(), now.strftime("%d-%m-%Y_%H:%M")
         )
         wb = Workbook()
@@ -807,16 +807,19 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             sheet.append(row)
 
         response = self.request.response
-        response.setHeader("content-type", "application/vnc.ms-excel")
         response.setHeader(
-            "Content-disposition",
-            'attachment;filename="{filename}"'.format(filename=filename),
+            "Content-type", 
+            "application/vnd.ms-excel; charset=utf-8",
+        )
+        response.setHeader(
+            "Content-Disposition", 
+            f"attachment; filename={filename}",
         )
 
-        xls = StringIO()
+        xls = BytesIO()
         wb.save(xls)
         xls.seek(0)
-        response.write(xls.read())
+        response.setBody(xls.read(), lock=True)
 
 
 ExportReviewFolderFormView = wrap_form(ExportReviewFolderForm)

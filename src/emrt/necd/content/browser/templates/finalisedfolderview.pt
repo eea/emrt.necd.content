@@ -51,10 +51,10 @@
       </div>
 
       <div id="filters">
-        <div class="row" style="padding-top:30px">
+        <div class="row px-2" style="padding-top:30px">
           <div class="col esdLabel">Free text</div>
         </div>
-        <div class="row">
+        <div class="row px-2">
           <form action="./finalisedfolderview" method="GET" tal:define="freeText request/freeText|nothing">
             <div class="col">
               <tal:params repeat="req_param python:[x for x in req_params if x[0] != 'freeText']">
@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <div id="observations" class="myview" tal:condition="not:here/@@plone_portal_state/anonymous">
+      <div id="observations" class="myview p-2" tal:condition="not:here/@@plone_portal_state/anonymous">
         <div class="page-content">
           <div class="menu">
             <ul class="menu-role">
