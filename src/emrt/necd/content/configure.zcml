@@ -134,7 +134,7 @@
   />
 
   <!--Observation forms and events-->
-  <subscriber
+  <!-- <subscriber
     for="emrt.necd.content.observation.IObservation
          zope.lifecycleevent.interfaces.IObjectAddedEvent"
     handler="emrt.necd.content.observation.set_title_to_observation"
@@ -144,7 +144,7 @@
     for="emrt.necd.content.observation.IObservation
          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
     handler="emrt.necd.content.observation.set_title_to_observation"
-    />
+    /> -->
 
   <adapter
     for="Products.CMFCore.interfaces.IFolderish
@@ -169,7 +169,7 @@
     permission="cmf.ModifyPortalContent"
     />
 
-  <subscriber
+  <!-- <subscriber
     for="emrt.necd.content.observation.IObservation
          Products.CMFCore.interfaces.IActionSucceededEvent"
     handler="emrt.necd.content.subscribers.observation_transition"
@@ -209,7 +209,7 @@
     for="emrt.necd.content.observation.IObservation
          Products.CMFCore.interfaces.IActionSucceededEvent"
     handler="emrt.necd.content.notifications.observation_finalisation_request.notification_lr"
-    />
+    /> -->
 
   <!--Comment forms and events-->
   <adapter
@@ -235,11 +235,11 @@
     permission="emrt.necd.content.EditComment"
     />
 
-  <subscriber
+  <!-- <subscriber
     for="emrt.necd.content.comment.IComment
          zope.lifecycleevent.interfaces.IObjectAddedEvent"
     handler="emrt.necd.content.comment.add_question"
-    />
+    /> -->
 
   <!--Question forms and events-->
   <adapter
@@ -257,7 +257,7 @@
           interface="zope.publisher.interfaces.browser.IBrowserPage"
           />
   </class>
-
+<!-- 
   <subscriber
     for="emrt.necd.content.question.IQuestion
          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
@@ -328,7 +328,7 @@
     for="emrt.necd.content.question.IQuestion
          Products.CMFCore.interfaces.IActionSucceededEvent"
     handler="emrt.necd.content.notifications.answer_acknowledged.notification_ms"
-    />
+    /> -->
 
   <!--NECDFile add form-->
 

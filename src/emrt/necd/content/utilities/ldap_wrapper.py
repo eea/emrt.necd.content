@@ -13,7 +13,7 @@ def ldap_inventory(ldap_const):
 class GetLDAPWrapper(object):
 
     def __call__(self, context):
-        if context.type == 'projection':
+        if getattr(context, "type", "") == 'projection':
             return ldap_projection
         else:
             return ldap_inventory

@@ -126,7 +126,7 @@ def _user_name(fun, self, userid):
 
 
 def _is_projection(context):
-    return context.type == "projection"
+    return getattr(context, "type", "") == "projection"
 
 
 def check_parameter(value):
@@ -219,7 +219,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
     )
 
     reference_year = schema.Int(
-        title="Reference year", required=True, min=1000, max=9999
+        title="Reference year", required=False, min=1000, max=9999
     )
 
     directives.widget("pollutants", CheckBoxFieldWidget)
@@ -270,6 +270,7 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     ms_key_category = schema.Bool(
         title="MS key category",
+        required=False,
     )
 
     directives.widget("parameter", CheckBoxFieldWidget)

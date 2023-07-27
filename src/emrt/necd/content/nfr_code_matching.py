@@ -98,7 +98,7 @@ def nfr_codes(context, field=None):
     # Use "field" if specified, else check for projection context.
     field_name = field or (
         "nfrcodeMapping_projection"
-        if context.type == "projection"
+        if getattr(context, "type", "") == "projection"
         else "nfrcodeMapping"
     )
 

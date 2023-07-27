@@ -115,7 +115,7 @@ class Pollutants(object):
     def __call__(self, context):
         terms = []
 
-        if context.type == "inventory":
+        if getattr(context, "type", "") == "inventory":
             csv_data = get_registry_interface_field_data(
                 INECDVocabularies, "pollutants"
             )
@@ -144,7 +144,7 @@ class Highlight(object):
     def __call__(self, context):
         voc_name = (
             "highlight"
-            if context.type == "inventory"
+            if getattr(context, "type", "") == "inventory"
             else "highlight_projection"
         )
         csv_data = get_registry_interface_field_data(
@@ -158,7 +158,7 @@ class Parameter(object):
     def __call__(self, context):
         terms = []
 
-        if context.type == "inventory":
+        if getattr(context, "type", "") == "inventory":
             csv_data = get_registry_interface_field_data(
                 INECDVocabularies, "parameter"
             )

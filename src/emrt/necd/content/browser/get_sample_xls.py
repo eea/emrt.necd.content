@@ -92,7 +92,7 @@ def adjust_row_heights(worksheet):
 class GetSampleXLS(BrowserView):
 
     def populate_cells(self, sheet):
-        is_projection = self.context.type == 'projection'
+        is_projection = self.getattr(context, "type", "") == 'projection'
         get_vocabulary = partial(_get_vocabulary, self.context)
         get_title = attrgetter('title')
 

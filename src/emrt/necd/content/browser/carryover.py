@@ -247,7 +247,7 @@ def reopen_with_qa(wf, wf_q, wf_c, obj, actor):
 def read_extra_fields(row, row_nr, start_at, context):
     extra_fields = (
         EXTRA_FIELDS_PROJECTION
-        if context.type == "projection"
+        if getattr(context, "type", "") == "projection"
         else EXTRA_FIELDS
     )
     result = dict()
@@ -328,7 +328,7 @@ class CarryOverView(BrowserView):
         return self.index(
             values_for_nfr_code=", ".join(values_for_nfr_code),
             values_for_pollutants=", ".join(values_for_pollutants),
-            is_projection=self.context.type == "projection",
+            is_projection=self.getattr(context, "type", "") == "projection",
         )
 
     def start(self, action, xls):

@@ -161,7 +161,7 @@ def get_highlight_vocabs(context):
 
     vocab_highlight_values = tuple([term.value for term in vocab_highlight])
 
-    is_projection = context.type == "projection"
+    is_projection = getattr(context, "type", "") == "projection"
     highlight_split_item = "ec" if is_projection else "nsms"
 
     # Split highlight to differentiate between
@@ -231,6 +231,7 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
     tableau_statistics_roles = schema.List(
         title="Roles that can access the statistics",
         value_type=schema.Choice(vocabulary="emrt.necd.content.roles"),
+        default=["Manager"],
     )
 
 
@@ -542,7 +543,7 @@ def fields_vocabulary_factory(context):
     user_is_ms = getUtility(IUserIsMS)(context)
     skip_for_user = user_is_ms and not user_is_manager
 
-    if context.type == "projection":
+    if getattr(context, "type", "") == "projection":
         EXPORT_FIELDS["year"] = "Projection Year"
         exclude_fields = EXCLUDE_INVENTORY_FIELDS
     else:

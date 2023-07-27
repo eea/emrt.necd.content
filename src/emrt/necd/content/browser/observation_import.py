@@ -403,7 +403,7 @@ class ObservationXLSImport(BrowserView):
             entries.append(
                 Entry(
                     row, constants,
-                    self.context.type == 'projection',
+                    self.getattr(context, "type", "") == 'projection',
                     get_vocabulary
                 )
             )

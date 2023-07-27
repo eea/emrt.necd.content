@@ -1,3 +1,4 @@
+import logging
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 
@@ -16,10 +17,17 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.constants import ROLE_LR
 
 
+LOG = logging.getLogger(__name__)
+
 def grant_local_roles(context):
     """ add local roles to the groups when adding an observation
     """
-    country = context.country.lower()
+    try:
+        country = context.country.lower()
+    except AttributeError:
+        LOG.info("No country for %s", context.absolute_url())
+        # XXX: if the attribute doesn't exist the import may not yet be complete.
+        return
     sector = context.ghg_source_category_value()
     applies_to = [context]
     parent = aq_parent(aq_inner(context))
