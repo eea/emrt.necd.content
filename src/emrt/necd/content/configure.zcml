@@ -22,6 +22,9 @@
   <include package=".notifications" />
   <include package=".forms" />
 
+  <!-- XXX: Remove after import -->
+  <include package=".contentimport" />
+
   <i18n:registerTranslations directory="locales" />
 
   <genericsetup:registerProfile
@@ -84,8 +87,9 @@
   <adapter name="observation_status" factory=".indexers.observation_status" />
 
   <!--Context form validators-->
-  <adapter factory=".observation.NfrCodeContextValidator" />
-  <adapter factory=".observation.CountryContextValidator" />
+  <!-- XXX: enable after data import -->
+  <!-- <adapter factory=".observation.NfrCodeContextValidator" />
+  <adapter factory=".observation.CountryContextValidator" /> -->
 
   <!-- ReviewFolder custom add form -->
   <adapter

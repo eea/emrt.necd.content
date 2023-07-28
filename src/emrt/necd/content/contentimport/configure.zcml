@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    >
+
+  <browser:page
+      name="import_content"
+      for="zope.interface.Interface"
+      class=".import_content.CustomImportContent"
+      permission="cmf.ManagePortal"
+      layer="emrt.necd.content.interfaces.IEmrtNecdContentLayer"
+      />
+
+</configure>

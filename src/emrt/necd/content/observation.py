@@ -214,7 +214,8 @@ class IObservation(model.Schema, IImageScaleTraversable):
         description="Inventory year can be a given year (2014), a range of "
         "years (2012-2014) or a list of the years "
         "(2012, 2014, 2016)",
-        constraint=inventory_year,
+        # XXX: Remove after import
+        # constraint=inventory_year,
         required=True,
     )
 
@@ -228,7 +229,8 @@ class IObservation(model.Schema, IImageScaleTraversable):
         value_type=schema.Choice(
             vocabulary="emrt.necd.content.pollutants",
         ),
-        constraint=check_pollutants,
+        # XXX: Remove after import
+        # constraint=check_pollutants,
         required=True,
     )
 
@@ -279,7 +281,8 @@ class IObservation(model.Schema, IImageScaleTraversable):
         value_type=schema.Choice(
             vocabulary="emrt.necd.content.parameter",
         ),
-        constraint=check_parameter,
+        # XXX: Remove after import
+        # constraint=check_parameter,
         required=True,
     )
 
@@ -332,10 +335,10 @@ class NfrCodeContextValidator(validator.SimpleFieldValidator):
                     "for this sector category."
                 )
 
-
-validator.WidgetValidatorDiscriminators(
-    NfrCodeContextValidator, field=IObservation["nfr_code"]
-)
+# XXX: Remove after import
+# validator.WidgetValidatorDiscriminators(
+#     NfrCodeContextValidator, field=IObservation["nfr_code"]
+# )
 
 
 class CountryContextValidator(validator.SimpleFieldValidator):
@@ -359,10 +362,10 @@ class CountryContextValidator(validator.SimpleFieldValidator):
                     "You are not allowed to add observations for this country."
                 )
 
-
-validator.WidgetValidatorDiscriminators(
-    CountryContextValidator, field=IObservation["country"]
-)
+# XXX: Remove after import
+# validator.WidgetValidatorDiscriminators(
+#     CountryContextValidator, field=IObservation["country"]
+# )
 
 
 def set_title_to_observation(obj, event):
