@@ -1,6 +1,10 @@
+from six.moves.urllib.parse import unquote
+from six.moves.urllib.parse import urlparse
+
 from zope.schema import getFieldNames
 
 from collective.exportimport.import_content import ImportContent
+from plone import api
 
 from emrt.necd.content.observation import IObservation
 
@@ -28,6 +32,9 @@ class CustomImportContent(ImportContent):
         ):
             item["year"] = str(item["year"])
 
+        elif item_type in ["Comment", "CommentAnswer"] and not item.get("title"):
+            item["title"] = item["id"]
+
         for fieldname in SIMPLE_SETTER_FIELDS.get(item_type, []):
             if fieldname in item:
                 value = item.pop(fieldname)
@@ -37,6 +44,12 @@ class CustomImportContent(ImportContent):
             item["exportimport.simplesetter"] = simple
 
         return item
+
+    def get_parent_as_container(self, item):
+        """Get parent by path, not by UID, there were issues with duplicate UIDs in import data."""
+        parent_url = unquote(item["parent"]["@id"])
+        parent_path = urlparse(parent_url).path
+        return api.content.get(path=parent_path)
 
     def global_obj_hook_before_deserializing(self, obj, item):
         """Hook to modify the created obj before deserializing the data."""
