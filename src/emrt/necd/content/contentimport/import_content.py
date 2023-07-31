@@ -6,11 +6,13 @@ from zope.schema import getFieldNames
 from collective.exportimport.import_content import ImportContent
 from plone import api
 
+from emrt.necd.content.conclusions import IConclusions
 from emrt.necd.content.observation import IObservation
 
 SIMPLE_SETTER_FIELDS = {
     # "ALL": ["some_shared_field"],
     "Observation": getFieldNames(IObservation),
+    "Conclusions": getFieldNames(IConclusions),
 }
 
 
@@ -32,7 +34,9 @@ class CustomImportContent(ImportContent):
         ):
             item["year"] = str(item["year"])
 
-        elif item_type in ["Comment", "CommentAnswer"] and not item.get("title"):
+        elif item_type in ["Comment", "CommentAnswer"] and not item.get(
+            "title"
+        ):
             item["title"] = item["id"]
 
         for fieldname in SIMPLE_SETTER_FIELDS.get(item_type, []):
