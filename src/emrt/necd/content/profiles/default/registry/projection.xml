@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <registry>
+  <records interface="emrt.necd.content.vocabularies.interfaces.INECDVocabularies" />
   <record name="emrt.necd.content.vocabularies.interfaces.INECDVocabularies.projection_pollutants">
     <value purge="True">
       <element key="SO2">SO2</element>
@@ -55,6 +56,7 @@
       </element>
     </value>
   </record>
+  <records interface="emrt.necd.content.nfr_code_matching.INECDSettings" />
   <record name="emrt.necd.content.nfr_code_matching.INECDSettings.nfrcodeMapping_projection">
     <value purge="True">
       <element key="0A">sector8|0A|National total|0A National total (based on fuel sold)</element>
