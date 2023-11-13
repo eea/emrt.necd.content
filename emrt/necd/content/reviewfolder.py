@@ -571,7 +571,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         self.widgets['come_from'].value = '%s?%s' % (
             self.context.absolute_url(), self.request['QUERY_STRING']
         )
-        if not self.is_secretariat():
+        user_is_ms = getUtility(IUserIsMS)(self.context)
+        can_export_qa = user_is_ms or self.is_secretariat() or self.is_lr()
+        if not can_export_qa:
             self.widgets['include_qa'].mode = HIDDEN_MODE
 
     def action(self):
@@ -622,6 +624,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             name for name in form_data.get('exportFields', []) if
             not skip_for_user or name not in EXCLUDE_FIELDS_FOR_MS
         ]
+
+        can_export_qa = user_is_ms or self.is_secretariat() or self.is_lr()
 
         dataset = []
 
@@ -719,7 +723,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             if base_len == 0:
                 base_len = len(row)
 
-            if form_data.get('include_qa') and self.is_secretariat():
+            if form_data.get('include_qa') and can_export_qa:
                 # Include Q&A threads if user is Manager
                 extracted_qa = self.extract_qa(catalog, observation)
                 extracted_qa_len = len(extracted_qa)
