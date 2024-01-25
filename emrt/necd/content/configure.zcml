@@ -111,7 +111,7 @@
   <browser:page
     name="edit"
     for="emrt.necd.content.conclusions.IConclusions"
-    class=".conclusions.EditForm"
+    class=".conclusions.EditView"
     permission="cmf.ModifyPortalContent"
   />
 

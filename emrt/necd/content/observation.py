@@ -1330,6 +1330,9 @@ class ObservationMixin(DefaultView):
     def is_old_qa(self, comment):
         return comment.modification_date.year() < datetime.datetime.now().year
 
+    def get_qa_macro(self):
+        return Z3ViewPageTemplateFile("templates/macro_qa_chat.pt").macros["main"]
+
     def actions(self):
         context = aq_inner(self.context)
         question = self.question()

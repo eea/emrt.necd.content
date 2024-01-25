@@ -1,3 +1,4 @@
+import datetime
 from copy import copy
 from logging import getLogger
 from AccessControl import getSecurityManager
@@ -11,20 +12,24 @@ from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utils import get_vocabulary_value
 from plone import api
+import plone.z3cform.templates
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.interfaces import IDexterityEditForm
 from plone.directives import form
 from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.Five import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from time import time
 from types import ListType
 from types import TupleType
 from types import FloatType
 from z3c.form import field
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from plone.z3cform import layout
 from zope import schema
 from zope.browsermenu.menu import getMenu
 from zope.browserpage.viewpagetemplatefile import (
@@ -32,9 +37,11 @@ from zope.browserpage.viewpagetemplatefile import (
 )
 from zope.component import createObject
 from zope.component import getUtility
+from zope.component import getMultiAdapter
 from zope.globalrequest import getRequest
 from zope.interface import Invalid
 from zope.interface import implementer
+from zope.interface import classImplements
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 
@@ -215,7 +222,13 @@ class AddForm(add.DefaultAddForm):
 
 class AddView(add.DefaultAddView):
     form = AddForm
+    index = ViewPageTemplateFile("./templates/conclusion_layout.pt")
 
+    def __init__(self, *args, **kwargs):
+        super(AddView, self).__init__(*args, **kwargs)
+        self.observation = self.context
+        self.observation_view = getMultiAdapter((self.observation, self.request), name="view")
+        self.is_old_qa = self.observation_view.is_old_qa
 
 class ConclusionsView(BrowserView):
     def render(self):
@@ -307,3 +320,17 @@ class EditForm(edit.DefaultEditForm):
                 'Cannot transition to draft-conclusions: %s!',
                 container.absolute_url(1)
             )
+
+class FormWrapper(layout.FormWrapper):
+
+    index = ViewPageTemplateFile("./templates/conclusion_layout.pt")
+
+    def __init__(self, *args, **kwargs):
+        super(FormWrapper, self).__init__(*args, **kwargs)
+        self.observation = self.context.aq_parent
+        self.observation_view = getMultiAdapter((self.observation, self.request), name="view")
+        self.is_old_qa = self.observation_view.is_old_qa
+
+
+EditView = layout.wrap_form(EditForm, __wrapper_class=FormWrapper)
+classImplements(EditView, IDexterityEditForm)
