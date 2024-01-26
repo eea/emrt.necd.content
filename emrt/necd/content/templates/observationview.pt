@@ -523,11 +523,14 @@
         <div class="finish-denied" tal:condition="context/closing_deny_comments|nothing">
           <dl>
             <dt>Observation Finishing denied</dt>
-            <dd></dd>
-            <tal:block condition="show_internal_notes">
-            <dt>LR comments on finish observation request:</dt>
-            <dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
-            </tal:block>
+            <dd>
+		<tal:block condition="show_internal_notes">
+		    <dl>
+			<dt>LR comments on finish observation request:</dt>
+			<dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
+		    </dl>
+		</tal:block>
+	    </dd>
           </dl>
         </div>
 

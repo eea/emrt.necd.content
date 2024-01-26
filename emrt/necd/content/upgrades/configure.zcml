@@ -745,4 +745,17 @@
   </genericsetup:upgradeSteps>
 
 
+  <genericsetup:upgradeSteps
+    source="2.5.41"
+    destination="2.5.42"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Remove unchanged closing comments from carried-over observations."
+      description="[refs #252799] Text on SE/LR responses to old conclusions is confusing."
+      handler=".evolve2542.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

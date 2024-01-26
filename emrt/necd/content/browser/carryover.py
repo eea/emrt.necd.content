@@ -197,6 +197,11 @@ def clear_conclusion_history(obj, wf_id):
         conclusion.workflow_history[wf_id] = (cur_history[0],)
 
 
+def clear_observation_comments(obj):
+    obj.closing_deny_comments = u""
+    obj.closing_comments = u""
+
+
 def save_extra_fields(obj, extra_fields):
     for fname, fvalue in extra_fields.items():
         if fvalue:
@@ -280,6 +285,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     clear_conclusion_closing_reason(ob)
     clear_conclusion_history(ob, wf_c.getId())
     delete_conclusion_file(ob)
+    clear_observation_comments(ob)
     save_extra_fields(ob, extra_fields)
 
     clear_and_grant_roles(ob)
@@ -305,6 +311,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     clear_conclusion_closing_reason(ob)
     clear_conclusion_history(ob, wf_c.getId())
     delete_conclusion_file(ob)
+    clear_observation_comments(ob)
     save_extra_fields(ob, extra_fields)
 
     prepend_qa(ob, older_obj)

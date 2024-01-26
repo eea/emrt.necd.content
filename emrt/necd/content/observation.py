@@ -1566,7 +1566,10 @@ class ObservationView(ObservationMixin):
                     pass
             if not result:
                 my_path = self.context.getPhysicalPath()
-                my_year = int(re.match(RE_YEAR, my_path[-2]).group())
+                try:
+                    my_year = int(re.match(RE_YEAR, my_path[-2]).group())
+                except AttributeError:
+                    my_year = None
                 catalog = api.portal.get_tool("portal_catalog")
                 found = catalog(
                     portal_type="Observation",
@@ -1577,8 +1580,11 @@ class ObservationView(ObservationMixin):
                 candidates = []
                 for brain in found:
                     their_path = brain.getPath().split("/")
-                    if their_path != my_path:
-                        their_year = int(re.match(RE_YEAR, their_path[-2]).group())
+                    if (their_path != my_path) and my_year is not None:
+                        try:
+                            their_year = int(re.match(RE_YEAR, their_path[-2]).group())
+                        except AttributeError:
+                            continue
                         if my_year > their_year:
                             candidates.append(brain)
                 if candidates:
