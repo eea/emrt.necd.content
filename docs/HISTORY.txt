@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.5.42 (2024-01-29)
+
+- Task #260969 - Text on SE/LR responses to old conclusions is confusing
+- Feature #260972 - Would be good to see Q&A when writing conclusion
+- Feature #260964 - Member States need to have the option to download Questions and Answers (from all previous & current years)
+- Task #260967 - Reviewers need to have the option to download the questions and answers during the review process
+
 2.5.41 (2023-05-31)
 
 - Bug #253484 - Inventory data not exporting correctly
