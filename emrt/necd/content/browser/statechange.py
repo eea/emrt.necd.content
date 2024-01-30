@@ -183,15 +183,29 @@ class DenyFinishObservationReasonForm(Form):
 class RecallObservation(BrowserView):
     def __call__(self):
         state = api.content.get_state(self.context)
-        if state == 'conclusions-lr-denied':
-            self.context.closing_deny_comments = ''
+        transition_id = ""
 
-        with api.env.adopt_roles(['Manager']):
-            return self.context.content_status_modify(
-                workflow_action='recall-lr',
+        if state == "conclusions-lr-denied":
+            self.context.closing_deny_comments = ""
+            transition_id = "recall-lr"
+
+        elif state == "close-requested":
+            self.context.closing_comments = ""
+            observation_history = self.context.workflow_history.get(
+                "esd-review-workflow", []
             )
 
-        return self.response.redirect(self.context.absolute_url())
+            prev_state = observation_history[-2]['review_state']
+
+            if prev_state == "conclusions":
+                transition_id = "recall-se-conclusions"
+            elif prev_state == "conclusions-lr-denied":
+                transition_id = "recall-se-conclusions-lr-denied"
+
+        with api.env.adopt_roles(["Manager"]):
+            api.content.transition(obj=self.context, transition=transition_id)
+
+        return self.request.RESPONSE.redirect(self.context.absolute_url())
 
 
 class AssignFormMixin(BrowserView):

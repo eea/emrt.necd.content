@@ -16,6 +16,9 @@
  <state state_id="close-requested" title="close-requested">
   <exit-transition transition_id="confirm-finishing-observation"/>
   <exit-transition transition_id="deny-finishing-observation"/>
+  <exit-transition transition_id="recall-se"/>
+  <exit-transition transition_id="recall-se-conclusions"/>
+  <exit-transition transition_id="recall-se-conclusions-lr-denied"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -372,8 +375,26 @@
  <transition transition_id="recall-lr" title="Recall denied/confirmed close observation." new_state="close-requested" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/recall-observation?workflow_action=recall-lr" category="workflow" icon="">Recall</action>
   <guard>
-   <guard-role>LeadReviewer</guard-role>
+    <guard-role>LeadReviewer</guard-role>
   </guard>
+ </transition>
+ <transition transition_id="recall-se" title="Recall from finish observation request." new_state="" trigger="USER" before_script="" after_script="">
+   <action url="%(content_url)s/recall-observation?workflow_action=recall-se" category="workflow" icon="">Recall</action>
+   <guard>
+     <guard-role>SectorExpert</guard-role>
+   </guard>
+ </transition>
+ <transition transition_id="recall-se-conclusions" title="Recall from finish observation request." new_state="conclusions" trigger="USER" before_script="" after_script="">
+   <action url="%(content_url)s/recall-observation?workflow_action=recall-se-conclusions" category="necd-hidden-action" icon="">Recall -> conclusions</action>
+   <guard>
+     <guard-role>SectorExpert</guard-role>
+   </guard>
+ </transition>
+ <transition transition_id="recall-se-conclusions-lr-denied" title="Recall from finish observation request." new_state="conclusions-lr-denied" trigger="USER" before_script="" after_script="">
+   <action url="%(content_url)s/recall-observation?workflow_action=recall-se-conclusions-lr-denied" category="necd-hidden-action" icon="">Recall -> conclusions-lr-denied</action>
+   <guard>
+     <guard-role>SectorExpert</guard-role>
+   </guard>
  </transition>
  <transition transition_id="draft-conclusions" title="Go to conclusions" new_state="conclusions" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=draft-conclusions" category="" icon="">Go to conclusions</action>

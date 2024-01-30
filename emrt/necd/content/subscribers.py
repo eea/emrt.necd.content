@@ -102,7 +102,7 @@ def observation_transition(observation, event):
                 api.content.transition(obj=conclusion,
                     transition='publish')
 
-    elif event.action in ['deny-finishing-observation']:
+    elif event.action in ['deny-finishing-observation', 'recall-se-conclusions', 'recall-se-conclusions-lr-denied']:
         with api.env.adopt_roles(roles=['Manager']):
             conclusions = [c for c in observation.values() if c.portal_type == 'Conclusions']
             if conclusions:
