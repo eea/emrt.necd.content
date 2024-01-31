@@ -40,6 +40,7 @@ from zope.interface import provider
 from zope.interface import implementer
 from z3c.form.interfaces import HIDDEN_MODE
 from openpyxl import Workbook
+import html2text
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utils import reduce_text
@@ -754,7 +755,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             path=observation.getPath()
         )
 
-        questions = tuple([brain.getObject() for brain in question_brains])
+        questions = (brain.getObject() for brain in question_brains)
 
         comments = tuple(
             itertools.chain(*[
@@ -763,10 +764,22 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         )
 
         mapping = dict(Comment='Question', CommentAnswer='Answer')
+
+        def get_qa_text(context, comment):
+            output_text = ""
+
+            try:
+                comment_html = comment.text.output_relative_to(context)
+                output_text = html2text.html2text(comment_html)
+            except AttributeError:
+                output_text = comment.text
+
+            return safe_unicode(output_text)
+
         return tuple([
             u'{}: {}'.format(
                 mapping[comment.portal_type],
-                safe_unicode(comment.text)
+                get_qa_text(self.context, comment)
             ) for comment in comments
         ])
 

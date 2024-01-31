@@ -71,7 +71,8 @@ from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
-from emrt.necd.content.utils import get_user_sectors
+from emrt.necd.content.utils import render_rich_text_value
+from emrt.necd.content.transform_html_to_docx import parse_html_to_docx
 from emrt.necd.content.utilities import ms_user
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
@@ -1207,6 +1208,7 @@ class AddView(add.DefaultAddView):
 
 
 class ObservationMixin(DefaultView):
+    qa_macros_view = Z3ViewPageTemplateFile("templates/macro_qa_chat.pt")
 
     @property
     def user_roles(self):
@@ -1331,7 +1333,13 @@ class ObservationMixin(DefaultView):
         return comment.modification_date.year() < datetime.datetime.now().year
 
     def get_qa_macro(self):
-        return Z3ViewPageTemplateFile("templates/macro_qa_chat.pt").macros["main"]
+        return self.qa_macros_view.macros["main"]
+
+    def render_qa_text(self, comment):
+        return render_rich_text_value(self.context, comment)
+
+    def render_rich_text(self, obj):
+        return render_rich_text_value(self.context, obj)
 
     def actions(self):
         context = aq_inner(self.context)
@@ -1655,7 +1663,7 @@ class ExportAsDocView(ObservationMixin):
             self.context.fuel
         ) if not is_projection else str(self.context.reference_year)
         row_cells[3].paragraphs[0].style = "Table Cell"
-        row_cells[4].text = self.context.year or ''
+        row_cells[4].text = str(self.context.year) or ''
         row_cells[4].paragraphs[0].style = "Table Cell"
         if is_projection:
             row_cells[5].text = self.context.activity_data_type or ''
@@ -1728,7 +1736,11 @@ class ExportAsDocView(ObservationMixin):
             document.add_paragraph(conclusion_2.reason_value())
             document.add_paragraph(
                 'Recommendation/internal note:', style="Label Bold")
-            document.add_paragraph(conclusion_2.text)
+            try:
+                conclusion_html = conclusion_2.text.output_relative_to(self.context)
+                parse_html_to_docx(conclusion_html, document)
+            except AttributeError:
+                document.add_paragraph(conclusion_2.text)
 
         chats = self.get_chat()
         if chats:
@@ -1741,9 +1753,12 @@ class ExportAsDocView(ObservationMixin):
                     sent_info = "Updated on: %s"
 
                 if chat.portal_type.lower() == 'comment':
-                    document.add_paragraph(
-                        '> %s' % self.strip_special_chars(chat.text)
-                    )
+                    try:
+                        comment_html = chat.text.output_relative_to(self.context)
+                        parse_html_to_docx(comment_html, document)
+                    except AttributeError:
+                        document.add_paragraph("> {}".format(chat.text))
+
                     document.add_paragraph(
                         "From TERTs To Member State \t\t %s" % (
                             sent_info % date.strftime('%d %b %Y, %H:%M CET')
@@ -1751,9 +1766,12 @@ class ExportAsDocView(ObservationMixin):
                     )
 
                 if chat.portal_type.lower() == 'commentanswer':
-                    document.add_paragraph(
-                        '< %s' % self.strip_special_chars(chat.text)
-                    )
+                    try:
+                        answer_html = chat.text.output_relative_to(self.context)
+                        parse_html_to_docx(answer_html, document)
+                    except AttributeError:
+                        document.add_paragraph("> {}".format(chat.text))
+
                     document.add_paragraph(
                         "From Member State To TERTs \t\t %s" % (
                             sent_info % date.strftime('%d %b %Y, %H:%M CET')
@@ -1793,8 +1811,15 @@ class AddQuestionForm(Form):
     @button.buttonAndHandler(u'Save question')
     def create_question(self, action):
         context = aq_inner(self.context)
-        text = self.request.form.get('form.widgets.text', '')
-        if not text.strip():
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
             raise ActionExecutionError(Invalid(u"Question text is empty"))
 
         qs = self.context.get_values_cat('Question')
@@ -1836,9 +1861,18 @@ class AddAnswerForm(Form):
 
     @button.buttonAndHandler(u'Save answer')
     def add_answer(self, action):
-        text = self.request.form.get('form.widgets.text', '')
-        if not text.strip():
+
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
             raise ActionExecutionError(Invalid(u"Answer text is empty"))
+
         observation = aq_inner(self.context)
         questions = [
             q for q in observation.values()
@@ -1946,12 +1980,17 @@ class AddCommentForm(Form):
             observation.get_question(),
             u'Invalid context'
         )
-        wid_text = self.widgets['text']
 
-        text = value_or_error(
-            wid_text.extract(u'').strip(),
-            u'Question text is empty'
-        )
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Question text is empty"))
 
         if question.get_status() == 'closed':  # fix for question in "draft"
             # transition before adding the comment,

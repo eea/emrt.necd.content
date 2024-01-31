@@ -8,14 +8,11 @@ import concurrent.futures
 import plone.api as api
 
 from zope.component import getUtility
-from zope.interface import Invalid
 from zope.schema.interfaces import IVocabularyFactory
 
-from z3c.form.interfaces import WidgetActionExecutionError
+from plone.app.textfield.value import RichTextValue
 
 from emrt.necd.content.utilities.ldap_wrapper import ldap_inventory
-from emrt.necd.content.vocabularies import get_registry_interface_field_data
-from emrt.necd.content.vocabularies import INECDVocabularies
 
 
 def user_has_ldap_role(ldap_name, user=None, groups=None,
@@ -131,3 +128,10 @@ def reduce_text(text, limit):
 
 def format_date(date, fmt='%d %b %Y, %H:%M CET'):
     return date.strftime(fmt)
+
+
+def render_rich_text_value(context, obj):
+    if isinstance(obj.text, RichTextValue):
+        return obj.text.output_relative_to(context)
+    else:
+        return obj.text

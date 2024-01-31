@@ -1,8 +1,7 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      lang="en"
       metal:use-macro="here/main_template/macros/master"
       i18n:domain="plone">
   <body>
@@ -11,46 +10,38 @@
       <metal:main-macro define-macro="main">
         <h1 class="documentFirstHeading" tal:content="view/label">Title</h1>
         <div id="content-core">
-	  <style>
-	   .pb-ajax > div {
-	     width: auto;
-	   }
-	   /* .conclusion-form-with-qa {
-	      height: 100vh;
-	      } */
-	   .conclusion-qa {
-	     padding: 1em;
-	     margin-bottom: 2em;
-	     background-color: #f3f3f3;
-	     border: solid #cacaca;
-	     border-width: 1px 0 1px 0;
-	     /* height: 50%;
-		overflow-y: scroll; */
-	   }
-	   .conclusion-qa-title {
-	     font-weight: bold;
-	     font-size: 12pt;
-	     text-align: center;
-	     margin-bottom: 1em;
-	   }
-	   /* .conclusion-form {
-	      height: 50%;
-	      } */
-	  </style>
-	  <div class="conclusion-form-with-qa">
-	    <div class="conclusion-qa">
-	      <div class="conclusion-qa-title">Q&A</div>
-	      <metal:qa use-macro="python:view.get_qa_macro()" tal:define="view python:view.observation_view">
-		<metal:can-edit fill-slot="file-edit" />
-		<metal:can-edit fill-slot="question-edit" />
-		<metal:actions fill-slot="actions" />
-	      </metal:qa>		
-	    </div>
- 	    <div class="conclusion-form">
-	      <tal:content tal:replace="structure view/contents"></tal:content>
-	    </div>
-	  </div>
-	</div>
+          <style>
+           .pb-ajax > div {
+             width: auto;
+           }
+           .conclusion-qa {
+             padding: 1em;
+             margin-bottom: 2em;
+             background-color: #f3f3f3;
+             border: solid #cacaca;
+             border-width: 1px 0 1px 0;
+           }
+           .conclusion-qa-title {
+             font-weight: bold;
+             font-size: 12pt;
+             text-align: center;
+             margin-bottom: 1em;
+           }
+          </style>
+          <div class="conclusion-form-with-qa">
+            <div class="conclusion-qa">
+              <div class="conclusion-qa-title">Q&amp;A</div>
+              <metal:qa use-macro="python:view.get_qa_macro()" tal:define="view python:view.observation_view">
+                <metal:can-edit fill-slot="file-edit" />
+                <metal:can-edit fill-slot="question-edit" />
+                <metal:actions fill-slot="actions" />
+              </metal:qa>
+            </div>
+             <div class="conclusion-form">
+              <tal:content tal:replace="structure view/contents"></tal:content>
+            </div>
+          </div>
+        </div>
       </metal:main-macro>
 
     </metal:main>

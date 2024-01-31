@@ -52,6 +52,9 @@ setup(
         "openpyxl",
         "five.pt",
         "simplejson",
+        "beautifulsoup4",
+        "requests",
+        "html2text",
     ],
     entry_points="""
     # -*- Entry points: -*-

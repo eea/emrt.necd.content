@@ -856,3 +856,8 @@ input[name="xls_file"]{
 .carryover-box dl {
     margin-bottom: 0!important;
 }
+
+/* TinyMCE in overlay ajax popup */
+.overlay .mceIframeContainer > iframe {
+  box-shadow: none;
+}

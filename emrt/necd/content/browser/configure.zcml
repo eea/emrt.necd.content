@@ -156,7 +156,7 @@
         for="..comment.IComment"
         layer="plone.app.discussion.interfaces.IDiscussionLayer"
         manager=".interfaces.ICommentDiscussion"
-        view="plone.app.layout.globals.interfaces.IViewView"
+        view="zope.interface.Interface"
         class=".comments.CommentsViewlet"
         permission="emrt.necd.content.ViewCommentDiscussion"
         />
@@ -166,7 +166,7 @@
         for="..commentanswer.ICommentAnswer"
         layer="plone.app.discussion.interfaces.IDiscussionLayer"
         manager=".interfaces.ICommentDiscussion"
-        view="plone.app.layout.globals.interfaces.IViewView"
+        view="zope.interface.Interface"
         class=".comments.CommentsViewlet"
         permission="emrt.necd.content.ViewAnswerDiscussion"
         />
@@ -176,7 +176,7 @@
         for="..conclusions.IConclusions"
         layer="plone.app.discussion.interfaces.IDiscussionLayer"
         manager=".interfaces.ICommentDiscussion"
-        view="plone.app.layout.globals.interfaces.IViewView"
+        view="zope.interface.Interface"
         class=".comments.CommentsViewlet"
         permission="emrt.necd.content.ViewConclusionDiscussion"
         />

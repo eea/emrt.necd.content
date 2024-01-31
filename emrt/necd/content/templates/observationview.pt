@@ -88,11 +88,22 @@
             noform: function(el) {return $.plonepopups.noformerrorshow(el, 'redirect');},
             redirect: $.plonepopups.redirectbasehref,
             config: {
-              onLoad: function(evt) { evt.target.style.top = 0; hightlight_restructured() }
+              onLoad: function(evt) {
+                $("#commenting", evt.target).remove();
+                init_emrt_necd_collapsible(evt.target);
+
+                $(".commentActions", evt.target).remove();
+                $("[name='form.widgets.text']", evt.target).removeAttr("id");
+                window.initTinyMCE(evt.target);
+
+                evt.target.style.top = 0;
+                evt.target.scrollIntoView();
+                hightlight_restructured();
+              },
             },
             closeselector: '[name="form.buttons.cancel"]',
-	    fixed: true,
-	    width:'90vw'
+            fixed: true,
+            width:'90vw'
         });
 
         $('.addfile').prepOverlay({
@@ -445,11 +456,11 @@
                     <tal:notes define="
                       carryover_source_view python:view.carryover_source_view();
                       carryover_source_conclusion python:carryover_source_view.get_conclusion();
-                      carryover_source_conclusion_text carryover_source_conclusion/text/output|carryover_source_conclusion/text|nothing;
+                      carryover_source_conclusion_text python:view.render_rich_text(carryover_source_conclusion);
                       carryover_source_closing_deny_comments carryover_source/closing_deny_comments/output|carryover_source/closing_deny_comments|nothing">
                       <tal:cond condition="carryover_source_conclusion_text">
                         <dt>Source recommendation/internal note:</dt>
-                        <dd>${carryover_source_conclusion_text}</dd>
+                        <dd tal:content="structure carryover_source_conclusion_text"></dd>
                       </tal:cond>
                       <tal:cond condition="carryover_source_closing_deny_comments">
                         <dt>Source LR comments on finish observation request:</dt>
@@ -466,7 +477,7 @@
             <dd><span tal:replace="conclusion/reason_value" /></dd>
             <tal:block condition="show_internal_notes">
             <dt>Recommendation/internal note:</dt>
-            <dd><span tal:replace="conclusion/text/output|conclusion/text|nothing" /></dd>
+            <dd><span tal:replace="structure python:view.render_rich_text(conclusion)" /></dd>
             <tal:comment replace="nothing">
               hide the table https://taskman.eionet.europa.eu/issues/71375
               <dt>GHG estimates:</dt>

@@ -5,6 +5,7 @@ from Acquisition import aq_parent
 from Acquisition.interfaces import IAcquirer
 from emrt.necd.content import MessageFactory as _
 from plone import api
+from plone.app.textfield import RichText
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.content import Container
@@ -14,7 +15,6 @@ from plone.namedfile.interfaces import IImageScaleTraversable
 from Products.Five import BrowserView
 from time import time
 from z3c.form import field
-from zope import schema
 from zope.component import createObject
 from zope.component import getUtility
 from zope.interface import implementer
@@ -25,15 +25,11 @@ class IComment(form.Schema, IImageScaleTraversable):
     """
     Q&A item
     """
-    # If you want a schema-defined interface, delete the form.model
-    # line below and delete the matching file in the models sub-directory.
-    # If you want a model-based interface, edit
-    # models/comment.xml to define the content type
-    # and add directives here as necessary.
-    text = schema.Text(
-        title=_(u'Text'),
+
+    text = RichText(
+        title=_("Text"),
         required=True,
-        )
+    )
 
 # Custom content-type class; objects created for this content type will
 # be instances of this class. Use this class to add content-type specific
@@ -88,7 +84,7 @@ class AddForm(add.DefaultAddForm):
         super(AddForm, self).updateWidgets()
         self.widgets['text'].rows = 15
 
-    def create(self, data={}):
+    def create(self, data=None):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -102,7 +98,7 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        content.text = self.request.form.get('form.widgets.text', '')
+        content.text = data.get("text", "")
 
         return aq_base(content)
 

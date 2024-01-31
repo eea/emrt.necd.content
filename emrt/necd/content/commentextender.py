@@ -11,6 +11,8 @@ from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 from persistent import Persistent
 from plone.app.discussion.browser.comments import CommentForm
 from plone.app.discussion.comment import Comment
+from plone.app.discussion.interfaces import IComment as IDiscussionComment
+from plone.app.textfield import RichText
 from plone.namedfile.field import NamedBlobFile
 from plone.z3cform.fieldsets import extensible
 from Products.CMFCore import permissions
@@ -26,6 +28,10 @@ from plone.formwidget.multifile import MultiFileFieldWidget
 
 
 class ICommentExtenderFields(Interface):
+    text = RichText(
+        title=_(u"label_comment", default=u"Comment")
+    )
+
     attachment = NamedBlobFile(
         title=_(u"Attachment"),
         description=_(u""),
@@ -68,7 +74,7 @@ CommentExtenderFactory = factory(CommentExtenderFields)
 class CommentExtender(extensible.FormExtender):
     adapts(Interface, IDefaultBrowserLayer, CommentForm)
 
-    fields = Fields(ICommentExtenderFields)
+    # fields = Fields(IDiscussionComment).omit("text") + Fields(ICommentExtenderFields)
 
     def __init__(self, context, request, form):
         self.context = context
@@ -76,6 +82,7 @@ class CommentExtender(extensible.FormExtender):
         self.form = form
 
     def update(self):
+        self.remove("text")
         self.add(ICommentExtenderFields, prefix="")
         self.move('attachment', after='text', prefix="")
         self.form.description = _(u'Handling of confidential files: '

@@ -14,6 +14,7 @@ from emrt.necd.content.utils import get_vocabulary_value
 from plone import api
 import plone.z3cform.templates
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.textfield import RichText
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.content import Container
@@ -69,7 +70,7 @@ class IConclusions(form.Schema, IImageScaleTraversable):
         required=True,
     )
 
-    text = schema.Text(
+    text = RichText(
         title=_(u'Text'),
         required=True,
         default=u'',
@@ -181,7 +182,7 @@ class AddForm(add.DefaultAddForm):
         # override .items anymore. It's now a @property.
         widget_highlight.isChecked = is_checked
 
-    def create(self, data={}):
+    def create(self, data=None):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -195,15 +196,14 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        content.text = self.request.form.get('form.widgets.text', '')
-        reason = self.request.form.get('form.widgets.closing_reason', '')
-        content.closing_reason = reason[0]
+        content.text = data.get("text", "")
+        content.closing_reason = data.get("closing_reason", "")
         adapted = IAllowDiscussion(content)
         adapted.allow_discussion = True
 
+
         # Update highlight on parent observation
-        highlight = self.request.form.get('form.widgets.highlight')
-        container.highlight = highlight
+        container.highlight = data.get("highlight", tuple())
         notify(ObjectModifiedEvent(container))
 
         # Update Observation state
@@ -299,13 +299,10 @@ class EditForm(edit.DefaultEditForm):
     def applyChanges(self, data):
         context = aq_inner(self.context)
         container = aq_parent(context)
-        text = self.request.form.get('form.widgets.text')
-        closing_reason = self.request.form.get('form.widgets.closing_reason')
-        context.text = text
-        if type(closing_reason) in (ListType, TupleType):
-            context.closing_reason = closing_reason[0]
-        highlight = self.request.form.get('form.widgets.highlight')
-        container.highlight = highlight
+        context.text = data.get("text", "")
+        context.closing_reason = data.get("closing_reason", "")
+        container.highlight = data.get("highlight", tuple())
+
         notify(ObjectModifiedEvent(context))
         notify(ObjectModifiedEvent(container))
         try:
