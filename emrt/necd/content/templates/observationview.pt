@@ -463,8 +463,13 @@
                         <dd tal:content="structure carryover_source_conclusion_text"></dd>
                       </tal:cond>
                       <tal:cond condition="carryover_source_closing_deny_comments">
-                        <dt>Source LR comments on finish observation request:</dt>
-                        <dd>${carryover_source_closing_deny_comments}</dd>
+                        <dt>Observation Finishing denied</dt>
+                        <dd>
+                          <dl>
+                            <dt>Source LR comments on finish observation request:</dt>
+                            <dd>${carryover_source_closing_deny_comments}</dd>
+                          </dl>
+                        </dd>
                       </tal:cond>
                     </tal:notes>
                   </tal:block>
@@ -535,13 +540,13 @@
           <dl>
             <dt>Observation Finishing denied</dt>
             <dd>
-		<tal:block condition="show_internal_notes">
-		    <dl>
-			<dt>LR comments on finish observation request:</dt>
-			<dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
-		    </dl>
-		</tal:block>
-	    </dd>
+              <tal:block condition="show_internal_notes">
+                <dl>
+                  <dt>LR comments on finish observation request:</dt>
+                  <dd><span tal:replace="context/closing_deny_comments/output|context/closing_deny_comments|nothing" /></dd>
+                </dl>
+              </tal:block>
+            </dd>
           </dl>
         </div>
 
