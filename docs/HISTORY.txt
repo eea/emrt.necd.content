@@ -1,9 +1,14 @@
 Changelog
 =========
 
+2.5.44 (2024-02-06)
+
+- Task #260969 - Text on SE/LR responses to old conclusions is confusing
+
 2.5.43 (2024-02-06)
 
 - Feature #260973 - Add formatting
+- Feature #260974 - Possibility to recall obs after sending to approval
 
 2.5.42 (2024-01-29)
 
