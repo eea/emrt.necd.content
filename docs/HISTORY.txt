@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.43 (2024-02-06)
+
+- Feature #260973 - Add formatting
+
 2.5.42 (2024-01-29)
 
 - Task #260969 - Text on SE/LR responses to old conclusions is confusing
