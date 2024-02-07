@@ -9,14 +9,22 @@ from Products.statusmessages.interfaces import IStatusMessage
 from zope.globalrequest import getRequest
 
 
+def get_email_context(review_type):
+    result = ''
+
+    if review_type == 'projection':
+        result = '[NECD Projection Review]'
+    else:
+        result = '[NECD Inventory Review]'
+
+    return result
+
+
 def notify(observation, template, subject, role, notification_name):
     users = get_users_in_context(observation, role, notification_name)
     content = template(**dict(observation=observation))
 
-    if observation.aq_parent.type == 'projection':
-        prepend = '[NECD Projection Review]'
-    else:
-        prepend = '[NECD Inventory Review]'
+    prepend = get_email_context(observation.aq_parent.type)
 
     subject = '{} {}'.format(prepend, subject)
 

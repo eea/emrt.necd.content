@@ -771,4 +771,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.43"
+    destination="2.5.45"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Import workflows"
+      description="[refs #260968] Reminder button"
+      import_steps="rolemap"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

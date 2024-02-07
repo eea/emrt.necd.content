@@ -74,5 +74,10 @@
       <role name="Site Administrator" />
       <role name="SectorExpert" />
     </permission>
+    <permission name="emrt.necd.content: Send reminder" acquire="False">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+      <role name="LeadReviewer" />
+    </permission>
   </permissions>
 </rolemap>

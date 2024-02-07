@@ -255,6 +255,14 @@
         attribute="start"
         />
 
+    <browser:pages
+      for="emrt.necd.content.reviewfolder.IReviewFolder"
+      class=".reminder.ReminderView"
+      permission="emrt.necd.content.SendReminder">
+      <browser:page name="reminder-form" template="templates/reminder.pt"/>
+      <browser:page name="reminder" attribute="send_reminder" />
+    </browser:pages>
+
     <browser:page
         name="bulk-update-form"
         for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"

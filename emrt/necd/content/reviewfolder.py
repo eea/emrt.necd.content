@@ -392,6 +392,10 @@ class ReviewFolderView(ReviewFolderMixin):
     def can_import_observation(self):
         return 'Manager' in api.user.get_roles()
 
+    def can_send_reminder(self):
+        local_roles = api.user.get_roles(obj=self.context)
+        return {'Manager', 'LeadReviewer'}.intersection(local_roles)
+
 
 class ReviewFolderBrowserView(ReviewFolderMixin):
 

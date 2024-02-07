@@ -10,6 +10,8 @@ import plone.api as api
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
+from Products.CMFPlone.utils import safe_unicode
+
 from plone.app.textfield.value import RichTextValue
 
 from emrt.necd.content.utilities.ldap_wrapper import ldap_inventory
@@ -135,3 +137,12 @@ def render_rich_text_value(context, obj):
         return obj.text.output_relative_to(context)
     else:
         return obj.text
+
+
+def safer_unicode(text):
+    """ Attempt to fix mixed latin1 + utf-8. """
+    try:
+        return text.decode('utf-8').encode('latin-1').decode('utf-8')
+    except Exception:
+        return safe_unicode(text)
+
