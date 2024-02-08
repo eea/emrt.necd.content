@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.45 (2024-02-08)
+
+- Task #260968 - Reminder button needs to be developed so the Lead Reviews can use it close to the deadline
+
 2.5.44 (2024-02-06)
 
 - Task #260969 - Text on SE/LR responses to old conclusions is confusing
