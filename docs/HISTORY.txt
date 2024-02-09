@@ -1,9 +1,13 @@
 Changelog
 =========
 
+2.5.46 (2024-02-09)
+
+- Feature #260974 - Possibility to recall obs after sending to approval
+
 2.5.45 (2024-02-08)
 
-- Task #260968 - Reminder button needs to be developed so the Lead Reviews can use it close to the deadline
+- Feature #260968 - Reminder button needs to be developed so the Lead Reviews can use it close to the deadline
 
 2.5.44 (2024-02-06)
 
