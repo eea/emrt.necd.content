@@ -379,7 +379,7 @@
   </guard>
  </transition>
  <transition transition_id="recall-se" title="Recall from finish observation request." new_state="" trigger="USER" before_script="" after_script="">
-   <action url="%(content_url)s/recall-observation?workflow_action=recall-se" category="workflow" icon="">Recall</action>
+   <action url="%(content_url)s/recall-observation?workflow_action=recall-se" category="workflow" icon="">Recall finalisation request</action>
    <guard>
      <guard-role>SectorExpert</guard-role>
    </guard>
