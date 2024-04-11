@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.47 (2024-04-11)
+
+- Bug #268428 - Unable to take extract from test site
+
 2.5.46 (2024-02-09)
 
 - Feature #260974 - Possibility to recall obs after sending to approval
