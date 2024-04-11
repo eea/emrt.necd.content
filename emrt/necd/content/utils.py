@@ -5,6 +5,8 @@ from itertools import chain
 from operator import itemgetter
 import concurrent.futures
 
+import html2text
+
 import plone.api as api
 
 from zope.component import getUtility
@@ -137,6 +139,12 @@ def render_rich_text_value(context, obj):
         return obj.text.output_relative_to(context)
     else:
         return obj.text
+
+
+def richtext2text(value, context):
+    html_value = value.output_relative_to(context)
+    output_text = html2text.html2text(html_value)
+    return safe_unicode(output_text)
 
 
 def safer_unicode(text):

@@ -9,6 +9,7 @@ from AccessControl import getSecurityManager, Unauthorized
 from DateTime import DateTime
 from plone import api
 from plone import directives
+from plone.app.textfield.value import RichTextValue
 from plone.app.content.browser.tableview import Table
 from plone.batching import Batch
 from plone.dexterity.content import Container
@@ -44,6 +45,7 @@ import html2text
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import user_has_ldap_role
 from emrt.necd.content.utils import reduce_text
+from emrt.necd.content.utils import richtext2text
 from emrt.necd.content.utilities.interfaces import IUserIsMS
 from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
@@ -723,7 +725,11 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     last_question_id = comment_ids[-1] if comment_ids else "-"
                     row.append(last_question_id)
                 else:
-                    row.append(safe_unicode(observation[key]))
+                    field_value = observation[key]
+                    if isinstance(field_value, RichTextValue):
+                        row.append(richtext2text(field_value, self.context))
+                    else:
+                        row.append(safe_unicode(field_value))
 
             if base_len == 0:
                 base_len = len(row)
