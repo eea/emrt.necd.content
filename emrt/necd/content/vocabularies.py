@@ -201,10 +201,15 @@ class Highlight(object):
 
     def __call__(self, context):
         pvoc = api.portal.get_tool('portal_vocabularies')
-        voc_name = (
-            'highlight' if context.type == 'inventory'
-            else 'highlight_projection'
-        )
+
+        if context.highlight_vocabulary:
+            voc_name = context.highlight_vocabulary
+        else:
+            voc_name = (
+                'highlight' if context.type == 'inventory'
+                else 'highlight_projection'
+            )
+
         voc = pvoc.getVocabularyByName(voc_name)
         if voc is None:
             return SimpleVocabulary([])

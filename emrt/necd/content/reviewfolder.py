@@ -79,6 +79,12 @@ REVIEWFOLDER_TYPES = SimpleVocabulary.fromItems((
     (u'Projection', 'projection')))
 
 
+HIGHLIGHT_VOCABULARY_TYPES = SimpleVocabulary.fromItems((
+    (u'Default: Projection or Inventory pre 2024', ''),
+    (u'Inventory 2024 onwards', 'highlight_2024_onwards'),
+    (u'Inventory pre 2024', 'highlight'),
+    (u'Projection', 'highlight_projection')))
+
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
@@ -201,6 +207,13 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
         required=True,
     )
 
+    highlight_vocabulary = schema.Choice(
+        title=u"Highlight vocabulary",
+        source=HIGHLIGHT_VOCABULARY_TYPES,
+        required=True,
+        default='',
+    )
+
     tableau_statistics = schema.Text(
         title=u'Tableau statistics embed code',
         required=False,
@@ -313,17 +326,8 @@ class ReviewFolderMixin(BrowserView):
         return countries
 
     def get_highlights(self):
-        vtool = getToolByName(self, 'portal_vocabularies')
-        if self.context.type == 'inventory':
-            voc = vtool.getVocabularyByName('highlight')
-        else:
-            voc = vtool.getVocabularyByName('highlight_projection')
-        highlights = []
-        voc_terms = voc.getDisplayList(self).items()
-        for term in voc_terms:
-            highlights.append((term[0], term[1]))
-
-        return highlights
+        factory = getUtility(IVocabularyFactory, name='emrt.necd.content.highlight')
+        return [[term.value, term.title] for term in factory(self.context)]
 
     def get_review_years(self):
         catalog = api.portal.get_tool('portal_catalog')

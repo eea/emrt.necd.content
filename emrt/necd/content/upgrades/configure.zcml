@@ -797,4 +797,18 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.47"
+    destination="2.5.48"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeDepends
+      title="Reimport missing vocabularies."
+      description="[refs #260971] Import new highlight_2024_onwards vocabulary"
+      import_steps="emrt.necd.content.setup.vocabularies"
+      />
+
+  </genericsetup:upgradeSteps>
+
+
 </configure>
