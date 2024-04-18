@@ -1,8 +1,12 @@
 import os
 from operator import attrgetter
 from collections import namedtuple
+from collections import defaultdict
 
 from zope.component import getMultiAdapter
+from zope.component import getUtility
+
+from zope.schema.interfaces import IVocabularyFactory
 
 from chameleon.zpt.template import PageTextTemplate
 
@@ -34,8 +38,15 @@ with open(DEFAULT_CONTENT_PATH) as default_content:
 
 
 
-UserData = namedtuple("UserData", ["name", "email", "roles"])
+UserData = namedtuple(
+    "UserData",
+    ["user_id", "name", "email", "roles", "country_a2", "country_name"]
+)
 
+CountryData = namedtuple(
+    "CountryData",
+    ["a2", "name", "user_count"]
+)
 
 class ReminderView(BrowserView):
 
@@ -43,6 +54,10 @@ class ReminderView(BrowserView):
         ("username", "The receiving user's name.", ),
         ("tool_url", "The absolute URL of this review folder.", ),
     )
+
+    @property
+    def mail_from_address(self):
+        return api.portal.get().email_from_address
 
     @property
     def default_content(self):
@@ -60,31 +75,76 @@ class ReminderView(BrowserView):
 
     @property
     def manager_users_to_notify(self):
+        v_ms = getUtility(
+            IVocabularyFactory,
+            name='emrt.necd.content.eea_member_states')(self.context)
+
         if "Manager" in api.user.get_roles():
             result = []
-            for user in self._get_users_to_notify():
+            for user, country_a2 in self._get_users_to_notify():
                 roles = api.user.get_roles(user=user, obj=self.context)
                 user_data = (
+                    user.getId(),
                     safer_unicode(user.getProperty("fullname", user.getId())),
                     user.getProperty("email", "-"),
                     [r for r in roles if r != "Authenticated"],
+                    country_a2,
+                    v_ms.getTerm(country_a2).title
                 )
                 result.append(UserData(*user_data))
             return sorted(result, key=attrgetter("name"))
 
 
+    @property
+    def countries_to_notify(self):
+        v_ms = getUtility(
+            IVocabularyFactory,
+            name='emrt.necd.content.eea_member_states')(self.context)
+
+        result = defaultdict(set)
+        for user, country_a2 in self._get_users_to_notify():
+            result[country_a2].add(user.getId())
+
+        return sorted(
+            [
+                CountryData(a2, v_ms.getTerm(a2).title, len(users))
+                for a2, users
+                in result.items()
+            ],
+            key=attrgetter("name")
+        )
+
+
     def send_reminder(self):
         subject = self.request.get("subject", self.default_subject)
         content = self.request.get("content", self.default_content)
+        countries_a2 = self.request.get("countries_a2", [])
+        user_ids = (
+            self.request.get("user_ids", [])
+            if "Manager" in api.user.get_roles()
+            else []
+        )
 
         template = PageTextTemplate(content)
 
-        to_notify = self._get_users_to_notify()
+        if user_ids:
+            to_notify = [
+                user for user, _ in self._get_users_to_notify()
+                if user.getId() in user_ids
+            ]
+        else:
+            to_notify = [
+                user for user, a2 in self._get_users_to_notify()
+                if a2 in countries_a2
+            ]
 
         for user in to_notify:
             self._send_email(subject, template, user)
 
-        portal_message = "Notified {} users.".format(len(to_notify))
+        if to_notify:
+            portal_message = "Notified {} users.".format(len(to_notify))
+        else:
+            portal_message = "Nothing selected, nobody was notified."
         api.portal.show_message(portal_message, request=self.request)
 
         return self.request.RESPONSE.redirect(self.context.absolute_url())
@@ -116,10 +176,14 @@ class ReminderView(BrowserView):
         to_notify = set()
 
         for obs in observations:
-            msa_users = get_users_in_context(obs, ROLE_MSA, "reminder")
+            msa_users = [
+                (user, obs.country)
+                for user
+                in get_users_in_context(obs, ROLE_MSA, "reminder")
+            ]
             to_notify.update(msa_users)
 
         return [
-            user for user in to_notify
+            (user, a2) for user, a2 in to_notify
             if "Manager" not in api.user.get_roles(user=user)
         ]
