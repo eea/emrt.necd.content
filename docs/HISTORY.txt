@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.5.48 (2024-04-11)
+
+- Feature #260968 - Reminder button: allow user / country selection
+- Task #260971 - Review if flags need updating/ all are still relevant
+
 2.5.47 (2024-04-11)
 
 - Bug #268428 - Unable to take extract from test site
