@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.5.49 (2024-04-25)
+
+- Task #260971 - Add "Description flags" to carryover
+
 2.5.48 (2024-04-11)
 
 - Feature #260968 - Reminder button: allow user / country selection

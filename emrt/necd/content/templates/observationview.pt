@@ -376,7 +376,7 @@
                     <span class="eea-icon eea-icon-lg wfRole"><!-- --></span>
                     <span tal:content="item/role"></span><br/>
                     <a
-                      tal:attributes="href python:'http://www.eionet.europa.eu/directory/user?uid='+item['actor']"
+                      tal:attributes="href python:'http://www.eionet.europa.eu/directory/user?uid=' + (item['actor'] or '')"
                       tal:content="item/author"></a>
                     <br/>
                     <span
