@@ -36,6 +36,7 @@
                   <th tal:condition="is_projection">Projection year</th>
                   <th>NFR Code</th>
                   <th>Pollutants</th>
+                  <th>Description flags</th>
                 </tr>
               </thead>
               <tbody><tr>
@@ -48,6 +49,7 @@
                   <td tal:condition="is_projection">2025<br />2030<br />2040<br />2050</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
+                  <td>Adjustment<br />Revised Estimate</td>
               </tr></tbody>
             </table>
 
@@ -66,6 +68,7 @@
                     <li tal:condition="is_projection">Field: Projection year (list) - multiple values, separated by newline. Valid values: 2025, 2030, 2040, 2050</li>
                     <li>Field: NFR category code (string) - single value.</li>
                     <li>Field: Pollutants (list) - multiple values, separated by newline.</li>
+                    <li>Field: Description flags (list) - multiple values, separated by newline.</li>
                 </ul>
                 If provided, the conclusion text will replace the existing conclusion text.
             </p>
@@ -82,6 +85,7 @@
                   <th tal:condition="is_projection">Projection year</th>
                   <th>NFR Code</th>
                   <th>Pollutants</th>
+                  <th>Description flags</th>
                 </tr>
               </thead>
               <tbody><tr>
@@ -95,6 +99,7 @@
                   <td tal:condition="is_projection">2025<br />2030<br />2040<br />2050</td>
                   <td>1A2d</td>
                   <td>PCBs<br />HCB<br />SO2</td>
+                  <td>Adjustment<br />Revised Estimate</td>
               </tr></tbody>
             </table>
 
@@ -107,6 +112,8 @@
             <dd>${python:options.get('values_for_nfr_code')}</dd>
             <dt>Pollutants</dt>
             <dd>${python:options.get('values_for_pollutants')}</dd>
+            <dt>Description flags</dt>
+            <dd>${python:options.get('titles_for_highlight')}</dd>
           </dl>
         </div>
 
