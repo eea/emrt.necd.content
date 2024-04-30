@@ -818,7 +818,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
             try:
                 comment_html = comment.text.output_relative_to(context)
-                output_text = html2text.html2text(comment_html)
+                output_text = html2text.html2text(comment_html, bodywidth=0)
             except AttributeError:
                 output_text = comment.text
 

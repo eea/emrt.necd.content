@@ -810,5 +810,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.48"
+    destination="2.5.50"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Roll-back formatting for conclusion text."
+      description="[refs #260973] Add formatting."
+      handler=".evolve2550.run"
+      />
+
+  </genericsetup:upgradeSteps>
 
 </configure>

@@ -1,5 +1,3 @@
-import datetime
-from copy import copy
 from logging import getLogger
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
@@ -12,9 +10,7 @@ from emrt.necd.content import MessageFactory as _
 from emrt.necd.content.utils import hidden
 from emrt.necd.content.utils import get_vocabulary_value
 from plone import api
-import plone.z3cform.templates
 from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
-from plone.app.textfield import RichText
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.content import Container
@@ -70,7 +66,7 @@ class IConclusions(form.Schema, IImageScaleTraversable):
         required=True,
     )
 
-    text = RichText(
+    text = schema.Text(
         title=_(u'Text'),
         required=True,
         default=u'',

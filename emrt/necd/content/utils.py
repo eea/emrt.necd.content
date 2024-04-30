@@ -143,7 +143,7 @@ def render_rich_text_value(context, obj):
 
 def richtext2text(value, context):
     html_value = value.output_relative_to(context)
-    output_text = html2text.html2text(html_value)
+    output_text = html2text.html2text(html_value, bodywidth=0)
     return safe_unicode(output_text)
 
 
