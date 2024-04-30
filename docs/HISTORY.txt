@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.5.50 (2024-04-30)
+
+- Task #260973 - Add formatting
+- Task #260971 - Review if flags need updating/ all are still relevant
+- Bug #269439 - Error when editing conclusion text
+
 2.5.49 (2024-04-25)
 
 - Task #260971 - Add "Description flags" to carryover
