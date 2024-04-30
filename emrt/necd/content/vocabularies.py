@@ -199,16 +199,17 @@ class Fuel(object):
 @implementer(IVocabularyFactory)
 class Highlight(object):
 
-    def __call__(self, context):
+    def __call__(self, context, voc_name=None):
         pvoc = api.portal.get_tool('portal_vocabularies')
 
-        if context.highlight_vocabulary:
-            voc_name = context.highlight_vocabulary
-        else:
-            voc_name = (
-                'highlight' if context.type == 'inventory'
-                else 'highlight_projection'
-            )
+        if voc_name is None:
+            if context.highlight_vocabulary:
+                voc_name = context.highlight_vocabulary
+            else:
+                voc_name = (
+                    'highlight' if context.type == 'inventory'
+                    else 'highlight_projection'
+                )
 
         voc = pvoc.getVocabularyByName(voc_name)
         if voc is None:

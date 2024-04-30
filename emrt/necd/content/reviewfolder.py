@@ -1,3 +1,4 @@
+from collections import namedtuple
 import itertools
 import time
 from StringIO import StringIO
@@ -133,14 +134,17 @@ def get_finalisation_reasons(reviewfolder):
     return reasons
 
 
+MissingHighlight = namedtuple("MissingHighlight", ["title"])
+
 def translate_highlights(vocab, keys):
-    return tuple(vocab.getTerm(x).title for x in keys)
+    return tuple(
+        vocab.by_token.get(x, MissingHighlight(x)).title for x in keys)
 
 
-def get_highlight_vocabs(context):
+def get_highlight_vocabs(context, voc_name=None):
     vocab_highlight = getUtility(
         IVocabularyFactory,
-        name='emrt.necd.content.highlight')(context)
+        name='emrt.necd.content.highlight')(context, voc_name)
 
     vocab_highlight_values = tuple([
         term.value for term in vocab_highlight
@@ -159,6 +163,28 @@ def get_highlight_vocabs(context):
 
     return vocab_description_flags, vocab_conclusion_flags, vocab_highlight
 
+def classify_unknown_highlights(context, unknown_highlights):
+    result = {
+        "description_flags": set(),
+        "conclusion_flags": set()
+    }
+    if context.type == 'inventory':
+        other_highlight_vocabularies = [
+            x for x in HIGHLIGHT_VOCABULARY_TYPES.by_value
+            if x and x != context.highlight_vocabulary 
+            and not x.endswith('projection')
+        ]
+        for voc_name in other_highlight_vocabularies:
+            vocab_description_flags, vocab_conclusion_flags, vocab_highlight = (
+                get_highlight_vocabs(context, voc_name)
+            )
+            highlights = translate_highlights(vocab_highlight, unknown_highlights)
+            description_flags = get_common(highlights, vocab_description_flags)
+            conclusion_flags = get_common(highlights, vocab_conclusion_flags)
+            result["conclusion_flags"].update(conclusion_flags)
+            result["description_flags"].update(description_flags)
+
+    return result
 
 def filter_for_ms(brains, context):
     if api.user.is_anonymous():
@@ -654,6 +680,14 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             row = [observation.getId]
             highlights = translate_highlights(
                 vocab_highlight, observation['get_highlight'] or [])
+            description_flags = get_common(highlights, vocab_description_flags)
+            conclusion_flags = get_common(highlights, vocab_conclusion_flags)
+            unknown_flags = classify_unknown_highlights(
+                self.context, 
+                set(highlights).difference(
+                    itertools.chain(description_flags, conclusion_flags)
+                )
+            )
 
             for key in fields_to_export:
                 if key == 'observation_is_potential_technical_correction':
@@ -664,11 +698,11 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     row.append(yes_no_bool(IS_FIELD_MAP[key] in highlights))
                 elif key == 'get_description_flags':
                     row.append(', '.join(
-                        get_common(highlights, vocab_description_flags)
+                        list(itertools.chain(description_flags, unknown_flags["description_flags"]))
                     ))
                 elif key == 'get_conclusion_flags':
                     row.append(', '.join(
-                        get_common(highlights, vocab_conclusion_flags)
+                        list(itertools.chain(conclusion_flags, unknown_flags["conclusion_flags"]))
                     ))
                 elif key == 'get_is_ms_key_category':
                     row.append(

@@ -244,6 +244,7 @@ class PseudoConclusion(object):
     text = u''
     closing_reason = ''
     highlight = ''
+    highlight_vocabulary = ''
 
     def __init__(self, context):
         self.context = context
@@ -258,6 +259,7 @@ class PseudoConclusion(object):
 
     def __call__(self, container):
         self.highlight = container.highlight
+        self.highlight_vocabulary = container.highlight_vocabulary
         # [refs #102793] needed by vocabularies
         self.type = container.type  # inventory/projection
         return self
