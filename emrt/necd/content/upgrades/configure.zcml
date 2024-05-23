@@ -823,4 +823,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.50"
+    destination="2.5.51"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="Reindex observation discussion counts"
+      description="[refs #270288] observation not reindexed when new discussion comments are added."
+      handler=".evolve2551.run"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

@@ -53,4 +53,4 @@ def run(_):
         # log progress
         if a_tenth and idx % a_tenth == 0:
             transaction.savepoint(optimistic=True)
-            LOGGER.info("Done %s/ < %s.", idx, brains_len)
+            LOGGER.info("Done %s/%s.", idx, brains_len)
