@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.6.0 (2025-03-13)
+
+- Bug #285464 - Preparing NECD-EMRT for 2025 activities
+
 2.5.51 (2024-05-23)
 
 - Bug #270288 - Fix observation not reindexing after new comments
