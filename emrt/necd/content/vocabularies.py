@@ -220,6 +220,30 @@ class Highlight(object):
 
 
 @implementer(IVocabularyFactory)
+class HighlightVocabularyTypes(object):
+
+    def __call__(self, context):
+        pvoc = api.portal.get_tool('portal_vocabularies')
+
+        default_key = ''
+        default_value = u'Default: Projection or Inventory pre 2024'
+
+        voc = pvoc.getVocabularyByName('highlight_vocabulary_types')
+        if voc is None:
+            return SimpleVocabulary.fromItems((
+                (default_value, default_key),
+            ))
+        terms = [
+            mk_term(*pair)
+            for pair in itertools.chain(
+                [(default_key, default_value)],
+                voc.getVocabularyLines()
+            )
+        ]
+        return SimpleVocabulary(terms)
+
+
+@implementer(IVocabularyFactory)
 class Parameter(object):
 
     def __call__(self, context):

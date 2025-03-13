@@ -836,4 +836,23 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="2.5.51"
+    destination="2.6.0"
+    profile="emrt.necd.content:default">
+
+    <genericsetup:upgradeStep
+      title="[refs #285464] Delete pollutants vocabulary"
+      description="Will be reimported by next step"
+      handler="emrt.necd.content.upgrades.evolve260.run"
+     />
+
+    <genericsetup:upgradeDepends
+      title="Reimport missing vocabularies."
+      description="[refs #285464] Updating vocabularies"
+      import_steps="emrt.necd.content.setup.vocabularies"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

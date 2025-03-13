@@ -321,8 +321,8 @@
                                   id python:item[0]"/>
                 <label tal:attributes="for python:item[0];"
                   tal:content="python:item[1]"></label><br/>
-                  <br tal:condition="python:item[0] in ['unece', 'acc', 'comparability']"/>
-                <div tal:condition="python:item[0] in ['unece', 'acc', 'comparability']" class="esdLabel">Draft/final conclusion flags</div>
+                  <br tal:condition="python:item[0] in ['unece', 'acc', 'comparability', 'flex']"/>
+                <div tal:condition="python:item[0] in ['unece', 'acc', 'comparability', 'flex']" class="esdLabel">Draft/final conclusion flags</div>
 
               </tal:block>
             </tal:block>

@@ -80,12 +80,6 @@ REVIEWFOLDER_TYPES = SimpleVocabulary.fromItems((
     (u'Projection', 'projection')))
 
 
-HIGHLIGHT_VOCABULARY_TYPES = SimpleVocabulary.fromItems((
-    (u'Default: Projection or Inventory pre 2024', ''),
-    (u'Inventory 2024 onwards', 'highlight_2024_onwards'),
-    (u'Inventory pre 2024', 'highlight'),
-    (u'Projection', 'highlight_projection')))
-
 # Cache helper methods
 def _user_name(fun, self, userid):
     return (userid, time.time() // 86400)
@@ -169,9 +163,12 @@ def classify_unknown_highlights(context, unknown_highlights):
         "conclusion_flags": set()
     }
     if context.type == 'inventory':
+        highlight_vocabulary_types = getUtility(
+            IVocabularyFactory,
+            name='emrt.necd.content.highlight_vocabulary_types')(context)
         other_highlight_vocabularies = [
-            x for x in HIGHLIGHT_VOCABULARY_TYPES.by_value
-            if x and x != context.highlight_vocabulary 
+            x for x in highlight_vocabulary_types.by_value
+            if x and x != context.highlight_vocabulary
             and not x.endswith('projection')
         ]
         for voc_name in other_highlight_vocabularies:
@@ -235,7 +232,7 @@ class IReviewFolder(directives.form.Schema, IImageScaleTraversable):
 
     highlight_vocabulary = schema.Choice(
         title=u"Highlight vocabulary",
-        source=HIGHLIGHT_VOCABULARY_TYPES,
+        vocabulary='emrt.necd.content.highlight_vocabulary_types',
         required=True,
         default='',
     )
@@ -683,7 +680,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             description_flags = get_common(highlights, vocab_description_flags)
             conclusion_flags = get_common(highlights, vocab_conclusion_flags)
             unknown_flags = classify_unknown_highlights(
-                self.context, 
+                self.context,
                 set(highlights).difference(
                     itertools.chain(description_flags, conclusion_flags)
                 )

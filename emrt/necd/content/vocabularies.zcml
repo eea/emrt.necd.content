@@ -28,6 +28,11 @@
     />
 
   <utility
+    name="emrt.necd.content.highlight_vocabulary_types"
+    factory=".vocabularies.HighlightVocabularyTypes"
+    />
+
+  <utility
     name="emrt.necd.content.highlight"
     factory=".vocabularies.Highlight"
     />
