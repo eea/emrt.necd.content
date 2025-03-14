@@ -86,25 +86,25 @@ def SearchableText(context):
     items = []
     items.extend(index_fields(getFieldsInOrder(IObservation), context))
     try:
-        questions = context.getFolderContents(
-            {"portal_type": "Question"}, full_objects=True
+        questions = context.listFolderContents(
+            {"portal_type": "Question"}
         )
         items.extend(to_unicode(context.id))
     except:
         questions = []
     try:
-        conclusions = context.getFolderContents(
-            {"portal_type": "Conclusions"}, full_objects=True
+        conclusions = context.listFolderContents(
+            {"portal_type": "Conclusions"}
         )
     except:
         conclusions = []
 
     for question in questions:
-        comments = question.getFolderContents(
-            {"portal_type": "Comment"}, full_objects=True
+        comments = question.listFolderContents(
+            {"portal_type": "Comment"}
         )
-        answers = question.getFolderContents(
-            {"portal_type": "CommentAnswer"}, full_objects=True
+        answers = question.listFolderContents(
+            {"portal_type": "CommentAnswer"}
         )
         for comment in comments:
             items.extend(index_fields(getFieldsInOrder(IComment), comment))

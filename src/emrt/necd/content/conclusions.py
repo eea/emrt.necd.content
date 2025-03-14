@@ -27,7 +27,7 @@ from Products.Five import BrowserView
 from collective.z3cform.datagridfield.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield.row import DictRow
 from plone import api
-from plone.app.dexterity.behaviors.discussion import IAllowDiscussion
+from plone.app.discussion.behavior import IAllowDiscussion
 from plone.autoform import directives
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit

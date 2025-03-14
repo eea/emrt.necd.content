@@ -343,7 +343,7 @@ class ReviewFolderMixin(BrowserView):
 
     def get_inventory_years(self):
         years = []
-        gfc = self.context.getFolderContents
+        gfc = self.context.listFolderContents
         for b in gfc(dict(portal_type="Observation")):
             year = b.year
             # handle projection years
@@ -605,7 +605,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         if errors:
             self.status = self.formErrorsMessage
             return
-        
+
         return self.build_file(data)
 
     @button.buttonAndHandler("Back")
@@ -808,11 +808,11 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         response = self.request.response
         response.setHeader(
-            "Content-type", 
+            "Content-type",
             "application/vnd.ms-excel; charset=utf-8",
         )
         response.setHeader(
-            "Content-Disposition", 
+            "Content-Disposition",
             f"attachment; filename={filename}",
         )
 
