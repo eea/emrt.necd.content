@@ -12,6 +12,7 @@ from typing import cast
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
 from openpyxl import Workbook
+from plone.z3cform.layout import FormWrapper
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
@@ -581,6 +582,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
     label = "Export observations in XLS format"
     name = "export-observation-form"
 
+    _downloadable_file = None
+
     def updateWidgets(self):
         super(ExportReviewFolderForm, self).updateWidgets()
         self.widgets["exportFields"].size = 20
@@ -606,7 +609,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.status = self.formErrorsMessage
             return
 
-        return self.build_file(data)
+        self._downloadable_file = self.build_file(data)
 
     @button.buttonAndHandler("Back")
     def handleCancel(self, action):
@@ -819,10 +822,20 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         xls = BytesIO()
         wb.save(xls)
         xls.seek(0)
-        response.setBody(xls.read(), lock=True)
+        return xls
 
 
-ExportReviewFolderFormView = wrap_form(ExportReviewFolderForm)
+class DownloadableFormWrapper(FormWrapper):
+    def render(self):
+        if self.form_instance._downloadable_file:
+            return self.form_instance._downloadable_file
+        return super(DownloadableFormWrapper, self).render()
+
+
+ExportReviewFolderFormView = wrap_form(
+    ExportReviewFolderForm,
+    __wrapper_class=DownloadableFormWrapper,
+)
 
 
 def _item_user(fun, self, user, item):
