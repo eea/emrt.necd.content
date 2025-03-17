@@ -69,10 +69,15 @@ def setup_ldap(portal, ldap_id):
         # need to move it one position at a time
         plugins.movePluginsUp(interface, [ldap_id])
 
+def disable_recursive_groups(portal):
+    acl = get_portal_acl(portal)
+    acl["recursive_groups"].manage_activateInterfaces([])
 
 def post_install(context):
     """Post install script"""
-    setup_ldap(api.portal.get(), LDAP_PLUGIN_ID)
+    portal = api.portal.get()
+    setup_ldap(portal, LDAP_PLUGIN_ID)
+    disable_recursive_groups(portal)
 
 
 def uninstall(context):

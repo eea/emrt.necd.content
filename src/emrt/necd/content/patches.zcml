@@ -21,17 +21,25 @@
     preserveOriginal="true"
     />
 
-  <monkey:patch
-    description="Add cache for node.ext.ldap.ugm._api.Groups.search. Because of 'plumber' we need to patch the 'inheritor'."
-    class="node.ext.ldap.ugm._api.Groups"
-    original="search"
-    replacement=".patches.LDAPPrincipals_search"
-    preserveOriginal="true"
-    />
+<!--  <monkey:patch-->
+<!--    description="Add cache for node.ext.ldap.ugm._api.Groups.search. Because of 'plumber' we need to patch the 'inheritor'."-->
+<!--    class="node.ext.ldap.ugm._api.Groups"-->
+<!--    original="search"-->
+<!--    replacement=".patches.LDAPPrincipals_search"-->
+<!--    preserveOriginal="true"-->
+<!--    />-->
+
+<!--  <monkey:patch-->
+<!--    description="Add cache for node.ext.ldap.ugm._api.Users.search Because of 'plumber' we need to patch the 'inheritor'."-->
+<!--    class="node.ext.ldap.ugm._api.Users"-->
+<!--    original="search"-->
+<!--    replacement=".patches.LDAPPrincipals_search"-->
+<!--    preserveOriginal="true"-->
+<!--    />-->
 
   <monkey:patch
-    description="Add cache for node.ext.ldap.ugm._api.Users.search Because of 'plumber' we need to patch the 'inheritor'."
-    class="node.ext.ldap.ugm._api.Users"
+    description="Add cache for node.ext.ldap._node.LDAPNode."
+    class="node.ext.ldap._node.LDAPNode"
     original="search"
     replacement=".patches.LDAPPrincipals_search"
     preserveOriginal="true"
