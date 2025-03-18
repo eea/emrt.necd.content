@@ -5,11 +5,21 @@
 .userrole-manager .formTabs{
 	display: block;
 }
-.portaltype-observation #content h1 ,
-.portaltype-question #content h1 {
-	display:none;
-    visibility: hidden;
+
+.portaltype-reviewfolder,
+.portaltype-observation,
+.portaltype-question {
+    #content .row.managePortlets-row {
+        display: none;
+    }
 }
+.portaltype-observation,
+.portaltype-question {
+    #content h1 {
+        display: none;
+    }
+}
+
 .esdDiv {
 	overflow: hidden;
 	margin-top: 4px;

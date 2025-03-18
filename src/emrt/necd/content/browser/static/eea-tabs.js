@@ -5,16 +5,21 @@ jQuery(document).ready(
       allTabPanels.hide();
 
       let requestedPanel = window.location.hash ? $(document).find(window.location.hash) : null;
-      if (!requestedPanel) {
+      if (!requestedPanel?.length) {
         requestedPanel = allTabPanels.first();
       }
 
-      requestedPanel.show();
+      if (requestedPanel?.length) {
+        requestedPanel.show();
 
-      const requestedTabId = requestedPanel.attr('id')
+        const requestedTabId = requestedPanel.attr('id')
 
-      $(".eea-tabs > div").removeClass("active");
-      $(`.eea-tabs a[href="#${requestedTabId}"]`).parent().addClass("active");
+        window.location.hash = requestedTabId;
+
+        $(".eea-tabs > div").removeClass("active");
+        $(`.eea-tabs a[href="#${requestedTabId}"]`).parent().addClass("active");
+      }
+
     }
     setCurrentTab();
     $(window).bind('hashchange', setCurrentTab);
