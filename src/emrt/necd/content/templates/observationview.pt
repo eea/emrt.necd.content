@@ -182,7 +182,7 @@
   <metal:observation define-macro="observation-info"
     tal:define="toLocalizedTime nocall:here/@@plone/toLocalizedTime">
     <div class="observationActions row">
-      <div class="col:2">
+      <div class="col">
         <ul class="observationNavigationMenu visualNoMarker"
           tal:define="pcp here/@@plone_context_state;
                       parent pcp/parent">
@@ -396,19 +396,19 @@
     });
   </script>
 
-  <ul class="eea-tabs">
-    <li style="width:165px;max-width:165px"
-      tal:condition="python:context.get_status() == 'close-requested'">Finish observation</li>
-    <li style="width:165px;max-width:165px"
+  <div class="eea-tabs tabs">
+    <div class="active" tal:condition="python:context.get_status() == 'close-requested'">
+      <a href="#tab-finish-observation">Finish observation</a>
+    </div>
+    <div class="active"
       tal:define="conclusion view/get_conclusion"
       tal:condition="nocall:conclusion"
-      >Conclusions</li>
-    <li style="width:200px;max-width:200px"
-      id="questionChatRoom">Q&amp;A</li>
-  </ul>
+    ><a href="#tab-conclusions">Conclusions</a></div>
+    <div id="questionChatRoom"><a href="#tab-questions">Q&amp;A</a></div>
+  </div>
 
   <div class="eea-tabs-panels" style="overflow:hidden">
-    <div class="eea-tabs-panel finish-observation"
+    <div id="tab-finish-observation" class="eea-tabs-panel finish-observation"
       tal:condition="python:context.get_status() == 'close-requested'">
         <dl>
           <dt>Observation Finish Requested</dt>
@@ -434,7 +434,7 @@
           </dl>
         </div>
     </div>
-    <div class="eea-tabs-panel conclusions"
+    <div id="tab-conclusions" class="eea-tabs-panel conclusions"
         tal:define="conclusion view/get_conclusion"
         tal:condition="nocall:conclusion">
       <div class="row">
@@ -688,7 +688,7 @@
         </div>
       </div>
     </div>
-    <div class="eea-tabs-panel questions">
+    <div id="tab-questions" class="eea-tabs-panel questions">
       <tal:qactions condition="python:not view.in_conclusions()">
       <div class="actions" tal:condition="view/can_add_question">
         <a id="add-question-link"
@@ -723,18 +723,18 @@
       <div id="question-add-form" style="display: none" tal:condition="view/can_add_question">
         <span tal:replace="structure view/add_question_form"></span>
       </div>
-      <div class="question" tal:repeat="question view/get_chat" id="${question/getId}" class="question ${question/portal_type/lower} ${python:'old-qa' if view.is_old_qa(question) else ''}">
-        <tal:block tal:define="portalType question/portal_type/lower"
+      <div tal:repeat="question view/get_chat" id="${question/getId}" class="question ${python:question.portal_type.lower()} ${python:'old-qa' if view.is_old_qa(question) else ''}">
+        <tal:block tal:define="portalType python:question.portal_type.lower()"
           tal:condition="python:portalType == 'comment'">
           <div class="arrow-right-border"></div>
           <div class="arrow-right"></div>
         </tal:block>
-        <tal:block tal:define="portalType question/portal_type/lower"
+        <tal:block tal:define="portalType python:question.portal_type.lower()"
           tal:condition="python:portalType == 'commentanswer'">
           <div class="arrow-left-border"></div>
           <div class="arrow-left"></div>
         </tal:block>
-        <div class="from"  tal:define="portalType question/portal_type/lower">
+        <div class="from"  tal:define="portalType python:question.portal_type.lower()">
           <span class="esdLabel">from</span>
           <span class="value" tal:condition="python:portalType == 'comment'">TERTs</span>
           <span class="value" tal:condition="python:portalType == 'commentanswer'">Member State</span>
@@ -893,7 +893,7 @@
         </div>
         <div id="comment-discussion-wrapper"
           tal:define="context nocall:question">
-            <tal:block tal:define="portalType question/portal_type/lower">
+            <tal:block tal:define="portalType python:question.portal_type.lower()">
               <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
                 <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
                   <div class="col">
@@ -960,7 +960,7 @@
             </a>
           </tal:block>
 
-          <tal:block  tal:define="portalType question/portal_type/lower"
+          <tal:block  tal:define="portalType python:question.portal_type.lower()"
             tal:condition="python:portalType == 'comment'">
             <a href=""
                   tal:condition="question/can_edit"
@@ -977,7 +977,7 @@
             </a>
           </tal:block>
 
-          <tal:block  tal:define="portalType question/portal_type/lower"
+          <tal:block  tal:define="portalType python:question.portal_type.lower()"
             tal:condition="python:portalType == 'commentanswer'">
             <a href=""
                   tal:condition="question/can_edit"
