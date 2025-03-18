@@ -8,7 +8,7 @@
     i18n_domain="emrt.necd.content">
 
   <include package="pas.plugins.ldap" file="cache_volatile.zcml" />
-  
+
   <include file="patches.zcml" />
   <include file="permissions.zcml" />
   <include file="views.zcml" />
@@ -50,7 +50,9 @@
   <!-- TODO: Clean-up below -->
 
   <!-- Comment Extender -->
-  <adapter factory=".commentextender.MultiFileFieldDataManager" />
+  <adapter factory=".commentextender.CommentMultiFileFieldDataManager" />
+  <adapter factory=".commentextender.CommentAnswerMultiFileFieldDataManager" />
+  <adapter factory=".commentextender.ConclusionsMultiFileFieldDataManager" />
   <adapter
     factory=".commentextender.CommentExtenderFactory"
     provides=".commentextender.ICommentExtenderFields" />

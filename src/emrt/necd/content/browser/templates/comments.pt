@@ -69,18 +69,7 @@
                         </div>
                     </div>
 
-                    <tal:attachments tal:define="single_attachment reply/attachment|nothing; multi_attachments reply/attachments|nothing">
-                    <div class="files" tal:condition="python:single_attachment or multi_attachments">
-                        <div class="file" tal:condition="single_attachment">
-                        <i class="bi bi-paperclip"></i>
-                        <a href="${reply/absolute_url}/@@download/attachment/${reply/attachment/filename}">
-                            ${reply/attachment/filename}
-                        </a>
-                        <a href="${reply/absolute_url}/@@copy-attachment-to-answer" tal:condition="here/can_add_files|nothing">
-                            Copy file to query
-                        </a>
-                        </div>
-                    </div>
+                    <tal:attachments tal:define="multi_attachments reply/attachments|nothing">
                     <tal:multifiles tal:condition="multi_attachments">
                         <span class="file" tal:repeat="attachment reply/attachments">
                             <i class="bi bi-paperclip"></i>
@@ -111,7 +100,7 @@
                                     method="get"
                                     class="comment-action action-edit"
                                     tal:condition="not: auth_token"
-                                    action="${reply/absolute_url}/@@edit-comment" 
+                                    action="${reply/absolute_url}/@@edit-comment"
                                     id="edit-${comment_id}">
 
                                     <button name="form.button.EditComment"
@@ -234,8 +223,7 @@
                 You can add a comment by filling out the form below. Plain text
                 formatting.
                 </p>
-
-                <div tal:replace="structure view/form/render" />
+                <div tal:replace="structure python:view.form.render()" />
 
             </fieldset>
         </div>

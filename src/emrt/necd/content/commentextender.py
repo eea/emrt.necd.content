@@ -29,6 +29,8 @@ from plone.z3cform.fieldsets import extensible
 
 from emrt.necd.content import _
 from emrt.necd.content.comment import IComment as ICommentContent
+from emrt.necd.content.commentanswer import ICommentAnswer
+from emrt.necd.content.conclusions import IConclusions
 from emrt.necd.content.constants import P_OBS_REDRAFT_REASON_VIEW
 
 
@@ -42,7 +44,6 @@ class MultiFileField(schema.List):
 
 
 @implementer(IDataManager)
-@adapter(ICommentContent, IMultiFileField)
 class MultiFileFieldDataManager(AttributeField):
     """MultiFileField data manager."""
 
@@ -56,14 +57,22 @@ class MultiFileFieldDataManager(AttributeField):
     def query(self, default=None):
         return super().query(default=default)
 
+@adapter(ICommentContent, IMultiFileField)
+class CommentMultiFileFieldDataManager(MultiFileFieldDataManager):
+    """ MultiFileField Data Manager for emrt.necd.content.comment.IComment """
+
+
+@adapter(ICommentAnswer, IMultiFileField)
+class CommentAnswerMultiFileFieldDataManager(MultiFileFieldDataManager):
+    """ MultiFileField Data Manager for emrt.necd.content.commentanswer.ICommentAnswer """
+
+
+@adapter(IConclusions, IMultiFileField)
+class ConclusionsMultiFileFieldDataManager(MultiFileFieldDataManager):
+    """ MultiFileField Data Manager for emrt.necd.content.conclusions.IConclusions """
+
 
 class ICommentExtenderFields(Interface):
-    attachment = NamedBlobFile(
-        title=_("Attachment"),
-        description=_(""),
-        required=False,
-    )
-
     attachments = MultiFileField(
         title="Attachments",
         value_type=NamedBlobFile(),
@@ -86,8 +95,7 @@ class ICommentExtenderFields(Interface):
 class CommentExtenderFields(Implicit, Persistent):
     security = ClassSecurityInfo()
 
-    security.declareProtected(permissions.View, "attachment")
-    attachment = None
+    security.declareProtected(permissions.View, "attachments")
     attachments = None
 
     security.declareProtected(P_OBS_REDRAFT_REASON_VIEW, "redraft_message")
@@ -112,7 +120,6 @@ class CommentExtender(extensible.FormExtender):
 
     def update(self):
         self.add(ICommentExtenderFields, prefix="")
-        self.move("attachment", after="text", prefix="")
         self.form.description = _(
             "Handling of confidential files: "
             "Please zip your file, protect it with a password, upload it to your reply in the EEA review tool "
@@ -121,6 +128,4 @@ class CommentExtender(extensible.FormExtender):
         )
         self.form.fields["redraft_message"].mode = interfaces.HIDDEN_MODE
         self.form.fields["redraft_date"].mode = interfaces.HIDDEN_MODE
-        # self.form.fields["attachment"].mode = interfaces.HIDDEN_MODE
-        # TODO: make this work
         self.form.fields["attachments"].widgetFactory = MultiFileFieldWidget
