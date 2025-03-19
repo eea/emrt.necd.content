@@ -11,6 +11,13 @@
       layer="emrt.necd.content.interfaces.IEmrtNecdContentLayer"
       />
 
+  <browser:page
+      name="necd_import_content"
+      for="zope.interface.Interface"
+      class=".import_content.CustomImportContent"
+      permission="cmf.ManagePortal"
+      />
+
 
     <browser:resourceDirectory
         name="emrt.necd.content"
