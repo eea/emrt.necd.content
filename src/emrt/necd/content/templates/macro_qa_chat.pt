@@ -1,0 +1,402 @@
+<metal:main define-macro="main">
+<div tal:repeat="question view/get_chat" id="${question/getId}"
+                                         class="question ${python:question.portal_type.lower()} ${python:'old-qa' if view.is_old_qa(question) else ''}">
+  <tal:block tal:define="portalType python:question.portal_type.lower()"
+     tal:condition="python:portalType == 'comment'">
+    <div class="arrow-right-border"></div>
+    <div class="arrow-right"></div>
+  </tal:block>
+  <tal:block tal:define="portalType python:question.portal_type.lower()"
+     tal:condition="python:portalType == 'commentanswer'">
+    <div class="arrow-left-border"></div>
+    <div class="arrow-left"></div>
+  </tal:block>
+  <div class="from"  tal:define="portalType python:question.portal_type.lower()">
+    <span class="esdLabel">from</span>
+    <span class="value" tal:condition="python:portalType == 'comment'">TERTs</span>
+    <span class="value" tal:condition="python:portalType == 'commentanswer'">Member State</span>
+    <span class="esdLabel">to</span>
+    <span class="value" tal:condition="python:portalType == 'comment'">Member State</span>
+    <span class="value" tal:condition="python:portalType == 'commentanswer'">TERTs</span>
+    <span tal:condition="python:portalType == 'comment'">&nbsp; <i class="bi bi-info-circle-fill tooltipIconBlue"
+                                                                   title="Draft a question for the MS. MS can only see the question once it has been approved and sent by the LR"></i></span>
+    <span class="messageDate">
+      <tal:effective condition="question/effective_date">
+        Sent on: <span tal:content="python:question.effective().strftime('%d %b %Y, %H:%M CET')">11/12/2013 12:00</span>
+      </tal:effective>
+      <tal:noteffective condition="not:question/effective_date">
+        Updated on: <span tal:content="python:question.modified().strftime('%d %b %Y, %H:%M CET')">11/12/2013 12:00</span>
+      </tal:noteffective>
+   </span>
+  </div>
+  <div tal:content="structure python:view.render_qa_text(question)" class="answerContent">
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  </div>
+  <div class="files" tal:condition="question/get_files">
+    Files:
+    <div class="file" tal:repeat="file question/get_files">
+      <p tal:condition="file/file">
+        <i class="bi bi-paperclip"></i>
+        <a href="" tal:attributes="href string:${file/absolute_url}/@@download/file"
+           tal:content="file/file/filename">
+        </a>
+        <span class="discreet"
+           tal:define="size file/file/getSize;
+            kb python:size/1024">
+              &mdash; <span tal:replace="kb" /> KB</span>
+        <metal:can-edit define-slot="file-edit">
+        <a tal:condition="file/can_edit"
+          class="edit"
+           tal:replace="nothing"
+           tal:attributes="href string:${file/absolute_url}/edit">
+          Edit File
+        </a>
+        <a tal:condition="file/can_edit"
+          class="deleteButton"
+           tal:attributes="href string:${file/absolute_url}/delete_confirmation">
+          Delete File
+        </a>
+        </metal:can-edit>
+      </p>
+    </div>
+  </div>
+  <tal:redraft tal:define="redraft_message question/redraft_message/output|question/redraft_message|string:">
+    <tal:message condition="python:view.can_view_redraft_reason and redraft_message">
+      <br/>
+      <div class="question comment">
+        <div class="arrow-right-border"></div>
+        <div class="arrow-right"></div>
+        <div class="from">
+          <span class="esdLabel">from</span>
+          <span class="value">Lead reviewer</span>
+          <span class="esdLabel">to</span>
+          <span class="value">TERTs</span>
+          <span class="messageDate">
+            <tal:sent condition="question/redraft_date">
+              Sent on: <span tal:content="python:question.redraft_date.strftime('%d %b %Y, %H:%M CET')">11/12/2013 12:00</span>
+            </tal:sent>
+          </span>
+        </div>
+        <div tal:content="redraft_message" class="answerContent"></div>
+      </div>
+    </tal:message>
+  </tal:redraft>
+<metal:can-edit define-slot="question-edit">
+  <div class="changes" tal:condition="question/can_edit">
+    <div class="question-history" style="display:none">
+      <p tal:condition="not:view/history|nothing" i18n:translate="no_history">
+        This object has no revision information.
+      </p>
+      <tal:block condition="view/history|nothing">
+        <form id="versionSelector"
+              action="#"
+           tal:attributes="action pps/current_page_url"
+           tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;
+            pps here/@@plone_context_state
+            ">
+          <fieldset>
+            <legend i18n:translate="legend_revisions">
+              Revisions
+            </legend>
+            <label for="two">
+              <span tal:omit-tag="" i18n:translate="">First revision</span>
+              <select id="two" name="two" tal:define="rev request/form/two|string:current">
+                <option tal:repeat="version view/history"
+                   tal:attributes="value version/version_id; selected python:str(rev)==str(version['version_id']) and 'yes' or None"
+                   i18n:translate="label_history_version">
+                  <tal:version i18n:name="version" content="version/version_id">1</tal:version>
+                  (<span tal:replace="version/sys_metadata/review_state"/>
+                  <span tal:replace="version/sys_metadata/principal"/>
+                  <tal:date i18n:name="date" content="python:toLocalizedTime(version['sys_metadata']['timestamp'])">
+                    1975-12-24
+                  </tal:date>
+                  )
+                </option>
+              </select>
+            </label>
+            <label for="one">
+              <span tal:omit-tag="" i18n:translate="">Second revision</span>
+              <select id="one" name="one" tal:define="rev request/one|string:current">
+                <option tal:repeat="version view/history"
+                   tal:attributes="value version/version_id; selected python:str(rev)==str(version['version_id']) and 'yes' or None"
+                   i18n:translate="label_history_version">
+                  <tal:version i18n:name="version" content="version/version_id">1</tal:version>
+                  (<span tal:replace="version/sys_metadata/review_state"/>
+                  <span tal:replace="version/sys_metadata/principal"/>
+                  <tal:date i18n:name="date" content="python:toLocalizedTime(version['sys_metadata']['timestamp'])">
+                    1975-12-24
+                  </tal:date>
+                  )
+                </option>
+              </select>
+            </label>
+          </fieldset>
+
+          <noscript>
+            <input type="submit" i18n:attributes="value label_update" value="Update"/>
+          </noscript>
+        </form>
+        <div metal:use-macro="here/diff_legend/macros/diff_legend"></div>
+
+        <p tal:condition="not:view/changes" i18n:translate="">
+          There are no changes between the selected revisions.
+        </p>
+
+        <tal:changes condition="view/changes">
+          <form method="post" action="">
+            <label for="diffstyle" class="jsOnly" style="display: none" i18n:translate="">Show differences</label>
+            <ul class="radioRow" id="diffTypeSelector">
+              <li>
+                <input id="diffstylevisual" type="radio" name="diffstyle" value="visual" checked="checked"/>
+                <label for="diffstylevisual" i18n:translate="">inline</label>
+              </li>
+              <li>
+                <input id="diffstylecode" type="radio" name="diffstyle" value="code"/>
+                <label for="diffstylecode" i18n:translate="">as code</label>
+              </li>
+            </ul>
+          </form>
+
+          <fieldset class="diff" tal:repeat="diff view/changes">
+            <legend tal:content="diff/label">Body text</legend>
+
+            <div class="fieldDiff inline-diff" tal:condition="exists:diff/inline_diff"
+               tal:content="structure python:diff.inline_diff()">
+              Inline changes
+            </div>
+
+            <p class="fieldDiff inline-diff" tal:condition="not:exists:diff/inline_diff" i18n:translate="">
+              This field has no inline difference view.
+            </p>
+
+            <div class="fieldDiff code-diff" style="display: none">
+              <pre tal:condition="exists:diff/html_diff" tal:content="structure python:diff.html_diff(wrapcolumn=80)">
+               HTML formatted differences
+              </pre>
+
+              <pre
+                class="fieldDiff code-diff" tal:condition="python:not exists('diff/html_diff') and exists('diff/ndiff')" tal:content="diff/ndiff">
+               ndiff formatted differences
+              </pre>
+              <p class="fieldDiff" tal:condition="python:not exists('diff/html_diff') and not exists('diff/ndiff')">
+                This field has no code difference view.
+              </p>
+            </div>
+          </fieldset>
+        </tal:changes>
+      </tal:block>
+    </div>
+  </div>
+</metal:can-edit>
+  <div id="comment-discussion-wrapper"
+     tal:define="context nocall:question">
+    <tal:block tal:define="portalType python:question.portal_type.lower()">
+      <tal:block tal:condition="python:portalType == 'comment' and question.can_see_comment_discussion()">
+        <div class="row collapsiblePanelTitle collapsed" data-panel="question-comments">
+          <div class="col">
+            <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+            <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
+            Internal comments on question between TERTs
+            <span>&nbsp; <i class="bi bi-info-circle-fill tooltipIconBlue"
+                            title="Expert/reviewer starts the discussion with the selected colleagues with a specific request or with the default sentence: 'Do you have any comment to the question?' The counterpart TERTs engage in the discussion or reply with the default phrase 'Ok, no comment.' If a discussion took place offline or per email the TERTs should use the default sentence: 'Discussed with ...' in the first text field"></i></span>
+          </div>
+        </div>
+        <div class="question-comments" tal:content="structure provider:emrt.necd.content.commentmanager"
+             style="display:none"/>
+      </tal:block>
+      <tal:block tal:condition="python:portalType == 'commentanswer' and question.can_see_answer_discussion()">
+        <div class="row collapsiblePanelTitle collapsed" data-panel="answer-comments">
+          <div class="col">
+            <i class="bi bi-chevron-down collapsible-icon icon-collapsed"></i>
+            <i class="bi bi-chevron-up collapsible-icon icon-expanded"></i>
+            Comments
+          </div>
+        </div>
+        <div class="answer-comments" tal:content="structure provider:emrt.necd.content.commentmanager"
+             style="display:none"/>
+      </tal:block>
+    </tal:block>
+  </div>
+<metal:actions define-slot="actions">
+  <tal:last condition="repeat/question/end">
+
+    <tal:conclu condition="python:view.in_conclusions() and not here.get_conclusion()">
+      <div class="actions">
+        <a href=""
+           id="add-conclusion-link"
+           tal:condition="view/can_add_conclusion"
+           tal:attributes="href string:${here/absolute_url}/++add++Conclusions"
+           class="standardButton">
+          Add conclusions
+        </a>
+      </div>
+    </tal:conclu>
+
+  </tal:last>
+
+  <tal:qactions condition="python:not view.in_conclusions()">
+    <div class="actions" tal:condition="repeat/question/end">
+
+      <tal:block tal:define="question view/question"
+         tal:condition="python: question and '-counterpart-comments' in question.get_state_api()">
+
+        <p class="discrete" tal:define="counterparters view/get_current_counterparters"
+           tal:condition="counterparters">
+          <strong>Counterparts involved: </strong>
+          <tal:loop repeat="user counterparters">
+          <span tal:replace="python:user.getProperty('fullname', user.getId())"
+             tal:condition="user" /><span tal:condition="not:repeat/user/end">, </span>
+          </tal:loop>
+        </p>
+
+      </tal:block>
+
+      <tal:block condition="view/can_delete_observation">
+        <a href="./delete_confirmation"
+           id="observation-delete"
+           tal:attributes="href string:${here/absolute_url}/delete_confirmation"
+           class="deleteButton standardButton">
+          Delete observation
+        </a>
+      </tal:block>
+
+      <tal:block  tal:define="portalType python:question.portal_type.lower()"
+         tal:condition="python:portalType == 'comment'">
+        <a href=""
+           tal:condition="question/can_edit"
+           tal:attributes="href string:${question/absolute_url}/edit"
+           class="edit standardButton">
+          Edit question
+        </a>
+        <a href=""
+           tal:replace="nothing"
+           tal:condition="question/can_delete"
+           tal:attributes="href string:${question/absolute_url}/delete_confirmation"
+           class="deleteButton standardButton">
+          Delete question
+        </a>
+      </tal:block>
+
+      <tal:block  tal:define="portalType python:question.portal_type.lower()"
+         tal:condition="python:portalType == 'commentanswer'">
+        <a href=""
+           tal:condition="question/can_edit"
+           tal:attributes="href string:${question/absolute_url}/edit"
+           class="edit standardButton">
+          Edit answer
+        </a>
+      </tal:block>
+
+      <a href=""
+         tal:condition="question/can_add_files"
+         tal:attributes="href string:${question/absolute_url}/++add++NECDFile"
+         class="standardButton addfile">
+        Upload file
+      </a>
+      <span
+         tal:condition="question/can_add_files"
+         tal:content="string:${question/absolute_url}/++add++NECDFile"
+        id="upload-file-url"
+        style="display:none">
+            Upload file
+    </span>
+      <tal:block tal:repeat="action view/actions">
+        <tal:block tal:condition="python:'draft-conclusions' in action['action']">
+          <tal:block tal:condition="python: view.existing_conclusion() or view.can_add_conclusion()">
+            <tal:block tal:condition="question/has_answers">
+              <a href=""
+                 tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+                title action/description|nothing;"
+                 class="standardButton defaultWFButton"
+                 tal:content="action/title">
+                Action
+              </a>
+            </tal:block>
+            <tal:block tal:condition="not: question/has_answers ">
+              <a href=""
+                 tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+                title action/description|nothing;"
+                 class="standardButton"
+                 tal:content="action/title">
+                Action
+              </a>
+            </tal:block>
+          </tal:block>
+        </tal:block>
+        <tal:block tal:condition="python:'/assign_counterpart_form' in action['action']">
+          <tal:block tal:condition="question/can_be_sent_to_lr">
+            <a href=""
+               tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+              title action/description|nothing;"
+               class="standardButton "
+               tal:content="action/title">
+              Action
+            </a>
+          </tal:block>
+          <tal:block tal:condition="not: question/can_be_sent_to_lr ">
+            <a href=""
+               tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+              title action/description|nothing;"
+               class="standardButton defaultWFButton"
+               tal:content="action/title">
+              Action
+            </a>
+          </tal:block>
+        </tal:block>
+        <tal:block tal:condition="python: 'send-comment' in action['action'] or 'send-to-lr' in action['action'] or 'ask-answer-approval' in action['action'] or 'answer-to-lr' in action['action'] or 'validate-answer-msa' in action['action']">
+          <a href=""
+             tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+            title action/description|nothing;"
+             class="standardButton defaultWFButton"
+             tal:content="action/title">
+            Action
+          </a>
+        </tal:block>
+        <tal:block tal:condition="python:'approve-question' in action['action']">
+          <a href=""
+             tal:attributes="href string:${question/absolute_url}/approve-question;
+            title action/description|nothing;"
+             class="standardButton defaultWFButton"
+             tal:content="action/title">
+            Action
+          </a>
+        </tal:block>
+        <tal:block tal:condition="python: 'edit-highlights' in action['action']"
+           tal:define="question view/question;">
+          <tal:block condition="python: True">
+            <a href=""
+               tal:attributes="href string:${action/action};
+                title action/description|nothing;"
+               class="standardButton"
+               tal:content="action/title">
+              Action
+            </a>
+          </tal:block>
+        </tal:block>
+        <tal:block tal:condition="python:'redraft' in action['action']">
+          <a href=""
+             tal:attributes="href string:${question/absolute_url}/redraft;
+            title action/description|nothing;"
+             class="standardButton"
+             tal:content="action/title">
+            Action
+          </a>
+        </tal:block>
+        <tal:block tal:condition="python: '/assign_counterpart_form' not in action['action'] and 'send-comment' not in action['action'] and 'send-to-lr' not in action['action'] and 'approve-question' not in action['action'] and 'ask-answer-approval' not in action['action'] and 'answer-to-lr' not in action['action'] and 'validate-answer-msa' not in action['action'] and 'draft-conclusions' not in action['action'] and 'edit-highlights' not in action['action'] and 'redraft' not in action['action']">
+          <a href=""
+             tal:attributes="href string:${action/action}&amp;comment=${question/getId};
+            title action/description|nothing;"
+             class="standardButton"
+             tal:content="action/title">
+            Action
+          </a>
+        </tal:block>
+      </tal:block>
+    </div>
+  </tal:qactions>
+</metal:actions>
+</div>
+</metal:main>

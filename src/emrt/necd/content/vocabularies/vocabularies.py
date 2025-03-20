@@ -63,17 +63,26 @@ def check_user_for_vocab(context, user):
     return not user_is_lr_or_manager and user_has_sectors
 
 
-def vocabulary_from_csv_string(data: str):
-    terms = []
+def mk_term(key, value):
+    return SimpleVocabulary.createTerm(key, key, value)
+
+
+def csv_entries(data: str):
     data = data.strip()
     if data:
         for key, value in csv.reader(data.split("\n")):
-            terms.append(SimpleVocabulary.createTerm(key, key, value))
-    return SimpleVocabulary(terms)
+            yield key, value
 
 
-def mk_term(key, value):
-    return SimpleVocabulary.createTerm(key, key, value)
+def csv_to_terms(data: str):
+    return [
+        mk_term(key, value)
+        for key, value in csv_entries(data)
+    ]
+
+
+def vocabulary_from_csv_string(data: str):
+    return SimpleVocabulary(csv_to_terms(data))
 
 
 def get_registry_interface_field_data(interface, field):
@@ -141,16 +150,35 @@ class Fuel(object):
 
 @implementer(IVocabularyFactory)
 class Highlight(object):
-    def __call__(self, context):
-        voc_name = (
-            "highlight"
-            if context.type == "inventory"
-            else "highlight_projection"
-        )
+    def __call__(self, context, voc_name=None):
+        if voc_name is None:
+            if context.highlight_vocabulary:
+                voc_name = context.highlight_vocabulary
+            else:
+                voc_name = (
+                    'highlight' if context.type == 'inventory'
+                    else 'highlight_projection'
+                )
+
         csv_data = get_registry_interface_field_data(
             INECDVocabularies, voc_name
         )
         return vocabulary_from_csv_string(csv_data)
+
+
+@implementer(IVocabularyFactory)
+class HighlightVocabularyTypes(object):
+    def __call__(self, context):
+        default_term = mk_term(
+            '',
+            'Default: Projection or Inventory pre 2024'
+        )
+
+        csv_data = get_registry_interface_field_data(
+            INECDVocabularies, 'highlight_vocabulary_types'
+        )
+        terms = itertools.chain([default_term], csv_to_terms(csv_data))
+        return SimpleVocabulary(terms)
 
 
 @implementer(IVocabularyFactory)
@@ -201,14 +229,14 @@ class NFRCode(object):
                     *(
                         (term_key, term)
                         for (term_key, term) in list(
-                            nfr_codes(context).items()
-                        )
+                        nfr_codes(context).items()
+                    )
                         if validate_term(
-                            build_prefix(
-                                ldap_wrapper(LDAP_SECTOREXP), term["ldap"]
-                            ),
-                            user_groups,
-                        )
+                        build_prefix(
+                            ldap_wrapper(LDAP_SECTOREXP), term["ldap"]
+                        ),
+                        user_groups,
+                    )
                     )
                 )
 
@@ -230,14 +258,14 @@ class NFRCodeInventories(object):
                     *(
                         (term_key, term)
                         for (term_key, term) in list(
-                            nfr_codes(context, field=registry_field).items()
-                        )
+                        nfr_codes(context, field=registry_field).items()
+                    )
                         if validate_term(
-                            build_prefix(
-                                ldap_wrapper(LDAP_SECTOREXP), term["ldap"]
-                            ),
-                            user_groups,
-                        )
+                        build_prefix(
+                            ldap_wrapper(LDAP_SECTOREXP), term["ldap"]
+                        ),
+                        user_groups,
+                    )
                     )
                 )
 
@@ -270,8 +298,8 @@ class SectorNames(object):
             [
                 mk_term(sector, name)
                 for sector, name in sorted(
-                    list(sectorNames.items()), key=itemgetter(0)
-                )
+                list(sectorNames.items()), key=itemgetter(0)
+            )
             ]
         )
 
@@ -338,6 +366,3 @@ class Roles(object):
         )
 
         return SimpleVocabulary(terms)
-    
-
-import plone.app.registry.exportimport.handler

@@ -24,29 +24,32 @@ from emrt.necd.content.utilities import ldap_utils
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 
 
+def get_email_context(review_type):
+    if review_type == 'projection':
+        result = '[NECD Projection Review]'
+    else:
+        result = '[NECD Inventory Review]'
+    return result
+
+
 def notify(
     observation, template, subject, role: VALID_ROLES, notification_name
 ):
     users = get_users_in_context(observation, role, notification_name)
     content = template(**dict(observation=observation))
-
-    if observation.aq_parent.type == "projection":
-        prepend = "[NECD Projection Review]"
-    else:
-        prepend = "[NECD Inventory Review]"
-
+    prepend = get_email_context(observation.aq_parent.type)
     subject = "{} {}".format(prepend, subject)
 
     send_mail(subject, safe_text(content), users)
 
 
-def send_mail(subject, email_content, users=[]):
+def send_mail(subject, email_content, users=None):
     """Effectively send the e-mail message."""
     from logging import getLogger
 
     log = getLogger(__name__)
 
-    user_emails = extract_emails(users)
+    user_emails = extract_emails(users or [])
     if user_emails:
         to_addr = user_emails[0]
         cc_addrs = user_emails[1:]

@@ -6,6 +6,8 @@ from operator import itemgetter
 from typing import Optional
 from typing import cast
 
+import html2text
+
 from OFS.Traversable import Traversable
 
 from Acquisition import aq_parent
@@ -14,6 +16,8 @@ from zope.interface.interface import Specification
 from zope.schema.interfaces import IVocabularyFactory
 
 from plone import api
+from Products.CMFPlone.utils import safe_unicode
+from plone.app.textfield.value import RichTextValue
 
 from emrt.necd.content.utilities.ldap_wrapper import ldap_inventory
 
@@ -139,3 +143,25 @@ def reduce_text(text, limit):
 
 def format_date(date, fmt="%d %b %Y, %H:%M CET"):
     return date.strftime(fmt)
+
+
+def render_rich_text_value(context, obj):
+    if isinstance(obj.text, RichTextValue):
+        return obj.text.output_relative_to(context)
+    else:
+        return obj.text
+
+
+def richtext2text(value, context):
+    html_value = value.output_relative_to(context)
+    output_text = html2text.html2text(html_value, bodywidth=0)
+    return safe_unicode(output_text)
+
+
+def safer_unicode(text):
+    """ Attempt to fix mixed latin1 + utf-8. """
+    try:
+        return text.decode('utf-8').encode('latin-1').decode('utf-8')
+    except Exception:
+        return safe_unicode(text)
+

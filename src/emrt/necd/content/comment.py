@@ -15,6 +15,7 @@ from zope.interface import implementer
 from Products.Five import BrowserView
 
 from plone import api
+from plone.app.textfield import RichText
 from plone.dexterity.browser import add
 from plone.dexterity.browser import edit
 from plone.dexterity.content import Container
@@ -29,7 +30,7 @@ from emrt.necd.content import _
 class IComment(model.Schema, IImageScaleTraversable):
     """Q&A item."""
 
-    text = schema.Text(
+    text = RichText(
         title=_("Text"),
         required=True,
     )
@@ -93,7 +94,7 @@ class AddForm(add.DefaultAddForm):
         super(AddForm, self).updateWidgets()
         self.widgets["text"].rows = 15
 
-    def create(self, data={}):
+    def create(self, data=None):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -107,7 +108,7 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        content.text = self.request.form.get("form.widgets.text", "")
+        content.text = data.get("text", "")
 
         return aq_base(content)
 

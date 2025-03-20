@@ -10,6 +10,7 @@ from operator import itemgetter
 from time import time
 
 from AccessControl import getSecurityManager
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from docx import Document
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Pt
@@ -75,6 +76,8 @@ from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
+from emrt.necd.content.utils import render_rich_text_value
+from emrt.necd.content.transform_html_to_docx import parse_html_to_docx
 from emrt.necd.content.vocabularies.vocabularies import INECDVocabularies
 from emrt.necd.content.vocabularies.vocabularies import (
     get_registry_interface_field_data,
@@ -1232,6 +1235,8 @@ class AddView(add.DefaultAddView):
 
 
 class ObservationMixin(DefaultView):
+    qa_macros_view = ViewPageTemplateFile("templates/macro_qa_chat.pt")
+
     @property
     def user_roles(self):
         user = api.user.get_current()
@@ -1351,6 +1356,15 @@ class ObservationMixin(DefaultView):
 
     def is_old_qa(self, comment):
         return comment.modification_date.year() < datetime.datetime.now().year
+
+    def get_qa_macro(self):
+        return self.qa_macros_view.macros["main"]
+
+    def render_qa_text(self, comment):
+        return render_rich_text_value(self.context, comment)
+
+    def render_rich_text(self, obj):
+        return render_rich_text_value(self.context, obj)
 
     def actions(self):
         context = aq_inner(self.context)
@@ -1581,7 +1595,10 @@ class ObservationView(ObservationMixin):
                     pass
             if not result:
                 my_path = self.context.getPhysicalPath()
-                my_year = int(re.match(RE_YEAR, my_path[-2]).group())
+                try:
+                    my_year = int(re.match(RE_YEAR, my_path[-2]).group())
+                except AttributeError:
+                    my_year = None
                 catalog = api.portal.get_tool("portal_catalog")
                 found = catalog(
                     portal_type="Observation",
@@ -1592,10 +1609,11 @@ class ObservationView(ObservationMixin):
                 candidates = []
                 for brain in found:
                     their_path = brain.getPath().split("/")
-                    if their_path != my_path:
-                        their_year = int(
-                            re.match(RE_YEAR, their_path[-2]).group()
-                        )
+                    if (their_path != my_path) and my_year is not None:
+                        try:
+                            their_year = int(re.match(RE_YEAR, their_path[-2]).group())
+                        except AttributeError:
+                            continue
                         if my_year > their_year:
                             candidates.append(brain)
                 if candidates:
@@ -1672,7 +1690,7 @@ class ExportAsDocView(ObservationMixin):
             else str(self.context.reference_year)
         )
         row_cells[3].paragraphs[0].style = "Table Cell"
-        row_cells[4].text = self.context.year or ""
+        row_cells[4].text = str(self.context.year) or ""
         row_cells[4].paragraphs[0].style = "Table Cell"
         if is_projection:
             row_cells[5].text = self.context.activity_data_type or ""
@@ -1746,9 +1764,12 @@ class ExportAsDocView(ObservationMixin):
             )
             document.add_paragraph(conclusion_2.reason_value())
             document.add_paragraph(
-                "Recommendation/internal note:", style="Label Bold"
-            )
-            document.add_paragraph(conclusion_2.text)
+                'Recommendation/internal note:', style="Label Bold")
+            try:
+                conclusion_html = conclusion_2.text.output_relative_to(self.context)
+                parse_html_to_docx(conclusion_html, document)
+            except AttributeError:
+                document.add_paragraph(conclusion_2.text)
 
         chats = self.get_chat()
         if chats:
@@ -1760,19 +1781,25 @@ class ExportAsDocView(ObservationMixin):
                     date = chat.modified()
                     sent_info = "Updated on: %s"
 
-                if chat.portal_type.lower() == "comment":
-                    document.add_paragraph(
-                        "> %s" % self.strip_special_chars(chat.text)
-                    )
+                if chat.portal_type.lower() == 'comment':
+                    try:
+                        comment_html = chat.text.output_relative_to(self.context)
+                        parse_html_to_docx(comment_html, document)
+                    except AttributeError:
+                        document.add_paragraph("> {}".format(chat.text))
+
                     document.add_paragraph(
                         "From TERTs To Member State \t\t %s"
                         % (sent_info % date.strftime("%d %b %Y, %H:%M CET"))
                     )
 
-                if chat.portal_type.lower() == "commentanswer":
-                    document.add_paragraph(
-                        "< %s" % self.strip_special_chars(chat.text)
-                    )
+                if chat.portal_type.lower() == 'commentanswer':
+                    try:
+                        answer_html = chat.text.output_relative_to(self.context)
+                        parse_html_to_docx(answer_html, document)
+                    except AttributeError:
+                        document.add_paragraph("> {}".format(chat.text))
+
                     document.add_paragraph(
                         "From Member State To TERTs \t\t %s"
                         % (sent_info % date.strftime("%d %b %Y, %H:%M CET"))
@@ -1811,9 +1838,16 @@ class AddQuestionForm(Form):
     @button.buttonAndHandler("Save question")
     def create_question(self, action):
         context = aq_inner(self.context)
-        text = self.request.form.get("form.widgets.text", "")
-        if not text.strip():
-            raise ActionExecutionError(Invalid("Question text is empty"))
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Question text is empty"))
 
         qs = self.context.get_values_cat("Question")
         if qs:
@@ -1853,9 +1887,18 @@ class AddAnswerForm(Form):
 
     @button.buttonAndHandler("Save answer")
     def add_answer(self, action):
-        text = self.request.form.get("form.widgets.text", "")
-        if not text.strip():
-            raise ActionExecutionError(Invalid("Answer text is empty"))
+
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Answer text is empty"))
+
         observation = aq_inner(self.context)
         questions = [
             q
@@ -1969,11 +2012,17 @@ class AddCommentForm(Form):
         question = value_or_error(
             observation.get_question(), "Invalid context"
         )
-        wid_text = self.widgets["text"]
 
-        text = value_or_error(
-            wid_text.extract("").strip(), "Question text is empty"
-        )
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Question text is empty"))
 
         if question.get_status() == "closed":  # fix for question in "draft"
             # transition before adding the comment,

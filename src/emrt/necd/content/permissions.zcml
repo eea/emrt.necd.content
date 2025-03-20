@@ -84,6 +84,11 @@
       />
 
     <permission
+      id="emrt.necd.content.SendReminder"
+      title="emrt.necd.content: Send reminder"
+      />
+
+    <permission
       id="emrt.necd.content.Warmup"
       title="emrt.necd.content: Warmup"
       />

@@ -1,3 +1,4 @@
+from plone.app.textfield import RichTextValue
 from z3c.form.action import Actions
 from z3c.form.field import FieldWidgets
 
@@ -28,3 +29,9 @@ class CommentForm(BaseForm):
 class CommentsViewlet(BaseViewlet):
     index = ViewPageTemplateFile("./templates/comments.pt")
     form = CommentForm
+
+    def render_rich_text_reply(self, reply):
+        if isinstance(reply.text, RichTextValue):
+            return reply.text.output_relative_to(self.context)
+        else:
+            return reply.getText()

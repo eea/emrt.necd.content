@@ -6,6 +6,56 @@ Changelog
 
 - Migrate to Plone 6 and Python 3.11
 
+2.6.0 (2025-03-13)
+
+- Bug #285464 - Preparing NECD-EMRT for 2025 activities
+
+2.5.51 (2024-05-23)
+
+- Bug #270288 - Fix observation not reindexing after new comments
+
+2.5.50 (2024-04-30)
+
+- Task #260973 - Add formatting
+- Task #260971 - Review if flags need updating/ all are still relevant
+- Bug #269439 - Error when editing conclusion text
+
+2.5.49 (2024-04-25)
+
+- Task #260971 - Add "Description flags" to carryover
+
+2.5.48 (2024-04-11)
+
+- Feature #260968 - Reminder button: allow user / country selection
+- Task #260971 - Review if flags need updating/ all are still relevant
+
+2.5.47 (2024-04-11)
+
+- Bug #268428 - Unable to take extract from test site
+
+2.5.46 (2024-02-09)
+
+- Feature #260974 - Possibility to recall obs after sending to approval
+
+2.5.45 (2024-02-08)
+
+- Feature #260968 - Reminder button needs to be developed so the Lead Reviews can use it close to the deadline
+
+2.5.44 (2024-02-06)
+
+- Task #260969 - Text on SE/LR responses to old conclusions is confusing
+
+2.5.43 (2024-02-06)
+
+- Feature #260973 - Add formatting
+- Feature #260974 - Possibility to recall obs after sending to approval
+
+2.5.42 (2024-01-29)
+
+- Task #260969 - Text on SE/LR responses to old conclusions is confusing
+- Feature #260972 - Would be good to see Q&A when writing conclusion
+- Feature #260964 - Member States need to have the option to download Questions and Answers (from all previous & current years)
+- Task #260967 - Reviewers need to have the option to download the questions and answers during the review process
 
 2.5.41 (2023-05-31)
 

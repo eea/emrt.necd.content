@@ -131,7 +131,7 @@
   <browser:page
     name="edit"
     for="emrt.necd.content.conclusions.IConclusions"
-    class=".conclusions.EditForm"
+    class=".conclusions.EditView"
     permission="cmf.ModifyPortalContent"
   />
 
@@ -211,6 +211,12 @@
     for="emrt.necd.content.observation.IObservation
          Products.CMFCore.interfaces.IActionSucceededEvent"
     handler="emrt.necd.content.notifications.observation_finalisation_request.notification_lr"
+    />
+
+  <!-- New comment, reindex number of replies -->
+  <subscriber
+    for="plone.app.discussion.interfaces.IComment zope.lifecycleevent.IObjectAddedEvent"
+    handler="emrt.necd.content.subscribers.new_discussion_comment"
     />
 
   <!--Comment forms and events-->

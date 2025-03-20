@@ -50,6 +50,14 @@ def get_vocabulary_values(context, name):
     except:
         return []
 
+def get_vocabulary_titles(context, name):
+    try:
+        factory = getUtility(IVocabularyFactory, name)
+        vocabulary = factory(context)
+        return [x.title for x in vocabulary.by_value.values()]
+    except:
+        return []
+
 
 def read_int(value):
     result = 0
@@ -100,6 +108,7 @@ EXTRA_FIELDS = (
     ("year", read_inventory_year),
     ("nfr_code", read_unicode),
     ("pollutants", read_list),
+    ("highlight", read_list),
 )
 
 EXTRA_FIELDS_PROJECTION = (
@@ -108,6 +117,31 @@ EXTRA_FIELDS_PROJECTION = (
     ("year", read_projection_year),
     ("nfr_code", read_unicode),
     ("pollutants", read_list),
+    ("highlight", read_list),
+)
+
+
+def transform_title_to_vocabulary_value(vocab_name):
+    def context_aware(context):
+        factory = getUtility(IVocabularyFactory, vocab_name)
+        vocabulary = factory(context)
+        title_to_value = dict([(v.title, k) for k, v in vocabulary.by_value.items()])
+        def vocab_aware(title):
+            return title_to_value.get(title, title)
+        return vocab_aware
+    return context_aware
+
+
+def transform_higlight_value_from_title(context):
+    context_aware = transform_title_to_vocabulary_value("emrt.necd.content.highlight")
+    vocab_aware = context_aware(context)
+    def title_list_to_values(titles):
+        return [vocab_aware(title) for title in titles]
+    return title_list_to_values
+
+
+TRANSFORM_EXTRA_FIELDS = (
+    ("highlight", transform_higlight_value_from_title),
 )
 
 
@@ -197,6 +231,11 @@ def clear_conclusion_history(obj, wf_id):
         conclusion.workflow_history[wf_id] = (cur_history[0],)
 
 
+def clear_observation_comments(obj):
+    obj.closing_deny_comments = u""
+    obj.closing_comments = u""
+
+
 def save_extra_fields(obj, extra_fields):
     for fname, fvalue in list(extra_fields.items()):
         if fvalue:
@@ -250,11 +289,20 @@ def read_extra_fields(row, row_nr, start_at, context):
         if context.type == "projection"
         else EXTRA_FIELDS
     )
+    transform_extra_fields = {
+        fname: transform(context)
+        for fname, transform
+        in TRANSFORM_EXTRA_FIELDS
+    }
     result = dict()
     for idx, (fname, reader) in enumerate(extra_fields):
         col_idx = start_at + idx
         try:
-            result[fname] = reader(_read_col(row, col_idx))
+            read_value = reader(_read_col(row, col_idx))
+            if fname in transform_extra_fields:
+                result[fname] = transform_extra_fields[fname](read_value)
+            else:
+                result[fname] = read_value
         except IndexError:
             msg = "Cannot read field {} on column {}, row {}.".format(
                 fname, col_idx + 1, row_nr
@@ -280,6 +328,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     clear_conclusion_closing_reason(ob)
     clear_conclusion_history(ob, wf_c.getId())
     delete_conclusion_file(ob)
+    clear_observation_comments(ob)
     save_extra_fields(ob, extra_fields)
 
     clear_and_grant_roles(ob)
@@ -305,6 +354,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     clear_conclusion_closing_reason(ob)
     clear_conclusion_history(ob, wf_c.getId())
     delete_conclusion_file(ob)
+    clear_observation_comments(ob)
     save_extra_fields(ob, extra_fields)
 
     prepend_qa(ob, older_obj)
@@ -325,9 +375,13 @@ class CarryOverView(BrowserView):
         values_for_nfr_code = get_vocabulary_values(
             self.context, "emrt.necd.content.nfr_code"
         )
+        titles_for_highlight = get_vocabulary_titles(
+            self.context, "emrt.necd.content.highlight"
+        )
         return self.index(
             values_for_nfr_code=", ".join(values_for_nfr_code),
             values_for_pollutants=", ".join(values_for_pollutants),
+            titles_for_highlight=", ".join(titles_for_highlight),
             is_projection=self.context.type == "projection",
         )
 

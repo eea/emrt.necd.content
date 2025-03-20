@@ -5,6 +5,7 @@
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from persistent import Persistent
+from plone.app.textfield import RichText
 from z3c.form import interfaces
 from z3c.form.datamanager import AttributeField
 from z3c.form.field import Fields
@@ -73,6 +74,10 @@ class ConclusionsMultiFileFieldDataManager(MultiFileFieldDataManager):
 
 
 class ICommentExtenderFields(Interface):
+    text = RichText(
+        title=_("label_comment", default="Comment")
+    )
+
     attachments = MultiFileField(
         title="Attachments",
         value_type=NamedBlobFile(),
@@ -111,7 +116,6 @@ CommentExtenderFactory = factory(CommentExtenderFields)
 
 @adapter(Interface, IDefaultBrowserLayer, CommentForm)
 class CommentExtender(extensible.FormExtender):
-    fields = Fields(ICommentExtenderFields)
 
     def __init__(self, context, request, form):
         self.context = context
@@ -119,6 +123,7 @@ class CommentExtender(extensible.FormExtender):
         self.form = form
 
     def update(self):
+        self.remove("text")
         self.add(ICommentExtenderFields, prefix="")
         self.form.description = _(
             "Handling of confidential files: "

@@ -1,6 +1,7 @@
 import itertools
 import time
 from collections import OrderedDict
+from collections import namedtuple
 from datetime import datetime
 from functools import partial
 from io import BytesIO
@@ -9,9 +10,11 @@ from typing import List
 from typing import Tuple
 from typing import cast
 
+import html2text
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
 from openpyxl import Workbook
+from plone.app.textfield import RichTextValue
 from plone.z3cform.layout import FormWrapper
 from z3c.form import button
 from z3c.form import field
@@ -64,6 +67,7 @@ from emrt.necd.content.utilities.interfaces import ISetupReviewFolderRoles
 from emrt.necd.content.utilities.interfaces import IUserIsMS
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import reduce_text
+from emrt.necd.content.utils import richtext2text
 from emrt.necd.content.utils import user_has_ldap_role
 
 QUESTION_WORKFLOW_MAP = {
@@ -151,14 +155,17 @@ def get_finalisation_reasons(reviewfolder: "ReviewFolder"):
     return reasons
 
 
+MissingHighlight = namedtuple("MissingHighlight", ["title"])
+
 def translate_highlights(vocab, keys):
-    return tuple(vocab.getTerm(x).title for x in keys)
+    return tuple(
+        vocab.by_token.get(x, MissingHighlight(x)).title for x in keys)
 
 
-def get_highlight_vocabs(context):
+def get_highlight_vocabs(context, voc_name=None):
     vocab_highlight = getUtility(
         IVocabularyFactory, name="emrt.necd.content.highlight"
-    )(context)
+    )(context, voc_name)
 
     vocab_highlight_values = tuple([term.value for term in vocab_highlight])
 
@@ -176,6 +183,33 @@ def get_highlight_vocabs(context):
     )
 
     return vocab_description_flags, vocab_conclusion_flags, vocab_highlight
+
+
+def classify_unknown_highlights(context, unknown_highlights):
+    result = {
+        "description_flags": set(),
+        "conclusion_flags": set()
+    }
+    if context.type == 'inventory':
+        highlight_vocabulary_types = getUtility(
+            IVocabularyFactory,
+            name='emrt.necd.content.highlight_vocabulary_types')(context)
+        other_highlight_vocabularies = [
+            x for x in highlight_vocabulary_types.by_value
+            if x and x != context.highlight_vocabulary
+            and not x.endswith('projection')
+        ]
+        for voc_name in other_highlight_vocabularies:
+            vocab_description_flags, vocab_conclusion_flags, vocab_highlight = (
+                get_highlight_vocabs(context, voc_name)
+            )
+            highlights = translate_highlights(vocab_highlight, unknown_highlights)
+            description_flags = get_common(highlights, vocab_description_flags)
+            conclusion_flags = get_common(highlights, vocab_conclusion_flags)
+            result["conclusion_flags"].update(conclusion_flags)
+            result["description_flags"].update(description_flags)
+
+    return result
 
 
 def filter_for_ms(brains, context):
@@ -221,6 +255,13 @@ class IReviewFolder(model.Schema, IImageScaleTraversable):
         title="Type",
         source=REVIEWFOLDER_TYPES,
         required=True,
+    )
+
+    highlight_vocabulary = schema.Choice(
+        title="Highlight vocabulary",
+        vocabulary='emrt.necd.content.highlight_vocabulary_types',
+        required=True,
+        default='',
     )
 
     tableau_statistics = schema.Text(
@@ -404,6 +445,10 @@ class ReviewFolderView(ReviewFolderMixin):
     def can_import_observation(self):
         return "Manager" in api.user.get_roles()
 
+    def can_send_reminder(self):
+        local_roles = api.user.get_roles(obj=self.context)
+        return {"Manager", "LeadReviewer"}.intersection(local_roles)
+
 
 class ReviewFolderBrowserView(ReviewFolderMixin):
     def folderitems(self, sort_on="modified", sort_order="reverse"):
@@ -514,8 +559,9 @@ EXCLUDE_PROJECTION_FIELDS = (
     "activity_data",
 )
 
-EXCLUDE_INVENTORY_FIELDS = "fuel"
-
+EXCLUDE_INVENTORY_FIELDS = (
+    "fuel",
+)
 
 IS_FIELD_MAP = {
     "get_is_adjustment": "Adjustment",
@@ -592,7 +638,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             self.context.absolute_url(),
             self.request["QUERY_STRING"],
         )
-        if not self.is_secretariat():
+        user_is_ms = getUtility(IUserIsMS)(self.context)
+        can_export_qa = user_is_ms or self.is_secretariat() or self.is_lr()
+        if not can_export_qa:
             self.widgets["include_qa"].mode = HIDDEN_MODE
 
     def action(self):
@@ -640,6 +688,8 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             if not skip_for_user or name not in EXCLUDE_FIELDS_FOR_MS
         ]
 
+        can_export_qa = user_is_ms or self.is_secretariat() or self.is_lr()
+
         dataset = []
 
         catalog = api.portal.get_tool("portal_catalog")
@@ -659,6 +709,14 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             highlights = translate_highlights(
                 vocab_highlight, observation["get_highlight"] or []
             )
+            description_flags = get_common(highlights, vocab_description_flags)
+            conclusion_flags = get_common(highlights, vocab_conclusion_flags)
+            unknown_flags = classify_unknown_highlights(
+                 self.context,
+                 set(highlights).difference(
+                     itertools.chain(description_flags, conclusion_flags)
+                 )
+             )
 
             for key in fields_to_export:
                 if key == "observation_is_potential_technical_correction":
@@ -670,13 +728,13 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                 elif key == "get_description_flags":
                     row.append(
                         ", ".join(
-                            get_common(highlights, vocab_description_flags)
+                            list(itertools.chain(description_flags, unknown_flags["description_flags"]))
                         )
                     )
                 elif key == "get_conclusion_flags":
                     row.append(
                         ", ".join(
-                            get_common(highlights, vocab_conclusion_flags)
+                            list(itertools.chain(conclusion_flags, unknown_flags["conclusion_flags"]))
                         )
                     )
                 elif key == "get_is_ms_key_category":
@@ -743,12 +801,16 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                     last_question_id = comment_ids[-1] if comment_ids else "-"
                     row.append(last_question_id)
                 else:
-                    row.append(safe_text(observation[key]))
+                    field_value = observation[key]
+                    if isinstance(field_value, RichTextValue):
+                        row.append(richtext2text(field_value, self.context))
+                    else:
+                        row.append(safe_text(field_value))
 
             if base_len == 0:
                 base_len = len(row)
 
-            if form_data.get("include_qa") and self.is_secretariat():
+            if form_data.get("include_qa") and can_export_qa:
                 # Include Q&A threads if user is Manager
                 extracted_qa = self.extract_qa(catalog, observation)
                 extracted_qa_len = len(extracted_qa)
@@ -778,7 +840,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             portal_type="Question", path=observation.getPath()
         )
 
-        questions = tuple([brain.getObject() for brain in question_brains])
+        questions = (brain.getObject() for brain in question_brains)
 
         comments = tuple(
             itertools.chain(
@@ -787,10 +849,21 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
         )
 
         mapping = dict(Comment="Question", CommentAnswer="Answer")
+
+        def get_qa_text(context, comment):
+            try:
+                comment_html = comment.text.output_relative_to(context)
+                output_text = html2text.html2text(comment_html, bodywidth=0)
+            except AttributeError:
+                output_text = comment.text
+
+            return safe_text(output_text)
+
         return tuple(
             [
                 "{}: {}".format(
-                    mapping[comment.portal_type], safe_text(comment.text)
+                    mapping[comment.portal_type],
+                    get_qa_text(self.context, comment)
                 )
                 for comment in comments
             ]

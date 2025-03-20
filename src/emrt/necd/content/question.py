@@ -241,7 +241,15 @@ class AddForm(add.DefaultAddForm):
     def add(self, object):
         super(AddForm, self).add(object)
         item = self.context.get(object.getId())
-        text = self.request.form.get("form.widgets.text", "")
+
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
         id = str(int(time()))
         item_id = item.invokeFactory(
             type_name="Comment",
@@ -274,9 +282,17 @@ class AddCommentForm(Form):
     @button.buttonAndHandler(_("Add question"))
     def create_question(self, action):
         context = aq_inner(self.context)
-        text = self.request.form.get("form.widgets.text", "")
-        if not text.strip():
-            raise ActionExecutionError(Invalid("Question text is empty"))
+
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Question text is empty"))
 
         id = str(int(time()))
         item_id = context.invokeFactory(
@@ -308,9 +324,17 @@ class AddAnswerForm(Form):
     @button.buttonAndHandler(_("Add answer"))
     def create_question(self, action):
         context = aq_inner(self.context)
-        text = self.request.form.get("form.widgets.text", "")
-        if not text.strip():
-            raise ActionExecutionError(Invalid("Answer text is empty"))
+
+        data, errors = self.extractData()
+
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        text = data.get("text")
+
+        if not text or not text.output.strip():
+            raise ActionExecutionError(Invalid(u"Answer text is empty"))
 
         id = str(int(time()))
         item_id = context.invokeFactory(

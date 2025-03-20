@@ -158,11 +158,29 @@ class DenyFinishObservationReasonForm(Form):
 class RecallObservation(BrowserView):
     def __call__(self):
         state = api.content.get_state(self.context)
+        transition_id = "recall-lr"
+
         if state == "conclusions-lr-denied":
             self.context.closing_deny_comments = ""
 
+        elif state == "close-requested":
+            self.context.closing_comments = ""
+            observation_history = self.context.workflow_history.get(
+                "esd-review-workflow", []
+            )
+
+            state_history = [hist["review_state"] for hist in observation_history]
+
+            for prev_state in reversed(state_history):
+                if prev_state == "conclusions":
+                    transition_id = "recall-se-conclusions"
+                    break
+                elif prev_state == "conclusions-lr-denied":
+                    transition_id = "recall-se-conclusions-lr-denied"
+                    break
+
         with api.env.adopt_roles(["Manager"]):
-            api.content.transition(obj=self.context, transition="recall-lr")
+            api.content.transition(obj=self.context, transition=transition_id)
 
         return self.response.redirect(self.context.absolute_url())
 

@@ -82,7 +82,7 @@
                     <!-- comment body -->
                     <div class="comment-body">
 
-                        <span tal:replace="structure reply/getText" />
+                        <span tal:replace="structure python:view.render_rich_text_reply(reply)" />
 
                         <!-- comment actions -->
                         <div class="d-flex flex-row justify-content-end mb-3">

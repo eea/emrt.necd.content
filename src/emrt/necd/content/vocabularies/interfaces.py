@@ -89,13 +89,33 @@ class INECDVocabularies(Interface):
     )
 
     highlight = schema.Text(
-        title=_("Highligt"),
+        title=_("Highlight"),
         default=read_profile_vocabulary("highlight.csv"),
+    )
+
+    highlight_2024_onwards = schema.Text(
+        title=_("Highlight 2024 onwards"),
+        default=read_profile_vocabulary("highlight_2024_onwards.csv"),
+    )
+
+    highlight_2025_onwards = schema.Text(
+        title=_("Highlight 2025 onwards"),
+        default=read_profile_vocabulary("highlight_2025_onwards.csv"),
     )
 
     highlight_projection = schema.Text(
         title=_("Highlight Projection"),
         default=read_profile_vocabulary("highlight_projection.csv"),
+    )
+
+    highlight_projection_2025_onwards = schema.Text(
+        title=_("Highlight Projection 2025 onwards"),
+        default=read_profile_vocabulary("highlight_projection_2025_onwards.csv"),
+    )
+
+    highlight_vocabulary_types = schema.Text(
+        title=_("Highlight Vocabulary Types"),
+        default=read_profile_vocabulary("highlight_vocabulary_types.csv"),
     )
 
     parameter = schema.Text(

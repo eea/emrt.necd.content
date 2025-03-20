@@ -3,6 +3,9 @@ from DateTime import DateTime
 from plone import api
 from Products.CMFCore.utils import getToolByName
 
+from emrt.necd.content.observation import IObservation
+from emrt.necd.content.utils import find_parent_with_interface
+
 
 def question_transition(question, event):
     if event.action in ['approve-question']:
@@ -102,7 +105,7 @@ def observation_transition(observation, event):
                 api.content.transition(obj=conclusion,
                     transition='publish')
 
-    elif event.action in ['deny-finishing-observation']:
+    elif event.action in ['deny-finishing-observation', 'recall-se-conclusions', 'recall-se-conclusions-lr-denied']:
         with api.env.adopt_roles(roles=['Manager']):
             conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
             if conclusions:
@@ -158,3 +161,9 @@ def observation_transition(observation, event):
 
 
     observation.reindexObject()
+
+
+def new_discussion_comment(comment, event):
+    with api.env.adopt_roles(roles=['Manager']):
+        observation = find_parent_with_interface(IObservation, comment)
+        observation.reindexObject()

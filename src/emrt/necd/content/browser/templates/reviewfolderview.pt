@@ -230,6 +230,11 @@
               Carry-over
             </a>
           </li>
+          <li tal:condition="view/can_send_reminder">
+            <a class="standardButton" href="${python:context.absolute_url()}/reminder-form">
+              Send reminder
+            </a>
+          </li>
           <li class="deleteButton" tal:condition="view/can_add_observation">
             <a href="./++add++Observation"
                tal:attributes="href string:${here/absolute_url}/++add++Observation"
@@ -425,8 +430,8 @@
                                       id python:item[0]"/>
                     <label tal:attributes="for python:item[0];"
                       tal:content="python:item[1]"></label><br/>
-                      <br tal:condition="python:item[0] in ['unece','acc']"/>
-                    <div tal:condition="python:item[0] in ['unece','acc']" class="esdLabel">Draft/final conclusion flags</div>
+                      <br tal:condition="python:item[0] in ['unece','acc', 'comparability', 'flex']"/>
+                    <div tal:condition="python:item[0] in ['unece','acc', 'comparability', 'flex']" class="esdLabel">Draft/final conclusion flags</div>
 
                   </tal:block>
                 </tal:block>
@@ -434,7 +439,7 @@
             </div>
           </div>
         </div>
-            
+
       </div>
 
       <tal:questions>

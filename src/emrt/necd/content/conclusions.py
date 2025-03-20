@@ -2,6 +2,8 @@ from logging import getLogger
 from time import time
 
 from AccessControl import getSecurityManager
+from plone.dexterity.interfaces import IDexterityEditForm
+from plone.z3cform import layout
 from z3c.form import field
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 
@@ -16,10 +18,12 @@ from zope.browserpage.viewpagetemplatefile import (
 )
 from zope.component import createObject
 from zope.component import getUtility
+from zope.component import getMultiAdapter
 from zope.event import notify
 from zope.globalrequest import getRequest
 from zope.interface import Invalid
 from zope.interface import implementer
+from zope.interface import classImplements
 from zope.lifecycleevent import ObjectModifiedEvent
 
 from Products.Five import BrowserView
@@ -213,7 +217,7 @@ class AddForm(add.DefaultAddForm):
         # override .items anymore. It's now a @property.
         widget_highlight.isChecked = is_checked
 
-    def create(self, data={}):
+    def create(self, data=None):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -227,15 +231,14 @@ class AddForm(add.DefaultAddForm):
         id = str(int(time()))
         content.title = id
         content.id = id
-        content.text = self.request.form.get("form.widgets.text", "")
-        reason = self.request.form.get("form.widgets.closing_reason", "")
-        content.closing_reason = reason[0]
+        content.text = data.get("text", "")
+        content.closing_reason = data.get("closing_reason", "")
         adapted = IAllowDiscussion(content)
         adapted.allow_discussion = True
 
+
         # Update highlight on parent observation
-        highlight = self.request.form.get("form.widgets.highlight")
-        container.highlight = highlight
+        container.highlight = data.get("highlight", tuple())
         notify(ObjectModifiedEvent(container))
 
         # Update Observation state
@@ -251,7 +254,13 @@ class AddForm(add.DefaultAddForm):
 
 class AddView(add.DefaultAddView):
     form = AddForm
+    index = Z3ViewPageTemplateFile("./templates/conclusion_layout.pt")
 
+    def __init__(self, *args, **kwargs):
+        super(AddView, self).__init__(*args, **kwargs)
+        self.observation = self.context
+        self.observation_view = getMultiAdapter((self.observation, self.request), name="view")
+        self.is_old_qa = self.observation_view.is_old_qa
 
 class ConclusionsView(BrowserView):
     def render(self):
@@ -267,6 +276,7 @@ class PseudoConclusion(object):
     text = ""
     closing_reason = ""
     highlight = ""
+    highlight_vocabulary = ""
 
     def __init__(self, context):
         self.context = context
@@ -281,6 +291,7 @@ class PseudoConclusion(object):
 
     def __call__(self, container):
         self.highlight = container.highlight
+        self.highlight_vocabulary = container.highlight_vocabulary
         # [refs #102793] needed by vocabularies
         self.type = container.type  # inventory/projection
         return self
@@ -326,13 +337,10 @@ class EditForm(edit.DefaultEditForm):
     def applyChanges(self, data):
         context = aq_inner(self.context)
         container = aq_parent(context)
-        text = self.request.form.get("form.widgets.text")
-        closing_reason = self.request.form.get("form.widgets.closing_reason")
-        context.text = text
-        if isinstance(closing_reason, (list, tuple)):
-            context.closing_reason = closing_reason[0]
-        highlight = self.request.form.get("form.widgets.highlight")
-        container.highlight = highlight
+        context.text = data.get("text", "")
+        context.closing_reason = data.get("closing_reason", "")
+        container.highlight = data.get("highlight", tuple())
+
         notify(ObjectModifiedEvent(context))
         notify(ObjectModifiedEvent(container))
         try:
@@ -346,3 +354,17 @@ class EditForm(edit.DefaultEditForm):
                 "Cannot transition to draft-conclusions: %s!",
                 container.absolute_url(1),
             )
+
+class FormWrapper(layout.FormWrapper):
+
+    index = Z3ViewPageTemplateFile("./templates/conclusion_layout.pt")
+
+    def __init__(self, *args, **kwargs):
+        super(FormWrapper, self).__init__(*args, **kwargs)
+        self.observation = self.context.aq_parent
+        self.observation_view = getMultiAdapter((self.observation, self.request), name="view")
+        self.is_old_qa = self.observation_view.is_old_qa
+
+
+EditView = layout.wrap_form(EditForm, __wrapper_class=FormWrapper)
+classImplements(EditView, IDexterityEditForm)

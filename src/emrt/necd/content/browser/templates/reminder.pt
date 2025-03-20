@@ -1,0 +1,109 @@
+<metal:page use-macro="here/main_template/macros/master">
+  <tal:block metal:fill-slot="style_slot">
+    <style type="text/css">
+      .field input[type="text"] {
+        padding: 0.5em 0.3em;
+        width: 100%;
+      }
+      .field textarea {
+        padding: 1em;
+      }
+
+      form button[disabled] {
+        background-color: #b3b3b3;
+        border-color: #f3f3f3;
+      }
+      form button[disabled]:hover {
+        cursor: not-allowed;
+      }
+    </style>
+  </tal:block>
+<metal:content fill-slot="main"
+  tal:define="is_projection python:options.get('is_projection');
+              will_notify_num python:view.will_notify_num_users;
+              countries_to_notify python:view.countries_to_notify;
+              manager_users_to_notify python:view.manager_users_to_notify;">
+<h1 class="documentFirstHeading">Send reminder</h1>
+<p class="discreet">Send email reminder to MS coordinators</p>
+
+<p>Submitting this form will send an email to <strong>${will_notify_num}</strong> MS coordinators which have outstanding questions.</p>
+
+<form action="./reminder" method="POST" enctype="multipart/form-data">
+  <tal:manager condition="manager_users_to_notify">
+  <p><strong>NOTE:</strong> The table below displays the users that will be notified and <strong>is only visible to Secretariat</strong></p>
+  <table class="listing">
+    <thead>
+      <tr>
+        <th>Notify?</th>
+        <th>Name</th>
+        <th>e-Mail</th>
+        <th>Roles</th>
+        <th>Country</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:repeat="user_data manager_users_to_notify">
+        <td><input type="checkbox" name="user_ids:list" value="${python:user_data.user_id}" checked="checked" /></td>
+        <td>${python:user_data.name}</td>
+        <td>${python:user_data.email}</td>
+        <td>${python:", ".join(user_data.roles)}</td>
+        <td>${python:user_data.country_name}</td>
+      </tr>
+    </tbody>
+  </table>
+  </tal:manager>
+
+  <tal:user condition="not:manager_users_to_notify">
+  <p><strong>NOTE:</strong> The table below displays the countries that will be notified, and the number of users for each country.</p>
+  <table class="listing">
+    <thead>
+      <tr>
+        <th>Notify?</th>
+        <th>Name</th>
+        <th>Number of users</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:repeat="country_data countries_to_notify">
+        <td><input type="checkbox" name="countries_a2:list" value="${python:country_data.a2}" checked="checked" /></td>
+        <td>${python:country_data.name}</td>
+        <td>${python:country_data.user_count}</td>
+      </tr>
+    </tbody>
+  </table>
+  </tal:user>
+
+  <div class="field">
+    <label for="mailFrom">From</label>
+    <div class="formHelp">The email address from which the email will be sent. <strong>This cannot be changed.</strong></div>
+    <input id="mailFrom" type="text" value="${python:view.mail_from_address}" disabled="disabled" readonly="readonly" />
+  </div>
+
+  <div class="field">
+    <label for="mailSubject">Message subject</label>
+    <div class="formHelp">The subject that will be used in the email.</div>
+    <input id="mailSubject" type="text" name="subject" value="${python:view.default_subject}" disabled="${python:not(will_notify_num) and 'disabled' or None}" />
+  </div>
+
+  <div class="field">
+    <label for="mailContent">Message content</label>
+    <div class="formHelp">
+      You can customise the message being sent, below. There are some parameters that you can use, described below:
+      <dl>
+        <tal:ditem repeat="param python:view.known_parameters">
+          <dt>${python:param[0]}</dt>
+          <dd>${python:param[1]}</dd>
+        </tal:ditem>
+      </dl>
+    </div>
+    <textarea id="mailContent" name="content" rows="15" disabled="${python:not(will_notify_num) and 'disabled' or None}">${python:view.default_content}</textarea>
+  </div>
+
+  <button type="submit" class="standardButton" disabled="${python:not(will_notify_num) and 'disabled' or None}">Confirm sending reminder</button>
+  <strong tal:condition="python:not(will_notify_num)">Sending disabled as it will not notify anyone (there are no observations in the required state).</strong>
+
+</form>
+
+</metal:content>
+
+</metal:page>
