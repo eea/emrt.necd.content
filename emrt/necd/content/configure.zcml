@@ -23,6 +23,7 @@
   <include package=".subscriptions" />
   <include package=".notifications" />
   <include package=".forms" />
+  <include package=".export_import" />
 
   <i18n:registerTranslations directory="locales" />
 
