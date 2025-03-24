@@ -12,7 +12,7 @@
       factory=".converter.NECDIntegerDataConverter"
       />
 
-  <utility factory=".cachechooser.MemcachedCacheChooser" />
+  <!-- <utility factory=".cachechooser.MemcachedCacheChooser" /> -->
 
   <z3c:widgetTemplate
       mode="input"
