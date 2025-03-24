@@ -1,9 +1,16 @@
+import uuid
+import logging
+
 from urllib.parse import unquote
 from urllib.parse import urlparse
 
 from collective.exportimport.import_content import ImportContent
 
 import plone.api as api
+
+
+logger = logging.getLogger(__name__)
+
 
 SIMPLE_SETTER_FIELDS = {
     # "ALL": ["some_shared_field"],
@@ -44,9 +51,13 @@ class CustomImportContent(ImportContent):
             item["title"] = item["id"]
 
         if item.get("UID") in self.SEEN_UIDS:
-            del item["UID"]
-        else:
-            self.SEEN_UIDS.add(item.get("UID"))
+            item["UID"] = uuid.uuid4().hex
+            logger.info(
+                "Duplicate UID detected, new UID generated: %s: %s", 
+                item["@id"], item["UID"]
+            )
+
+        self.SEEN_UIDS.add(item.get("UID"))
 
         for fieldname in SIMPLE_SETTER_FIELDS.get(item["@type"], []):
             if fieldname in item:
