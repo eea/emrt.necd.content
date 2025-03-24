@@ -70,6 +70,7 @@ setup(
         "requests",
         "html2text",
         # "pylibmc",
+        "collective.exportimport",
         "plone.autoinclude==2.0.2",
         "setuptools==75.8.2",
     ],
