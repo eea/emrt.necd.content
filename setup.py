@@ -70,6 +70,8 @@ setup(
         "requests",
         "html2text",
         # "pylibmc",
+        "plone.autoinclude==2.0.2",
+        "setuptools==75.8.2",
     ],
     extras_require={
         "test": [
