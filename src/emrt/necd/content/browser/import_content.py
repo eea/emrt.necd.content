@@ -1,4 +1,9 @@
+from urllib.parse import unquote
+from urllib.parse import urlparse
+
 from collective.exportimport.import_content import ImportContent
+
+import plone.api as api
 
 SIMPLE_SETTER_FIELDS = {
     # "ALL": ["some_shared_field"],
@@ -42,6 +47,12 @@ class CustomImportContent(ImportContent):
             item["exportimport.simplesetter"] = simple
 
         return item
+
+    def get_parent_as_container(self, item):
+        """Get parent by path, not by UID, there were issues with duplicate UIDs in import data."""
+        parent_url = unquote(item["parent"]["@id"])
+        parent_path = urlparse(parent_url).path
+        return api.content.get(path=parent_path)
 
     def global_obj_hook_before_deserializing(self, obj, item):
         to_set = item.get("exportimport.simplesetter", {}).items()
