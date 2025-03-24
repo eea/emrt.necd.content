@@ -16,6 +16,7 @@ SIMPLE_SETTER_FIELDS = {
     # "ALL": ["some_shared_field"],
     "Conclusions": [
       "ghg_estimations",
+      "closing_reason",
     ],
     "Observation": [
         "country",
