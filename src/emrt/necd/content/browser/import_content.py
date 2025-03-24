@@ -28,6 +28,11 @@ SIMPLE_SETTER_FIELDS = {
 
 class CustomImportContent(ImportContent):
 
+    SEEN_UIDS = None
+
+    def start(self):
+        self.SEEN_UIDS = set()
+
     def global_dict_hook(self, item):
         simple = {}
         # for fieldname in SIMPLE_SETTER_FIELDS.get("ALL", []):
@@ -37,6 +42,11 @@ class CustomImportContent(ImportContent):
         #             simple[fieldname] = value
         if not item["title"]:
             item["title"] = item["id"]
+
+        if item.get("UID") in self.SEEN_UIDS:
+            del item["UID"]
+        else:
+            self.SEEN_UIDS.add(item.get("UID"))
 
         for fieldname in SIMPLE_SETTER_FIELDS.get(item["@type"], []):
             if fieldname in item:
