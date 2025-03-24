@@ -69,7 +69,7 @@ setup(
         "beautifulsoup4",
         "requests",
         "html2text",
-        "pylibmc",
+        # "pylibmc",
     ],
     extras_require={
         "test": [
