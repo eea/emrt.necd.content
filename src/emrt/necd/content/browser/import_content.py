@@ -50,6 +50,10 @@ class CustomImportContent(ImportContent):
         if not item["title"]:
             item["title"] = item["id"]
 
+        # fix integer years
+        if isinstance(item.get("year"), int):
+            item["year"] = str(item["year"])
+
         if item.get("UID") in self.SEEN_UIDS:
             item["UID"] = uuid.uuid4().hex
             logger.info(
