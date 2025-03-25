@@ -31,7 +31,7 @@ class INECDFile(model.Schema, IImageScaleTraversable):
     primary("file")
     file = NamedBlobFile(
         title=_("File"),
-        required=True,
+        required=False,
     )
 
 
