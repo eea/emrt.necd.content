@@ -41,7 +41,7 @@ class ImportDiscussion(import_other.ImportDiscussion):
                     comment_id = int(item["comment_id"])
                     comment = conversation._comments.get(comment_id)
                     if comment:
-                        comment["text"] = RichTextValue(
+                        comment.text = RichTextValue(
                             item["text"], "text/html", "text/x-html-safe"
                         )
                         updated += 1
