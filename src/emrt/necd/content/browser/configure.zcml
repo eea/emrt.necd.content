@@ -18,6 +18,12 @@
       permission="cmf.ManagePortal"
       />
 
+  <browser:page
+      name="necd_import_discussion"
+      for="zope.interface.Interface"
+      class=".import_other.ImportDiscussion"
+      permission="cmf.ManagePortal"
+      />
 
     <browser:resourceDirectory
         name="emrt.necd.content"
