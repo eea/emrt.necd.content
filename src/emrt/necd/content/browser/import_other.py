@@ -33,7 +33,8 @@ class ImportDiscussion(import_other.ImportDiscussion):
 
             for item in conversation_data["conversation"]["items"]:
                 needs_update = (
-                    isinstance(item["text"], dict) 
+                    isinstance(item["text"], dict)
+                    and item["text"].get("data")
                     and item["text"].get("mime-type") == "text/html"
                 )
 
@@ -42,7 +43,7 @@ class ImportDiscussion(import_other.ImportDiscussion):
                     comment = conversation._comments.get(comment_id)
                     if comment:
                         comment.text = RichTextValue(
-                            item["text"], "text/html", "text/x-html-safe"
+                            item["text"]["data"], "text/html", "text/x-html-safe"
                         )
                         updated += 1
                     else:
