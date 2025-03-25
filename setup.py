@@ -55,6 +55,7 @@ setup(
         "beautifulsoup4",
         "requests",
         "html2text",
+        "collective.exportimport",
     ],
     entry_points="""
     # -*- Entry points: -*-
