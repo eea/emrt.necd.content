@@ -3,7 +3,7 @@ import os
 from setuptools import find_packages
 from setuptools import setup
 
-VERSION = "2.6.1"
+VERSION = "2.6.2"
 
 
 setup(
