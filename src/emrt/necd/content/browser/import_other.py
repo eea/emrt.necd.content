@@ -4,6 +4,9 @@ from plone import api
 
 import logging
 
+from urllib.parse import unquote
+from urllib.parse import urlparse
+
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone.app.textfield import RichTextValue
@@ -11,6 +14,8 @@ from plone.app.discussion.interfaces import IConversation
 
 from collective.exportimport import import_other
 
+from collective.exportimport.import_other import PORTAL_PLACEHOLDER
+from collective.exportimport.import_other import ZLogHandler
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +30,9 @@ class ImportDiscussion(import_other.ImportDiscussion):
     def import_data(self, data):
         results = 0
         for conversation_data in data:
-            obj = api.content.get(UID=conversation_data["uuid"])
+            parent_url = unquote(conversation_data["@id"])
+            parent_path = urlparse(parent_url).path
+            obj = api.content.get(path=parent_path)
             if not obj:
                 continue
             updated = 0
@@ -65,4 +72,58 @@ class ImportDiscussion(import_other.ImportDiscussion):
                 )
             results += updated
 
+        return results
+    
+
+class ImportLocalRoles(import_other.ImportLocalRoles):
+
+    index = ViewPageTemplateFile(
+        "templates/import_localroles.pt",
+        _prefix=os.path.dirname(import_other.__file__),
+    )
+
+    def import_localroles(self, data):
+        results = 0
+        total = len(data)
+        for index, item in enumerate(data, start=1):
+            obj_url = unquote(item["@id"])
+            obj_path = urlparse(obj_url).path
+            obj = api.content.get(path=obj_path)
+            if not obj:
+                if item["uuid"] == PORTAL_PLACEHOLDER:
+                    obj = api.portal.get()
+                else:
+                    logger.info(
+                        "Could not find object to set localroles on. UUID: {} ({})".format(
+                            item["uuid"],
+                            item["@id"],
+                        )
+                    )
+                    continue
+            if item.get("localroles"):
+                localroles = item["localroles"]
+                for userid in localroles:
+                    obj.manage_setLocalRoles(userid=userid, roles=localroles[userid])
+                logger.debug(
+                    u"Set roles on {}: {}".format(obj.absolute_url(), localroles)
+                )
+            if item.get("block"):
+                obj.__ac_local_roles_block__ = 1
+                logger.debug(
+                    u"Disable acquisition of local roles on {}".format(
+                        obj.absolute_url()
+                    )
+                )
+            if not index % 1000:
+                logger.info(
+                    u"Set local roles on {} ({}%) of {} items".format(
+                        index, round(index / total * 100, 2), total
+                    )
+                )
+            results += 1
+        if results:
+            logger.info("Reindexing Security")
+            catalog = api.portal.get_tool("portal_catalog")
+            pghandler = ZLogHandler(1000)
+            catalog.reindexIndex("allowedRolesAndUsers", None, pghandler=pghandler)
         return results
