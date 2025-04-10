@@ -1,5 +1,23 @@
-<configure xmlns="http://namespaces.zope.org/zope" i18n_domain="emrt.necd.content">
+<configure 
+    xmlns="http://namespaces.zope.org/zope" 
+    i18n_domain="emrt.necd.content">
+    
     <adapter factory=".serializers.CommentTextSerializer" />
     <adapter factory=".serializers.CommentAnswerTextSerializer" />
     <adapter factory=".serializers.DiscussionCommentSerializer" />
+
+    <browser:page
+        name="necd_export_discussion"
+        for="zope.interface.Interface"
+        class=".export_other.ExportDiscussion"
+        permission="cmf.ManagePortal"
+    />
+
+    <browser:page
+        name="necd_export_localroles"
+        for="zope.interface.Interface"
+        class=".export_other.ExportLocalRoles"
+        permission="cmf.ManagePortal"
+    />
+
 </configure>
