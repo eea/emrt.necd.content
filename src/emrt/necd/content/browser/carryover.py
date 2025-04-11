@@ -171,7 +171,7 @@ def _copy_obj(target, ob, new_id=None):
     ob_id = new_id or orig_ob.getId()
     ob = ob._getCopy(target)
     ob._setId(ob_id)
-    target._setObject(ob_id, ob)
+    target._setObject(ob_id, ob, suppress_events=True)
     return target[ob_id]
 
 
@@ -314,6 +314,12 @@ def read_extra_fields(row, row_nr, start_at, context):
     return result
 
 
+def catalog_with_children(catalog, obj):
+    catalog.catalog_object(obj)
+    for child in obj.objectValues():
+        catalog_with_children(catalog, child)
+
+
 def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     source = _read_col(row, 0)
     conclusion_text = _read_col(row, 1)
@@ -334,7 +340,7 @@ def copy_direct(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     clear_and_grant_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob, actor)
 
-    catalog.catalog_object(ob)
+    catalog_with_children(catalog, ob)
 
 
 def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
@@ -361,7 +367,7 @@ def copy_complex(context, catalog, wf, wf_q, wf_c, obj_from_url, row, row_nr):
     clear_and_grant_roles(ob)
     reopen_with_qa(wf, wf_q, wf_c, ob, actor)
 
-    catalog.catalog_object(ob)
+    catalog_with_children(catalog, ob)
 
 
 class CarryOverView(BrowserView):
