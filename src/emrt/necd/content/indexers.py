@@ -46,7 +46,7 @@ def observation_year(context):
     year = context.year
     if isinstance(year, (list, tuple)):
         return ", ".join(year)
-    return year
+    return str(year)
 
 
 @indexer(IObservation)
