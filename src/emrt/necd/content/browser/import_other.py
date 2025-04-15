@@ -16,6 +16,13 @@ from collective.exportimport import import_other
 
 from collective.exportimport.import_other import PORTAL_PLACEHOLDER
 from collective.exportimport.import_other import ZLogHandler
+from collective.exportimport.import_other import Comment
+from collective.exportimport.import_other import dateutil
+from collective.exportimport.import_other import unescape
+from collective.exportimport.import_other import aq_base
+from collective.exportimport.import_other import LLSet
+from collective.exportimport.import_other import IAnnotations
+from collective.exportimport.import_other import DISCUSSION_ANNOTATION_KEY
 
 logger = logging.getLogger(__name__)
 
@@ -35,45 +42,71 @@ class ImportDiscussion(import_other.ImportDiscussion):
             obj = api.content.get(path=parent_path)
             if not obj:
                 continue
-            updated = 0
+            added = 0
             conversation = IConversation(obj)
 
             for item in conversation_data["conversation"]["items"]:
-                needs_update = (
-                    isinstance(item["text"], dict)
-                    and item["text"].get("data")
-                    and item["text"].get("mime-type") == "text/html"
-                )
 
-                if needs_update:
-                    comment_id = int(item["comment_id"])
-                    comment = conversation._comments.get(comment_id)
-                    if comment:
-                        comment.text = RichTextValue(
-                            item["text"]["data"], "text/html", "text/x-html-safe"
-                        )
-                        updated += 1
-                    else:
-                        warn_msg = (
-                            "Comment with id %s not found in %s. "
-                            "Make sure to run @@import_discussion before "
-                            "running @@necd_import_discussion!"
-                        )
-                        logger.warning(
-                            warn_msg,
-                            comment_id,
-                            obj.absolute_url(),
-                        )
-            if updated:
-                logger.info(
-                    "Updated %s comments to %s", 
-                    updated, 
-                    obj.absolute_url(),
+                is_rich_text = False
+
+                if isinstance(item["text"], dict) and item["text"].get("data"):
+                    if item["text"].get("mime-type") == "text/html":
+                        is_rich_text = True
+                    item["text"] = item["text"]["data"]
+
+                comment = Comment()
+                comment_id = int(item["comment_id"])
+                comment.comment_id = comment_id
+                comment.creation_date = dateutil.parser.parse(item["creation_date"])
+                comment.modification_date = dateutil.parser.parse(
+                    item["modification_date"]
                 )
-            results += updated
+                comment.author_name = item["author_name"]
+                comment.author_username = item["author_username"]
+                comment.creator = item["author_username"]
+                if is_rich_text:
+                    comment.text = RichTextValue(
+                        item["text"], "text/html", "text/x-html-safe"
+                    )
+                else:
+                    comment.text = unescape(
+                        item["text"]
+                        .replace(u"\r<br />", u"\r\n")
+                        .replace(u"<br />", u"\r\n")
+                    )
+
+                if item["user_notification"]:
+                    comment.user_notification = True
+                if item.get("in_reply_to"):
+                    comment.in_reply_to = int(item["in_reply_to"])
+
+                conversation._comments[comment_id] = comment
+                comment.__parent__ = aq_base(conversation)
+                commentator = comment.author_username
+                if commentator:
+                    if commentator not in conversation._commentators:
+                        conversation._commentators[commentator] = 0
+                    conversation._commentators[commentator] += 1
+
+                reply_to = comment.in_reply_to
+                if not reply_to:
+                    # top level comments are in reply to the faux id 0
+                    comment.in_reply_to = reply_to = 0
+
+                if reply_to not in conversation._children:
+                    conversation._children[reply_to] = LLSet()
+                conversation._children[reply_to].insert(comment_id)
+
+                # Add the annotation if not already done
+                annotions = IAnnotations(obj)
+                if DISCUSSION_ANNOTATION_KEY not in annotions:
+                    annotions[DISCUSSION_ANNOTATION_KEY] = aq_base(conversation)
+                added += 1
+            logger.info("Added {} comments to {}".format(added, obj.absolute_url()))
+            results += added
 
         return results
-    
+
 
 class ImportLocalRoles(import_other.ImportLocalRoles):
 
