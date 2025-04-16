@@ -170,7 +170,14 @@ def get_highlight_vocabs(context, voc_name=None):
     vocab_highlight_values = tuple([term.value for term in vocab_highlight])
 
     is_projection = context.type == "projection"
-    highlight_split_item = "ec" if is_projection else "nsms"
+
+    inventory_split_item = "nsms"
+    projection_split_item = "ec"
+
+    highlight_split_item = ""
+    for item in [inventory_split_item, projection_split_item]:
+        if item in vocab_highlight_values:
+            highlight_split_item = item
 
     # Split highlight to differentiate between
     # description and conclusion flags.
