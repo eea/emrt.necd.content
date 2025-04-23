@@ -177,7 +177,7 @@ class HighlightVocabularyTypes(object):
         csv_data = get_registry_interface_field_data(
             INECDVocabularies, 'highlight_vocabulary_types'
         )
-        terms = itertools.chain([default_term], csv_to_terms(csv_data))
+        terms = list(itertools.chain([default_term], csv_to_terms(csv_data)))
         return SimpleVocabulary(terms)
 
 
