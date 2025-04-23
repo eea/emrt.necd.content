@@ -85,6 +85,7 @@
   <adapter name="observation_sent_to_msc" factory=".indexers.observation_sent_to_msc" />
   <adapter name="observation_sent_to_mse" factory=".indexers.observation_sent_to_mse" />
   <adapter name="observation_status" factory=".indexers.observation_status" />
+  <adapter name="text" factory=".indexers.dx_text_output" />
 
   <!--Context form validators-->
   <adapter factory=".observation.NfrCodeContextValidator" />

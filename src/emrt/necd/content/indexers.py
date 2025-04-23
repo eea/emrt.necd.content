@@ -1,5 +1,6 @@
 import datetime
 
+from plone.dexterity.interfaces import IDexterityContent
 from zope.schema import getFieldsInOrder
 
 from plone import api
@@ -304,3 +305,11 @@ def observation_finalisation_text(context):
         return conclusions[0] and conclusions[0].text or ""
     except:
         return None
+
+
+@indexer(IDexterityContent)
+def dx_text_output(context):
+    value = getattr(context, "text", None)
+    if value and IRichTextValue.providedBy(value):
+        return value.output
+    return ""
