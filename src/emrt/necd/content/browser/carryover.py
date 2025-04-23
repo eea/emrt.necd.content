@@ -161,6 +161,8 @@ def _replace_uuid(obj):
     uuid_generator = getUtility(IUUIDGenerator)
     new_uuid = uuid_generator()
     setattr(obj, UUID_ATTRIBUTE_NAME, new_uuid)
+    for child in obj.objectValues():
+        _replace_uuid(child)
 
 
 def clear_and_grant_roles(obj):
