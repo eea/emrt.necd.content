@@ -9,7 +9,7 @@
       destination="301"
       >
     <genericsetup:upgradeStep
-        title="Remove dexterity-types from portal_actions"
+        title="Override uuid and add intid for carried over observations."
         handler=".to301.run"
         />
 
