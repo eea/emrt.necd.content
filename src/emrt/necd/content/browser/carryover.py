@@ -2,6 +2,7 @@ import re
 from functools import partial
 from logging import getLogger
 
+import five.intid.intid
 import openpyxl
 
 from DateTime import DateTime
@@ -19,6 +20,8 @@ from Products.CMFCore.utils import getToolByName
 
 import plone.api as api
 from plone.app.discussion.conversation import ANNOTATION_KEY
+from plone.uuid.interfaces import IUUIDGenerator
+from plone.uuid.interfaces import ATTRIBUTE_NAME as UUID_ATTRIBUTE_NAME
 
 from emrt.necd.content.observation import inventory_year
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
@@ -154,6 +157,12 @@ def _clear_local_roles(obj):
     obj.__ac_local_roles__ = None
 
 
+def _replace_uuid(obj):
+    uuid_generator = getUtility(IUUIDGenerator)
+    new_uuid = uuid_generator()
+    setattr(obj, UUID_ATTRIBUTE_NAME, new_uuid)
+
+
 def clear_and_grant_roles(obj):
     """Clear any local roles already granted and grant just those
     that make sense in the current review folder context.
@@ -171,6 +180,7 @@ def _copy_obj(target, ob, new_id=None):
     ob_id = new_id or orig_ob.getId()
     ob = ob._getCopy(target)
     ob._setId(ob_id)
+    _replace_uuid(ob)
     target._setObject(ob_id, ob, suppress_events=True)
     return target[ob_id]
 
@@ -315,6 +325,7 @@ def read_extra_fields(row, row_nr, start_at, context):
 
 
 def catalog_with_children(catalog, obj):
+    five.intid.intid.addIntIdSubscriber(obj, None)
     catalog.catalog_object(obj)
     for child in obj.objectValues():
         catalog_with_children(catalog, child)

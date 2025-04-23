@@ -1,0 +1,21 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    >
+
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="3.0.0"
+      destination="301"
+      >
+    <genericsetup:upgradeStep
+        title="Remove dexterity-types from portal_actions"
+        handler=".to301.run"
+        />
+
+    <genericsetup:upgradeDepends
+        title="Update action icons."
+        import_steps="typeinfo"
+        />
+   </genericsetup:upgradeSteps>
+</configure>

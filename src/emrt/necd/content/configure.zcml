@@ -21,6 +21,7 @@
   <include package=".subscriptions" />
   <include package=".notifications" />
   <include package=".forms" />
+  <include package=".upgrades" />
 
   <i18n:registerTranslations directory="locales" />
 
