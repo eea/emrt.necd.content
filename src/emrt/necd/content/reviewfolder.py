@@ -351,9 +351,9 @@ class ReviewFolderMixin(BrowserView):
         if wfStatus != "":
             query["observation_status"] = wfStatus
         if nfrCode:
-            query["nfr_code"] = dict(query=nfrCode, operator="or")
+            query["nfr_code"] = dict(query=nfrCode)
         if sectorId:
-            query["GHG_Source_Category"] = dict(query=sectorId, operator="or")
+            query["GHG_Source_Category"] = dict(query=sectorId)
         if pollutants:
             query["Title"] = " OR ".join([p.strip() for p in pollutants])
 
