@@ -6,7 +6,7 @@ import re
 from enum import Enum
 from functools import partial
 from itertools import chain
-from operator import itemgetter
+from operator import itemgetter, methodcaller
 from time import time
 
 from AccessControl import getSecurityManager
@@ -1352,7 +1352,7 @@ class ObservationMixin(DefaultView):
                 for v in list(question.values())
                 if sm.checkPermission("View", v)
             ]
-            return values
+            return sorted(values, key=methodcaller("created"))
 
     def is_old_qa(self, comment):
         return comment.modification_date.year() < datetime.datetime.now().year
