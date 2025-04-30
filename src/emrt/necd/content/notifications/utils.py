@@ -51,20 +51,18 @@ def send_mail(subject, email_content, users=None):
 
     user_emails = extract_emails(users or [])
     if user_emails:
-        to_addr = user_emails[0]
-        cc_addrs = user_emails[1:]
         getRequest()
 
         mail = create_html_mail(
             subject,
             html=email_content,
-            cc_addrs=cc_addrs,
         )
 
         try:
-            api.portal.send_email(
-                recipient=to_addr, subject=subject, body=mail
-            )
+            for user_addr in user_emails:
+                api.portal.send_email(
+                    recipient=user_addr, subject=subject, body=mail
+                )
             message = "Users have been notified by e-mail"
             log.info(
                 "Emails sent to users %s",
