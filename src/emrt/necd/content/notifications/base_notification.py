@@ -1,5 +1,6 @@
 import logging
 from functools import lru_cache
+from functools import partial
 from typing import Generic
 from typing import Optional
 from typing import Tuple
@@ -73,7 +74,7 @@ class BaseNotification(BrowserView, Generic[Context, Event]):
         if observation:
             notify(
                 observation,
-                self.template,
+                partial(self.template, self),
                 self.subject,
                 self.target_role,
                 self.notification_name,

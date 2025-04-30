@@ -143,7 +143,7 @@ class DenyFinishObservationReasonForm(Form):
                     obj=self.context, transition="deny-finishing-observation"
                 )
 
-        return self.response.redirect(self.context.absolute_url())
+        return self.request.response.redirect(self.context.absolute_url())
 
     def updateWidgets(self):
         super(DenyFinishObservationReasonForm, self).updateWidgets()
@@ -182,7 +182,7 @@ class RecallObservation(BrowserView):
         with api.env.adopt_roles(["Manager"]):
             api.content.transition(obj=self.context, transition=transition_id)
 
-        return self.response.redirect(self.context.absolute_url())
+        return self.request.response.redirect(self.context.absolute_url())
 
 
 class AssignFormMixin(BrowserView):
