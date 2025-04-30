@@ -733,9 +733,8 @@
       </div>
       <metal:qa use-macro="python:view.get_qa_macro()" />
       <div class="actions" tal:condition="view/can_add_follow_up_question">
-        <a href="./++add++Comment"
+        <a href="${python:context.get_question().absolute_url()}/++add++Comment"
           id="add-comment-link"
-          tal:attributes="href string:${here/absolute_url}/++add++Comment"
           class="standardButton">
             Add follow up question
         </a>
