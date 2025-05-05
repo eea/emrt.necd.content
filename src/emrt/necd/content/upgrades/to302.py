@@ -15,9 +15,16 @@ def get_candidates(brains):
                 yield obj
 
 
-def reindex_observation_text():
+def reindex_observation_text(folder):
     catalog = api.portal.get_tool("portal_catalog")
-    candidates = get_candidates(catalog(portal_type="Observation"))
+    candidates = get_candidates(
+        catalog(
+            portal_type="Observation",
+            path="/".join(
+                folder.getPhysicalPath(),
+            ),
+        )
+    )
     for idx, obs in enumerate(candidates, start=1):
         logger.info("[%s] Reindexing %s...", idx, obs.absolute_url(1))
         obs.reindexObject(idxs=["text"], update_metadata=True)
@@ -35,4 +42,5 @@ def reindex_observation_text():
 
 
 def run(_):
-    reindex_observation_text()
+    portal = api.portal.get()
+    reindex_observation_text(portal["2025"])
