@@ -67,7 +67,7 @@ class BulkUpdateView(BrowserView):
             ob = obj_from_url(target)
             replace_conclusion_text(ob, conclusion_text)
             replace_description_text(ob, description_text)
-            catalog.reindexObject(ob, idxs=["SearchableText"])
+            catalog.reindexObject(ob, idxs=["SearchableText", "text"])
 
         if len(valid_rows) > 0:
             (IStatusMessage(self.request)

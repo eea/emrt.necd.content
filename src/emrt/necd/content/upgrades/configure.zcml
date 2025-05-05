@@ -18,4 +18,16 @@
         import_steps="typeinfo"
         />
    </genericsetup:upgradeSteps>
+
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="301"
+      destination="302"
+      >
+    <genericsetup:upgradeStep
+        title="Reindex observation text"
+        handler=".to302.run"
+        />
+   </genericsetup:upgradeSteps>
+
 </configure>
