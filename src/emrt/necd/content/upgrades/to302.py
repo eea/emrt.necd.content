@@ -16,10 +16,12 @@ def reindex_observation_text():
     catalog = api.portal.get_tool("portal_catalog")
     candidates = get_candidates(catalog(portal_type="Observation"))
     for idx, obs in enumerate(candidates, start=1):
-        logger.info("[%s] Reindexing %s", idx, obs.absolute_url(1))
+        logger.info("[%s] Reindexing %s...", idx, obs.absolute_url(1))
         obs.reindexObject()
-        if idx % 100 == 0:
+        if idx % 1000 == 0:
+            logger.info("Savepoint: %s...", idx)
             transaction.savepoint(optimistic=True)
+    transaction.commit()
 
 
 def run(_):
