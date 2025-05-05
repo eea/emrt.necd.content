@@ -23,7 +23,7 @@ def reindex_observation_text():
             logger.info("Savepoint & collect: %s...", idx)
             transaction.commit()
             gc.collect()
-        if idx % 1000 == 0:
+        elif idx % 1000 == 0:
             logger.info("Savepoint: %s...", idx)
             transaction.savepoint(optimistic=True)
     transaction.commit()
