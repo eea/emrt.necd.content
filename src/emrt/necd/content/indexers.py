@@ -312,4 +312,6 @@ def dx_text_output(context):
     value = getattr(context, "text", None)
     if value and IRichTextValue.providedBy(value):
         return value.output
+    elif isinstance(value, str):
+        return value
     return ""

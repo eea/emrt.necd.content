@@ -1,4 +1,3 @@
-import gc
 import logging
 
 import plone.api as api
@@ -20,9 +19,8 @@ def reindex_observation_text():
         logger.info("[%s] Reindexing %s...", idx, obs.absolute_url(1))
         obs.reindexObject()
         if idx % 2000 == 0:
-            logger.info("Savepoint & collect: %s...", idx)
+            logger.info("Commit: %s...", idx)
             transaction.commit()
-            gc.collect()
         elif idx % 1000 == 0:
             logger.info("Savepoint: %s...", idx)
             transaction.savepoint(optimistic=True)
