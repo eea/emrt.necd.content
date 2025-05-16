@@ -1,6 +1,8 @@
 import re
 from functools import partial
 from logging import getLogger
+from urllib.parse import urlparse
+from urllib.parse import unquote
 
 import five.intid.intid
 import openpyxl
@@ -52,6 +54,7 @@ def get_vocabulary_values(context, name):
         return sorted([k for k, v in list(vocabulary.by_token.items())])
     except:
         return []
+
 
 def get_vocabulary_titles(context, name):
     try:
@@ -128,24 +131,31 @@ def transform_title_to_vocabulary_value(vocab_name):
     def context_aware(context):
         factory = getUtility(IVocabularyFactory, vocab_name)
         vocabulary = factory(context)
-        title_to_value = dict([(v.title, k) for k, v in vocabulary.by_value.items()])
+        title_to_value = dict(
+            [(v.title, k) for k, v in vocabulary.by_value.items()]
+        )
+
         def vocab_aware(title):
             return title_to_value.get(title, title)
+
         return vocab_aware
+
     return context_aware
 
 
 def transform_higlight_value_from_title(context):
-    context_aware = transform_title_to_vocabulary_value("emrt.necd.content.highlight")
+    context_aware = transform_title_to_vocabulary_value(
+        "emrt.necd.content.highlight"
+    )
     vocab_aware = context_aware(context)
+
     def title_list_to_values(titles):
         return [vocab_aware(title) for title in titles]
+
     return title_list_to_values
 
 
-TRANSFORM_EXTRA_FIELDS = (
-    ("highlight", transform_higlight_value_from_title),
-)
+TRANSFORM_EXTRA_FIELDS = (("highlight", transform_higlight_value_from_title),)
 
 
 def _read_col(row, nr):
@@ -203,8 +213,9 @@ def _copy_and_flag(context, obj, new_id=None):
     return ob
 
 
-def _obj_from_url(context, site_url, url):
-    traversable = str(url.split(site_url)[-1][1:])
+def _obj_from_url(context, site_path, url):
+    parsed_url = urlparse(url)
+    traversable = f"{site_path}{unquote(parsed_url.path)}"
     return context.unrestrictedTraverse(traversable)
 
 
@@ -244,8 +255,8 @@ def clear_conclusion_history(obj, wf_id):
 
 
 def clear_observation_comments(obj):
-    obj.closing_deny_comments = u""
-    obj.closing_comments = u""
+    obj.closing_deny_comments = ""
+    obj.closing_comments = ""
 
 
 def save_extra_fields(obj, extra_fields):
@@ -303,8 +314,7 @@ def read_extra_fields(row, row_nr, start_at, context):
     )
     transform_extra_fields = {
         fname: transform(context)
-        for fname, transform
-        in TRANSFORM_EXTRA_FIELDS
+        for fname, transform in TRANSFORM_EXTRA_FIELDS
     }
     result = dict()
     for idx, (fname, reader) in enumerate(extra_fields):
@@ -412,8 +422,8 @@ class CarryOverView(BrowserView):
         valid_rows = get_valid_sheet_rows(sheet)
 
         context = self.context
-        site_url = portal.absolute_url()
-        obj_from_url = partial(_obj_from_url, context, site_url)
+        site_path = "/".join(portal.getPhysicalPath())
+        obj_from_url = partial(_obj_from_url, context, site_path)
         catalog = getToolByName(portal, "portal_catalog")
         wft = getToolByName(portal, "portal_workflow")
 
