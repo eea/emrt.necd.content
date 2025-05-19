@@ -37,6 +37,9 @@ WRONG_DATA_ERR = 'The information you entered in the {} section ' \
                  'of row no. {} is not correct. Please consult the columns' \
                  ' in the sample xls file to see the correct set of data.' \
 
+UNKNOWN_NFR_CODE = 'The NFR Code on row no. {} is incorrect. {} is not one of the' \
+                   ' known NFR codes.'
+
 DONE_MSG = 'Successfully imported {} observations!'
 
 PROJECTION_COLS = (
@@ -145,6 +148,16 @@ class Entry(object):
         self.constants = constants
         self.is_projection = is_projection
         self.get_vocabulary = get_vocabulary
+        self.errors = []
+        self.row_nr = 0
+
+    def _validate_nfr_code(self, nfr_vocab, nfr_code):
+        nfr_vocab = self.get_vocabulary(nfr_vocab)
+        try:
+            nfr_vocab.getTerm(nfr_code)
+            return nfr_code
+        except LookupError:
+            self.errors.append(UNKNOWN_NFR_CODE.format(self.row_nr, nfr_code))
 
     @property
     def title(self):
@@ -162,12 +175,13 @@ class Entry(object):
 
     @property
     def nfr_code(self):
-        return self.constants['nfr_code'](self.row)
+        nfr_code = self.constants['nfr_code'](self.row)
+        return self._validate_nfr_code('nfr_code', nfr_code)
 
     @property
     def nfr_code_inventory(self):
         nfr = self.constants['nfr_code_inventory'](self.row)
-        return nfr if nfr != '' else None
+        return self._validate_nfr_code('nfr_code_inventories', nfr_code)
 
     @property
     def year(self):
@@ -325,9 +339,10 @@ class Entry(object):
 def _create_observation(entry, context, request, portal_type, obj):
     obj.row_nr += 1
 
+    entry.row_nr = obj.row_nr - 1
     fields = entry.get_fields()
 
-    errors = []
+    errors = list(entry.errors)
 
     if '' in list(fields.values()):
         errors.append(UNCOMPLETED_ERR.format(obj.row_nr - 1))
