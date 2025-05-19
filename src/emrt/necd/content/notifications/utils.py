@@ -105,7 +105,8 @@ def get_ldap_group_member_ids(context, groupname):
             )
             ldap_members = [
                 x.decode() for x in ldap_group[0][1]["uniqueMember"]
-            ]
+            ] if ldap_group else []
+
             return [m.split(",")[0].split("=")[1] for m in ldap_members]
     else:
         raise ValueError
