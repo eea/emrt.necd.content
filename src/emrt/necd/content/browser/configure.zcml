@@ -289,6 +289,20 @@
         attribute="start"
         />
 
+    <browser:page
+        name="reindex_observation"
+        for="..observation.IObservation"
+        class=".management.ReindexObservation"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="change_history"
+        for="*"
+        class=".management.ChangeHistoryView"
+        permission="cmf.ManagePortal"
+        />
+
   <!-- Publish static files -->
   <plone:static
       name="emrt.necd.content"
