@@ -30,4 +30,15 @@
         />
    </genericsetup:upgradeSteps>
 
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="302"
+      destination="303"
+      >
+    <genericsetup:upgradeStep
+        title="Reindex observation_sent_to_mse and observation_sent_to_msc"
+        handler=".to303.run"
+        />
+   </genericsetup:upgradeSteps>
+
 </configure>
