@@ -32,3 +32,4 @@ def reindex_observations(folder):
 def run(_):
     portal = api.portal.get()
     reindex_observations(portal["2025"])
+    reindex_observations(portal["2025-projection"])

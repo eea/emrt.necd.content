@@ -276,10 +276,10 @@
             </tal:is_inventory>
             <tal:is_projection condition="python:view.is_projection()">
               <div class="col" tal:content="context/activity_data_type"></div>
-              <div class="col" tal:content="context/reference_year">Reference year placeholder</div>
               <div class="col">
                 <span tal:replace="structure python:', '.join(context.year or [])"></span>
               </div>
+              <div class="col" tal:content="context/reference_year">Reference year placeholder</div>
             </tal:is_projection>
           </div>
         </div>
