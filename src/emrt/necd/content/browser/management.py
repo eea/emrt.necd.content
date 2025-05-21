@@ -22,7 +22,7 @@ import plone.api as api
 from emrt.necd.content.browser.carryover import catalog_with_children
 
 
-class ReindexObservation(BrowserView):
+class ReindexContext(BrowserView):
     def __call__(self):
         catalog = api.portal.get_tool("portal_catalog")
         catalog_with_children(catalog, self.context)

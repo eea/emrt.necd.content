@@ -20,7 +20,6 @@ from zope.interface import implementer
 from Products.Five import BrowserView
 
 from plone import api
-from plone.app.contentlisting.interfaces import IContentListing
 from plone.dexterity.browser import add
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
@@ -85,11 +84,7 @@ class Question(Container):
         return api.content.get_state(self)
 
     def get_questions(self):
-        sm = getSecurityManager()
-        values = [
-            v for v in list(self.values()) if sm.checkPermission("View", v)
-        ]
-        return IContentListing(values)
+        return self.listFolderContents()
 
     def getFirstComment(self):
         comments = sorted([

@@ -290,9 +290,9 @@
         />
 
     <browser:page
-        name="reindex_observation"
-        for="..observation.IObservation"
-        class=".management.ReindexObservation"
+        name="reindex_context"
+        for="*"
+        class=".management.ReindexContext"
         permission="cmf.ManagePortal"
         />
 

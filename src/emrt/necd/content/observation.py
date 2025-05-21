@@ -46,7 +46,6 @@ from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
 from plone import api
-from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.discussion.interfaces import IConversation
 from plone.autoform import directives
 from plone.base.utils import safe_text
@@ -1267,7 +1266,7 @@ class ObservationMixin(DefaultView):
         return [mitem for mitem in menu_items if not hidden(mitem)]
 
     def get_questions(self):
-        return IContentListing(self.context.get_values_cat("Question"))
+        return self.context.get_values_cat("Question")
 
     def can_delete_observation(self):
         is_draft = self.context.get_status() in ["pending", "draft"]
@@ -1311,12 +1310,7 @@ class ObservationMixin(DefaultView):
 
     def show_description(self):
         questions = self.get_questions()
-        sm = getSecurityManager()
-        if questions:
-            question = questions[-1]
-            return sm.checkPermission("View", question.getObject())
-        else:
-            return ms_user.hide_from_ms(self.context)
+        return questions or ms_user.hide_from_ms(self.context)
 
     def show_internal_notes(self):
         return ms_user.hide_from_ms(self.context)
@@ -1341,7 +1335,7 @@ class ObservationMixin(DefaultView):
     def question(self):
         questions = self.get_questions()
         if questions:
-            return questions[0].getObject()
+            return questions[0]
 
     def get_chat(self):
         sm = getSecurityManager()
@@ -1462,7 +1456,7 @@ class ObservationMixin(DefaultView):
             question = self.question()
             if question is not None:
                 qs = question.get_questions()
-                return qs[-1].getObject() if qs else None
+                return qs[-1] if qs else None
 
         return None
 

@@ -1096,7 +1096,6 @@ class InboxReviewFolderView(ReviewFolderMixin):
                 observations.append(b.getObject())
             except Unauthorized:
                 pass
-
         if rolecheck is None:
             return observations
 
