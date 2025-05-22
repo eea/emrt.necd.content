@@ -1,6 +1,7 @@
 from operator import methodcaller
 from time import time
 
+from zExceptions import Redirect
 from AccessControl import getSecurityManager
 from z3c.form import button
 from z3c.form import field
@@ -231,6 +232,10 @@ class AddForm(add.DefaultAddForm):
         self.widgets["text"].rows = 15
 
     def create(self, data={}):
+        existing_question = self.context.listFolderContents({"portal_type": "Question"})
+        # Handle multiple submits, there should be only one Question.
+        if existing_question:
+            raise Redirect(self.context.absolute_url())
         return create_question(self.context)
 
     def add(self, object):

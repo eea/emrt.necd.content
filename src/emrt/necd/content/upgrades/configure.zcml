@@ -41,4 +41,15 @@
         />
    </genericsetup:upgradeSteps>
 
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="303"
+      destination="304"
+      >
+    <genericsetup:upgradeStep
+        title="Fix observations that have multiple Question items."
+        handler=".to304.run"
+        />
+   </genericsetup:upgradeSteps>
+
 </configure>
