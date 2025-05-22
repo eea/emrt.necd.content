@@ -21,6 +21,14 @@
     preserveOriginal="true"
     />
 
+  <monkey:patch
+    description="Patch plone.app.z3cform.widgets.richtext to copy widget.form."
+    class="plone.app.z3cform.widgets.richtext.RichTextWidget"
+    original="render_input_mode"
+    replacement=".patches.RichTextWidget_render_input_mode"
+    preserveOriginal="false"
+    />
+
 <!--  <monkey:patch-->
 <!--    description="Add cache for node.ext.ldap.ugm._api.Groups.search. Because of 'plumber' we need to patch the 'inheritor'."-->
 <!--    class="node.ext.ldap.ugm._api.Groups"-->
