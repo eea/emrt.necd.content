@@ -401,13 +401,12 @@ class DeleteLastComment(BrowserView):
                 )
             else:
                 question_state = api.content.get_state(obj=question)
+                if question_state == "draft":
+                    # Need to transition before deleting the comment, otherwise the
+                    # can_be_deleted guard will fail.
+                    api.content.transition(obj=question, transition="delete-question")
                 self.context.manage_delObjects([last_comment.getId()])
                 url = question.absolute_url()
-                if question_state == "draft":
-                    url += (
-                        "/content_status_modify"
-                        "?workflow_action=delete-question"
-                    )
                 return self.request.response.redirect(url)
 
 
