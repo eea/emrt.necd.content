@@ -123,12 +123,7 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
     def updateWidgets(self):
         super(ChangeHistoryForm, self).updateWidgets()
 
-    @button.buttonAndHandler("Save")
-    def handleSave(self, action):
-        params, errors = self.extractData()
-        if errors:
-            return False
-
+    def _parse_params(self, params):
         search_params = {
             k[2:]: v
             for k, v in params.items()
@@ -146,6 +141,9 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
         if write_params.get("time"):
             write_params["time"] = DateTime(write_params["time"])
 
+        return search_params, search_time, write_params
+
+    def _find_entry(self, params, search_params, search_time):
         found = []
 
         for entry in self.context.workflow_history[params["wf"]]:
@@ -155,8 +153,46 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
         if search_time:
             found.sort(key=partial(cmp_datetime, search_time))
 
-        if found:
-            target = found[0]
+        return found[0] if found else None
+
+    @button.buttonAndHandler("Delete matching")
+    def handleDelete(self, action):
+        params, errors = self.extractData()
+        if errors:
+            return False
+
+        search_params, search_time, write_params = self._parse_params(params)
+        target = self._find_entry(params, search_params, search_time)
+
+        if target:
+            wh = self.context.workflow_history
+            wh[params["wf"]] = tuple(
+                [x for x in wh[params["wf"]] if x != target]
+            )
+
+            self.context.workflow_history._p_changed = 1
+            self.context._p_changed = 1
+            self.context.reindexObject()
+
+            api.portal.show_message(f"Removed entry {target}.")
+
+        else:
+            api.portal.show_message(
+                f"Could not locate entry for: {search_params}, {search_time}."
+            )
+
+        self.request.response.redirect(self.context.absolute_url())
+
+    @button.buttonAndHandler("Save")
+    def handleSave(self, action):
+        params, errors = self.extractData()
+        if errors:
+            return False
+
+        search_params, search_time, write_params = self._parse_params(params)
+        target = self._find_entry(params, search_params, search_time)
+
+        if target:
             old_values = deepcopy(dict(target))
 
             for k, v in write_params.items():
