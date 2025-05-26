@@ -28,7 +28,6 @@ class FollowUpPermission(object):
         obs = question.aq_parent
         obs_state = obs.get_status()
         observation_in_right_state = obs_state not in INVALID_OBS_STATES
-        question.has_answers()
 
         return (
             observation_in_right_state and

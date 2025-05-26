@@ -358,8 +358,6 @@ class AddAnswerForm(Form):
 
 class AddFollowUpQuestion(BrowserView):
     def render(self):
-        api.content.transition(obj=self.context, transition="reopen")
-
         url = "%s/++add++Comment" % self.context.absolute_url()
         return self.request.response.redirect(url)
 

@@ -1,5 +1,6 @@
 from time import time
 
+from zExceptions import Redirect
 from AccessControl import getSecurityManager
 from z3c.form import field
 
@@ -95,6 +96,23 @@ class AddForm(add.DefaultAddForm):
         self.widgets["text"].rows = 15
 
     def create(self, data=None):
+        if self.context.listFolderContents():
+            return self._create_follow_up(data)
+        return self._create_initial(data)
+
+    def _create_follow_up(self, data=None):
+        # Transition so guard works
+        api.content.transition(obj=self.context, transition="reopen")
+
+        # If all is well, create the object.
+        if self.context.can_add_follow_up_question():
+            return self._create_initial(data)
+
+        # Anything fails raise a Redirect.
+        # So that the transaction is rolled back and we keep the initial state.
+        raise Redirect(self.context.absolute_url())
+
+    def _create_initial(self, data=None):
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
