@@ -776,7 +776,7 @@ class Observation(Container):
                 item["author"] = self.get_author_name(item["actor"])
                 i_rstate = item["review_state"]
                 i_action = item["action"]
-                if i_rstate == "draft" and i_action == "reopen":
+                if i_rstate == "draft" and i_action in ["reopen", None]:
                     item["state"] = "Draft question"
                     item["role"] = "Sector Expert"
                     question_wf.append(item)
