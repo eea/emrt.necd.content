@@ -178,7 +178,7 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
 
         else:
             api.portal.show_message(
-                f"Could not locate entry for: {search_params}, {search_time}."
+                f"Could not locate entry for: {search_params}."
             )
 
         self.request.response.redirect(self.context.absolute_url())
