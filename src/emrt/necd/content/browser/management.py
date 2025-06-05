@@ -131,7 +131,7 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
         }
         search_time = search_params.pop("time", None)
         if search_time:
-            search_time = DateTime(search_time)
+            search_params["time"] = DateTime(search_time)
 
         write_params = {
             k[2:]: v
@@ -141,17 +141,17 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
         if write_params.get("time"):
             write_params["time"] = DateTime(write_params["time"])
 
-        return search_params, search_time, write_params
+        return search_params, write_params
 
-    def _find_entry(self, params, search_params, search_time):
+    def _find_entry(self, params, search_params):
         found = []
 
-        for entry in self.context.workflow_history[params["wf"]]:
-            if all([entry[k] == v for k, v in search_params.items()]):
-                found.append(entry)
+        entries = self.context.workflow_history[params["wf"]]
 
-        if search_time:
-            found.sort(key=partial(cmp_datetime, search_time))
+        for entry in entries:
+            matched = [entry[k] == v for k, v in search_params.items()]
+            if matched and all(matched):
+                found.append(entry)
 
         return found[0] if found else None
 
@@ -161,8 +161,8 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
         if errors:
             return False
 
-        search_params, search_time, write_params = self._parse_params(params)
-        target = self._find_entry(params, search_params, search_time)
+        search_params, write_params = self._parse_params(params)
+        target = self._find_entry(params, search_params)
 
         if target:
             wh = self.context.workflow_history
@@ -189,8 +189,8 @@ class ChangeHistoryForm(AutoExtensibleForm, form.Form):
         if errors:
             return False
 
-        search_params, search_time, write_params = self._parse_params(params)
-        target = self._find_entry(params, search_params, search_time)
+        search_params, write_params = self._parse_params(params)
+        target = self._find_entry(params, search_params)
 
         if target:
             old_values = deepcopy(dict(target))
