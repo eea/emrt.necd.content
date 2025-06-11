@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T", bound="BaseNotification")
 
 Context = TypeVar("Context", bound=Traversable)
-Event = TypeVar("Event", bound=ObjectEvent, default=None)
+Event = TypeVar("Event", bound=ObjectEvent)
 
 WorkflowContext = TypeVar("WorkflowContext", bound=DexterityContent)
 WorkflowEvent = TypeVar("WorkflowEvent", bound=WorkflowActionEvent)
