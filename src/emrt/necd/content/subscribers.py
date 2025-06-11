@@ -71,7 +71,8 @@ def observation_transition(observation, event):
             qs = [q for q in list(observation.values()) if q.portal_type == 'Question']
             if qs:
                 q = qs[0]
-                api.content.transition(obj=q, transition='reopen')
+                if api.content.get_state(q) == 'closed':
+                    api.content.transition(obj=q, transition='reopen')
 
     elif event.action in ['request-comments']:
         with api.env.adopt_roles(roles=['Manager']):
