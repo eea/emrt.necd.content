@@ -361,7 +361,7 @@ class ReAssignMSExpertsForm(AssignAnswererForm):
                 )
             target.reindexObjectSecurity()
 
-            answer_to_msexperts.notification_mse(self.context, reassign=True)
+            answer_to_msexperts.notification_mse(self.context, None, reassign=True)
 
             return self.request.response.redirect(target.absolute_url())
 
@@ -453,7 +453,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
             url = self.context.absolute_url()
 
             question_to_counterpart.notification_cp(
-                self.context, reassign=True
+                self.context, None, reassign=True
             )
 
             return self.request.response.redirect(url)

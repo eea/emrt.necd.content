@@ -1,3 +1,5 @@
+from typing import Optional
+
 from Products.CMFCore.WorkflowCore import ActionSucceededEvent
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
@@ -9,7 +11,7 @@ from emrt.necd.content.question import Question
 
 
 class NotificationMSE(
-    BaseWorkflowNotification[Question, ActionSucceededEvent]
+    BaseWorkflowNotification[Question, Optional[ActionSucceededEvent]]
 ):
     """To: MSExperts. When: New question for your country."""
 
@@ -20,7 +22,7 @@ class NotificationMSE(
     target_role = ROLE_MSE
     notification_name = "answer_to_msexperts"
 
-    def should_run(self, event: ActionSucceededEvent, reassign=False):
+    def should_run(self, event: Optional[ActionSucceededEvent], reassign=False):
         """Check if this notification should run."""
         return super().should_run(event) or reassign
 

@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T", bound="BaseNotification")
 
 Context = TypeVar("Context", bound=Traversable)
-Event = TypeVar("Event", bound=ObjectEvent)
+Event = TypeVar("Event", bound=ObjectEvent, default=None)
 
 WorkflowContext = TypeVar("WorkflowContext", bound=DexterityContent)
 WorkflowEvent = TypeVar("WorkflowEvent", bound=WorkflowActionEvent)
@@ -95,9 +95,9 @@ class BaseWorkflowNotification(
 
     action_types: Tuple[str]
 
-    def should_run(self, event: WorkflowEvent, **kwargs):
+    def should_run(self, event: Optional[WorkflowEvent], **kwargs):
         """Check if this notification should run."""
-        return event.action in self.action_types
+        return event and (event.action in self.action_types)
 
 
 class BaseContentNotification(BaseNotification[Context, Event]):
