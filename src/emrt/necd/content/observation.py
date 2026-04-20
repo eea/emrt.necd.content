@@ -455,7 +455,10 @@ class Observation(Container):
     def ghg_source_sectors_value(self):
         # Get the value of the sector to be used
         # on the Observation Metadata screen
-        return get_category_value_from_nfr_code(self.nfr_code, self.aq_parent)
+        result = get_category_value_from_nfr_code(self.nfr_code, self.aq_parent)
+        if not result:
+            result = self.title.split(" ", 1)[0]
+        return result
 
     def parameter_value(self):
         return get_join_from_vocab(
