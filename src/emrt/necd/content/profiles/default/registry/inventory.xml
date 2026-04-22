@@ -166,13 +166,12 @@
       <element key="11C">sector6|11C|11C National Total|11C Other natural emissions (please specify in the IIR)</element>
       <element key="0A">sector6|0A|0A National Total|0A National total - National total for the entire territory - Based on fuel sold/fuel used</element>
       <element key="0B">sector6|0B|0B National Total|0B National total for compliance assessment</element>
-      <element key="LPS-E">sector10|LPS-E|E_Solvents IPPU Solvents|LPS-E LPS - E_Solvents</element>
       <element key="LPS-A">sector8|LPS-A|A_PublicPower Energy|LPS-A Public Power</element>
       <element key="LPS-B-1">sector8|LPS-B-1|B_Industry Energy|LPS-B-1 Industry</element>
       <element key="LPS-B-2">sector8|LPS-B-2|B_Industry IPPU|LPS-B-2 Industry</element>
       <element key="LPS-C">sector8|LPS-C|C_OtherStationaryComb Energy|LPS-C Other Stationary Combustion</element>
       <element key="LPS-D">sector8|LPS-D|D_Fugitive Energy|LPS-D Fugitive</element>
-<!--      <element key="LPS-E">sector8|LPS-E|E_Solvents IPPU|LPS-E Solvents</element>-->
+      <element key="LPS-E">sector8|LPS-E|E_Solvents IPPU Solvents|LPS-E LPS - E_Solvents</element>
       <element key="LPS-F">sector8|LPS-F|F_RoadTransport Transport|LPS-F Road Transport</element>
       <element key="LPS-G">sector8|LPS-G|G_Shipping Transport|LPS-G Shipping</element>
       <element key="LPS-H">sector8|LPS-H|H_Aviation Transport|LPS-H Aviation</element>
