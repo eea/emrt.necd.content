@@ -220,6 +220,8 @@ class QuestionView(BrowserView):
 
 
 class AddForm(add.DefaultAddForm):
+    _comment_text = ""
+
     def updateFields(self):
         super(AddForm, self).updateFields()
         self.fields = field.Fields(IComment).select("text")
@@ -231,24 +233,18 @@ class AddForm(add.DefaultAddForm):
         super(AddForm, self).updateWidgets()
         self.widgets["text"].rows = 15
 
-    def create(self, data={}):
+    def create(self, data=None):
+        data = data or {}
         existing_question = self.context.listFolderContents({"portal_type": "Question"})
         # Handle multiple submits, there should be only one Question.
         if existing_question:
             raise Redirect(self.context.absolute_url())
+        self._comment_text = data.get("text", "")
         return create_question(self.context)
 
     def add(self, object):
         super(AddForm, self).add(object)
         item = self.context.get(object.getId())
-
-        data, errors = self.extractData()
-
-        if errors:
-            self.status = self.formErrorsMessage
-            return
-
-        text = data.get("text")
 
         id = str(int(time()))
         item_id = item.invokeFactory(
@@ -256,7 +252,7 @@ class AddForm(add.DefaultAddForm):
             id=id,
         )
         comment = item.get(item_id)
-        comment.text = text
+        comment.text = self._comment_text
 
 
 class AddView(add.DefaultAddView):

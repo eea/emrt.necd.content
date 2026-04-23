@@ -272,6 +272,8 @@ class IObservation(model.Schema, IImageScaleTraversable):
 
     ms_key_category = schema.Bool(
         title="MS key category",
+        required=False,
+        default=False,
     )
 
     directives.widget("parameter", CheckBoxFieldWidget)

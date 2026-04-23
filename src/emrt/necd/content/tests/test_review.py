@@ -75,22 +75,26 @@ class TestSetup(unittest.TestCase):
         }
         observation = cast(Observation, form.createAndAdd(data=form_data))
         return cast(Observation, self.tool[observation.getId()])
-    
+
     def create_answer(self, question: Question, text="") -> CommentAnswer:
         add_view: CommentAnswerAddView = cast(
             CommentAnswerAddView,
             question.restrictedTraverse("++add++CommentAnswer"),
         )
-        self.request.form["form.widgets.text"] = text
-        answer = cast(CommentAnswer, add_view.form_instance.createAndAdd(data=None))
+        answer = cast(
+            CommentAnswer,
+            add_view.form_instance.createAndAdd(data={"text": text}),
+        )
         return cast(CommentAnswer, question[answer.getId()])
 
     def create_question(self, observation: Observation, text: str = ""):
         add_view: QuestionAddView = cast(
             QuestionAddView, observation.restrictedTraverse("++add++Question")
         )
-        self.request.form["form.widgets.text"] = text
-        added = cast(Question, add_view.form_instance.createAndAdd(data=None))
+        added = cast(
+            Question,
+            add_view.form_instance.createAndAdd(data={"text": text}),
+        )
         return cast(Question, observation[added.getId()])
 
     def get_view(self, context, cls: T, name: str = "view") -> T:
@@ -142,6 +146,25 @@ class TestSetup(unittest.TestCase):
         self.assertTrue("Edit observation" in content)
         self.assertTrue("Delete observation" in content)
         self.assertTrue("Go to conclusions" in content)
+
+    def test_add_observation_without_ms_key_category(self):
+        add_view: ObservationAddView = cast(
+            ObservationAddView,
+            self.tool.restrictedTraverse("++add++Observation"),
+        )
+        form = add_view.form_instance
+        form_data = {
+            "text": "observation description",
+            "country": "at",
+            "nfr_code": "1A1",
+            "year": "2022",
+            "pollutants": list(["SO2"]),
+            "review_year": 2023,
+            "parameter": list(["act", "emi"]),
+        }
+        observation = cast(Observation, form.createAndAdd(data=form_data))
+        observation = cast(Observation, self.tool[observation.getId()])
+        self.assertFalse(observation.ms_key_category)
 
     def test_add_question(self):
         observation = self.create_observation()
