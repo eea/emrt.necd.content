@@ -6,9 +6,21 @@ Changelog
 
 - Migrate to Plone 6 and Python 3.11
 
+2.6.3 (2025-04-14)
+
+- Task #260930 - Custom discussion and localrole exporters.
+
+2.6.2 (2025-03-25)
+
+- Task #260930 - Custom discussion comment serializer.
+
+2.6.1 (2025-03-21)
+
+- Task #260930 - Add collective.exportimport. Custom serializers.
+
 2.6.0 (2025-03-13)
 
-- Bug #285464 - Preparing NECD-EMRT for 2025 activities
+- Task #285464 - Preparing NECD-EMRT for 2025 activities
 
 2.5.51 (2024-05-23)
 
