@@ -2,6 +2,10 @@ Changelog
 =========
 
 
+3.0.5 (2026-04-24)
+
+- Use plone.autoinclude.plugin
+
 3.0.4 (2026-04-24)
 
 - Migrate to Plone 6 and Python 3.11

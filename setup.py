@@ -15,7 +15,7 @@ long_description = "\n\n".join(
 
 setup(
     name="emrt.necd.content",
-    version="3.0.4",
+    version="3.0.5",
     description="Content-types for EMRT-NECD Review Tool",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
@@ -84,10 +84,10 @@ setup(
             "plone.app.robotframework[debug]",
         ],
     },
-    entry_points="""
-    [z3c.autoinclude.plugin]
-    target = plone
-    [console_scripts]
-    update_locale = emrt.necd.content.locales.update:update_locale
-    """,
+    entry_points={
+        "plone.autoinclude.plugin": [
+            "target = plone",
+            "module = emrt.necd.content",
+        ],
+    },
 )
