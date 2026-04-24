@@ -1,4 +1,4 @@
-graft src/emrt.necd
+graft src/emrt
 graft docs
 include *.rst
 exclude tox.ini

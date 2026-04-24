@@ -2,6 +2,10 @@ Changelog
 =========
 
 
+3.0.6 (2026-04-24)
+
+- Fix MANIFEST.in
+
 3.0.5 (2026-04-24)
 
 - Use plone.autoinclude.plugin
