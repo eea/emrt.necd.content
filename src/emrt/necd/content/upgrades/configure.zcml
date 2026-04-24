@@ -1,0 +1,55 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    >
+
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="3.0.0"
+      destination="301"
+      >
+    <genericsetup:upgradeStep
+        title="Override uuid and add intid for carried over observations."
+        handler=".to301.run"
+        />
+
+    <genericsetup:upgradeDepends
+        title="Update action icons."
+        import_steps="typeinfo"
+        />
+   </genericsetup:upgradeSteps>
+
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="301"
+      destination="302"
+      >
+    <genericsetup:upgradeStep
+        title="Reindex observation text"
+        handler=".to302.run"
+        />
+   </genericsetup:upgradeSteps>
+
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="302"
+      destination="303"
+      >
+    <genericsetup:upgradeStep
+        title="Reindex observation_sent_to_mse and observation_sent_to_msc"
+        handler=".to303.run"
+        />
+   </genericsetup:upgradeSteps>
+
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="303"
+      destination="304"
+      >
+    <genericsetup:upgradeStep
+        title="Fix observations that have multiple Question items."
+        handler=".to304.run"
+        />
+   </genericsetup:upgradeSteps>
+
+</configure>

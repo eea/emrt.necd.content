@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+   metal:use-macro="context/main_template/macros/master"
+   i18n:domain="emrt.necd.content">
+
+<metal:main fill-slot="content-core">
+
+
+  <br /> <br />
+  <div class="visualClear"><!-- --></div>
+
+  <div id="tabs">
+    <div class="tabs">
+      <div>
+        <a tal:attributes="href string:${here/absolute_url}/view"><i class="bi bi-eye-fill"></i> Overview list</a>
+      </div>
+      <div>
+        <a tal:attributes="href string:${here/absolute_url}/inboxview"><i class="bi-inbox-fill"></i> My view</a>
+      </div>
+      <div class="active">
+        <a tal:attributes="href string:${here/absolute_url}/tableau_dashboard"><i class="bi bi-eye-fill"></i> Statistics</a>
+      </div>
+      <div>
+        <a tal:attributes="href string:${here/absolute_url}/finalisedfolderview"><i class="bi-inbox-fill"></i> Finalised observations</a>
+      </div>
+    </div>
+  </div>
+
+  <tal:block replace="structure python:options.get('tableau_embed', '')" />
+
+</metal:main>
+</html>

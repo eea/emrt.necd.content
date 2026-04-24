@@ -1,0 +1,56 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:monkey="http://namespaces.plone.org/monkey"
+  i18n_domain="emrt.necd.content">
+
+  <include package="collective.monkeypatcher" />
+
+  <monkey:patch
+    description="Patch node.ext.ldap.ugm._api.Group.existing_member_ids to return the members instead of querying ldap for all users."
+    class="node.ext.ldap.ugm._api.Group"
+    original="existing_member_ids"
+    replacement=".patches.Group_existing_member_ids"
+    preserveOriginal="false"
+    />
+
+  <monkey:patch
+    description="Patch pas.plugins.ldap.sheet.LDAPUserPropertySheet.__init__ to join fullname if it's a list."
+    class="pas.plugins.ldap.sheet.LDAPUserPropertySheet"
+    original="__init__"
+    replacement=".patches.LDAPUserPropertySheet__init__"
+    preserveOriginal="true"
+    />
+
+  <monkey:patch
+    description="Patch plone.app.z3cform.widgets.richtext to copy widget.form."
+    class="plone.app.z3cform.widgets.richtext.RichTextWidget"
+    original="render_input_mode"
+    replacement=".patches.RichTextWidget_render_input_mode"
+    preserveOriginal="false"
+    />
+
+<!--  <monkey:patch-->
+<!--    description="Add cache for node.ext.ldap.ugm._api.Groups.search. Because of 'plumber' we need to patch the 'inheritor'."-->
+<!--    class="node.ext.ldap.ugm._api.Groups"-->
+<!--    original="search"-->
+<!--    replacement=".patches.LDAPPrincipals_search"-->
+<!--    preserveOriginal="true"-->
+<!--    />-->
+
+<!--  <monkey:patch-->
+<!--    description="Add cache for node.ext.ldap.ugm._api.Users.search Because of 'plumber' we need to patch the 'inheritor'."-->
+<!--    class="node.ext.ldap.ugm._api.Users"-->
+<!--    original="search"-->
+<!--    replacement=".patches.LDAPPrincipals_search"-->
+<!--    preserveOriginal="true"-->
+<!--    />-->
+
+  <monkey:patch
+    description="Add cache for node.ext.ldap._node.LDAPNode."
+    class="node.ext.ldap._node.LDAPNode"
+    original="search"
+    replacement=".patches.LDAPPrincipals_search"
+    preserveOriginal="true"
+    />
+
+</configure>

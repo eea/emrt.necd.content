@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<registry>
+  <records interface="emrt.necd.content.nfr_code_matching.INECDSettings" />
+  <record name="emrt.necd.content.nfr_code_matching.INECDSettings.sectorNames">
+    <value purge="True">
+      <element key="sector1">Energy</element>
+      <element key="sector2">Transport</element>
+      <element key="sector3">IPPU</element>
+      <element key="sector4">Agriculture</element>
+      <element key="sector5">Waste</element>
+      <element key="sector6">National total</element>
+    </value>
+  </record>
+  <records interface="emrt.necd.content.vocabularies.interfaces.INECDVocabularies" />
+</registry>
