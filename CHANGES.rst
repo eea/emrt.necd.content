@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-3.0.0 (unreleased)
+3.0.4 (2026-04-24)
 
 - Migrate to Plone 6 and Python 3.11
 
