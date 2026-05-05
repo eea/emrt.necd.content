@@ -15,7 +15,7 @@ long_description = "\n\n".join(
 
 setup(
     name="emrt.necd.content",
-    version="3.0.6",
+    version="3.0.7",
     description="Content-types for EMRT-NECD Review Tool",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/

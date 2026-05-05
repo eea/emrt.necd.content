@@ -2,6 +2,10 @@ Changelog
 =========
 
 
+3.0.7 (2026-05-05)
+
+- Task #302917 - Prevent sector experts from editing old years.
+
 3.0.6 (2026-04-24)
 
 - Fix MANIFEST.in
