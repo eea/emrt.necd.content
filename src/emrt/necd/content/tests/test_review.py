@@ -234,8 +234,7 @@ class TestSetup(unittest.TestCase):
 
         helpers.login(self.portal, USERS.LR.value.name)
         question.getFirstComment().restrictedTraverse("approve-question")()
-
-        helpers.login(self.portal, TEST_USER_ID)
+        setRoles(self.portal, USERS.LR.value.name, ["Manager"])
         api.content.transition(obj=self.tool, transition="end-review")
 
         helpers.login(self.portal, USERS.MSA.value.name)
@@ -248,8 +247,7 @@ class TestSetup(unittest.TestCase):
         helpers.login(self.portal, USERS.SE.value.name)
         question = self.create_question(observation, "question text")
         api.content.transition(obj=question, transition="send-to-lr")
-
-        helpers.login(self.portal, TEST_USER_ID)
+        setRoles(self.portal, USERS.SE.value.name, ["Manager"])
         api.content.transition(obj=self.tool, transition="end-review")
 
         helpers.login(self.portal, USERS.LR.value.name)
