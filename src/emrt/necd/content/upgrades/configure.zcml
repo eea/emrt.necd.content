@@ -52,4 +52,16 @@
         />
    </genericsetup:upgradeSteps>
 
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="304"
+      destination="305"
+      >
+
+    <genericsetup:upgradeDepends
+        title="Update workflows - don't allow non-managers to modify old reviews."
+        import_steps="workflow"
+        />
+   </genericsetup:upgradeSteps>
+
 </configure>
