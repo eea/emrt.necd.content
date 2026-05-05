@@ -3,6 +3,7 @@
  <instance-creation-conditions>
    <guard>
     <guard-permission>emrt.necd.content: Add Comment</guard-permission>
+    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
    </guard>
  </instance-creation-conditions>
  <permission>Access contents information</permission>
@@ -90,12 +91,14 @@
 
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="retract" title="Retract" new_state="initial" trigger="USER" before_script="" after_script="">
 
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <worklist worklist_id="reviewer_queue" title="">

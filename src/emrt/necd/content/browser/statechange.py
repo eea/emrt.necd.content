@@ -31,6 +31,7 @@ from emrt.necd.content.constants import ROLE_SE
 from emrt.necd.content.notifications import answer_to_msexperts
 from emrt.necd.content.notifications import question_to_counterpart
 from emrt.necd.content.notifications.utils import get_ldap_group_member_ids
+from emrt.necd.content.review_state import ensure_reviewfolder_allows_mutation
 from emrt.necd.content.reviewfolder import IReviewFolder
 from emrt.necd.content.utilities.interfaces import IGetLDAPWrapper
 from emrt.necd.content.utils import find_parent_with_interface
@@ -96,6 +97,7 @@ class FinishObservationReasonForm(Form):
 
     @button.buttonAndHandler("Request finalisation of the observation")
     def finish_observation(self, action):
+        ensure_reviewfolder_allows_mutation(self.context)
         comments = self.request.get("form.widgets.comments")
         with api.env.adopt_roles(["Manager"]):
             self.context.closing_comments = comments
@@ -135,6 +137,7 @@ class DenyFinishObservationReasonForm(Form):
 
     @button.buttonAndHandler("Deny finishing observation")
     def finish_observation(self, action):
+        ensure_reviewfolder_allows_mutation(self.context)
         comments = self.request.get("form.widgets.comments")
         with api.env.adopt_roles(["Manager"]):
             if api.content.get_state(self.context) == "close-requested":
@@ -157,6 +160,7 @@ class DenyFinishObservationReasonForm(Form):
 
 class RecallObservation(BrowserView):
     def __call__(self):
+        ensure_reviewfolder_allows_mutation(self.context)
         state = api.content.get_state(self.context)
         transition_id = "recall-lr"
 
@@ -262,6 +266,7 @@ class AssignFormMixin(BrowserView):
 
     def __call__(self):
         """Perform the update and redirect if necessary, or render the page."""
+        ensure_reviewfolder_allows_mutation(self.context)
         target = self._assignation_target()
         if self.request.get("send", None):
             usernames = self.request.get("counterparts", None)
@@ -341,6 +346,7 @@ class AssignAnswererForm(AssignFormMixin):
 
 class ReAssignMSExpertsForm(AssignAnswererForm):
     def __call__(self):
+        ensure_reviewfolder_allows_mutation(self.context)
         target = self._assignation_target()
         if self.request.form.get("send", None):
             usernames = self.request.get("counterparts", None)
@@ -430,6 +436,7 @@ class ReAssignCounterPartForm(AssignCounterPartForm):
 
     def __call__(self):
         """Perform the update and redirect if necessary, or render the page."""
+        ensure_reviewfolder_allows_mutation(self.context)
         target = self._assignation_target()
         if self.request.form.get("send", None):
             counterparts = self.request.get("counterparts", None)

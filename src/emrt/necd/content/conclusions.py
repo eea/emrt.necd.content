@@ -41,6 +41,8 @@ from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 
 from emrt.necd.content import _
+from emrt.necd.content.review_state import ensure_reviewfolder_allows_mutation
+from emrt.necd.content.review_state import reviewfolder_allows_mutation
 from emrt.necd.content.utils import get_vocabulary_value
 from emrt.necd.content.utils import hidden
 
@@ -144,17 +146,26 @@ class Conclusions(Container):
             self, "emrt.necd.content.conclusion_reasons", self.closing_reason
         )
 
+    def reviewfolder_allows_mutation(self):
+        return reviewfolder_allows_mutation(self)
+
     def can_edit(self):
         sm = getSecurityManager()
-        return sm.checkPermission("Modify portal content", self)
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
+            "Modify portal content", self
+        )
 
     def can_delete(self):
         sm = getSecurityManager()
-        return sm.checkPermission("Delete objects", self)
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
+            "Delete objects", self
+        )
 
     def can_add_files(self):
         sm = getSecurityManager()
-        return sm.checkPermission("emrt.necd.content: Add NECDFile", self)
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
+            "emrt.necd.content: Add NECDFile", self
+        )
 
     def get_actions(self):
         parent = aq_parent(self)
@@ -218,6 +229,7 @@ class AddForm(add.DefaultAddForm):
         widget_highlight.isChecked = is_checked
 
     def create(self, data=None):
+        ensure_reviewfolder_allows_mutation(self.context)
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -301,6 +313,10 @@ class EditForm(edit.DefaultEditForm):
     label = "Conclusions"
     description = ""
     ignoreContext = False
+
+    def update(self):
+        ensure_reviewfolder_allows_mutation(self.context)
+        super(EditForm, self).update()
 
     def getContent(self):
         context = aq_inner(self.context)

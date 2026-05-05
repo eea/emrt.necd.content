@@ -3,6 +3,7 @@
  <instance-creation-conditions>
    <guard>
     <guard-permission>emrt.necd.content: Add Conclusions</guard-permission>
+    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
    </guard>
  </instance-creation-conditions>
  <permission>Access contents information</permission>
@@ -199,21 +200,25 @@
  <transition transition_id="ask-approval" title="Ask Approval" new_state="approval" trigger="USER" before_script="" after_script="">
 
   <guard>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="publish" title="Publish" new_state="published" trigger="USER" before_script="" after_script="">
 
   <guard>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="redraft" title="Redraft" new_state="draft" trigger="USER" before_script="" after_script="">
 
   <guard>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="request-comments" title="Request comments" new_state="comments" trigger="USER" before_script="" after_script="">
 
   <guard>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <worklist worklist_id="reviewer_queue" title="">
