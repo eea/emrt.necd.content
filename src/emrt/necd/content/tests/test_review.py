@@ -4,6 +4,7 @@ import unittest
 from typing import TypeVar
 from typing import cast
 
+from zExceptions import Unauthorized
 from zope.component import getMultiAdapter
 
 from plone import api
@@ -223,3 +224,34 @@ class TestSetup(unittest.TestCase):
         helpers.login(self.portal, USERS.MSA.value.name)
         self.create_answer(question, text="The MSA answer")
         self.assertTrue("The MSA answer" in self.get_view(observation, ObservationView)())
+
+    def test_end_review_blocks_answer_creation_for_msa(self):
+        observation = self.create_observation()
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        question.getFirstComment().restrictedTraverse("approve-question")()
+
+        helpers.login(self.portal, TEST_USER_ID)
+        api.content.transition(obj=self.tool, transition="end-review")
+
+        helpers.login(self.portal, USERS.MSA.value.name)
+        with self.assertRaises(Unauthorized):
+            self.create_answer(question, text="The MSA answer")
+
+    def test_end_review_blocks_question_recall_for_lr(self):
+        observation = self.create_observation()
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, TEST_USER_ID)
+        api.content.transition(obj=self.tool, transition="end-review")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        with self.assertRaises(api.exc.InvalidParameterError):
+            api.content.transition(obj=question, transition="recall-question-lr")

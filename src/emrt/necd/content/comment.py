@@ -25,6 +25,8 @@ from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 
 from emrt.necd.content import _
+from emrt.necd.content.review_state import ensure_reviewfolder_allows_mutation
+from emrt.necd.content.review_state import reviewfolder_allows_mutation
 
 
 # Interface class; used to define content-type schema.
@@ -47,17 +49,26 @@ class IComment(model.Schema, IImageScaleTraversable):
 class Comment(Container):
     # Add your class methods and properties here
 
+    def reviewfolder_allows_mutation(self):
+        return reviewfolder_allows_mutation(self)
+
     def can_edit(self):
         sm = getSecurityManager()
-        return sm.checkPermission("emrt.necd.content: Edit Comment", self)
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
+            "emrt.necd.content: Edit Comment", self
+        )
 
     def can_delete(self):
         sm = getSecurityManager()
-        return sm.checkPermission("Delete portal content", self)
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
+            "Delete portal content", self
+        )
 
     def can_add_files(self):
         sm = getSecurityManager()
-        return sm.checkPermission("emrt.necd.content: Add NECDFile", self)
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
+            "emrt.necd.content: Add NECDFile", self
+        )
 
     def get_files(self):
         items = list(self.values())
@@ -96,6 +107,7 @@ class AddForm(add.DefaultAddForm):
         self.widgets["text"].rows = 15
 
     def create(self, data=None):
+        ensure_reviewfolder_allows_mutation(self.context)
         if self.context.listFolderContents():
             return self._create_follow_up(data)
         return self._create_initial(data)
@@ -143,6 +155,10 @@ class AddView(add.DefaultAddView):
 class EditForm(edit.DefaultEditForm):
     label = "Question"
     description = ""
+
+    def update(self):
+        ensure_reviewfolder_allows_mutation(self.context)
+        super(EditForm, self).update()
 
     def updateFields(self):
         super(EditForm, self).updateFields()

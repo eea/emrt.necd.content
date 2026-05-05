@@ -364,36 +364,42 @@
   <action url="%(content_url)s/content_status_modify?workflow_action=confirm-finishing-observation" category="workflow" icon="">Finish Observation</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="deny-finishing-observation" title="Deny finishing observation" new_state="conclusions-lr-denied" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/deny-finish-observation?workflow_action=deny-finishing-observation" category="workflow" icon="">Deny finishing observation</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="recall-lr" title="Recall denied/confirmed close observation." new_state="close-requested" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/recall-observation?workflow_action=recall-lr" category="workflow" icon="">Recall</action>
   <guard>
     <guard-role>LeadReviewer</guard-role>
+    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="recall-se" title="Recall from finish observation request." new_state="" trigger="USER" before_script="" after_script="">
    <action url="%(content_url)s/recall-observation?workflow_action=recall-se" category="workflow" icon="">Recall finalisation request</action>
    <guard>
      <guard-role>SectorExpert</guard-role>
+     <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
    </guard>
  </transition>
  <transition transition_id="recall-se-conclusions" title="Recall from finish observation request." new_state="conclusions" trigger="USER" before_script="" after_script="">
    <action url="%(content_url)s/recall-observation?workflow_action=recall-se-conclusions" category="necd-hidden-action" icon="">Recall -> conclusions</action>
    <guard>
      <guard-role>SectorExpert</guard-role>
+     <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
    </guard>
  </transition>
  <transition transition_id="recall-se-conclusions-lr-denied" title="Recall from finish observation request." new_state="conclusions-lr-denied" trigger="USER" before_script="" after_script="">
    <action url="%(content_url)s/recall-observation?workflow_action=recall-se-conclusions-lr-denied" category="necd-hidden-action" icon="">Recall -> conclusions-lr-denied</action>
    <guard>
      <guard-role>SectorExpert</guard-role>
+     <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
    </guard>
  </transition>
  <transition transition_id="draft-conclusions" title="Go to conclusions" new_state="conclusions" trigger="USER" before_script="" after_script="">
@@ -401,7 +407,7 @@
   <guard>
    <guard-role>SectorExpert</guard-role>
    <guard-role>LeadReviewer</guard-role>
-   <guard-expression>here/can_draft_conclusions</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.can_draft_conclusions()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="edit-highlights" title="Edit Key Flags" new_state="" trigger="USER" before_script="" after_script="">
@@ -409,18 +415,21 @@
   <guard>
    <guard-role>SectorExpert</guard-role>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="finish-comments" title="Close Comments" new_state="conclusions" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=finish-comments" category="workflow" icon="">Close Comments</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="finish-observation" title="Finish Observation" new_state="close-requested" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/request-finish-observation?workflow_action=finish-observation" category="workflow" icon="">Request finalisation of the observation</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="open" title="Open" new_state="pending" trigger="USER" before_script="" after_script="">
@@ -429,24 +438,28 @@
    <guard-role>Manager</guard-role>
    <guard-role>SectorExpert</guard-role>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="reopen-closed-observation" title="Reopen closed observation" new_state="close-requested" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=reopen-closed-observation" category="workflow" icon="">Reopen closed observation</action>
   <guard>
    <guard-role>Manager</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="reopen-qa-chat" title="Reopen Q&amp;A Chat" new_state="pending" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=reopen-qa-chat" category="workflow" icon="">Reopen Q&amp;A Chat</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="request-comments" title="Request comments" new_state="conclusion-discussion" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/assign_conclusion_reviewer_form?workflow_action=request-comments" category="workflow" icon="">Request comments</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <worklist worklist_id="reviewer_queue" title="">

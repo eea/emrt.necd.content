@@ -24,6 +24,8 @@ from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 
 from emrt.necd.content import _
+from emrt.necd.content.review_state import ensure_reviewfolder_allows_mutation
+from emrt.necd.content.review_state import reviewfolder_allows_mutation
 
 
 # Interface class; used to define content-type schema.
@@ -44,18 +46,23 @@ class ICommentAnswer(model.Schema, IImageScaleTraversable):
 class CommentAnswer(Container):
     # Add your class methods and properties here
 
+    def reviewfolder_allows_mutation(self):
+        return reviewfolder_allows_mutation(self)
+
     def can_edit(self):
         sm = getSecurityManager()
-        return sm.checkPermission(
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
             "emrt.necd.content: Edit CommentAnswer", self
         )
 
     def can_add_files(self):
         sm = getSecurityManager()
         parent = aq_parent(self)
-        return sm.checkPermission(
-            "emrt.necd.content: Add NECDFile", self
-        ) and api.content.get_state(parent) not in ["expert-comments"]
+        return (
+            self.reviewfolder_allows_mutation()
+            and sm.checkPermission("emrt.necd.content: Add NECDFile", self)
+            and api.content.get_state(parent) not in ["expert-comments"]
+        )
 
     def get_files(self):
         items = list(self.values())
@@ -66,9 +73,11 @@ class CommentAnswer(Container):
         sm = getSecurityManager()
         parent = aq_parent(self)
         parent_state = api.content.get_state(parent)
-        return sm.checkPermission(
-            "Delete portal content", self
-        ) and parent_state not in ["expert-comments"]
+        return (
+            self.reviewfolder_allows_mutation()
+            and sm.checkPermission("Delete portal content", self)
+            and parent_state not in ["expert-comments"]
+        )
 
 
 # View class
@@ -102,6 +111,7 @@ class AddForm(add.DefaultAddForm):
         self.widgets["text"].rows = 15
 
     def create(self, data=None):
+        ensure_reviewfolder_allows_mutation(self.context)
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -129,6 +139,10 @@ class AddView(add.DefaultAddView):
 class EditForm(edit.DefaultEditForm):
     label = "Answer"
     description = ""
+
+    def update(self):
+        ensure_reviewfolder_allows_mutation(self.context)
+        super(EditForm, self).update()
 
     def updateFields(self):
         super(EditForm, self).updateFields()

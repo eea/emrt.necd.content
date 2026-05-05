@@ -1,5 +1,7 @@
 from AccessControl import getSecurityManager
 
+from emrt.necd.content.review_state import reviewfolder_allows_mutation
+
 
 INVALID_OBS_STATES = ['conclusion-discussion', 'close-requested']
 PERM_ADD_COMMENT = 'emrt.necd.content: Add Comment'
@@ -16,7 +18,10 @@ def validate_qa(question):
 
 def check_comment_perm(question):
     sm = getSecurityManager()
-    return sm.checkPermission(PERM_ADD_COMMENT, question)
+    return (
+        reviewfolder_allows_mutation(question)
+        and sm.checkPermission(PERM_ADD_COMMENT, question)
+    )
 
 
 class FollowUpPermission(object):

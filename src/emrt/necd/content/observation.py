@@ -66,6 +66,8 @@ from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.review_state import ensure_reviewfolder_allows_mutation
+from emrt.necd.content.review_state import reviewfolder_allows_mutation
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
 from emrt.necd.content.subscriptions.interfaces import (
     INotificationUnsubscriptions,
@@ -408,6 +410,9 @@ def get_list_from_vocab(context, vocab, values):
 
 @implementer(IObservation)
 class Observation(Container):
+    def reviewfolder_allows_mutation(self):
+        return reviewfolder_allows_mutation(self)
+
     def get_values(self):
         """Memoized version of values, to speed-up."""
         return list(self.values())
@@ -859,7 +864,9 @@ class Observation(Container):
 
     def can_edit(self):
         sm = getSecurityManager()
-        return sm.checkPermission("Modify portal content", self)
+        return self.reviewfolder_allows_mutation() and sm.checkPermission(
+            "Modify portal content", self
+        )
 
     def get_question(self):
         questions = self.get_values_cat("Question")
@@ -1108,6 +1115,10 @@ def set_form_fields(form_instance):
 
 
 class EditForm(edit.DefaultEditForm):
+    def update(self):
+        ensure_reviewfolder_allows_mutation(self.context)
+        super(EditForm, self).update()
+
     def updateFields(self):
         super(EditForm, self).updateFields()
         set_form_fields(self)
@@ -1213,6 +1224,7 @@ class AddForm(add.DefaultAddForm):
             self.actions[k].addClass("standardButton")
 
     def create(self, data):
+        ensure_reviewfolder_allows_mutation(self.context)
         fti = getUtility(IDexterityFTI, name=self.portal_type)
         container = aq_inner(self.context)
         content = createObject(fti.factory)
@@ -1284,14 +1296,22 @@ class ObservationMixin(DefaultView):
         sm = getSecurityManager()
         questions = len(self.context.get_values_cat("Question"))
         p_add = "emrt.necd.content: Add Question"
-        return sm.checkPermission(p_add, self.context) and not questions
+        return (
+            self.context.reviewfolder_allows_mutation()
+            and sm.checkPermission(p_add, self.context)
+            and not questions
+        )
 
     def can_edit(self):
         sm = getSecurityManager()
         # If observation has conclusion cannot be edited (Ticket #26992)
         conclusions = len(self.context.get_values_cat("Conclusions"))
         p_edit = "Modify portal content"
-        return sm.checkPermission(p_edit, self.context) and not conclusions
+        return (
+            self.context.reviewfolder_allows_mutation()
+            and sm.checkPermission(p_edit, self.context)
+            and not conclusions
+        )
 
     def get_conclusion(self):
         sm = getSecurityManager()
@@ -1309,9 +1329,13 @@ class ObservationMixin(DefaultView):
         sm = getSecurityManager()
         question_state = api.content.get_state(self.question())
 
-        return sm.checkPermission(
-            "emrt.necd.content: Add Conclusions", self.context
-        ) and question_state in ["draft", "drafted", "pending", "closed"]
+        return (
+            self.context.reviewfolder_allows_mutation()
+            and sm.checkPermission(
+                "emrt.necd.content: Add Conclusions", self.context
+            )
+            and question_state in ["draft", "drafted", "pending", "closed"]
+        )
 
     def show_description(self):
         questions = self.get_questions()
@@ -1404,14 +1428,21 @@ class ObservationMixin(DefaultView):
         return ""
 
     def can_add_follow_up_question(self):
-        return getUtility(IFollowUpPermission)(self.question())
+        question = self.question()
+        return bool(
+            question
+            and question.reviewfolder_allows_mutation()
+            and getUtility(IFollowUpPermission)(question)
+        )
 
     def can_add_answer(self):
         sm = getSecurityManager()
         question = self.question()
         if question:
             p_add = "emrt.necd.content: Add CommentAnswer"
-            permission = sm.checkPermission(p_add, question)
+            permission = question.reviewfolder_allows_mutation() and sm.checkPermission(
+                p_add, question
+            )
             questions = [
                 q
                 for q in list(question.values())
@@ -1837,6 +1868,7 @@ class AddQuestionForm(Form):
     @button.buttonAndHandler("Save question")
     def create_question(self, action):
         context = aq_inner(self.context)
+        ensure_reviewfolder_allows_mutation(context)
         data, errors = self.extractData()
 
         if errors:
@@ -1886,6 +1918,7 @@ class AddAnswerForm(Form):
 
     @button.buttonAndHandler("Save answer")
     def add_answer(self, action):
+        ensure_reviewfolder_allows_mutation(self.context)
 
         data, errors = self.extractData()
 
@@ -1933,6 +1966,7 @@ class AddAnswerForm(Form):
 class AddAnswerAndRequestComments(BrowserView):
     def render(self):
         observation = aq_inner(self.context)
+        ensure_reviewfolder_allows_mutation(observation)
         questions = [
             q
             for q in list(observation.values())
@@ -2006,6 +2040,7 @@ class AddCommentForm(Form):
     def create_question(self, action):
         request = self.request
         observation = self.context
+        ensure_reviewfolder_allows_mutation(observation)
         # raising errors before transition as that will
         # cause a transaction.commit
         question = value_or_error(
@@ -2045,6 +2080,7 @@ class AddCommentForm(Form):
 
 class EditConclusionP2AndCloseComments(BrowserView):
     def update(self):
+        ensure_reviewfolder_allows_mutation(self.context)
         # Some checks:
         waction = self.request.get("workflow_action")
         if waction != "finish-comments":
@@ -2062,6 +2098,10 @@ class EditConclusionP2AndCloseComments(BrowserView):
 
 
 class EditHighlightsForm(edit.DefaultEditForm):
+    def update(self):
+        ensure_reviewfolder_allows_mutation(self.context)
+        super(EditHighlightsForm, self).update()
+
     def updateFields(self):
         super(EditHighlightsForm, self).updateFields()
         self.fields = field.Fields(IObservation).select("highlight")
@@ -2080,6 +2120,7 @@ class EditHighlightsForm(edit.DefaultEditForm):
 class AddConclusions(BrowserView):
     def render(self):
         context = aq_inner(self.context)
+        ensure_reviewfolder_allows_mutation(context)
         conclusions_folder = self.context.get_values_cat("Conclusions")
 
         if conclusions_folder:

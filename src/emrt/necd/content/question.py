@@ -31,6 +31,8 @@ from plone.supermodel import model
 from emrt.necd.content import _
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.constants import ROLE_LR
+from emrt.necd.content.review_state import ensure_reviewfolder_allows_mutation
+from emrt.necd.content.review_state import reviewfolder_allows_mutation
 from emrt.necd.content.utilities.interfaces import IFollowUpPermission
 
 
@@ -78,8 +80,13 @@ def create_question(context):
 class Question(Container):
     # Add your class methods and properties here
 
+    def reviewfolder_allows_mutation(self):
+        return reviewfolder_allows_mutation(self)
+
     def can_add_follow_up_question(self):
-        return getUtility(IFollowUpPermission)(self)
+        return self.reviewfolder_allows_mutation() and getUtility(
+            IFollowUpPermission
+        )(self)
 
     def get_state_api(self):
         return api.content.get_state(self)
@@ -234,6 +241,7 @@ class AddForm(add.DefaultAddForm):
         self.widgets["text"].rows = 15
 
     def create(self, data=None):
+        ensure_reviewfolder_allows_mutation(self.context)
         data = data or {}
         existing_question = self.context.listFolderContents({"portal_type": "Question"})
         # Handle multiple submits, there should be only one Question.
@@ -278,6 +286,7 @@ class AddCommentForm(Form):
     @button.buttonAndHandler(_("Add question"))
     def create_question(self, action):
         context = aq_inner(self.context)
+        ensure_reviewfolder_allows_mutation(context)
 
         data, errors = self.extractData()
 
@@ -320,6 +329,7 @@ class AddAnswerForm(Form):
     @button.buttonAndHandler(_("Add answer"))
     def create_question(self, action):
         context = aq_inner(self.context)
+        ensure_reviewfolder_allows_mutation(context)
 
         data, errors = self.extractData()
 
@@ -372,6 +382,7 @@ class AddConclusions(BrowserView):
 
 class DeleteLastComment(BrowserView):
     def render(self):
+        ensure_reviewfolder_allows_mutation(self.context)
         answers = [
             c
             for c in list(self.context.values())
@@ -406,6 +417,7 @@ class DeleteLastComment(BrowserView):
 
 class DeleteLastAnswer(BrowserView):
     def render(self):
+        ensure_reviewfolder_allows_mutation(self.context)
         question = aq_inner(self.context)
         url = question.absolute_url()
         answers = [
@@ -430,6 +442,7 @@ class DeleteLastAnswer(BrowserView):
 
 class ApproveAndSendView(BrowserView):
     def render(self):
+        ensure_reviewfolder_allows_mutation(self.context)
         alsoProvides(self.request, IDisableCSRFProtection)
         question = self.context.aq_parent
         roles = api.user.get_roles(obj=question)

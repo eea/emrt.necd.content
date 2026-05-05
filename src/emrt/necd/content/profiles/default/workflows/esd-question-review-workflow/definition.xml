@@ -3,6 +3,7 @@
  <instance-creation-conditions>
    <guard>
     <guard-permission>emrt.necd.content: Add Question</guard-permission>
+    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
    </guard>
  </instance-creation-conditions>
  <permission>Access contents information</permission>
@@ -567,157 +568,174 @@
   <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="finish-observation-re" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="eselect-msexperts" title="Select new Experts" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/select-new-mse?workflow_action=eselect-msexperts" category="workflow" icon="">Select new Experts</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="add-answer" title="Add Answer" new_state="pending-answer-drafting" trigger="USER" before_script="" after_script="">
 
   <guard>
    <guard-role>MSAuthority</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="add-followup-question" title="Add follow up question" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/add-follow-up-question?workflow_action=add-followup-question" category="workflow" icon="">Add follow up question</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
-   <guard-expression>python:here.can_add_follow_up_question()</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.can_add_follow_up_question()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="answer-to-lr" title="Submit Answer" new_state="answered" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=answer-to-lr" category="workflow" icon="">Submit Answer</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
-   <guard-expression>object/one_pending_answer</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.one_pending_answer()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="approve-question" title="Approve question and send" new_state="pending" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=approve-question" category="workflow" icon="">Approve question and send</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="ask-answer-aproval" title="Close Comments" new_state="pending-answer-drafting" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=ask-answer-aproval" category="workflow" icon="">Close Comments</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="assign-answerer" title="Request Comments" new_state="expert-comments" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/assign_answerer_form?workflow_action=assign-answerer" category="workflow" icon="">Request Comments</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
-   <guard-expression>object/one_pending_answer</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.one_pending_answer()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="close" title="Finish Observation" new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="" category="" icon="">Finish Observation</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="close-lr" title="Finish Observation" new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="" category="" icon="">Finish Observation</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="delete-answer" title="Delete Answer" new_state="pending" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/delete-last-answer?workflow_action=delete-answer" category="workflow" icon="">Delete Answer</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="delete-question" title="Delete Question" new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/delete-last-comment?workflow_action=delete-question" category="workflow" icon="">Delete Question</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
-   <guard-expression>here/can_be_deleted</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.can_be_deleted()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="draft-conclusions" title="Add Conclusions" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Add Conclusions</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
-   <guard-expression>python:here.has_answers() and not here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.has_answers() and not here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
   </guard>
  </transition>
  <transition transition_id="go-to-conclusions" title="Go to Conclusions" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/../add-conclusions?workflow_action=draft-conclusions" category="workflow" icon="">Go to Conclusions</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
-   <guard-expression>python:here.has_answers() and here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.has_answers() and here.aq_parent.get_conclusion() and here.aq_parent.get_status() == 'pending'</guard-expression>
   </guard>
  </transition>
  <transition transition_id="recall-msa" title="Recall" new_state="recalled-msa" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=recall-msa" category="workflow" icon="">Recall</action>
   <guard>
    <guard-role>MSAuthority</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="recall-question-lr" title="Recall Question" new_state="recalled-lr" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=recall-question-lr" category="workflow" icon="">Recall Question</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="recall-sre" title="Recall Question" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=recall-sre" category="workflow" icon="">Recall Question</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="redraft" title="Ask SE to redraft" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=redraft" category="workflow" icon="">Ask SE to redraft</action>
   <guard>
    <guard-role>LeadReviewer</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="reopen" title="Reopen" new_state="draft" trigger="USER" before_script="" after_script="">
 
   <guard>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="request-for-counterpart-comments" title="Request Comments" new_state="counterpart-comments" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/assign_counterpart_form?workflow_action=request-for-counterpart-comments" category="workflow" icon="">Request Comments</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
-   <guard-expression>here/unanswered_questions</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.unanswered_questions()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="reselect-counterparts" title="Select new Counterparts" new_state="" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/reassign_counterpart_form?workflow_action=reselect-counterpart" category="workflow" icon="">Select new Counterparts</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="send-comments" title="Close Comments" new_state="draft" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=send-comments" category="workflow" icon="">Close Comments</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="send-to-lr" title=" Send Question for Approval " new_state="drafted" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=send-to-lr" category="workflow" icon="">Send Question for Approval</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
-   <guard-expression>python:object.can_be_sent_to_lr()</guard-expression>
+   <guard-expression>python:here.reviewfolder_allows_mutation() and here.can_be_sent_to_lr()</guard-expression>
   </guard>
  </transition>
  <transition transition_id="validate-answer-msa" title="Acknowledge Answer " new_state="closed" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/content_status_modify?workflow_action=validate-answer-msa" category="workflow" icon="">Acknowledge Answer</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>
  <variable variable_id="action" for_catalog="False" for_status="True" update_always="True">
