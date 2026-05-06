@@ -2,9 +2,13 @@ Changelog
 =========
 
 
-3.0.7 (2026-05-05)
+3.0.8 (2026-05-06)
 
 - Task #302917 - Prevent sector experts from editing old years.
+
+3.0.7 (2026-05-05)
+
+- Task #302917 - BROKEN RELEASE (Prevent sector experts from editing old years.)
 
 3.0.6 (2026-04-24)
 
