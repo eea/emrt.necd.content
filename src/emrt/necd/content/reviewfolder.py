@@ -849,10 +849,11 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
         questions = (brain.getObject() for brain in question_brains)
 
-        comments = tuple(
+        comments = sorted(
             itertools.chain(
                 *[question.get_questions() for question in questions]
-            )
+            ),
+            key=lambda c: int(c.id),
         )
 
         mapping = dict(Comment="Question", CommentAnswer="Answer")
