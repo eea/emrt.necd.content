@@ -64,4 +64,24 @@
         />
    </genericsetup:upgradeSteps>
 
+   <genericsetup:upgradeSteps
+      profile="emrt.necd.content:default"
+      source="305"
+      destination="306"
+      >
+
+      <genericsetup:upgradeDepends
+          title="Update catalog config"
+          description="[refs #297940] New column added: qa_extract."
+          import_steps="catalog"
+          />
+
+      <genericsetup:upgradeStep
+          title="Reindex observations"
+          description="[refs #297940] New column added: qa_extract."
+          handler=".to306.run"
+          />
+
+   </genericsetup:upgradeSteps>
+
 </configure>

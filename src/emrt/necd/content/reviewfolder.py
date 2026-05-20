@@ -1,5 +1,6 @@
 import itertools
 import time
+import json
 from collections import OrderedDict
 from collections import namedtuple
 from datetime import datetime
@@ -22,6 +23,7 @@ from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 
+import Missing
 from Acquisition import aq_inner
 from DateTime import DateTime
 from zope import schema
@@ -684,7 +686,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
     def extract_data(self, form_data):
         """Create xls file."""
-        observations = self.get_questions()
+        observation_brains = self.get_questions()
 
         user_is_ms = getUtility(IUserIsMS)(self.context)
         user_is_manager = "Manager" in api.user.get_roles()
@@ -711,10 +713,10 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
             vocab_highlight,
         ) = get_highlight_vocabs(self.context)
 
-        for observation in observations:
-            row = [observation.getId]
+        for obs_brain in observation_brains:
+            row = [obs_brain.getId]
             highlights = translate_highlights(
-                vocab_highlight, observation["get_highlight"] or []
+                vocab_highlight, obs_brain["get_highlight"] or []
             )
             description_flags = get_common(highlights, vocab_description_flags)
             conclusion_flags = get_common(highlights, vocab_conclusion_flags)
@@ -727,9 +729,9 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
             for key in fields_to_export:
                 if key == "observation_is_potential_technical_correction":
-                    row.append(observation[key] and "Yes" or "No")
+                    row.append(obs_brain[key] and "Yes" or "No")
                 elif key == "getURL":
-                    row.append(observation.getURL())
+                    row.append(obs_brain.getURL())
                 elif key in IS_FIELD_MAP:
                     row.append(yes_no_bool(IS_FIELD_MAP[key] in highlights))
                 elif key == "get_description_flags":
@@ -745,7 +747,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         )
                     )
                 elif key == "get_is_ms_key_category":
-                    row.append(observation.ms_key_category and "Yes" or "No")
+                    row.append(obs_brain.ms_key_category and "Yes" or "No")
                 elif key == "observation_questions_workflow":
                     row_val = ", ".join(
                         [
@@ -753,7 +755,7 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                                 (str(idx), QUESTION_WORKFLOW_MAP.get(val, val))
                             )
                             for idx, val in enumerate(
-                                observation[key], start=1
+                                obs_brain[key], start=1
                             )
                         ]
                     )
@@ -761,54 +763,54 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
                         row_val
                         if row_val
                         else QUESTION_WORKFLOW_MAP.get(
-                            observation["observation_status"], "unknown"
+                            obs_brain["observation_status"], "unknown"
                         )
                     )
                 elif key == "observation_questions_workflow_current":
                     row.append(
                         QUESTION_WORKFLOW_MAP.get(
-                            observation["observation_status"],
-                            observation["observation_status"],
+                            obs_brain["observation_status"],
+                            obs_brain["observation_status"],
                         )
                     )
                 elif key == "fuel":
                     fuel = get_vocabulary_value(
                         self.context.aq_parent,
                         "emrt.necd.content.fuel",
-                        observation.getObject().fuel,
+                        obs_brain.getObject().fuel,
                     )
                     row.append(fuel)
                 elif key == "modified":
-                    row.append(observation.modified.asdatetime().isoformat())
+                    row.append(obs_brain.modified.asdatetime().isoformat())
                 elif key == "extract_timestamp":
                     row.append(DateTime().asdatetime().isoformat())
 
                 # XXX: these are projection fields and need rework,
                 # getObject kill performance.
                 elif key == "nfr_code_inventory":
-                    row.append(observation.getObject().nfr_code_inventory)
+                    row.append(obs_brain.getObject().nfr_code_inventory)
                 elif key == "reference_year":
-                    row.append(observation.getObject().reference_year)
+                    row.append(obs_brain.getObject().reference_year)
                 elif key == "scenario_type_value":
-                    row.append(observation.getObject().scenario_type_value())
+                    row.append(obs_brain.getObject().scenario_type_value())
                 elif key == "activity_data_type":
-                    row.append(observation.getObject().activity_data_type)
+                    row.append(obs_brain.getObject().activity_data_type)
                 elif key == "activity_data":
                     row.append(
                         "\n".join(
-                            observation.getObject().activity_data_value()
+                            obs_brain.getObject().activity_data_value()
                         )
                     )
                 elif key == "latest_question_id":
                     b_comments = catalog(
                         portal_type="Comment",
-                        path=dict(query=observation.getPath()),
+                        path=dict(query=obs_brain.getPath()),
                     )
                     comment_ids = sorted([b.getId for b in b_comments])
                     last_question_id = comment_ids[-1] if comment_ids else "-"
                     row.append(last_question_id)
                 else:
-                    field_value = observation[key]
+                    field_value = obs_brain[key]
                     if isinstance(field_value, RichTextValue):
                         row.append(richtext2text(field_value, self.context))
                     else:
@@ -819,7 +821,10 @@ class ExportReviewFolderForm(form.Form, ReviewFolderMixin):
 
             if form_data.get("include_qa") and can_export_qa:
                 # Include Q&A threads if user is Manager
-                extracted_qa = self.extract_qa(catalog, observation)
+                if obs_brain["qa_extract"] != Missing.Value:
+                    extracted_qa = json.loads(obs_brain["qa_extract"])
+                else:
+                    extracted_qa = self.extract_qa(catalog, obs_brain)
                 extracted_qa_len = len(extracted_qa)
                 qa_len = (
                     extracted_qa_len if extracted_qa_len > qa_len else qa_len

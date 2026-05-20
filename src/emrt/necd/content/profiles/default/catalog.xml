@@ -98,6 +98,10 @@
     <indexed_attr value="observation_status" />
  </index>
 
+ <index name="qa_extract" meta_type="FieldIndex">
+    <indexed_attr value="qa_extract" />
+ </index>
+
  <column value="observation_status" />
  <column value="country" />
  <column value="country_value" />
@@ -129,4 +133,5 @@
  <column value="pollutants_value" />
  <column value="observation_sent_to_msc" />
  <column value="observation_sent_to_mse" />
+ <column value="qa_extract" />
 </object>

@@ -1,7 +1,12 @@
 import datetime
+import itertools
+import json
 
 from plone.dexterity.interfaces import IDexterityContent
 from zope.schema import getFieldsInOrder
+
+from Products.CMFPlone.utils import safe_unicode
+
 
 from plone import api
 from plone.app.discussion.interfaces import IConversation
@@ -315,3 +320,26 @@ def dx_text_output(context):
     elif isinstance(value, str):
         return value
     return ""
+
+
+@indexer(IObservation)
+def qa_extract(context):
+    extract = []
+    with api.env.adopt_roles(['Manager']):
+        questions = context.listFolderContents({"portal_type": "Question"})
+        comments = sorted(
+            itertools.chain(
+                *[question.get_questions() for question in questions]
+            ),
+            key=lambda c: int(c.id),
+        )
+
+        mapping = dict(Comment="Question", CommentAnswer="Answer")
+        extract = [
+            u"{}: {}".format(
+                mapping[comment.portal_type], safe_unicode(comment.text)
+            )
+            for comment in comments
+        ]
+
+    return json.dumps(extract)

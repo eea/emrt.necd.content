@@ -168,3 +168,8 @@ def new_discussion_comment(comment, event):
     with api.env.adopt_roles(roles=['Manager']):
         observation = find_parent_with_interface(IObservation, comment)
         observation.reindexObject()
+
+
+def reindex_observation_qa_extract(context, _):
+    observation = context.get_observation()
+    observation.reindexObject(idxs=['qa_extract'])

@@ -1,0 +1,185 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!-- Observation -->
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="emrt.necd.content.observation.set_title_to_observation"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="emrt.necd.content.observation.set_title_to_observation"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.subscribers.observation_transition"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalised.notification_ms"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalised.notification_se"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalisation_denied.notification_se"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.conclusion_to_comment.notification_cp"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.conclusion_to_comment.notification_lr"
+  />
+
+  <subscriber
+    for="emrt.necd.content.observation.IObservation
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.observation_finalisation_request.notification_lr"
+  />
+
+  <!--  Question -->
+
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler="emrt.necd.content.question.add_question"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.subscribers.question_transition"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_counterpart.notification_cp"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_counterpart.notification_lr"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+           Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_answered.notification_lr"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_answered.notification_se"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_answered.notification_rev_msexperts"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_ms.notification_ms"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_to_ms.notification_se"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.answer_to_msexperts.notification_mse"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.question_ready_for_approval.notification_lr"
+  />
+
+  <subscriber
+    for="emrt.necd.content.question.IQuestion
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler="emrt.necd.content.notifications.answer_acknowledged.notification_ms"
+  />
+
+
+  <!-- New comment, reindex number of replies -->
+  <subscriber
+    for="plone.app.discussion.interfaces.IComment zope.lifecycleevent.IObjectAddedEvent"
+    handler="emrt.necd.content.subscribers.new_discussion_comment"
+  />
+
+  <subscriber
+    for="emrt.necd.content.comment.IComment
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler="emrt.necd.content.comment.add_question"
+  />
+
+  <!-- Reindex QA Extract on Q&A Changes. -->
+
+  <subscriber
+    for="emrt.necd.content.commentanswer.ICommentAnswer
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+  />
+
+  <subscriber
+    for="emrt.necd.content.commentanswer.ICommentAnswer
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+  />
+
+  <subscriber
+    for="emrt.necd.content.commentanswer.ICommentAnswer
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+  />
+
+  <subscriber
+    for="emrt.necd.content.comment.IComment
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+  />
+
+  <subscriber
+    for="emrt.necd.content.comment.IComment
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+  />
+
+  <subscriber
+    for="emrt.necd.content.comment.IComment
+         Products.CMFCore.interfaces.IActionSucceededEvent"
+    handler=".subscribers.reindex_observation_qa_extract"
+  />
+
+</configure>
