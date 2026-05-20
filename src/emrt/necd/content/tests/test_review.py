@@ -345,6 +345,43 @@ class TestSetup(unittest.TestCase):
             ["Add Conclusions", "Go to Conclusions", "Edit Key Flags"],
         )
 
+    def test_q_and_a_stage_defaults_to_questions_tab(self):
+        observation = self.create_observation()
+        view = self.get_view(observation, ObservationView)
+
+        self.assertEqual(
+            view.default_tab_selector(),
+            'a[href="#tab-questions"]',
+        )
+
+    def test_conclusion_stage_defaults_to_conclusions_tab(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        self.create_conclusion(observation, "draft conclusion text")
+        view = self.get_view(observation, ObservationView)
+
+        self.assertEqual(
+            view.default_tab_selector(),
+            'a[href="#tab-conclusions"]',
+        )
+
+    def test_pending_observation_with_conclusion_keeps_q_and_a_tab_active(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        self.create_question(observation, "question text")
+        self.create_conclusion(observation, "draft conclusion text")
+        api.content.transition(obj=observation, transition="reopen-qa-chat")
+
+        content = self.get_view(observation, ObservationView)()
+        self.assertIn(
+            '<div id="questionChatRoom" class="active"><a href="#tab-questions">Q&amp;A</a></div>',
+            content,
+        )
+        self.assertNotIn(
+            '<div class="active"><a href="#tab-conclusions">Conclusions</a></div>',
+            content,
+        )
+
     def test_end_review_blocks_answer_creation_for_msa(self):
         observation = self.create_observation()
 

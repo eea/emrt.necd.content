@@ -389,10 +389,14 @@
       </div>
     </div>
   </metal:observation>
-
-  <script tal:condition="view/isChatCurrent">
+  <script>
     $(document).ready(function(){
-      $("#tab-qa").click();
+      if (!window.location.hash) {
+        var default_tab = $("${view/default_tab_selector}");
+        if (default_tab.length) {
+          default_tab.click();
+        }
+      }
     });
   </script>
 
@@ -400,11 +404,13 @@
     <div class="active" tal:condition="python:context.get_status() == 'close-requested'">
       <a href="#tab-finish-observation">Finish observation</a>
     </div>
-    <div class="active"
+    <div
       tal:define="conclusion view/get_conclusion"
+      tal:attributes="class python:view.in_conclusions() and 'active' or None"
       tal:condition="nocall:conclusion"
     ><a href="#tab-conclusions">Conclusions</a></div>
-    <div id="questionChatRoom"><a href="#tab-questions">Q&amp;A</a></div>
+    <div id="questionChatRoom"
+      tal:attributes="class python:context.get_status() != 'close-requested' and not view.in_conclusions() and 'active' or None"><a href="#tab-questions">Q&amp;A</a></div>
   </div>
 
   <div class="eea-tabs-panels" style="overflow:hidden">

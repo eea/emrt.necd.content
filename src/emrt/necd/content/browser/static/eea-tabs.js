@@ -6,6 +6,11 @@ jQuery(document).ready(
 
       let requestedPanel = window.location.hash ? $(document).find(window.location.hash) : null;
       if (!requestedPanel?.length) {
+        const activeTabLink = $(".eea-tabs > div.active a").first();
+        const activeTabSelector = activeTabLink.attr("href");
+        requestedPanel = activeTabSelector ? $(document).find(activeTabSelector) : null;
+      }
+      if (!requestedPanel?.length) {
         requestedPanel = allTabPanels.first();
       }
 
@@ -24,4 +29,3 @@ jQuery(document).ready(
     setCurrentTab();
     $(window).bind('hashchange', setCurrentTab);
   });
-

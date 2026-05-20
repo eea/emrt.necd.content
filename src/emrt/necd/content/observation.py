@@ -1586,6 +1586,14 @@ class ObservationMixin(DefaultView):
         else:
             return False
 
+    def default_tab_selector(self):
+        status = api.content.get_state(self.context)
+        if status == "close-requested":
+            return 'a[href="#tab-finish-observation"]'
+        if self.in_conclusions():
+            return 'a[href="#tab-conclusions"]'
+        return 'a[href="#tab-questions"]'
+
 
 class ObservationView(ObservationMixin):
     def get_current_counterparters(self):
