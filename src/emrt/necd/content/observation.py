@@ -517,7 +517,6 @@ class Observation(Container):
             q = questions[0]
             return q.get_state_api() in [
                 "draft",
-                "drafted",
                 "recalled-lr",
                 "closed",
             ]

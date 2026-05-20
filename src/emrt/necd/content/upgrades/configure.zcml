@@ -1,87 +1,92 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    >
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+>
 
-   <genericsetup:upgradeSteps
-      profile="emrt.necd.content:default"
-      source="3.0.0"
-      destination="301"
-      >
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="3.0.0"
+    destination="301"
+  >
     <genericsetup:upgradeStep
-        title="Override uuid and add intid for carried over observations."
-        handler=".to301.run"
-        />
+      title="Override uuid and add intid for carried over observations."
+      handler=".to301.run"
+    />
 
     <genericsetup:upgradeDepends
-        title="Update action icons."
-        import_steps="typeinfo"
-        />
-   </genericsetup:upgradeSteps>
+      title="Update action icons."
+      import_steps="typeinfo"
+    />
+  </genericsetup:upgradeSteps>
 
-   <genericsetup:upgradeSteps
-      profile="emrt.necd.content:default"
-      source="301"
-      destination="302"
-      >
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="301"
+    destination="302"
+  >
     <genericsetup:upgradeStep
-        title="Reindex observation text"
-        handler=".to302.run"
-        />
-   </genericsetup:upgradeSteps>
+      title="Reindex observation text"
+      handler=".to302.run"
+    />
+  </genericsetup:upgradeSteps>
 
-   <genericsetup:upgradeSteps
-      profile="emrt.necd.content:default"
-      source="302"
-      destination="303"
-      >
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="302"
+    destination="303"
+  >
     <genericsetup:upgradeStep
-        title="Reindex observation_sent_to_mse and observation_sent_to_msc"
-        handler=".to303.run"
-        />
-   </genericsetup:upgradeSteps>
+      title="Reindex observation_sent_to_mse and observation_sent_to_msc"
+      handler=".to303.run"
+    />
+  </genericsetup:upgradeSteps>
 
-   <genericsetup:upgradeSteps
-      profile="emrt.necd.content:default"
-      source="303"
-      destination="304"
-      >
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="303"
+    destination="304"
+  >
     <genericsetup:upgradeStep
-        title="Fix observations that have multiple Question items."
-        handler=".to304.run"
-        />
-   </genericsetup:upgradeSteps>
+      title="Fix observations that have multiple Question items."
+      handler=".to304.run"
+    />
+  </genericsetup:upgradeSteps>
 
-   <genericsetup:upgradeSteps
-      profile="emrt.necd.content:default"
-      source="304"
-      destination="305"
-      >
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="304"
+    destination="305"
+  >
 
     <genericsetup:upgradeDepends
-        title="Update workflows - don't allow non-managers to modify old reviews."
-        import_steps="workflow"
-        />
-   </genericsetup:upgradeSteps>
+      title="Update workflows - don't allow non-managers to modify old reviews."
+      import_steps="workflow"
+    />
+  </genericsetup:upgradeSteps>
 
-   <genericsetup:upgradeSteps
-      profile="emrt.necd.content:default"
-      source="305"
-      destination="306"
-      >
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="305"
+    destination="306"
+  >
 
-      <genericsetup:upgradeDepends
-          title="Update catalog config"
-          description="[refs #297940] New column added: qa_extract."
-          import_steps="catalog"
-          />
+    <genericsetup:upgradeDepends
+      title="[refs #292903] - Remove Go to conclusions when sent for approval."
+      import_steps="workflow"
+    />
 
-      <genericsetup:upgradeStep
-          title="Reindex observations"
-          description="[refs #297940] New column added: qa_extract."
-          handler=".to306.run"
-          />
+    <genericsetup:upgradeDepends
+      title="Update catalog config"
+      description="[refs #297940] New column added: qa_extract."
+      import_steps="catalog"
+    />
 
-   </genericsetup:upgradeSteps>
+    <genericsetup:upgradeStep
+      title="Reindex observations"
+      description="[refs #297940] New column added: qa_extract."
+      handler=".to306.run"
+    />
+
+  </genericsetup:upgradeSteps>
 
 </configure>

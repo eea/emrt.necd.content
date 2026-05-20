@@ -208,7 +208,6 @@
   </permission-map>
  </state>
  <state state_id="drafted" title="drafted">
-  <exit-transition transition_id="finish-observation-lr"/>
   <exit-transition transition_id="approve-question"/>
   <exit-transition transition_id="close-lr"/>
   <exit-transition transition_id="recall-sre"/>

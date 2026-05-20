@@ -225,6 +225,18 @@ class TestSetup(unittest.TestCase):
         self.create_answer(question, text="The MSA answer")
         self.assertTrue("The MSA answer" in self.get_view(observation, ObservationView)())
 
+    def test_lr_cannot_go_to_conclusions_while_question_waits_for_approval(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        self.assertFalse(observation.can_draft_conclusions())
+        self.assertFalse(
+            "Go to conclusions" in self.get_view(observation, ObservationView)()
+        )
+
     def test_end_review_blocks_answer_creation_for_msa(self):
         observation = self.create_observation()
 

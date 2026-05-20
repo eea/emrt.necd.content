@@ -720,7 +720,7 @@
           </a>
         </tal:block>
        <a href="./content_status_modify?workflow_action=close"
-          tal:condition="python:not context.get_question() and view.can_add_question()"
+          tal:condition="python:not context.get_question() and view.can_add_question() and context.can_draft_conclusions()"
           id="observation-finish"
           tal:attributes="href string:${here/absolute_url}/add-conclusions?workflow_action=draft-conclusions"
           class="standardButton">
