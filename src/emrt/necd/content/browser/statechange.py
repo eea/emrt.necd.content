@@ -498,6 +498,9 @@ class AssignConclusionReviewerForm(AssignFormMixin):
         return static + validated_groups
 
     def _get_wf_action(self):
+        workflow_action = self.request.get("workflow_action")
+        if workflow_action == "reselect-counterparts":
+            return "reselect-counterparts"
         return "request-comments"
 
     def updateActions(self):

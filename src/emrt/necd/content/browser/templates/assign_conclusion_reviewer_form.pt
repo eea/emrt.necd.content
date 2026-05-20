@@ -43,6 +43,8 @@
                 tal:attributes="action string:${context/absolute_url}/${view/__name__}">
 
               <input type="hidden" name="form.submitted:boolean" value="True" />
+              <input type="hidden" name="workflow_action"
+                     tal:attributes="value request/workflow_action|nothing" />
             <div id="user-group-sharing-container">
 
 

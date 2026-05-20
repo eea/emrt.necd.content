@@ -20,6 +20,8 @@ from emrt.necd.content.question import AddView as QuestionAddView
 from emrt.necd.content.question import Question
 from emrt.necd.content.commentanswer import CommentAnswer
 from emrt.necd.content.commentanswer import AddView as CommentAnswerAddView
+from emrt.necd.content.conclusions import AddView as ConclusionsAddView
+from emrt.necd.content.browser.statechange import AssignConclusionReviewerForm
 from emrt.necd.content.reviewfolder import ReviewFolder
 from emrt.necd.content.testing import (  # noqa: E501
     EMRT_NECD_CONTENT_INTEGRATION_TESTING,
@@ -97,6 +99,20 @@ class TestSetup(unittest.TestCase):
             add_view.form_instance.createAndAdd(data={"text": text}),
         )
         return cast(Question, observation[added.getId()])
+
+    def create_conclusion(self, observation: Observation, text: str = ""):
+        add_view: ConclusionsAddView = cast(
+            ConclusionsAddView,
+            observation.restrictedTraverse("++add++Conclusions"),
+        )
+        added = add_view.form_instance.createAndAdd(
+            data={
+                "closing_reason": "resolved",
+                "text": text,
+                "highlight": tuple(),
+            }
+        )
+        return observation[added.id]
 
     def get_view(self, context, cls: T, name: str = "view") -> T:
         return cast(
@@ -236,6 +252,45 @@ class TestSetup(unittest.TestCase):
         self.assertFalse(
             "Go to conclusions" in self.get_view(observation, ObservationView)()
         )
+
+    def test_draft_conclusion_hides_select_new_counterparts_action(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        self.create_conclusion(observation, "draft conclusion text")
+
+        content = self.get_view(observation, ObservationView)()
+        self.assertFalse("Select new Counterparts" in content)
+
+    def test_conclusion_discussion_shows_select_new_counterparts_action(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        self.create_conclusion(observation, "draft conclusion text")
+        api.content.transition(obj=observation, transition="request-comments")
+
+        content = self.get_view(observation, ObservationView)()
+        self.assertTrue("Select new Counterparts" in content)
+
+    def test_closed_conclusion_comments_hide_select_new_counterparts_action(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        self.create_conclusion(observation, "draft conclusion text")
+        api.content.transition(obj=observation, transition="request-comments")
+        api.content.transition(obj=observation, transition="finish-comments")
+
+        content = self.get_view(observation, ObservationView)()
+        self.assertFalse("Select new Counterparts" in content)
+
+    def test_assign_conclusion_reviewer_form_uses_reselect_transition(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        self.request.form["workflow_action"] = "reselect-counterparts"
+
+        view = self.get_view(
+            observation,
+            AssignConclusionReviewerForm,
+            name="assign_conclusion_reviewer_form",
+        )
+        self.assertEqual(view._get_wf_action(), "reselect-counterparts")
 
     def test_end_review_blocks_answer_creation_for_msa(self):
         observation = self.create_observation()

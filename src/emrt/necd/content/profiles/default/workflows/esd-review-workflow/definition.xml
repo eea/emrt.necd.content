@@ -99,6 +99,7 @@
   </permission-map>
  </state>
  <state state_id="conclusion-discussion" title="conclusion-discussion">
+  <exit-transition transition_id="reselect-counterparts"/>
   <exit-transition transition_id="finish-comments"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
@@ -457,6 +458,13 @@
  </transition>
  <transition transition_id="request-comments" title="Request comments" new_state="conclusion-discussion" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/assign_conclusion_reviewer_form?workflow_action=request-comments" category="workflow" icon="">Request comments</action>
+  <guard>
+   <guard-role>SectorExpert</guard-role>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="reselect-counterparts" title="Select new Counterparts" new_state="conclusion-discussion" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/assign_conclusion_reviewer_form?workflow_action=reselect-counterparts" category="workflow" icon="">Select new Counterparts</action>
   <guard>
    <guard-role>SectorExpert</guard-role>
    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
