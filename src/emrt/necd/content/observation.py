@@ -1399,14 +1399,14 @@ class ObservationMixin(DefaultView):
             question_menu_items = getMenu(
                 "plone_contentmenu_workflow", question, self.request
             )
-            # remove add-followup-question action
-            # if the permission check is False
-            if not self.can_add_follow_up_question():
-                question_menu_items = [
-                    item
-                    for item in question_menu_items
-                    if not item["action"].endswith("add-followup-question")
-                ]
+            # The observation view renders its own dedicated follow-up button,
+            # so keep the workflow action out of the generic action list.
+            question_menu_items = [
+                item
+                for item in question_menu_items
+                if "workflow_action=add-followup-question"
+                not in item["action"]
+            ]
 
             menu_items = question_menu_items + observation_menu_items
         return [mitem for mitem in menu_items if not hidden(mitem)]

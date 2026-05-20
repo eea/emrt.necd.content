@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
 import unittest
+from unittest.mock import patch
 from typing import TypeVar
 from typing import cast
 
@@ -291,6 +292,58 @@ class TestSetup(unittest.TestCase):
             name="assign_conclusion_reviewer_form",
         )
         self.assertEqual(view._get_wf_action(), "reselect-counterparts")
+
+    def test_observation_actions_hide_workflow_follow_up_action(self):
+        observation = self.create_observation()
+        self.create_question(observation, "question text")
+        view = self.get_view(observation, ObservationView)
+
+        with patch(
+            "emrt.necd.content.observation.getMenu",
+            side_effect=[
+                [
+                    {
+                        "action": (
+                            "http://nohost/observation/edit-highlights"
+                            "?_authenticator=test"
+                        ),
+                        "title": "Edit Key Flags",
+                    }
+                ],
+                [
+                    {
+                        "action": (
+                            "http://nohost/question/add-follow-up-question"
+                            "?workflow_action=add-followup-question"
+                            "&_authenticator=test"
+                        ),
+                        "title": "Add follow up question",
+                    },
+                    {
+                        "action": (
+                            "http://nohost/question/add-conclusions"
+                            "?workflow_action=draft-conclusions"
+                            "&_authenticator=test"
+                        ),
+                        "title": "Add Conclusions",
+                    },
+                    {
+                        "action": (
+                            "http://nohost/question/../add-conclusions"
+                            "?workflow_action=draft-conclusions"
+                            "&_authenticator=test"
+                        ),
+                        "title": "Go to Conclusions",
+                    }
+                ],
+            ],
+        ):
+            actions = view.actions()
+
+        self.assertEqual(
+            [action["title"] for action in actions],
+            ["Add Conclusions", "Go to Conclusions", "Edit Key Flags"],
+        )
 
     def test_end_review_blocks_answer_creation_for_msa(self):
         observation = self.create_observation()
