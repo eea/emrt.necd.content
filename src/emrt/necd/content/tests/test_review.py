@@ -254,6 +254,101 @@ class TestSetup(unittest.TestCase):
             "Go to conclusions" in self.get_view(observation, ObservationView)()
         )
 
+    def test_go_to_conclusions_shows_after_lr_recalls_question_in_normal_flow(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        question.getFirstComment().restrictedTraverse("approve-question")()
+        api.content.transition(
+            obj=question,
+            transition="recall-question-lr",
+            comment=question.getFirstComment().getId(),
+        )
+
+        self.assertEqual(api.content.get_state(observation), "pending")
+        self.assertEqual(api.content.get_state(question), "recalled-lr")
+        helpers.login(self.portal, USERS.SE.value.name)
+        self.assertIn(
+            "Go to Conclusions",
+            self.get_view(observation, ObservationView)(),
+        )
+
+    def test_se_can_create_conclusion_after_lr_recalls_question(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        question.getFirstComment().restrictedTraverse("approve-question")()
+        api.content.transition(
+            obj=question,
+            transition="recall-question-lr",
+            comment=question.getFirstComment().getId(),
+        )
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        self.create_conclusion(observation, "draft conclusion text")
+
+        self.assertEqual(api.content.get_state(observation), "conclusions")
+        self.assertEqual(api.content.get_state(question), "closed")
+
+    def test_go_to_conclusions_shows_after_lr_recalls_reopened_qa_question(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        self.create_conclusion(observation, "draft conclusion text")
+        api.content.transition(obj=observation, transition="reopen-qa-chat")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        question.getFirstComment().restrictedTraverse("approve-question")()
+        api.content.transition(
+            obj=question,
+            transition="recall-question-lr",
+            comment=question.getFirstComment().getId(),
+        )
+
+        self.assertEqual(api.content.get_state(observation), "pending")
+        self.assertEqual(api.content.get_state(question), "recalled-lr")
+        helpers.login(self.portal, USERS.SE.value.name)
+        self.assertIn(
+            "Go to Conclusions",
+            self.get_view(observation, ObservationView)(),
+        )
+
+    def test_lr_recall_restores_reopened_qa_state_after_observation_closed(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        self.create_conclusion(observation, "draft conclusion text")
+        api.content.transition(obj=observation, transition="reopen-qa-chat")
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        api.content.transition(obj=observation, transition="draft-conclusions")
+        api.content.transition(obj=observation, transition="finish-observation")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        api.content.transition(
+            obj=observation, transition="confirm-finishing-observation"
+        )
+        observation.restrictedTraverse("recall-observation")()
+
+        self.assertEqual(api.content.get_state(observation), "pending")
+        self.assertEqual(api.content.get_state(question), "draft")
+        self.assertEqual(
+            api.content.get_state(observation.get_conclusion()),
+            "draft",
+        )
+        helpers.login(self.portal, USERS.SE.value.name)
+        self.assertIn(
+            "Go to Conclusions",
+            self.get_view(observation, ObservationView)(),
+        )
+
     def test_draft_conclusion_hides_select_new_counterparts_action(self):
         helpers.login(self.portal, USERS.SE.value.name)
         observation = self.create_observation()

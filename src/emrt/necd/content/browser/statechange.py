@@ -159,6 +159,13 @@ class DenyFinishObservationReasonForm(Form):
 
 
 class RecallObservation(BrowserView):
+    def _restore_pending_on_lr_recall(self):
+        history = self.context.workflow_history.get("esd-review-workflow", [])
+        for item in reversed(history):
+            if item.get("review_state") == "pending":
+                return item.get("action") == "reopen-qa-chat"
+        return False
+
     def __call__(self):
         ensure_reviewfolder_allows_mutation(self.context)
         state = api.content.get_state(self.context)
@@ -166,6 +173,8 @@ class RecallObservation(BrowserView):
 
         if state == "conclusions-lr-denied":
             self.context.closing_deny_comments = ""
+            if self._restore_pending_on_lr_recall():
+                transition_id = "recall-lr-pending"
 
         elif state == "close-requested":
             self.context.closing_comments = ""
@@ -182,6 +191,10 @@ class RecallObservation(BrowserView):
                 elif prev_state == "conclusions-lr-denied":
                     transition_id = "recall-se-conclusions-lr-denied"
                     break
+
+        elif state == "closed" and self._restore_pending_on_lr_recall():
+            self.context.closing_comments = ""
+            transition_id = "recall-lr-pending"
 
         with api.env.adopt_roles(["Manager"]):
             api.content.transition(obj=self.context, transition=transition_id)

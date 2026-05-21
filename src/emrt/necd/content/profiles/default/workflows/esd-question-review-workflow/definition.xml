@@ -80,6 +80,7 @@
   <exit-transition transition_id="draft-conclusions"/>
   <exit-transition transition_id="go-to-conclusions"/>
   <exit-transition transition_id="reopen"/>
+  <exit-transition transition_id="reopen-lr"/>
   <permission-map name="emrt.necd.content: Add Comment" acquired="False">
    <permission-role>Manager</permission-role>
    <permission-role>SectorExpert</permission-role>
@@ -448,6 +449,9 @@
   </permission-map>
  </state>
  <state state_id="recalled-lr" title="recalled-lr">
+  <exit-transition transition_id="finish-observation-lr"/>
+  <exit-transition transition_id="finish-observation-re"/>
+  <exit-transition transition_id="close"/>
   <exit-transition transition_id="redraft"/>
   <exit-transition transition_id="approve-question"/>
   <exit-transition transition_id="close-lr"/>
@@ -697,6 +701,12 @@
   </guard>
  </transition>
  <transition transition_id="reopen" title="Reopen" new_state="draft" trigger="USER" before_script="" after_script="">
+
+  <guard>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="reopen-lr" title="Reopen to LR recall" new_state="recalled-lr" trigger="USER" before_script="" after_script="">
 
   <guard>
    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>

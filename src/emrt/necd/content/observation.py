@@ -1333,7 +1333,13 @@ class ObservationMixin(DefaultView):
             and sm.checkPermission(
                 "emrt.necd.content: Add Conclusions", self.context
             )
-            and question_state in ["draft", "drafted", "pending", "closed"]
+            and question_state in [
+                "draft",
+                "drafted",
+                "pending",
+                "closed",
+                "recalled-lr",
+            ]
         )
 
     def show_description(self):

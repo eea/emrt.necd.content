@@ -60,6 +60,7 @@
  <state state_id="closed" title="closed">
   <exit-transition transition_id="reopen-closed-observation"/>
   <exit-transition transition_id="recall-lr"/>
+  <exit-transition transition_id="recall-lr-pending"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -204,6 +205,7 @@
   <exit-transition transition_id="request-comments"/>
   <exit-transition transition_id="edit-highlights"/>
   <exit-transition transition_id="recall-lr"/>
+  <exit-transition transition_id="recall-lr-pending"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>LeadReviewer</permission-role>
    <permission-role>MSAuthority</permission-role>
@@ -377,6 +379,13 @@
  </transition>
  <transition transition_id="recall-lr" title="Recall denied/confirmed close observation." new_state="close-requested" trigger="USER" before_script="" after_script="">
   <action url="%(content_url)s/recall-observation?workflow_action=recall-lr" category="workflow" icon="">Recall</action>
+  <guard>
+    <guard-role>LeadReviewer</guard-role>
+    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="recall-lr-pending" title="Recall to Q&amp;A phase." new_state="pending" trigger="USER" before_script="" after_script="">
+  <action url="%(content_url)s/recall-observation?workflow_action=recall-lr" category="necd-hidden-action" icon="">Recall -&gt; pending</action>
   <guard>
     <guard-role>LeadReviewer</guard-role>
     <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>

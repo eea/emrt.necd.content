@@ -3,6 +3,7 @@ from DateTime import DateTime
 from plone import api
 from Products.CMFCore.utils import getToolByName
 
+from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.observation import IObservation
 from emrt.necd.content.utils import find_parent_with_interface
 
@@ -65,14 +66,45 @@ def question_transition(question, event):
     observation.reindexObject()
 
 
+def _restore_question_after_reopen(question):
+    if api.content.get_state(question) != "closed":
+        return
+
+    history = question.workflow_history.get("esd-question-review-workflow", [])
+    close_action = None
+    for item in reversed(history):
+        if item.get("review_state") == "closed":
+            close_action = item.get("action")
+            break
+
+    if close_action == "close-lr":
+        api.content.transition(obj=question, transition="reopen-lr")
+    else:
+        api.content.transition(obj=question, transition="reopen")
+
+
+def _close_question_for_conclusions(question):
+    state = api.content.get_state(question)
+    if state == "draft":
+        transition = "close"
+    elif state == "drafted":
+        transition = "close-lr"
+    elif state == "recalled-lr":
+        roles = api.user.get_roles(obj=question)
+        transition = "close-lr" if ROLE_LR in roles else "close"
+    else:
+        return
+
+    api.content.transition(obj=question, transition=transition)
+
+
 def observation_transition(observation, event):
     if event.action == 'reopen-qa-chat':
         with api.env.adopt_roles(roles=['Manager']):
             qs = [q for q in list(observation.values()) if q.portal_type == 'Question']
             if qs:
                 q = qs[0]
-                if api.content.get_state(q) == 'closed':
-                    api.content.transition(obj=q, transition='reopen')
+                _restore_question_after_reopen(q)
 
     elif event.action in ['request-comments']:
         with api.env.adopt_roles(roles=['Manager']):
@@ -114,17 +146,26 @@ def observation_transition(observation, event):
                 api.content.transition(obj=conclusion,
                     transition='redraft')
 
+    elif event.action == 'recall-lr-pending':
+        with api.env.adopt_roles(roles=['Manager']):
+            conclusions = [c for c in list(observation.values()) if c.portal_type == 'Conclusions']
+            if conclusions:
+                conclusion = conclusions[0]
+                if api.content.get_state(conclusion) != 'draft':
+                    api.content.transition(
+                        obj=conclusion,
+                        transition='redraft'
+                    )
+
+            questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
+            if questions:
+                _restore_question_after_reopen(questions[0])
+
     elif event.action == 'draft-conclusions':
         with api.env.adopt_roles(roles=['Manager']):
             questions = [c for c in list(observation.values()) if c.portal_type == 'Question']
             if questions:
-                question = questions[0]
-                if api.content.get_state(question) == 'draft':
-                    api.content.transition(obj=question,
-                        transition='close')
-                elif api.content.get_state(question) in ['drafted', 'recalled-lr']:
-                    api.content.transition(obj=question,
-                        transition='close-lr')
+                _close_question_for_conclusions(questions[0])
 
     elif event.action == 'recall-from':
         with api.env.adopt_roles(roles=['Manager']):
