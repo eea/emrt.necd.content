@@ -1,6 +1,15 @@
 Changelog
 =========
 
+3.1.0 (2026-05-26)
+
+- Task #292903 - Allow "Go to conclusions" after recall.
+- Task #292903 - Fix initial selected tab.
+- Task #292903 - Remove duplicate "Add follow up question" button.
+- Task #292903 - Select new counterparts on conclusion.
+- Task #292903 - Remove Go to conclusions when sent for approval.
+- Bug #297940 - Add Q&A export caching in catalog.
+- Bug #297940 - Fix Q&A ordering in extract.
 
 3.0.8 (2026-05-06)
 

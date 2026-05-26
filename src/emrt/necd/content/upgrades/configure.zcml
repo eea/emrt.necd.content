@@ -67,7 +67,7 @@
   <genericsetup:upgradeSteps
     profile="emrt.necd.content:default"
     source="305"
-    destination="306"
+    destination="310"
   >
 
     <genericsetup:upgradeDepends
@@ -84,7 +84,7 @@
     <genericsetup:upgradeStep
       title="Reindex observations"
       description="[refs #297940] New column added: qa_extract."
-      handler=".to306.run"
+      handler=".to310.run"
     />
 
   </genericsetup:upgradeSteps>
