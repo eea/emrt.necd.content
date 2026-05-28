@@ -1,6 +1,10 @@
 Changelog
 =========
 
+3.1.1 (2026-05-28)
+
+- Bug #304039 - Fix MS unable to answer.
+
 3.1.0 (2026-05-26)
 
 - Task #292903 - Allow "Go to conclusions" after recall.
