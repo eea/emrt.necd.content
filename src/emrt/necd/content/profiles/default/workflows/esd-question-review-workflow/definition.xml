@@ -269,6 +269,7 @@
  <state state_id="expert-comments" title="expert-comments">
   <exit-transition transition_id="eselect-msexperts"/>
   <exit-transition transition_id="ask-answer-aproval"/>
+  <exit-transition transition_id="repair-stale-answer-state"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
@@ -392,6 +393,7 @@
  <state state_id="pending-answer-drafting" title="pending-answer-drafting">
   <exit-transition transition_id="assign-answerer"/>
   <exit-transition transition_id="answer-to-lr"/>
+  <exit-transition transition_id="repair-stale-answer-state"/>
   <permission-map name="Access contents information" acquired="False">
    <permission-role>CounterPart</permission-role>
    <permission-role>LeadReviewer</permission-role>
@@ -709,6 +711,13 @@
  <transition transition_id="reopen-lr" title="Reopen to LR recall" new_state="recalled-lr" trigger="USER" before_script="" after_script="">
 
   <guard>
+   <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
+  </guard>
+ </transition>
+ <transition transition_id="repair-stale-answer-state" title="Repair stale answer state" new_state="pending" trigger="USER" before_script="" after_script="">
+  <action url="" category="necd-hidden-action" icon="">Repair stale answer state</action>
+  <guard>
+   <guard-role>Manager</guard-role>
    <guard-expression>python:here.reviewfolder_allows_mutation()</guard-expression>
   </guard>
  </transition>

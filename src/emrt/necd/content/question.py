@@ -1,3 +1,5 @@
+import datetime
+
 from operator import methodcaller
 from time import time
 
@@ -55,6 +57,8 @@ PENDING_STATUS_NAME = "pending"
 DRAFT_STATUS_NAME = "draft"
 OPEN_STATUS_NAME = "open"
 CLOSED_STATUS_NAME = "closed"
+
+QA_PORTAL_TYPES = ("Comment", "CommentAnswer")
 
 
 def create_question(context):
@@ -132,6 +136,48 @@ class Question(Container):
         items = list(self.values())
         return len(items) and items[-1].portal_type == "CommentAnswer" or False
 
+    def _qa_date(self, item):
+        """Return the date that identifies the Q&A cycle for an item."""
+        for attr in ("effective_date", "creation_date"):
+            value = getattr(item, attr, None)
+            if value:
+                return value
+
+        return item.created()
+
+    def _qa_year(self, item):
+        date = self._qa_date(item)
+        year = getattr(date, "year", None)
+        if callable(year):
+            return year()
+        return year
+
+    def qa_items(self):
+        items = [
+            item
+            for item in list(self.values())
+            if item.portal_type in QA_PORTAL_TYPES
+        ]
+        return sorted(items, key=self._qa_date)
+
+    def current_cycle_qa_items(self):
+        items = self.qa_items()
+        current_year = datetime.datetime.now().year
+        current_items = [
+            item for item in items if self._qa_year(item) == current_year
+        ]
+        return current_items or items
+
+    def current_cycle_qa_counts(self):
+        items = self.current_cycle_qa_items()
+        comments = [
+            item for item in items if item.portal_type == "Comment"
+        ]
+        answers = [
+            item for item in items if item.portal_type == "CommentAnswer"
+        ]
+        return len(comments), len(answers)
+
     def can_be_sent_to_lr(self):
         items = list(self.values())
         questions = [q for q in items if q.portal_type == "Comment"]
@@ -165,11 +211,8 @@ class Question(Container):
         return False
 
     def unanswered_questions(self):
-        items = list(self.values())
-        questions = [q for q in items if q.portal_type == "Comment"]
-        answers = [q for q in items if q.portal_type == "CommentAnswer"]
-
-        return len(questions) > len(answers)
+        questions, answers = self.current_cycle_qa_counts()
+        return questions > answers
 
     def can_close(self):
         """Check if this question can be closed:
@@ -190,15 +233,14 @@ class Question(Container):
         return True
 
     def one_pending_answer(self):
-        if self.has_answers():
-            answers = [
-                q
-                for q in list(self.values())
-                if q.portal_type == "CommentAnswer"
-            ]
-            return len(answers) > 0
-        else:
-            return False
+        items = self.current_cycle_qa_items()
+        questions, answers = self.current_cycle_qa_counts()
+        return (
+            bool(items)
+            and questions == answers
+            and answers > 0
+            and items[-1].portal_type == "CommentAnswer"
+        )
 
     def can_see_comment_discussion(self):
         sm = getSecurityManager()

@@ -5,6 +5,7 @@ from unittest.mock import patch
 from typing import TypeVar
 from typing import cast
 
+from DateTime import DateTime
 from zExceptions import Unauthorized
 from zope.component import getMultiAdapter
 
@@ -28,6 +29,7 @@ from emrt.necd.content.testing import (  # noqa: E501
     EMRT_NECD_CONTENT_INTEGRATION_TESTING,
 )
 from emrt.necd.content.testing import USERS
+from emrt.necd.content.upgrades import to311
 
 TEST_USER_EMAIL = "test-user@eaudeweb.ro"
 
@@ -114,6 +116,54 @@ class TestSetup(unittest.TestCase):
             }
         )
         return observation[added.id]
+
+    def add_comment(self, question: Question, item_id: str, text: str):
+        with api.env.adopt_roles(["Manager"]):
+            question.invokeFactory(type_name="Comment", id=item_id)
+        comment = question[item_id]
+        comment.text = text
+        return comment
+
+    def add_answer(self, question: Question, item_id: str, text: str):
+        with api.env.adopt_roles(["Manager"]):
+            question.invokeFactory(type_name="CommentAnswer", id=item_id)
+        answer = question[item_id]
+        answer.text = text
+        return answer
+
+    def set_qa_date(self, item, value):
+        item.creation_date = value
+        item.modification_date = value
+        item.setEffectiveDate(value)
+        item.reindexObject()
+
+    def create_stale_carried_over_question(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "Current TERT question")
+        current_comment = question.getFirstComment()
+
+        old_date = DateTime("2020/01/01 00:00 UTC")
+        old_items = [
+            self.add_comment(question, "old-comment-1", "Old TERT question 1"),
+            self.add_answer(question, "old-answer-1", "Old MS answer 1"),
+            self.add_comment(question, "old-comment-2", "Old TERT question 2"),
+            self.add_answer(question, "old-answer-2", "Old MS answer 2"),
+        ]
+        for item in old_items:
+            self.set_qa_date(item, old_date)
+
+        self.set_qa_date(current_comment, DateTime())
+        api.content.transition(
+            obj=question,
+            transition="send-to-lr",
+            comment=current_comment.getId(),
+        )
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        current_comment.restrictedTraverse("approve-question")()
+
+        return observation, question, current_comment
 
     def get_view(self, context, cls: T, name: str = "view") -> T:
         return cast(
@@ -241,6 +291,66 @@ class TestSetup(unittest.TestCase):
         helpers.login(self.portal, USERS.MSA.value.name)
         self.create_answer(question, text="The MSA answer")
         self.assertTrue("The MSA answer" in self.get_view(observation, ObservationView)())
+
+    def test_current_year_unanswered_question_ignores_old_answers_for_msa_actions(self):
+        observation, question, _current_comment = (
+            self.create_stale_carried_over_question()
+        )
+
+        self.assertTrue(question.has_answers())
+        self.assertTrue(question.unanswered_questions())
+        self.assertFalse(question.one_pending_answer())
+
+        helpers.login(self.portal, USERS.MSA.value.name)
+        content = self.get_view(observation, ObservationView)()
+
+        self.assertIn("Create answer", content)
+        self.assertEqual(content.count("workflow_action=answer-to-lr"), 0)
+        self.assertEqual(content.count("workflow_action=assign-answerer"), 0)
+
+    def test_submit_answer_action_is_rendered_only_on_answer_item(self):
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        comment = question.getFirstComment()
+        comment.restrictedTraverse("approve-question")()
+
+        helpers.login(self.portal, USERS.MSA.value.name)
+        answer = self.create_answer(question, text="The MSA answer")
+        api.content.transition(obj=question, transition="add-answer")
+        content = self.get_view(observation, ObservationView)()
+
+        self.assertEqual(content.count("workflow_action=answer-to-lr"), 1)
+        action_url = content.split("workflow_action=answer-to-lr", 1)[1]
+        action_url = action_url.split("</a>", 1)[0]
+        self.assertIn("comment={}".format(answer.getId()), action_url)
+        self.assertNotIn(
+            'comment={}"'.format(comment.getId()),
+            action_url,
+        )
+
+    def test_upgrade_repairs_stale_pending_answer_drafting_question(self):
+        observation, question, _current_comment = (
+            self.create_stale_carried_over_question()
+        )
+
+        helpers.login(self.portal, USERS.MSA.value.name)
+        api.content.transition(obj=question, transition="add-answer")
+        question.reindexObject()
+        self.assertEqual(
+            api.content.get_state(question), "pending-answer-drafting"
+        )
+
+        with patch("emrt.necd.content.upgrades.to311.transaction.commit"):
+            to311.run(None)
+
+        self.assertEqual(api.content.get_state(question), "pending")
+        content = self.get_view(observation, ObservationView)()
+        self.assertIn("Create answer", content)
+        self.assertEqual(content.count("workflow_action=answer-to-lr"), 0)
 
     def test_lr_cannot_go_to_conclusions_while_question_waits_for_approval(self):
         helpers.login(self.portal, USERS.SE.value.name)

@@ -89,4 +89,22 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="310"
+    destination="311"
+  >
+
+    <genericsetup:upgradeDepends
+      title="Update workflows - repair stale carried-over answer state."
+      import_steps="workflow"
+    />
+
+    <genericsetup:upgradeStep
+      title="Repair stale carried-over answer state."
+      handler=".to311.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

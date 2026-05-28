@@ -1448,17 +1448,7 @@ class ObservationMixin(DefaultView):
             permission = question.reviewfolder_allows_mutation() and sm.checkPermission(
                 p_add, question
             )
-            questions = [
-                q
-                for q in list(question.values())
-                if q.portal_type == "Comment"
-            ]
-            answers = [
-                q
-                for q in list(question.values())
-                if q.portal_type == "CommentAnswer"
-            ]
-            return permission and len(questions) > len(answers)
+            return permission and question.unanswered_questions()
         else:
             return False
 
@@ -1990,16 +1980,7 @@ class AddAnswerAndRequestComments(BrowserView):
         else:
             raise ActionExecutionError(Invalid("Invalid context"))
 
-        comments = [
-            q for q in list(context.values()) if q.portal_type == "Comment"
-        ]
-        answers = [
-            q
-            for q in list(context.values())
-            if q.portal_type == "CommentAnswer"
-        ]
-
-        if len(comments) == len(answers):
+        if not context.unanswered_questions():
             status = IStatusMessage(self.request)
             msg = _("There is a draft answer created for the question.")
             status.addStatusMessage(msg, "error")
