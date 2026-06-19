@@ -30,8 +30,17 @@ from emrt.necd.content.testing import (  # noqa: E501
 )
 from emrt.necd.content.testing import USERS
 from emrt.necd.content.upgrades import to311
+from emrt.necd.content.upgrades import to312
 
 TEST_USER_EMAIL = "test-user@eaudeweb.ro"
+MSA_AT_GROUP = "extranet-necd-review-countries-msa-at"
+QUESTION_WORKFLOW = "esd-question-review-workflow"
+MS_VISIBILITY_INDEXES = [
+    "observation_sent_to_msc",
+    "observation_sent_to_mse",
+    "observation_already_replied",
+    "observation_question_status",
+]
 
 T = TypeVar("T")
 
@@ -63,10 +72,12 @@ class TestSetup(unittest.TestCase):
     def tearDown(self) -> None:
         self.request.form = {}
 
-    def create_observation(self) -> Observation:
+    def create_observation_in(
+        self, folder: ReviewFolder, review_year: int = 2023
+    ) -> Observation:
         add_view: ObservationAddView = cast(
             ObservationAddView,
-            self.tool.restrictedTraverse("++add++Observation"),
+            folder.restrictedTraverse("++add++Observation"),
         )
         form = add_view.form_instance
         form_data = {
@@ -75,12 +86,29 @@ class TestSetup(unittest.TestCase):
             "nfr_code": "1A1",
             "year": "2022",
             "pollutants": list(["SO2"]),
-            "review_year": 2023,
+            "review_year": review_year,
             "ms_key_category": True,
             "parameter": list(["act", "emi"]),
         }
         observation = cast(Observation, form.createAndAdd(data=form_data))
-        return cast(Observation, self.tool[observation.getId()])
+        return cast(Observation, folder[observation.getId()])
+
+    def create_observation(self) -> Observation:
+        return self.create_observation_in(self.tool)
+
+    def create_review_folder(self, title) -> ReviewFolder:
+        with api.env.adopt_roles(["Manager"]):
+            folder: ReviewFolder = api.content.create(
+                container=self.portal,
+                type="ReviewFolder",
+                title=str(title),
+                tableau_statistics="nothing",
+                tableau_statistics_roles=list(["Manager"]),
+            )
+            folder.type = "inventory"
+            api.content.transition(obj=folder, transition="publish")
+            api.content.transition(obj=folder, transition="start")
+        return folder
 
     def create_answer(self, question: Question, text="") -> CommentAnswer:
         add_view: CommentAnswerAddView = cast(
@@ -136,6 +164,38 @@ class TestSetup(unittest.TestCase):
         item.modification_date = value
         item.setEffectiveDate(value)
         item.reindexObject()
+
+    def set_review_folder_year(self, year):
+        self.tool.title = str(year)
+        self.tool.reindexObject()
+
+    def set_workflow_history_year(self, obj, workflow_id, year):
+        history = []
+        for item in obj.workflow_history[workflow_id]:
+            updated = item.copy()
+            updated["time"] = DateTime(f"{year}/01/01 00:00 UTC")
+            history.append(updated)
+        obj.workflow_history[workflow_id] = tuple(history)
+        obj.reindexObject()
+
+    def force_question_state(self, question, state, year):
+        wf = api.portal.get_tool("portal_workflow")[QUESTION_WORKFLOW]
+        question.workflow_history[QUESTION_WORKFLOW] = tuple(
+            question.workflow_history[QUESTION_WORKFLOW]
+        ) + (
+            {
+                "comments": "Test force state",
+                "actor": api.user.get_current().getId(),
+                "time": DateTime(f"{year}/01/01 00:00 UTC"),
+                "action": "test-force-state",
+                "review_state": state,
+            },
+        )
+        wf.updateRoleMappingsFor(question)
+        question.reindexObject()
+
+    def reindex_ms_visibility(self, observation):
+        observation.reindexObject(idxs=MS_VISIBILITY_INDEXES)
 
     def create_stale_carried_over_question(self):
         helpers.login(self.portal, USERS.SE.value.name)
@@ -307,6 +367,134 @@ class TestSetup(unittest.TestCase):
         self.assertIn("Create answer", content)
         self.assertEqual(content.count("workflow_action=answer-to-lr"), 0)
         self.assertEqual(content.count("workflow_action=assign-answerer"), 0)
+
+    def test_msa_myview_uses_review_folder_year_for_carried_over_answers(self):
+        self.set_review_folder_year(2026)
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        question.getFirstComment().restrictedTraverse("approve-question")()
+
+        helpers.login(self.portal, USERS.MSA.value.name)
+        answer = self.create_answer(question, text="The old MSA answer")
+        api.content.transition(
+            obj=question,
+            transition="answer-to-lr",
+            comment=answer.getId(),
+        )
+
+        self.set_workflow_history_year(question, QUESTION_WORKFLOW, 2025)
+        self.force_question_state(question, "draft", 2026)
+        self.reindex_ms_visibility(observation)
+
+        view = self.get_view(self.tool, object, name="inboxview")
+        view.rolemap_observations = {}
+
+        self.assertEqual(view.get_answers_sent_to_se_re(), [])
+
+    def test_published_old_review_folder_exports_rows_for_msa(self):
+        self.set_review_folder_year(2024)
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        question.getFirstComment().restrictedTraverse("approve-question")()
+        self.set_workflow_history_year(question, QUESTION_WORKFLOW, 2024)
+        self.reindex_ms_visibility(observation)
+
+        setRoles(self.portal, USERS.LR.value.name, ["Manager"])
+        api.content.transition(obj=self.tool, transition="end-review")
+
+        helpers.login(self.portal, USERS.MSA.value.name)
+        user = api.user.get_current()
+        view = self.get_view(self.tool, object)
+        with patch.object(user, "getGroups", return_value=[MSA_AT_GROUP]):
+            exported_ids = [brain.getId for brain in view.get_questions()]
+
+        self.assertEqual(exported_ids, [observation.getId()])
+
+    def test_upgrade_reindexes_ms_visibility_against_review_folder_year(self):
+        self.set_review_folder_year(2024)
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        observation = self.create_observation()
+        question = self.create_question(observation, "question text")
+        api.content.transition(obj=question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        question.getFirstComment().restrictedTraverse("approve-question")()
+        self.set_workflow_history_year(question, QUESTION_WORKFLOW, 2024)
+
+        with patch("emrt.necd.content.upgrades.to312.transaction.commit"):
+            to312.run(None)
+
+        catalog = api.portal.get_tool("portal_catalog")
+        brain = catalog(getId=observation.getId())[0]
+        self.assertTrue(brain.observation_sent_to_msc)
+
+    def test_upgrade_reindexes_only_historical_candidate_observations(self):
+        current_year = DateTime().year()
+        self.set_review_folder_year(2024)
+        current_tool = self.create_review_folder(current_year)
+
+        helpers.login(self.portal, USERS.SE.value.name)
+        historical_observation = self.create_observation()
+        historical_question = self.create_question(
+            historical_observation, "historical question"
+        )
+        api.content.transition(
+            obj=historical_question, transition="send-to-lr"
+        )
+
+        current_observation = self.create_observation_in(
+            current_tool, review_year=current_year
+        )
+        current_question = self.create_question(
+            current_observation, "current question"
+        )
+        api.content.transition(obj=current_question, transition="send-to-lr")
+
+        helpers.login(self.portal, USERS.LR.value.name)
+        historical_question.getFirstComment().restrictedTraverse(
+            "approve-question"
+        )()
+        current_question.getFirstComment().restrictedTraverse(
+            "approve-question"
+        )()
+        self.set_workflow_history_year(
+            historical_question, QUESTION_WORKFLOW, 2024
+        )
+        self.set_workflow_history_year(
+            current_question, QUESTION_WORKFLOW, current_year
+        )
+
+        with patch(
+            "emrt.necd.content.upgrades.to312._update_ms_visibility",
+            wraps=to312._update_ms_visibility,
+        ) as update_ms_visibility:
+            with patch("emrt.necd.content.upgrades.to312.transaction.commit"):
+                to312.run(None)
+
+        indexed_paths = [
+            "/".join(call.args[1].getPhysicalPath())
+            for call in update_ms_visibility.call_args_list
+        ]
+
+        self.assertIn(
+            "/".join(historical_observation.getPhysicalPath()),
+            indexed_paths,
+        )
+        self.assertNotIn(
+            "/".join(current_observation.getPhysicalPath()),
+            indexed_paths,
+        )
 
     def test_submit_answer_action_is_rendered_only_on_answer_item(self):
         helpers.login(self.portal, USERS.SE.value.name)

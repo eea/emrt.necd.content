@@ -66,6 +66,7 @@ from emrt.necd.content.constants import ROLE_CP
 from emrt.necd.content.constants import ROLE_LR
 from emrt.necd.content.constants import ROLE_MSE
 from emrt.necd.content.constants import ROLE_SE
+from emrt.necd.content.ms_visibility import observation_already_replied
 from emrt.necd.content.review_state import ensure_reviewfolder_allows_mutation
 from emrt.necd.content.review_state import reviewfolder_allows_mutation
 from emrt.necd.content.roles.localrolesubscriber import grant_local_roles
@@ -984,28 +985,7 @@ class Observation(Container):
         ]
 
     def observation_already_replied(self):
-        questions = self.get_values_cat("Question")
-        if questions:
-            question = questions[0]
-            winfo = question.workflow_history
-            this_year = datetime.datetime.now().year
-            # [refs #134160] only count events that happened this year
-            # as the Observation may be a carry-over.
-            states = [
-                w.get("review_state")
-                for w in winfo.get("esd-question-review-workflow", [])
-                if w["time"].year() == this_year
-            ]
-            if states:
-                sp = {s: idx for idx, s in enumerate(states)}
-                return states[-1] not in [
-                    "recalled-msa",
-                    "pending",
-                    "pending-answer-drafting",
-                    "expert-comments",
-                ] and sp.get("answered")
-
-        return False
+        return observation_already_replied(self)
 
     def can_add_followup(self):
         status = self.get_status()

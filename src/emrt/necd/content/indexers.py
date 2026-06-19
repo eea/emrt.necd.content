@@ -1,4 +1,3 @@
-import datetime
 import itertools
 import json
 
@@ -16,6 +15,8 @@ from plone.indexer import indexer
 
 from emrt.necd.content.comment import IComment
 from emrt.necd.content.commentanswer import ICommentAnswer
+from emrt.necd.content.ms_visibility import observation_was_sent_to_msc
+from emrt.necd.content.ms_visibility import observation_was_sent_to_mse
 from emrt.necd.content.utils import get_vocabulary_value
 
 from .conclusions import IConclusions
@@ -233,30 +234,7 @@ def reply_comments_by_mse(context):
 @indexer(IObservation)
 def observation_sent_to_msc(context):
     try:
-        questions = context.get_values_cat(["Question"])
-        if questions:
-            question = questions[0]
-            winfo = question.workflow_history
-            was_or_is_pending = False
-            has_public_questions = False
-            this_year = datetime.datetime.now().year
-            # [refs #134160] only count events that happened this year
-            # as the Observation may be a carry-over.
-            witems = [
-                w
-                for w in winfo.get("esd-question-review-workflow", [])
-                if w["time"].year() == this_year
-            ]
-            for witem in witems:
-                if witem.get("review_state", "").endswith("pending"):
-                    was_or_is_pending = True
-                    break
-            for q in question.get_questions():
-                if api.content.get_state(obj=q) == "public":
-                    has_public_questions = True
-                    break
-            return was_or_is_pending and has_public_questions
-        return False
+        return observation_was_sent_to_msc(context)
     except:
         return False
 
@@ -264,22 +242,7 @@ def observation_sent_to_msc(context):
 @indexer(IObservation)
 def observation_sent_to_mse(context):
     try:
-        questions = context.get_values_cat(["Question"])
-        if questions:
-            question = questions[0]
-            winfo = question.workflow_history
-            this_year = datetime.datetime.now().year
-            # [refs #134160] only count events that happened this year
-            # as the Observation may be a carry-over.
-            witems = [
-                w
-                for w in winfo.get("esd-question-review-workflow", [])
-                if w["time"].year() == this_year
-            ]
-            for witem in witems:
-                if witem.get("review_state", "").endswith("expert-comments"):
-                    return True
-        return False
+        return observation_was_sent_to_mse(context)
     except:
         return False
 

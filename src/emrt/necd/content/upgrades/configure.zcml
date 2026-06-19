@@ -107,4 +107,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    profile="emrt.necd.content:default"
+    source="311"
+    destination="312"
+  >
+
+    <genericsetup:upgradeStep
+      title="Reindex MS visibility indexes against review-folder year."
+      handler=".to312.run"
+    />
+
+  </genericsetup:upgradeSteps>
+
 </configure>
