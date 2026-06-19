@@ -1,6 +1,10 @@
 Changelog
 =========
 
+3.1.2 (2026-06-19)
+
+- Bug #303929 - Export not working for MS coordinator in earlier years.
+
 3.1.1 (2026-05-28)
 
 - Bug #304039 - Fix MS unable to answer.
